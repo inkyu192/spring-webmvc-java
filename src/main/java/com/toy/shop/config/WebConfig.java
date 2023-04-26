@@ -1,4 +1,4 @@
-package com.toy.shop;
+package com.toy.shop.config;
 
 import com.toy.shop.filter.LogFilter;
 import com.toy.shop.interceptor.LogInterceptor;
