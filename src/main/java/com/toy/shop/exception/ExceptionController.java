@@ -21,15 +21,15 @@ import static com.toy.shop.common.ResultCode.NOT_VALID;
 public class ExceptionController {
 
     @ExceptionHandler(CommonException.class)
-    public ResultDto CommonExceptionHandler(CommonException e) {
+    public Object CommonExceptionHandler(CommonException e) {
         ResultCode resultCode = e.getResultCode();
 
-        return new ResultDto(resultCode.getCode(), resultCode.getMessage(), null);
+        return new ResultDto<>(resultCode.getCode(), resultCode.getMessage(), null);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResultDto MethodArgumentNotValidExceptionHandler(MethodArgumentNotValidException e) {
+    public Object MethodArgumentNotValidExceptionHandler(MethodArgumentNotValidException e) {
         log.error("[MethodArgumentNotValidExceptionHandler]", e);
 
         ArrayList<String> errors = new ArrayList<>();
@@ -39,14 +39,14 @@ public class ExceptionController {
             errors.add(fieldError.getField());
         }
 
-        return new ResultDto(NOT_VALID.getCode(), NOT_VALID.getMessage(), errors);
+        return new ResultDto<>(NOT_VALID.getCode(), NOT_VALID.getMessage(), errors);
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
-    public ResultDto ExceptionHandler(Exception e) {
+    public Object ExceptionHandler(Exception e) {
         log.error("[ExceptionHandler]", e);
 
-        return new ResultDto(ERROR.getCode(), ERROR.getMessage(), null);
+        return new ResultDto<>(ERROR.getCode(), ERROR.getMessage(), null);
     }
 }
