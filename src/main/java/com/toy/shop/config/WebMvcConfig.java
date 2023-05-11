@@ -14,6 +14,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
     private final FirstInterceptor firstInterceptor;
     private final SecondInterceptor secondInterceptor;
 
+    /**
+     * {@code InterceptorRegistry}에 등록해야 호출된다.
+     */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(firstInterceptor)
