@@ -3,24 +3,22 @@ package com.toy.shop.interceptor;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.UUID;
+import static com.toy.shop.common.Constants.*;
 
 @Slf4j
-public class LogInterceptor implements HandlerInterceptor {
-
-    public static final String LOG_ID = "LOG_ID";
+@Component
+public class SecondInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         String requestURI = request.getRequestURI();
-        String logId = UUID.randomUUID().toString();
+        String logId = (String) request.getAttribute(LOG_ID);
 
-        request.setAttribute(LOG_ID, logId);
-
-        log.info("======================== Interceptor preHandle [{}][{}][{}] ========================", logId, requestURI, handler);
+        log.info("======================== SecondInterceptor preHandle [{}][{}][{}] ========================", logId, requestURI, handler);
 
         return true;
     }
@@ -30,7 +28,7 @@ public class LogInterceptor implements HandlerInterceptor {
         String requestURI = request.getRequestURI();
         String logId = (String) request.getAttribute(LOG_ID);
 
-        log.info("======================== Interceptor postHandle [{}][{}][{}] ========================", logId, requestURI, handler);
+        log.info("======================== SecondInterceptor postHandle [{}][{}][{}] ========================", logId, requestURI, handler);
     }
 
     @Override
@@ -38,6 +36,6 @@ public class LogInterceptor implements HandlerInterceptor {
         String requestURI = request.getRequestURI();
         String logId = (String) request.getAttribute(LOG_ID);
 
-        log.info("======================== Interceptor afterCompletion [{}][{}][{}] ========================", logId, requestURI, handler);
+        log.info("======================== SecondInterceptor afterCompletion [{}][{}][{}] ========================", logId, requestURI, handler);
     }
 }
