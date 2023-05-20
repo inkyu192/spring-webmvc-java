@@ -2,10 +2,12 @@ package com.toy.shop.common;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
+import lombok.ToString;
 
 import static com.toy.shop.common.ResultCode.SUCCESS;
 
 @Getter
+@ToString
 public class ResultDto<T> {
 
     private final String resultCode;
