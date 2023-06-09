@@ -36,7 +36,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDto.Response> items(Long categoryId, String name) {
-        List<Item> items = itemRepository.findAllOfJpa(categoryId, name);
+        List<Item> items = itemRepository.findAllOfQueryMethod(categoryId, name);
 
         return items.stream()
                 .map(ItemDto.Response::new)

@@ -52,7 +52,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderDto.Response> orders(Long memberId, OrderStatus orderStatus, DeliveryStatus deliveryStatus) {
-        List<Order> orders = orderRepository.findAllOfJpa(memberId, orderStatus, deliveryStatus);
+        List<Order> orders = orderRepository.findAllOfQueryMethod(memberId, orderStatus, deliveryStatus);
 
         return orders.stream()
                 .map(OrderDto.Response::new)

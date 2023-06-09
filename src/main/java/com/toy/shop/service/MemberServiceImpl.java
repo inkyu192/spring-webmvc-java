@@ -31,7 +31,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public List<MemberDto.Response> members(String name) {
-        List<Member> members = memberRepository.findAllOfJpa(name);
+        List<Member> members = memberRepository.findAllOfQueryMethod(name);
 
         return members.stream()
                 .map(MemberDto.Response::new)
