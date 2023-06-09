@@ -14,5 +14,5 @@ public interface MemberRepository extends JpaRepository<Member, Long>, MemberCus
         " from Member m" +
         " where (:name is null or m.name like concat('%', :name, '%'))"
     )
-    List<Member> findAllOfJpa(@Param("name") String name);
+    List<Member> findAllOfQueryMethod(@Param("name") String name);
 }

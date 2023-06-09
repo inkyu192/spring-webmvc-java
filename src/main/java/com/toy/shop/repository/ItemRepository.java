@@ -16,5 +16,5 @@ public interface ItemRepository extends JpaRepository<Item, Long>, ItemCustomRep
         " where (:categoryId is null or c.id = :categoryId)" +
         " and (:name is null or i.name like concat('%', :name, '%'))"
     )
-    List<Item> findAllOfJpa(@Param("categoryId") Long categoryId, @Param("name") String name);
+    List<Item> findAllOfQueryMethod(@Param("categoryId") Long categoryId, @Param("name") String name);
 }
