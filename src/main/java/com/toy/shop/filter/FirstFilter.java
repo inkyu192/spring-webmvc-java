@@ -3,12 +3,12 @@ package com.toy.shop.filter;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.UUID;
 
-import static com.toy.shop.common.Constants.*;
+import static com.toy.shop.common.Constants.LOG_ID;
+
 
 @Slf4j
 //@Component
@@ -24,7 +24,7 @@ public class FirstFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         String requestURI = httpRequest.getRequestURI();
         String logId = UUID.randomUUID().toString();
-        httpRequest.setAttribute(LOG_ID, logId);
+        httpRequest.setAttribute(LOG_ID.name(), logId);
 
         try {
             log.info("======================== FirstFilter request [{}][{}] ========================", logId, requestURI);
