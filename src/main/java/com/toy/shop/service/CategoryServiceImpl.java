@@ -6,10 +6,10 @@ import com.toy.shop.dto.CategoryDto;
 import com.toy.shop.exception.CommonException;
 import com.toy.shop.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -29,12 +29,10 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<CategoryDto.Response> categories() {
-        List<Category> categories = categoryRepository.findAll();
+    public Page<CategoryDto.Response> categories(Pageable pageable) {
+        Page<Category> page = categoryRepository.findAll(pageable);
 
-        return categories.stream()
-                .map(CategoryDto.Response::new)
-                .toList();
+        return page.map(CategoryDto.Response::new);
     }
 
     @Override

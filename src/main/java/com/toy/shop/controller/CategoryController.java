@@ -5,9 +5,10 @@ import com.toy.shop.dto.CategoryDto;
 import com.toy.shop.service.CategoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/categories")
@@ -24,10 +25,10 @@ public class CategoryController {
     }
 
     @GetMapping
-    public Object categories() {
-        List<CategoryDto.Response> list = categoryService.categories();
+    public Object categories(@PageableDefault(size = 3) Pageable pageable) {
+        Page<CategoryDto.Response> page = categoryService.categories(pageable);
 
-        return new ResultDto<>(list);
+        return new ResultDto<>(page);
     }
 
     @GetMapping("/{id}")
