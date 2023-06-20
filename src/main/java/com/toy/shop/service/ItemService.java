@@ -1,14 +1,14 @@
 package com.toy.shop.service;
 
 import com.toy.shop.dto.ItemDto;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface ItemService {
 
     ItemDto.Response saveItem(ItemDto.Save requestDto);
 
-    List<ItemDto.Response> items(Long categoryId, String name);
+    Page<ItemDto.Response> items(Long categoryId, String name, Pageable pageable);
 
     ItemDto.Response item(Long id);
 

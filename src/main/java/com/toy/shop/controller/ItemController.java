@@ -5,9 +5,9 @@ import com.toy.shop.dto.ItemDto;
 import com.toy.shop.service.ItemService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/items")
@@ -25,10 +25,11 @@ public class ItemController {
 
     @GetMapping
     public Object items(@RequestParam(required = false) Long categoryId,
-                        @RequestParam(required = false) String name) {
-        List<ItemDto.Response> list = itemService.items(categoryId, name);
+                        @RequestParam(required = false) String name,
+                        Pageable pageable) {
+        Page<ItemDto.Response> page = itemService.items(categoryId, name, pageable);
 
-        return new ResultDto<>(list);
+        return new ResultDto<>(page);
     }
 
     @GetMapping("/{id}")

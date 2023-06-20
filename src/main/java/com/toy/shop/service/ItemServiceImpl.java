@@ -8,10 +8,10 @@ import com.toy.shop.exception.CommonException;
 import com.toy.shop.repository.CategoryRepository;
 import com.toy.shop.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -35,12 +35,10 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto.Response> items(Long categoryId, String name) {
-        List<Item> items = itemRepository.findAllOfQueryMethod(categoryId, name);
+    public Page<ItemDto.Response> items(Long categoryId, String name, Pageable pageable) {
+        Page<Item> page = itemRepository.findAllOfQueryMethod(categoryId, name, pageable);
 
-        return items.stream()
-                .map(ItemDto.Response::new)
-                .toList();
+        return page.map(ItemDto.Response::new);
     }
 
     @Override
