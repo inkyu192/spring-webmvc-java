@@ -5,10 +5,10 @@ import com.toy.shop.dto.MemberDto;
 import com.toy.shop.exception.CommonException;
 import com.toy.shop.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 import static com.toy.shop.common.ResultCode.MEMBER_NOT_FOUND;
 
@@ -30,12 +30,10 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public List<MemberDto.Response> members(String name) {
-        List<Member> members = memberRepository.findAllOfQueryMethod(name);
+    public Page<MemberDto.Response> members(String name, Pageable pageable) {
+        Page<Member> page = memberRepository.findAllOfQueryMethod(name, pageable);
 
-        return members.stream()
-                .map(MemberDto.Response::new)
-                .toList();
+        return page.map(MemberDto.Response::new);
     }
 
     @Override

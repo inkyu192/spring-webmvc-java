@@ -5,9 +5,9 @@ import com.toy.shop.dto.MemberDto;
 import com.toy.shop.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/members")
@@ -24,10 +24,10 @@ public class MemberController {
     }
 
     @GetMapping
-    public Object members(@RequestParam(required = false) String name) {
-        List<MemberDto.Response> list = memberService.members(name);
+    public Object members(@RequestParam(required = false) String name, Pageable pageable) {
+        Page<MemberDto.Response> members = memberService.members(name, pageable);
 
-        return new ResultDto<>(list);
+        return new ResultDto<>(members);
     }
 
     @GetMapping("/{id}")
