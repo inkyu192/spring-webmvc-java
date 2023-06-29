@@ -7,6 +7,8 @@ import com.toy.shop.dto.OrderDto;
 import com.toy.shop.service.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,8 +30,9 @@ public class OrderController {
     @GetMapping
     public Object orders(@RequestParam Long memberId,
                          @RequestParam(required = false) OrderStatus orderStatus,
-                         @RequestParam(required = false) DeliveryStatus deliveryStatus) {
-        List<OrderDto.Response> list = orderService.orders(memberId, orderStatus, deliveryStatus);
+                         @RequestParam(required = false) DeliveryStatus deliveryStatus,
+                         Pageable pageable) {
+        Page<OrderDto.Response> list = orderService.orders(memberId, orderStatus, deliveryStatus, pageable);
 
         return new ResultDto<>(list);
     }

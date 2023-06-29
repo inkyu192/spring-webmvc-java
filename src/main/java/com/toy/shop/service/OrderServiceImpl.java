@@ -8,6 +8,8 @@ import com.toy.shop.repository.ItemRepository;
 import com.toy.shop.repository.MemberRepository;
 import com.toy.shop.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,12 +53,10 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderDto.Response> orders(Long memberId, OrderStatus orderStatus, DeliveryStatus deliveryStatus) {
-        List<Order> orders = orderRepository.findAllOfQueryMethod(memberId, orderStatus, deliveryStatus);
+    public Page<OrderDto.Response> orders(Long memberId, OrderStatus orderStatus, DeliveryStatus deliveryStatus, Pageable pageable) {
+        Page<Order> page = orderRepository.findAllOfQueryMethod(memberId, orderStatus, deliveryStatus, pageable);
 
-        return orders.stream()
-                .map(OrderDto.Response::new)
-                .toList();
+        return page.map(OrderDto.Response::new);
     }
 
     @Override
