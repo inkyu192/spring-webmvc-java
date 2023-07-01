@@ -10,15 +10,17 @@ spring:
 
 logging:
   level:
-    org.hibernate.SQL: debug
-    org.hibernate.type: info
+    org:
+      hibernate:
+        SQL: debug
+        type: info
 
 ---
 
 spring:
   config:
     activate:
-      on-profile: default
+      on-profile: local
 
   datasource:
     url: jdbc:h2:tcp://localhost/~/shop
