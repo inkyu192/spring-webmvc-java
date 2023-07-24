@@ -7,9 +7,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.util.StringUtils;
 
-import static com.toy.shop.common.ResultCode.ITEM_QUANTITY_NOT_ENOUGH;
-import static com.toy.shop.dto.ItemDto.Save;
-import static com.toy.shop.dto.ItemDto.Update;
+import static com.toy.shop.common.ApiResponseCode.ITEM_QUANTITY_NOT_ENOUGH;
+import static com.toy.shop.business.item.dto.ItemDto.Save;
+import static com.toy.shop.business.item.dto.ItemDto.Update;
 
 @Entity
 @Getter

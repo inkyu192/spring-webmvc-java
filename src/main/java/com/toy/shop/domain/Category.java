@@ -1,6 +1,6 @@
 package com.toy.shop.domain;
 
-import com.toy.shop.dto.CategoryDto;
+import com.toy.shop.business.category.dto.CategoryDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

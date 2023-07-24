@@ -1,6 +1,6 @@
 package com.toy.shop.aspect;
 
-import com.toy.shop.common.ResultCode;
+import com.toy.shop.common.ApiResponseCode;
 import com.toy.shop.exception.CommonException;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -27,6 +27,6 @@ public class RetryAspect {
                 log.error("[retry] {}", joinPoint.getSignature(), exception);
             }
         }
-        throw new CommonException(ResultCode.ERROR);
+        throw new CommonException(ApiResponseCode.ERROR);
     }
 }

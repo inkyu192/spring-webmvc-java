@@ -1,14 +1,14 @@
 package com.toy.shop.exception;
 
-import com.toy.shop.common.ResultCode;
+import com.toy.shop.common.ApiResponseCode;
 import lombok.Getter;
 
 @Getter
 public class CommonException extends RuntimeException {
 
-    private final ResultCode resultCode;
+    private final ApiResponseCode apiResponseCode;
 
-    public CommonException(ResultCode resultCode) {
-        this.resultCode = resultCode;
+    public CommonException(ApiResponseCode apiResponseCode) {
+        this.apiResponseCode = apiResponseCode;
     }
 }

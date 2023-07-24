@@ -1,6 +1,6 @@
 package com.toy.shop.domain;
 
-import com.toy.shop.common.ResultCode;
+import com.toy.shop.common.ApiResponseCode;
 import com.toy.shop.exception.CommonException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -66,7 +66,7 @@ public class Order extends BaseDomain {
 
     public void cancel() {
         if (delivery.getStatus() == DeliveryStatus.COMP) {
-            throw new CommonException(ResultCode.ORDER_NOT_CANCEL);
+            throw new CommonException(ApiResponseCode.ORDER_NOT_CANCEL);
         }
 
         this.status = OrderStatus.CANCEL;

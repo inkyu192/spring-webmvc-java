@@ -5,7 +5,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import static com.toy.shop.dto.OrderDto.*;
+import static com.toy.shop.business.order.dto.OrderDto.*;
 
 @Entity
 @Getter

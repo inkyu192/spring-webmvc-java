@@ -20,7 +20,7 @@ public class LogApplicationRunner implements ApplicationRunner {
 
         for (String beanDefinitionName : beanDefinitionNames) {
             Object bean = applicationContext.getBean(beanDefinitionName);
-            log.info("[{}] - [{}]", beanDefinitionName, bean);
+//            log.info("[{}] - [{}]", beanDefinitionName, bean);
         }
     }
 }
