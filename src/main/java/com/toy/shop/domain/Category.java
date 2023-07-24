@@ -1,6 +1,7 @@
 package com.toy.shop.domain;
 
-import com.toy.shop.business.category.dto.CategoryDto;
+import com.toy.shop.business.category.dto.request.CategorySaveRequest;
+import com.toy.shop.business.category.dto.request.CategoryUpdateRequest;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -26,15 +27,15 @@ public class Category extends BaseDomain {
 //    @OneToMany(mappedBy = "category")
 //    private List<Item> items = new ArrayList<>();
 
-    public static Category createCategory(CategoryDto.Save requestDto) {
+    public static Category createCategory(CategorySaveRequest categorySaveRequest) {
         Category category = new Category();
-        category.name = requestDto.getName();
-        category.description = requestDto.getDescription();
+        category.name = categorySaveRequest.name();
+        category.description = categorySaveRequest.description();
 
         return category;
     }
 
-    public void updateCategory(CategoryDto.Update requestDto) {
-        if (StringUtils.hasText(requestDto.getName())) this.name = requestDto.getName();
+    public void updateCategory(CategoryUpdateRequest categoryUpdateRequest) {
+        if (StringUtils.hasText(categoryUpdateRequest.name())) this.name = categoryUpdateRequest.name();
     }
 }

@@ -1,10 +1,12 @@
 package com.toy.shop.business.category.service;
 
+import com.toy.shop.business.category.dto.request.CategorySaveRequest;
+import com.toy.shop.business.category.dto.request.CategoryUpdateRequest;
+import com.toy.shop.business.category.dto.response.CategoryResponse;
+import com.toy.shop.business.category.repository.CategoryRepository;
 import com.toy.shop.common.ApiResponseCode;
 import com.toy.shop.domain.Category;
-import com.toy.shop.business.category.dto.CategoryDto;
 import com.toy.shop.exception.CommonException;
-import com.toy.shop.business.category.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,36 +22,36 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional
-    public CategoryDto.Response saveCategory(CategoryDto.Save requestDto) {
-        Category category = Category.createCategory(requestDto);
+    public CategoryResponse saveCategory(CategorySaveRequest categorySaveRequest) {
+        Category category = Category.createCategory(categorySaveRequest);
 
         categoryRepository.save(category);
 
-        return new CategoryDto.Response(category);
+        return new CategoryResponse(category);
     }
 
     @Override
-    public Page<CategoryDto.Response> categories(Pageable pageable) {
+    public Page<CategoryResponse> categories(Pageable pageable) {
         Page<Category> page = categoryRepository.findAll(pageable);
 
-        return page.map(CategoryDto.Response::new);
+        return page.map(CategoryResponse::new);
     }
 
     @Override
-    public CategoryDto.Response category(Long id) {
+    public CategoryResponse category(Long id) {
         Category category = categoryRepository.findById(id).orElseThrow(() -> new CommonException(ApiResponseCode.CATEGORY_NOT_FOUND));
 
-        return new CategoryDto.Response(category);
+        return new CategoryResponse(category);
     }
 
     @Override
     @Transactional
-    public CategoryDto.Response updateCategory(Long id, CategoryDto.Update requestDto) {
+    public CategoryResponse updateCategory(Long id, CategoryUpdateRequest categoryUpdateRequest) {
         Category category = categoryRepository.findById(id).orElseThrow(() -> new CommonException(ApiResponseCode.CATEGORY_NOT_FOUND));
 
-        category.updateCategory(requestDto);
+        category.updateCategory(categoryUpdateRequest);
 
-        return new CategoryDto.Response(category);
+        return new CategoryResponse(category);
     }
 
     @Override

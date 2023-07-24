@@ -1,18 +1,20 @@
 package com.toy.shop.business.category.service;
 
-import com.toy.shop.business.category.dto.CategoryDto;
+import com.toy.shop.business.category.dto.request.CategorySaveRequest;
+import com.toy.shop.business.category.dto.request.CategoryUpdateRequest;
+import com.toy.shop.business.category.dto.response.CategoryResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface CategoryService {
 
-    CategoryDto.Response saveCategory(CategoryDto.Save requestDto);
+    CategoryResponse saveCategory(CategorySaveRequest categorySaveRequest);
 
-    Page<CategoryDto.Response> categories(Pageable pageable);
+    Page<CategoryResponse> categories(Pageable pageable);
 
-    CategoryDto.Response category(Long id);
+    CategoryResponse category(Long id);
 
-    CategoryDto.Response updateCategory(Long id, CategoryDto.Update requestDto);
+    CategoryResponse updateCategory(Long id, CategoryUpdateRequest categoryUpdateRequest);
 
     void deleteCategory(Long id);
 }
