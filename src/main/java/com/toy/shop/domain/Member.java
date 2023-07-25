@@ -32,20 +32,20 @@ public class Member extends BaseDomain {
     @OneToMany(mappedBy = "member")
     private List<Order> orders = new ArrayList<>();
 
-    public static Member createMember(MemberSaveRequest requestDto, PasswordEncoder passwordEncoder) {
+    public static Member createMember(MemberSaveRequest memberSaveRequest, PasswordEncoder passwordEncoder) {
         Member member = new Member();
 
-        member.account = requestDto.account();
-        member.password = passwordEncoder.encode(requestDto.password());
-        member.name = requestDto.name();
-        member.address = Address.createAddress((requestDto.city()), requestDto.street(), requestDto.zipcode());
+        member.account = memberSaveRequest.account();
+        member.password = passwordEncoder.encode(memberSaveRequest.password());
+        member.name = memberSaveRequest.name();
+        member.address = Address.createAddress((memberSaveRequest.city()), memberSaveRequest.street(), memberSaveRequest.zipcode());
 
         return member;
     }
 
-    public void updateMember(MemberUpdateRequest requestDto, PasswordEncoder passwordEncoder) {
-        if (StringUtils.hasText(requestDto.password())) this.name = passwordEncoder.encode(requestDto.password());
-        if (StringUtils.hasText(requestDto.name())) this.name = requestDto.name();
-        this.address.updateAddress((requestDto.city()), requestDto.street(), requestDto.zipcode());
+    public void updateMember(MemberUpdateRequest memberUpdateRequest, PasswordEncoder passwordEncoder) {
+        if (StringUtils.hasText(memberUpdateRequest.password())) this.name = passwordEncoder.encode(memberUpdateRequest.password());
+        if (StringUtils.hasText(memberUpdateRequest.name())) this.name = memberUpdateRequest.name();
+        this.address.updateAddress((memberUpdateRequest.city()), memberUpdateRequest.street(), memberUpdateRequest.zipcode());
     }
 }

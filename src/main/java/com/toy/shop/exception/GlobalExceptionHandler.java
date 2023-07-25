@@ -18,7 +18,7 @@ import static com.toy.shop.common.ApiResponseCode.NOT_VALID;
 
 @Slf4j
 @RestControllerAdvice
-public class ExceptionResponseHandler {
+public class GlobalExceptionHandler {
 
     @ExceptionHandler(CommonException.class)
     public Object CommonExceptionHandler(CommonException e) {

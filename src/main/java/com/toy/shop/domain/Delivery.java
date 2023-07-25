@@ -1,11 +1,10 @@
 package com.toy.shop.domain;
 
+import com.toy.shop.business.order.dto.request.OrderSaveRequest;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import static com.toy.shop.business.order.dto.OrderDto.*;
 
 @Entity
 @Getter
@@ -25,10 +24,10 @@ public class Delivery {
     @Enumerated(EnumType.STRING)
     private DeliveryStatus status;
 
-    public static Delivery createDelivery(Save requestDto) {
+    public static Delivery createDelivery(OrderSaveRequest orderSaveRequest) {
         Delivery delivery = new Delivery();
 
-        delivery.address = Address.createAddress(requestDto.getCity(), requestDto.getStreet(), requestDto.getZipcode());
+        delivery.address = Address.createAddress(orderSaveRequest.city(), orderSaveRequest.street(), orderSaveRequest.zipcode());
         delivery.status = DeliveryStatus.READY;
 
         return delivery;
