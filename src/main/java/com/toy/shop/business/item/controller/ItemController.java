@@ -1,8 +1,10 @@
 package com.toy.shop.business.item.controller;
 
-import com.toy.shop.common.ApiResponseDto;
-import com.toy.shop.business.item.dto.ItemDto;
+import com.toy.shop.business.item.dto.request.ItemSaveRequest;
+import com.toy.shop.business.item.dto.request.ItemUpdateRequest;
+import com.toy.shop.business.item.dto.response.ItemResponse;
 import com.toy.shop.business.item.service.ItemService;
+import com.toy.shop.common.ApiResponseDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -17,8 +19,8 @@ public class ItemController {
     private final ItemService itemService;
 
     @PostMapping
-    public Object saveItem(@RequestBody @Valid ItemDto.Save requestDto) {
-        ItemDto.Response responseDto = itemService.saveItem(requestDto);
+    public Object saveItem(@RequestBody @Valid ItemSaveRequest itemSaveRequest) {
+        ItemResponse responseDto = itemService.saveItem(itemSaveRequest);
 
         return new ApiResponseDto<>(responseDto);
     }
@@ -27,22 +29,22 @@ public class ItemController {
     public Object items(@RequestParam(required = false) Long categoryId,
                         @RequestParam(required = false) String name,
                         Pageable pageable) {
-        Page<ItemDto.Response> page = itemService.items(categoryId, name, pageable);
+        Page<ItemResponse> page = itemService.items(categoryId, name, pageable);
 
         return new ApiResponseDto<>(page);
     }
 
     @GetMapping("/{id}")
     public Object item(@PathVariable Long id) {
-        ItemDto.Response responseDto = itemService.item(id);
+        ItemResponse responseDto = itemService.item(id);
 
         return new ApiResponseDto<>(responseDto);
     }
 
     @PatchMapping("/{id}")
     public Object updateItem(@PathVariable Long id,
-                             @RequestBody @Valid ItemDto.Update requestDto) {
-        ItemDto.Response responseDto = itemService.updateItem(id, requestDto);
+                             @RequestBody @Valid ItemUpdateRequest itemUpdateRequest) {
+        ItemResponse responseDto = itemService.updateItem(id, itemUpdateRequest);
 
         return new ApiResponseDto<>(responseDto);
     }

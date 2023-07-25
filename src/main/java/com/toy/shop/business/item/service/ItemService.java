@@ -1,18 +1,20 @@
 package com.toy.shop.business.item.service;
 
-import com.toy.shop.business.item.dto.ItemDto;
+import com.toy.shop.business.item.dto.request.ItemSaveRequest;
+import com.toy.shop.business.item.dto.request.ItemUpdateRequest;
+import com.toy.shop.business.item.dto.response.ItemResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface ItemService {
 
-    ItemDto.Response saveItem(ItemDto.Save requestDto);
+    ItemResponse saveItem(ItemSaveRequest itemSaveRequest);
 
-    Page<ItemDto.Response> items(Long categoryId, String name, Pageable pageable);
+    Page<ItemResponse> items(Long categoryId, String name, Pageable pageable);
 
-    ItemDto.Response item(Long id);
+    ItemResponse item(Long id);
 
-    ItemDto.Response updateItem(Long id, ItemDto.Update requestDto);
+    ItemResponse updateItem(Long id, ItemUpdateRequest itemUpdateRequest);
 
     void deleteItem(Long id);
 }

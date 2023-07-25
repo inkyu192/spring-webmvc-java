@@ -32,22 +32,22 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Page<CategoryResponse> categories(Pageable pageable) {
-        Page<Category> page = categoryRepository.findAll(pageable);
-
-        return page.map(CategoryResponse::new);
+        return categoryRepository.findAll(pageable)
+                .map(CategoryResponse::new);
     }
 
     @Override
     public CategoryResponse category(Long id) {
-        Category category = categoryRepository.findById(id).orElseThrow(() -> new CommonException(ApiResponseCode.CATEGORY_NOT_FOUND));
-
-        return new CategoryResponse(category);
+        return categoryRepository.findById(id)
+                .map(CategoryResponse::new)
+                .orElseThrow(() -> new CommonException(ApiResponseCode.CATEGORY_NOT_FOUND));
     }
 
     @Override
     @Transactional
     public CategoryResponse updateCategory(Long id, CategoryUpdateRequest categoryUpdateRequest) {
-        Category category = categoryRepository.findById(id).orElseThrow(() -> new CommonException(ApiResponseCode.CATEGORY_NOT_FOUND));
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new CommonException(ApiResponseCode.CATEGORY_NOT_FOUND));
 
         category.updateCategory(categoryUpdateRequest);
 
@@ -57,7 +57,8 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional
     public void deleteCategory(Long id) {
-        Category category = categoryRepository.findById(id).orElseThrow(() -> new CommonException(ApiResponseCode.CATEGORY_NOT_FOUND));
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new CommonException(ApiResponseCode.CATEGORY_NOT_FOUND));
 
         categoryRepository.delete(category);
     }
