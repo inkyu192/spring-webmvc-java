@@ -1,18 +1,19 @@
 package com.toy.shop.business.order.service;
 
+import com.toy.shop.business.order.dto.request.OrderSaveRequest;
+import com.toy.shop.business.order.dto.response.OrderResponse;
 import com.toy.shop.domain.DeliveryStatus;
 import com.toy.shop.domain.OrderStatus;
-import com.toy.shop.business.order.dto.OrderDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface OrderService {
 
-    OrderDto.Response saveOrder(OrderDto.Save requestDto);
+    OrderResponse saveOrder(OrderSaveRequest orderSaveRequest);
 
-    Page<OrderDto.Response> orders(Long memberId, OrderStatus orderStatus, DeliveryStatus deliveryStatus, Pageable pageable);
+    Page<OrderResponse> orders(Long memberId, OrderStatus orderStatus, DeliveryStatus deliveryStatus, Pageable pageable);
 
-    OrderDto.Response order(Long id);
+    OrderResponse order(Long id);
 
-    OrderDto.Response cancelOrder(Long id);
+    OrderResponse cancelOrder(Long id);
 }
