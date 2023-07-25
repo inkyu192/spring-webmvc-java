@@ -20,13 +20,13 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("login")
-    public Object login(@RequestBody MemberLoginRequest requestDto) {
-        return memberService.login(requestDto);
+    public Object login(@RequestBody MemberLoginRequest memberLoginRequest) {
+        return memberService.login(memberLoginRequest);
     }
 
     @PostMapping
-    public Object saveMember(@RequestBody @Valid MemberSaveRequest requestDto) {
-        MemberResponse responseDto = memberService.saveMember(requestDto);
+    public Object saveMember(@RequestBody @Valid MemberSaveRequest memberSaveRequest) {
+        MemberResponse responseDto = memberService.saveMember(memberSaveRequest);
 
         return new ApiResponseDto<>(responseDto);
     }
@@ -47,8 +47,8 @@ public class MemberController {
 
     @PatchMapping("{id}")
     public Object updateMember(@PathVariable Long id,
-                               @RequestBody @Valid MemberUpdateRequest requestDto) {
-        MemberResponse responseDto = memberService.updateMember(id, requestDto);
+                               @RequestBody @Valid MemberUpdateRequest memberUpdateRequest) {
+        MemberResponse responseDto = memberService.updateMember(id, memberUpdateRequest);
 
         return new ApiResponseDto<>(responseDto);
     }

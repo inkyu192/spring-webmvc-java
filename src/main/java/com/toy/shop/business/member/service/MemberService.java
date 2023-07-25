@@ -10,9 +10,9 @@ import org.springframework.data.domain.Pageable;
 
 public interface MemberService {
 
-    MemberLoginResponse login(MemberLoginRequest requestDto);
+    MemberLoginResponse login(MemberLoginRequest memberLoginRequest);
 
-    MemberResponse saveMember(MemberSaveRequest requestDto);
+    MemberResponse saveMember(MemberSaveRequest memberSaveRequest);
 
     Page<MemberResponse> members(String name, Pageable pageable);
 

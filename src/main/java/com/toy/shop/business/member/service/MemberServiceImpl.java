@@ -32,8 +32,8 @@ public class MemberServiceImpl implements MemberService {
     private final JwtTokenProvider jwtTokenProvider;
 
     @Override
-    public MemberLoginResponse login(MemberLoginRequest requestDto) {
-        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(requestDto.account(), requestDto.password());
+    public MemberLoginResponse login(MemberLoginRequest memberLoginRequest) {
+        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(memberLoginRequest.account(), memberLoginRequest.password());
 
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(usernamePasswordAuthenticationToken);
 
@@ -45,8 +45,8 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public MemberResponse saveMember(MemberSaveRequest requestDto) {
-        Member member = Member.createMember(requestDto, passwordEncoder);
+    public MemberResponse saveMember(MemberSaveRequest memberSaveRequest) {
+        Member member = Member.createMember(memberSaveRequest, passwordEncoder);
 
         memberRepository.save(member);
 
@@ -55,22 +55,22 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public Page<MemberResponse> members(String name, Pageable pageable) {
-        Page<Member> page = memberRepository.findAllOfQueryMethod(name, pageable);
-
-        return page.map(MemberResponse::new);
+        return memberRepository.findAllOfQueryMethod(name, pageable)
+                .map(MemberResponse::new);
     }
 
     @Override
     public MemberResponse member(Long id) {
-        Member member = memberRepository.findById(id).orElseThrow(() -> new CommonException(MEMBER_NOT_FOUND));
-
-        return new MemberResponse(member);
+        return memberRepository.findById(id)
+                .map(MemberResponse::new)
+                .orElseThrow(() -> new CommonException(MEMBER_NOT_FOUND));
     }
 
     @Override
     @Transactional
     public MemberResponse updateMember(Long id, MemberUpdateRequest requestDto) {
-        Member member = memberRepository.findById(id).orElseThrow(() -> new CommonException(MEMBER_NOT_FOUND));
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new CommonException(MEMBER_NOT_FOUND));
 
         member.updateMember(requestDto, passwordEncoder);
 
@@ -80,7 +80,8 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @Transactional
     public void deleteMember(Long id) {
-        Member member = memberRepository.findById(id).orElseThrow(() -> new CommonException(MEMBER_NOT_FOUND));
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new CommonException(MEMBER_NOT_FOUND));
 
         memberRepository.delete(member);
     }
