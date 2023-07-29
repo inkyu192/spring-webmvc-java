@@ -3,7 +3,7 @@ package com.toy.shop.business.order.controller;
 import com.toy.shop.business.order.dto.request.OrderSaveRequest;
 import com.toy.shop.business.order.dto.response.OrderResponse;
 import com.toy.shop.business.order.service.OrderService;
-import com.toy.shop.common.ApiResponseDto;
+import com.toy.shop.common.dto.ApiResponseDto;
 import com.toy.shop.domain.DeliveryStatus;
 import com.toy.shop.domain.OrderStatus;
 import jakarta.validation.Valid;

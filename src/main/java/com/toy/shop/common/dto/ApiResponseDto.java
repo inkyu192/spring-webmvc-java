@@ -1,4 +1,4 @@
-package com.toy.shop.common;
+package com.toy.shop.common.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;

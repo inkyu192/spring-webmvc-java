@@ -1,7 +1,7 @@
 package com.toy.shop.exception;
 
 import com.toy.shop.common.ApiResponseCode;
-import com.toy.shop.common.ApiResponseDto;
+import com.toy.shop.common.dto.ApiResponseDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;

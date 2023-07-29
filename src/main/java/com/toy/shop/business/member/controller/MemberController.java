@@ -1,11 +1,10 @@
 package com.toy.shop.business.member.controller;
 
-import com.toy.shop.business.member.dto.request.MemberLoginRequest;
 import com.toy.shop.business.member.dto.request.MemberSaveRequest;
 import com.toy.shop.business.member.dto.request.MemberUpdateRequest;
 import com.toy.shop.business.member.dto.response.MemberResponse;
 import com.toy.shop.business.member.service.MemberService;
-import com.toy.shop.common.ApiResponseDto;
+import com.toy.shop.common.dto.ApiResponseDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -18,11 +17,6 @@ import org.springframework.web.bind.annotation.*;
 public class MemberController {
 
     private final MemberService memberService;
-
-    @PostMapping("login")
-    public Object login(@RequestBody MemberLoginRequest memberLoginRequest) {
-        return memberService.login(memberLoginRequest);
-    }
 
     @PostMapping
     public Object saveMember(@RequestBody @Valid MemberSaveRequest memberSaveRequest) {

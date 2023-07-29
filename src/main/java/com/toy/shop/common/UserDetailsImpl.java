@@ -1,4 +1,4 @@
-package com.toy.shop.config;
+package com.toy.shop.common;
 
 import com.toy.shop.domain.Member;
 import org.springframework.security.core.GrantedAuthority;

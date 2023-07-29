@@ -4,7 +4,7 @@ import com.toy.shop.business.category.dto.request.CategorySaveRequest;
 import com.toy.shop.business.category.dto.request.CategoryUpdateRequest;
 import com.toy.shop.business.category.dto.response.CategoryResponse;
 import com.toy.shop.business.category.service.CategoryService;
-import com.toy.shop.common.ApiResponseDto;
+import com.toy.shop.common.dto.ApiResponseDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
