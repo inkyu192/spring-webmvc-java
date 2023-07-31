@@ -1,31 +1,51 @@
 package com.toy.shop.common;
 
 import com.toy.shop.domain.Member;
+import io.jsonwebtoken.Claims;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
+@Getter
 public class UserDetailsImpl implements UserDetails {
 
     private final Long id;
     private final String account;
+    private final String password;
     private final String name;
+    private final String auth;
 
     public UserDetailsImpl(Member member) {
         this.id = member.getId();
         this.account = member.getAccount();
+        this.password = member.getPassword();
         this.name = member.getName();
+        this.auth = "ROLE_MEMBER";
+    }
+
+    public UserDetailsImpl(Claims claims) {
+        this.id = Long.valueOf(String.valueOf(claims.get("id")));
+        this.account = claims.getSubject();
+        this.password = null;
+        this.name = String.valueOf(claims.get("name"));
+        this.auth = claims.get("authorities").toString();
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        List<GrantedAuthority> list = new ArrayList<>();
+        list.add(new SimpleGrantedAuthority(auth));
+        return list;
     }
 
     @Override
     public String getPassword() {
-        return null;
+        return password;
     }
 
     @Override
@@ -35,21 +55,21 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return true;
     }
 }
