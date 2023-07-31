@@ -28,7 +28,7 @@ public class JwtTokenProvider {
         this.validTime = validTime * 60 * 1000;
     }
 
-    public String createAccessToken(Authentication authentication) {
+    public String createToken(Authentication authentication) {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
         String authorities = authentication.getAuthorities().stream()
@@ -40,13 +40,6 @@ public class JwtTokenProvider {
                 .claim("authorities", authorities)
                 .claim("id", userDetails.getId())
                 .claim("name", userDetails.getName())
-                .setExpiration(new Date(new Date().getTime() + validTime))
-                .signWith(key, SignatureAlgorithm.HS256)
-                .compact();
-    }
-
-    public String createRefreshToken(Authentication authentication) {
-        return Jwts.builder()
                 .setExpiration(new Date(new Date().getTime() + validTime))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
