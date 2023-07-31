@@ -16,7 +16,8 @@ import static com.toy.shop.common.ApiResponseCode.ITEM_QUANTITY_NOT_ENOUGH;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Item extends BaseDomain {
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     @Column(name = "item_id")
     private Long id;
 
