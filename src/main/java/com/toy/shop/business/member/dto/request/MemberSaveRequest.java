@@ -10,6 +10,8 @@ public record MemberSaveRequest(
         @NotEmpty
         String name,
         @NotEmpty
+        String roleId,
+        @NotEmpty
         String city,
         @NotEmpty
         String street,

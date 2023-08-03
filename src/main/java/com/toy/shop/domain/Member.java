@@ -33,12 +33,17 @@ public class Member extends BaseDomain {
     @OneToMany(mappedBy = "member")
     private List<Order> orders = new ArrayList<>();
 
-    public static Member createMember(MemberSaveRequest memberSaveRequest, PasswordEncoder passwordEncoder) {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "role_id")
+    private Role role;
+
+    public static Member createMember(MemberSaveRequest memberSaveRequest, Role role, PasswordEncoder passwordEncoder) {
         Member member = new Member();
 
         member.account = memberSaveRequest.account();
         member.password = passwordEncoder.encode(memberSaveRequest.password());
         member.name = memberSaveRequest.name();
+        member.role = role;
         member.address = Address.createAddress((memberSaveRequest.city()), memberSaveRequest.street(), memberSaveRequest.zipcode());
 
         return member;

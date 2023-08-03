@@ -4,7 +4,10 @@ import com.toy.shop.business.member.dto.request.MemberSaveRequest;
 import com.toy.shop.business.member.dto.request.MemberUpdateRequest;
 import com.toy.shop.business.member.dto.response.MemberResponse;
 import com.toy.shop.business.member.repository.MemberRepository;
+import com.toy.shop.business.role.repository.RoleRepository;
+import com.toy.shop.common.ApiResponseCode;
 import com.toy.shop.domain.Member;
+import com.toy.shop.domain.Role;
 import com.toy.shop.exception.CommonException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,12 +24,16 @@ import static com.toy.shop.common.ApiResponseCode.MEMBER_NOT_FOUND;
 public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
+    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
     public MemberResponse saveMember(MemberSaveRequest memberSaveRequest) {
-        Member member = Member.createMember(memberSaveRequest, passwordEncoder);
+        Role role = roleRepository.findById(memberSaveRequest.roleId())
+                .orElseThrow(() -> new CommonException(ApiResponseCode.ROLE_NOT_FOUND));
+
+        Member member = Member.createMember(memberSaveRequest, role, passwordEncoder);
 
         memberRepository.save(member);
 

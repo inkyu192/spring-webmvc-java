@@ -36,10 +36,10 @@ public class JwtTokenProvider {
                 .collect(Collectors.joining(","));
 
         return Jwts.builder()
-                .setSubject(authentication.getName())
-                .claim("authorities", authorities)
                 .claim("id", userDetails.getId())
+                .claim("account", authentication.getName())
                 .claim("name", userDetails.getName())
+                .claim("authorities", authorities)
                 .setExpiration(new Date(new Date().getTime() + validTime))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();

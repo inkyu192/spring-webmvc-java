@@ -18,5 +18,11 @@ public interface MemberRepository extends JpaRepository<Member, Long>, MemberCus
     )
     Page<Member> findAllOfQueryMethod(@Param("name") String name, Pageable pageable);
 
+    @Query(
+        "select m" +
+        " from Member m" +
+        " join fetch m.role r" +
+        " where m.account = :account"
+    )
     Optional<Member> findByAccount(String account);
 }

@@ -1,6 +1,7 @@
 package com.toy.shop.common;
 
 import com.toy.shop.domain.Member;
+import com.toy.shop.domain.Role;
 import io.jsonwebtoken.Claims;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,14 +19,14 @@ public class UserDetailsImpl implements UserDetails {
     private final String account;
     private final String password;
     private final String name;
-    private final String auth;
+    private final String roleId;
 
     public UserDetailsImpl(Member member) {
         this.id = member.getId();
         this.account = member.getAccount();
         this.password = member.getPassword();
         this.name = member.getName();
-        this.auth = "ROLE_MEMBER";
+        this.roleId = member.getRole().getId();
     }
 
     public UserDetailsImpl(Claims claims) {
@@ -33,13 +34,13 @@ public class UserDetailsImpl implements UserDetails {
         this.account = claims.getSubject();
         this.password = null;
         this.name = String.valueOf(claims.get("name"));
-        this.auth = claims.get("authorities").toString();
+        this.roleId = claims.get("authorities").toString();
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> list = new ArrayList<>();
-        list.add(new SimpleGrantedAuthority(auth));
+        list.add(new SimpleGrantedAuthority(roleId));
         return list;
     }
 

@@ -15,6 +15,7 @@ public enum ApiResponseCode {
     ITEM_NOT_FOUND("I0001", "아이템이 존재하지 않습니다."),
     ITEM_QUANTITY_NOT_ENOUGH("I0002", "아이템 수량이 부족합니다."),
     MEMBER_NOT_FOUND("M0001", "회원이 존재하지 않습니다."),
+    ROLE_NOT_FOUND("R0001", "권한이 존재하지 않습니다."),
     ORDER_NOT_FOUND("O0001", "주문이 존재하지 않습니다."),
     ORDER_NOT_CANCEL("O0002", "이미 배송완료된 주문은 취소가 불가능합니다.");
 
