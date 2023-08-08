@@ -1,7 +1,7 @@
 package com.toy.shop.exception;
 
 import com.toy.shop.common.ApiResponseCode;
-import com.toy.shop.common.dto.ApiResponseDto;
+import com.toy.shop.common.dto.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
@@ -24,7 +24,7 @@ public class GlobalExceptionHandler {
     public Object CommonExceptionHandler(CommonException e) {
         ApiResponseCode apiResponseCode = e.getApiResponseCode();
 
-        return new ApiResponseDto<>(apiResponseCode.getCode(), apiResponseCode.getMessage(), null);
+        return new ApiResponse<>(apiResponseCode.getCode(), apiResponseCode.getMessage(), null);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -39,7 +39,7 @@ public class GlobalExceptionHandler {
             errors.add(fieldError.getField());
         }
 
-        return new ApiResponseDto<>(NOT_VALID.getCode(), NOT_VALID.getMessage(), errors);
+        return new ApiResponse<>(NOT_VALID.getCode(), NOT_VALID.getMessage(), errors);
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -47,6 +47,6 @@ public class GlobalExceptionHandler {
     public Object ExceptionHandler(Exception e) {
         log.error("[ExceptionHandler]", e);
 
-        return new ApiResponseDto<>(ERROR.getCode(), ERROR.getMessage(), null);
+        return new ApiResponse<>(ERROR.getCode(), ERROR.getMessage(), null);
     }
 }

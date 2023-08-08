@@ -3,7 +3,7 @@ package com.toy.shop.business.order.controller;
 import com.toy.shop.business.order.dto.request.OrderSaveRequest;
 import com.toy.shop.business.order.dto.response.OrderResponse;
 import com.toy.shop.business.order.service.OrderService;
-import com.toy.shop.common.dto.ApiResponseDto;
+import com.toy.shop.common.dto.ApiResponse;
 import com.toy.shop.domain.DeliveryStatus;
 import com.toy.shop.domain.OrderStatus;
 import jakarta.validation.Valid;
@@ -23,7 +23,7 @@ public class OrderController {
     public Object saveOrder(@RequestBody @Valid OrderSaveRequest orderSaveRequest) {
         OrderResponse responseDto = orderService.saveOrder(orderSaveRequest);
 
-        return new ApiResponseDto<>(responseDto);
+        return new ApiResponse<>(responseDto);
     }
 
     @GetMapping
@@ -33,20 +33,20 @@ public class OrderController {
                          Pageable pageable) {
         Page<OrderResponse> list = orderService.orders(memberId, orderStatus, deliveryStatus, pageable);
 
-        return new ApiResponseDto<>(list);
+        return new ApiResponse<>(list);
     }
 
     @GetMapping("/{id}")
     public Object order(@PathVariable Long id) {
         OrderResponse responseDto = orderService.order(id);
 
-        return new ApiResponseDto<>(responseDto);
+        return new ApiResponse<>(responseDto);
     }
 
     @PatchMapping("/{id}")
     public Object cancelOrder(@PathVariable Long id) {
         OrderResponse responseDto = orderService.cancelOrder(id);
 
-        return new ApiResponseDto<>(responseDto);
+        return new ApiResponse<>(responseDto);
     }
 }

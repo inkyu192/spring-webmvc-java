@@ -4,7 +4,7 @@ import com.toy.shop.business.member.dto.request.MemberSaveRequest;
 import com.toy.shop.business.member.dto.request.MemberUpdateRequest;
 import com.toy.shop.business.member.dto.response.MemberResponse;
 import com.toy.shop.business.member.service.MemberService;
-import com.toy.shop.common.dto.ApiResponseDto;
+import com.toy.shop.common.dto.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -22,21 +22,21 @@ public class MemberController {
     public Object saveMember(@RequestBody @Valid MemberSaveRequest memberSaveRequest) {
         MemberResponse responseDto = memberService.saveMember(memberSaveRequest);
 
-        return new ApiResponseDto<>(responseDto);
+        return new ApiResponse<>(responseDto);
     }
 
     @GetMapping
     public Object members(@RequestParam(required = false) String name, Pageable pageable) {
         Page<MemberResponse> members = memberService.members(name, pageable);
 
-        return new ApiResponseDto<>(members);
+        return new ApiResponse<>(members);
     }
 
     @GetMapping("{id}")
     public Object member(@PathVariable Long id) {
         MemberResponse responseDto = memberService.member(id);
 
-        return new ApiResponseDto<>(responseDto);
+        return new ApiResponse<>(responseDto);
     }
 
     @PatchMapping("{id}")
@@ -44,13 +44,13 @@ public class MemberController {
                                @RequestBody @Valid MemberUpdateRequest memberUpdateRequest) {
         MemberResponse responseDto = memberService.updateMember(id, memberUpdateRequest);
 
-        return new ApiResponseDto<>(responseDto);
+        return new ApiResponse<>(responseDto);
     }
 
     @DeleteMapping("{id}")
     public Object deleteMember(@PathVariable Long id) {
         memberService.deleteMember(id);
 
-        return new ApiResponseDto<>();
+        return new ApiResponse<>();
     }
 }

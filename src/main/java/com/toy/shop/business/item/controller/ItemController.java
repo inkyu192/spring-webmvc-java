@@ -4,7 +4,7 @@ import com.toy.shop.business.item.dto.request.ItemSaveRequest;
 import com.toy.shop.business.item.dto.request.ItemUpdateRequest;
 import com.toy.shop.business.item.dto.response.ItemResponse;
 import com.toy.shop.business.item.service.ItemService;
-import com.toy.shop.common.dto.ApiResponseDto;
+import com.toy.shop.common.dto.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -22,7 +22,7 @@ public class ItemController {
     public Object saveItem(@RequestBody @Valid ItemSaveRequest itemSaveRequest) {
         ItemResponse responseDto = itemService.saveItem(itemSaveRequest);
 
-        return new ApiResponseDto<>(responseDto);
+        return new ApiResponse<>(responseDto);
     }
 
     @GetMapping
@@ -31,14 +31,14 @@ public class ItemController {
                         Pageable pageable) {
         Page<ItemResponse> page = itemService.items(categoryId, name, pageable);
 
-        return new ApiResponseDto<>(page);
+        return new ApiResponse<>(page);
     }
 
     @GetMapping("/{id}")
     public Object item(@PathVariable Long id) {
         ItemResponse responseDto = itemService.item(id);
 
-        return new ApiResponseDto<>(responseDto);
+        return new ApiResponse<>(responseDto);
     }
 
     @PatchMapping("/{id}")
@@ -46,13 +46,13 @@ public class ItemController {
                              @RequestBody @Valid ItemUpdateRequest itemUpdateRequest) {
         ItemResponse responseDto = itemService.updateItem(id, itemUpdateRequest);
 
-        return new ApiResponseDto<>(responseDto);
+        return new ApiResponse<>(responseDto);
     }
 
     @DeleteMapping("/{id}")
     public Object deleteItem(@PathVariable Long id) {
         itemService.deleteItem(id);
 
-        return new ApiResponseDto<>();
+        return new ApiResponse<>();
     }
 }
