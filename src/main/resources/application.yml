@@ -16,8 +16,12 @@ logging:
         type: info
 
 jwt:
-  secret: VlwEyVBsYt9V7zq57TejMnVUyzblYcfPQye08f7MGVA9XkHa
-  valid-time: 30
+  access-token:
+    key: VlwEyVBsYt9V7zq57TejMnVUyZblYcfPQye08f7MgAA9XkHa
+    expiration-time: 10
+  refresh-token:
+    key: VlwEyVBsYt9V7zq57TejMnVUyZblYcfPQye08f7MgAA9XkHa
+    expiration-time: 60
 
 ---
 

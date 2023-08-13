@@ -40,9 +40,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
-        String accessToken = jwtTokenProvider.createToken(authResult);
-//        String refreshToken = jwtTokenProvider.createRefreshToken(authResult);
-//
+        String accessToken = jwtTokenProvider.createAccessToken(authResult);
+        String refreshToken = jwtTokenProvider.createRefreshToken();
+
         response.addHeader("Authorization", "Bearer " + accessToken);
+        response.addHeader("Authorization-refresh", "Bearer " + refreshToken);
     }
 }
