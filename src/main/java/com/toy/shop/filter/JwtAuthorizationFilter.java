@@ -1,7 +1,7 @@
 package com.toy.shop.filter;
 
 
-import com.toy.shop.common.JwtTokenProvider;
+import com.toy.shop.business.token.service.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,11 +16,11 @@ import java.io.IOException;
 
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
-    private final JwtTokenProvider jwtTokenProvider;
+    private final TokenService tokenService;
 
-    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider) {
+    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, TokenService tokenService) {
         super(authenticationManager);
-        this.jwtTokenProvider = jwtTokenProvider;
+        this.tokenService = tokenService;
     }
 
     @Override
@@ -28,7 +28,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         String token = resolveToken(request);
 
         if (token != null) {
-            Authentication authentication = jwtTokenProvider.getAuthentication(token);
+            Authentication authentication = tokenService.getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
 

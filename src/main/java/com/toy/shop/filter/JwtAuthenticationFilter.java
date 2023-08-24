@@ -1,8 +1,8 @@
 package com.toy.shop.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.toy.shop.business.token.service.TokenService;
 import com.toy.shop.common.dto.LoginRequest;
-import com.toy.shop.common.JwtTokenProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,7 +21,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     private final AuthenticationManager authenticationManager;
     private final ObjectMapper objectMapper;
-    private final JwtTokenProvider jwtTokenProvider;
+    private final TokenService tokenService;
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
@@ -40,8 +40,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
-        String accessToken = jwtTokenProvider.createAccessToken(authResult);
-        String refreshToken = jwtTokenProvider.createRefreshToken();
+        String accessToken = tokenService.createAccessToken(authResult);
+        String refreshToken = tokenService.createRefreshToken(authResult);
 
         response.addHeader("Authorization", "Bearer " + accessToken);
         response.addHeader("Authorization-refresh", "Bearer " + refreshToken);
