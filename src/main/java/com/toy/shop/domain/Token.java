@@ -1,7 +1,7 @@
 package com.toy.shop.domain;
 
-import jakarta.persistence.Id;
 import lombok.Getter;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
 import java.time.LocalDateTime;
@@ -11,13 +11,13 @@ import java.time.LocalDateTime;
 public class Token {
 
     @Id
-    private Long id;
+    private String account;
     private String refreshToken;
     private LocalDateTime createdDate;
 
-    public static Token createToken(Long id, String refreshToken) {
+    public static Token createToken(String account, String refreshToken) {
         Token token = new Token();
-        token.id = id;
+        token.account = account;
         token.refreshToken = refreshToken;
         token.createdDate = LocalDateTime.now();
 

@@ -1,7 +1,6 @@
 package com.toy.shop.common;
 
 import com.toy.shop.domain.Member;
-import com.toy.shop.domain.Role;
 import io.jsonwebtoken.Claims;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
@@ -15,25 +14,19 @@ import java.util.List;
 @Getter
 public class UserDetailsImpl implements UserDetails {
 
-    private final Long id;
     private final String account;
     private final String password;
-    private final String name;
     private final String roleId;
 
     public UserDetailsImpl(Member member) {
-        this.id = member.getId();
         this.account = member.getAccount();
         this.password = member.getPassword();
-        this.name = member.getName();
         this.roleId = member.getRole().getId();
     }
 
     public UserDetailsImpl(Claims claims) {
-        this.id = Long.valueOf(String.valueOf(claims.get("id")));
         this.account = claims.getSubject();
         this.password = null;
-        this.name = String.valueOf(claims.get("name"));
         this.roleId = claims.get("authorities").toString();
     }
 

@@ -44,16 +44,13 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     public String createAccessToken(Authentication authentication) {
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
         return Jwts.builder()
-                .claim("id", userDetails.getId())
+                .setHeaderParam("typ", "JWT")
                 .claim("account", authentication.getName())
-                .claim("name", userDetails.getName())
                 .claim("authorities", authorities)
                 .setExpiration(new Date(new Date().getTime() + refreshTokenExpirationTime))
                 .signWith(accessTokenKey, SignatureAlgorithm.HS256)
@@ -67,9 +64,7 @@ public class TokenServiceImpl implements TokenService {
                 .signWith(refreshTokenKey, SignatureAlgorithm.HS256)
                 .compact();
 
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-
-        tokenRepository.save(Token.createToken(userDetails.getId(), refreshToken));
+        tokenRepository.save(Token.createToken(authentication.getName(), refreshToken));
 
         return refreshToken;
     }
