@@ -18,5 +18,6 @@ public class DataInitApplicationRunner implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) {
         roleService.saveRole(new RoleSaveRequest("ROLE_MEMBER", "사용자 권한", "사용자 권한"));
+        roleService.saveRole(new RoleSaveRequest("ROLE_ADMIN", "관리자 권한", "관리자 권한"));
     }
 }

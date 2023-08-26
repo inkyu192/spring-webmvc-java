@@ -71,27 +71,14 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     public Authentication getAuthentication(String token) {
-        Claims claims = null;
-        try {
-            claims = Jwts.parserBuilder()
-                    .setSigningKey(accessTokenKey)
-                    .build()
-                    .parseClaimsJws(token)
-                    .getBody();
-        } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-            log.error("Invalid JWT Token", e);
-        } catch (ExpiredJwtException e) {
-            log.error("Expired JWT Token", e);
-        } catch (UnsupportedJwtException e) {
-            log.error("Unsupported JWT Token", e);
-        } catch (IllegalArgumentException e) {
-            log.error("JWT claims string is empty.", e);
-        }
-
-        if (claims == null) return null;
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(accessTokenKey)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
 
         UserDetails userDetails = new UserDetailsImpl(claims);
 
-        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 }

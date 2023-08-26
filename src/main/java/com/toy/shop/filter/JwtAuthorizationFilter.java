@@ -2,6 +2,7 @@ package com.toy.shop.filter;
 
 
 import com.toy.shop.business.token.service.TokenService;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,18 +26,23 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-        String token = resolveToken(request);
+        try {
+            String accessToken = getToken(request, "Authorization");
+            String refreshToken = getToken(request, "Authorization-refresh");
 
-        if (token != null) {
-            Authentication authentication = tokenService.getAuthentication(token);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            if (accessToken != null) {
+                Authentication authentication = tokenService.getAuthentication(accessToken);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
+
+            chain.doFilter(request, response);
+        } catch (Exception e) {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         }
-
-        chain.doFilter(request, response);
     }
 
-    private String resolveToken(HttpServletRequest request) {
-        String token = request.getHeader("Authorization");
+    private String getToken(HttpServletRequest request, String key) {
+        String token = request.getHeader(key);
         if (StringUtils.hasText(token) && token.startsWith("Bearer")) {
             return token.replace("Bearer ", "");
         }
