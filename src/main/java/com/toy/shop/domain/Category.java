@@ -1,7 +1,7 @@
 package com.toy.shop.domain;
 
-import com.toy.shop.business.category.dto.request.CategorySaveRequest;
-import com.toy.shop.business.category.dto.request.CategoryUpdateRequest;
+import com.toy.shop.dto.request.CategorySaveRequest;
+import com.toy.shop.dto.request.CategoryUpdateRequest;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

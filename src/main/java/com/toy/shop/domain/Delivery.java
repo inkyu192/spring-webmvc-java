@@ -1,6 +1,6 @@
 package com.toy.shop.domain;
 
-import com.toy.shop.business.order.dto.request.OrderSaveRequest;
+import com.toy.shop.dto.request.OrderSaveRequest;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

@@ -1,6 +1,6 @@
 package com.toy.shop.domain;
 
-import com.toy.shop.business.role.dto.request.RoleSaveRequest;
+import com.toy.shop.dto.request.RoleSaveRequest;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

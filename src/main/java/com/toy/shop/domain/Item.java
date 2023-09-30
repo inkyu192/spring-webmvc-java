@@ -1,7 +1,7 @@
 package com.toy.shop.domain;
 
-import com.toy.shop.business.item.dto.request.ItemSaveRequest;
-import com.toy.shop.business.item.dto.request.ItemUpdateRequest;
+import com.toy.shop.dto.request.ItemSaveRequest;
+import com.toy.shop.dto.request.ItemUpdateRequest;
 import com.toy.shop.exception.CommonException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
