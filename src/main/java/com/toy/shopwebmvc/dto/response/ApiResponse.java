@@ -17,4 +17,8 @@ public record ApiResponse<T>(
     public ApiResponse(T data) {
         this(OK.getCode(), OK.getMessage(), data);
     }
+
+    public ApiResponse(String code, String message) {
+        this(code, message, null);
+    }
 }

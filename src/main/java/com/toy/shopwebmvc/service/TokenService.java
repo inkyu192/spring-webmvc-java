@@ -4,6 +4,7 @@ import com.toy.shopwebmvc.common.UserDetailsImpl;
 import com.toy.shopwebmvc.domain.Token;
 import com.toy.shopwebmvc.repository.TokenRepository;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;

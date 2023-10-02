@@ -3,6 +3,7 @@ package com.toy.shopwebmvc.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.toy.shopwebmvc.filter.JwtAuthenticationFilter;
 import com.toy.shopwebmvc.filter.JwtAuthorizationFilter;
+import com.toy.shopwebmvc.filter.JwtExceptionFilter;
 import com.toy.shopwebmvc.service.TokenService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -52,6 +53,7 @@ public class SecurityConfig {
                                 .usernameParameter("account")
                                 .disable()
                 )
+                .addFilterBefore(new JwtExceptionFilter(objectMapper), JwtAuthenticationFilter.class)
                 .addFilter(new JwtAuthenticationFilter(authenticationManager(), objectMapper, tokenService))
                 .addFilter(new JwtAuthorizationFilter(authenticationManager(), tokenService))
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
