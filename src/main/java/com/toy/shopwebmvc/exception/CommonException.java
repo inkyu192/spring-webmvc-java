@@ -1,6 +1,6 @@
 package com.toy.shopwebmvc.exception;
 
-import com.toy.shopwebmvc.common.ApiResponseCode;
+import com.toy.shopwebmvc.constant.ApiResponseCode;
 import lombok.Getter;
 
 @Getter

@@ -1,7 +1,7 @@
 package com.toy.shopwebmvc.exception;
 
-import com.toy.shopwebmvc.common.ApiResponseCode;
-import com.toy.shopwebmvc.common.dto.ApiResponse;
+import com.toy.shopwebmvc.constant.ApiResponseCode;
+import com.toy.shopwebmvc.dto.response.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
@@ -13,25 +13,24 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.toy.shopwebmvc.common.ApiResponseCode.ERROR;
-import static com.toy.shopwebmvc.common.ApiResponseCode.NOT_VALID;
+import static com.toy.shopwebmvc.constant.ApiResponseCode.BAD_REQUEST;
+import static com.toy.shopwebmvc.constant.ApiResponseCode.INTERNAL_SERVER_ERROR;
+
 
 @Slf4j
 @RestControllerAdvice
-public class GlobalExceptionHandler {
+public class ControllerAdvice {
 
-    @ExceptionHandler(CommonException.class)
-    public Object CommonExceptionHandler(CommonException e) {
+    @ExceptionHandler
+    public ApiResponse<Void> CommonExceptionHandler(CommonException e) {
         ApiResponseCode apiResponseCode = e.getApiResponseCode();
 
         return new ApiResponse<>(apiResponseCode.getCode(), apiResponseCode.getMessage(), null);
     }
 
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
     public Object MethodArgumentNotValidExceptionHandler(MethodArgumentNotValidException e) {
-        log.error("[MethodArgumentNotValidExceptionHandler]", e);
-
         ArrayList<String> errors = new ArrayList<>();
 
         List<FieldError> fieldErrors = e.getBindingResult().getFieldErrors();
@@ -39,14 +38,14 @@ public class GlobalExceptionHandler {
             errors.add(fieldError.getField());
         }
 
-        return new ApiResponse<>(NOT_VALID.getCode(), NOT_VALID.getMessage(), errors);
+        return new ApiResponse<>(BAD_REQUEST.getCode(), BAD_REQUEST.getMessage(), errors);
     }
 
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(Exception.class)
-    public Object ExceptionHandler(Exception e) {
+    public ApiResponse<Void> ExceptionHandler(Exception e) {
         log.error("[ExceptionHandler]", e);
 
-        return new ApiResponse<>(ERROR.getCode(), ERROR.getMessage(), null);
+        return new ApiResponse<>(INTERNAL_SERVER_ERROR.getCode(), INTERNAL_SERVER_ERROR.getMessage(), null);
     }
 }

@@ -12,43 +12,45 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("members")
+@RequestMapping("member")
 @RequiredArgsConstructor
 public class MemberController {
 
     private final MemberService memberService;
 
     @PostMapping
-    public Object saveMember(@RequestBody @Valid MemberSaveRequest memberSaveRequest) {
+    public ApiResponse<MemberResponse> saveMember(@RequestBody @Valid MemberSaveRequest memberSaveRequest) {
         MemberResponse responseDto = memberService.saveMember(memberSaveRequest);
 
         return new ApiResponse<>(responseDto);
     }
 
     @GetMapping
-    public Object members(@RequestParam(required = false) String name, Pageable pageable) {
+    public ApiResponse<Page<MemberResponse>> members(Pageable pageable, @RequestParam(required = false) String name) {
         Page<MemberResponse> members = memberService.members(name, pageable);
 
         return new ApiResponse<>(members);
     }
 
     @GetMapping("{id}")
-    public Object member(@PathVariable Long id) {
+    public ApiResponse<MemberResponse> member(@PathVariable Long id) {
         MemberResponse responseDto = memberService.member(id);
 
         return new ApiResponse<>(responseDto);
     }
 
     @PatchMapping("{id}")
-    public Object updateMember(@PathVariable Long id,
-                               @RequestBody @Valid MemberUpdateRequest memberUpdateRequest) {
+    public ApiResponse<MemberResponse> updateMember(
+            @PathVariable Long id,
+            @RequestBody @Valid MemberUpdateRequest memberUpdateRequest
+    ) {
         MemberResponse responseDto = memberService.updateMember(id, memberUpdateRequest);
 
         return new ApiResponse<>(responseDto);
     }
 
     @DeleteMapping("{id}")
-    public Object deleteMember(@PathVariable Long id) {
+    public ApiResponse<MemberResponse> deleteMember(@PathVariable Long id) {
         memberService.deleteMember(id);
 
         return new ApiResponse<>();

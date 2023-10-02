@@ -1,4 +1,4 @@
-package com.toy.shopwebmvc.common;
+package com.toy.shopwebmvc.constant;
 
 public enum Constants {
 

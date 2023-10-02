@@ -1,5 +1,6 @@
 package com.toy.shopwebmvc.dto.request;
 
+import com.toy.shopwebmvc.constant.Role;
 import jakarta.validation.constraints.NotEmpty;
 
 public record MemberSaveRequest(
@@ -9,8 +10,7 @@ public record MemberSaveRequest(
         String password,
         @NotEmpty
         String name,
-        @NotEmpty
-        String roleId,
+        Role role,
         @NotEmpty
         String city,
         @NotEmpty

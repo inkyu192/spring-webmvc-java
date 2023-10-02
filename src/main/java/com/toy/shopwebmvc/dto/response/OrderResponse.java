@@ -2,7 +2,7 @@ package com.toy.shopwebmvc.dto.response;
 
 import com.toy.shopwebmvc.domain.Address;
 import com.toy.shopwebmvc.domain.Order;
-import com.toy.shopwebmvc.domain.OrderStatus;
+import com.toy.shopwebmvc.constant.OrderStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;

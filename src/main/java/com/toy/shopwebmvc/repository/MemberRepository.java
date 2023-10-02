@@ -22,7 +22,6 @@ public interface MemberRepository extends JpaRepository<Member, Long>, MemberCus
     @Query(
         "select m" +
         " from Member m" +
-        " join fetch m.role r" +
         " where m.account = :account"
     )
     Optional<Member> findByAccount(String account);

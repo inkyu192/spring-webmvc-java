@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import static com.toy.shopwebmvc.common.Constants.LOG_ID;
+import static com.toy.shopwebmvc.constant.Constants.LOG_ID;
 
 
 @Slf4j

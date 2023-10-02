@@ -12,6 +12,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -40,18 +41,26 @@ public class SecurityConfig {
     @SneakyThrows
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) {
         return httpSecurity
-                .csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .formLogin().usernameParameter("account").disable()
+                .csrf(AbstractHttpConfigurer::disable)
+                .rememberMe(AbstractHttpConfigurer::disable)
+                .sessionManagement(httpSecuritySessionManagementConfigurer ->
+                        httpSecuritySessionManagementConfigurer
+                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+                .formLogin(httpSecurityFormLoginConfigurer ->
+                        httpSecurityFormLoginConfigurer
+                                .usernameParameter("account")
+                                .disable()
+                )
                 .addFilter(new JwtAuthenticationFilter(authenticationManager(), objectMapper, tokenService))
                 .addFilter(new JwtAuthorizationFilter(authenticationManager(), tokenService))
-                .authorizeHttpRequests()
-                .requestMatchers(HttpMethod.POST, "/members").permitAll()
-                .requestMatchers("/members/**").hasRole("MEMBER")
-                .requestMatchers(HttpMethod.GET, "/members").authenticated()
-                .anyRequest().permitAll()
-                .and()
+                .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
+                        authorizationManagerRequestMatcherRegistry
+                                .requestMatchers(HttpMethod.POST, "/member").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/member").hasRole("ADMIN")
+                                .requestMatchers("/member/**").authenticated()
+                                .anyRequest().permitAll()
+                )
                 .build();
     }
 }

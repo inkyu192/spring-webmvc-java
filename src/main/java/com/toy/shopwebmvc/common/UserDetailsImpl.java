@@ -1,5 +1,6 @@
 package com.toy.shopwebmvc.common;
 
+import com.toy.shopwebmvc.constant.Role;
 import com.toy.shopwebmvc.domain.Member;
 import io.jsonwebtoken.Claims;
 import lombok.Getter;
@@ -16,24 +17,24 @@ public class UserDetailsImpl implements UserDetails {
 
     private final String account;
     private final String password;
-    private final String roleId;
+    private final String role;
 
     public UserDetailsImpl(Member member) {
         this.account = member.getAccount();
         this.password = member.getPassword();
-        this.roleId = member.getRole().getId();
+        this.role = member.getRole().toString();
     }
 
     public UserDetailsImpl(Claims claims) {
         this.account = claims.getSubject();
         this.password = null;
-        this.roleId = claims.get("authorities").toString();
+        this.role = claims.get("authorities").toString();
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> list = new ArrayList<>();
-        list.add(new SimpleGrantedAuthority(roleId));
+        list.add(new SimpleGrantedAuthority(role));
         return list;
     }
 

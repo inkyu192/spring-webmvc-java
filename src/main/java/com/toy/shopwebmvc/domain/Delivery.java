@@ -1,5 +1,6 @@
 package com.toy.shopwebmvc.domain;
 
+import com.toy.shopwebmvc.constant.DeliveryStatus;
 import com.toy.shopwebmvc.dto.request.OrderSaveRequest;
 import jakarta.persistence.*;
 import lombok.AccessLevel;

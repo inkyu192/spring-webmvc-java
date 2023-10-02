@@ -1,11 +1,13 @@
 package com.toy.shopwebmvc.service;
 
+import com.toy.shopwebmvc.constant.ApiResponseCode;
+import com.toy.shopwebmvc.constant.DeliveryStatus;
+import com.toy.shopwebmvc.constant.OrderStatus;
 import com.toy.shopwebmvc.repository.ItemRepository;
 import com.toy.shopwebmvc.repository.MemberRepository;
 import com.toy.shopwebmvc.dto.request.OrderSaveRequest;
 import com.toy.shopwebmvc.dto.response.OrderResponse;
 import com.toy.shopwebmvc.repository.OrderRepository;
-import com.toy.shopwebmvc.common.ApiResponseCode;
 import com.toy.shopwebmvc.domain.*;
 import com.toy.shopwebmvc.exception.CommonException;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.toy.shopwebmvc.common.ApiResponseCode.ITEM_NOT_FOUND;
-import static com.toy.shopwebmvc.common.ApiResponseCode.MEMBER_NOT_FOUND;
+import static com.toy.shopwebmvc.constant.ApiResponseCode.*;
+
 
 @Service
 @Transactional(readOnly = true)
@@ -34,13 +36,13 @@ public class OrderService {
     @Transactional
     public OrderResponse saveOrder(OrderSaveRequest orderSaveRequest) {
         Member member = memberRepository.findById(orderSaveRequest.memberId())
-                .orElseThrow(() -> new CommonException(MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new CommonException(DATA_NOT_FOUND));
 
         List<OrderItem> orderItems = new ArrayList<>();
 
         orderSaveRequest.orderItems().forEach(orderItem -> {
             Item item = itemRepository.findById(orderItem.itemId())
-                    .orElseThrow(() -> new CommonException(ITEM_NOT_FOUND));
+                    .orElseThrow(() -> new CommonException(DATA_NOT_FOUND));
 
             orderItems.add(OrderItem.createOrderItem(item, item.getPrice(), orderItem.count()));
         });
@@ -62,12 +64,12 @@ public class OrderService {
     public OrderResponse order(Long id) {
         return orderRepository.findById(id)
                 .map(OrderResponse::new)
-                .orElseThrow(() -> new CommonException(ApiResponseCode.ORDER_NOT_FOUND));
+                .orElseThrow(() -> new CommonException(ApiResponseCode.DATA_NOT_FOUND));
     }
 
     public OrderResponse cancelOrder(Long id) {
         Order order = orderRepository.findById(id)
-                .orElseThrow(() -> new CommonException(ApiResponseCode.ORDER_NOT_FOUND));
+                .orElseThrow(() -> new CommonException(ApiResponseCode.DATA_NOT_FOUND));
 
         order.cancel();
 

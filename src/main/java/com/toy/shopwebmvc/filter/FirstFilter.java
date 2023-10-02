@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 import java.util.UUID;
 
-import static com.toy.shopwebmvc.common.Constants.LOG_ID;
+import static com.toy.shopwebmvc.constant.Constants.LOG_ID;
 
 
 @Slf4j

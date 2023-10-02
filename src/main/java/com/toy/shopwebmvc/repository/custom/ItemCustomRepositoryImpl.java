@@ -11,7 +11,6 @@ import org.springframework.util.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.toy.shopwebmvc.domain.QCategory.category;
 import static com.toy.shopwebmvc.domain.QItem.item;
 
 @Repository
@@ -27,13 +26,12 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
     }
 
     @Override
-    public List<Item> findAllOfJpql(Long categoryId, String name) {
+    public List<Item> findAllOfJpql(String name) {
         String jpql = "select i from Item i" +
                 " join fetch i.category c";
 
         ArrayList<String> whereCondition = new ArrayList<>();
 
-        if (categoryId != null) whereCondition.add("c.id = :categoryId");
         if (StringUtils.hasText(name)) whereCondition.add("i.name like concat('%', :name, '%')");
 
         if (!whereCondition.isEmpty()) {
@@ -43,31 +41,18 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
 
         TypedQuery<Item> query = entityManager.createQuery(jpql, Item.class);
 
-        if (categoryId != null) query.setParameter("categoryId", categoryId);
         if (StringUtils.hasText(name)) query.setParameter("name", name);
 
         return query.getResultList();
     }
 
     @Override
-    public List<Item> findAllOfQuery(Long categoryId, String name) {
+    public List<Item> findAllOfQuery(String name) {
         return queryFactory
                 .select(item)
                 .from(item)
-                .join(item.category, category)
-                .fetchJoin()
-                .where(
-                        categoryId(categoryId),
-                        name(name)
-                )
+                .where(name(name))
                 .fetch();
-    }
-
-    private BooleanExpression categoryId(Long categoryId) {
-        if (categoryId != null) {
-            return category.id.eq(categoryId);
-        }
-        return null;
     }
 
     private BooleanExpression name(String name) {

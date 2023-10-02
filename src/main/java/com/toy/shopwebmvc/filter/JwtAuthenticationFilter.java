@@ -1,13 +1,16 @@
 package com.toy.shopwebmvc.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.toy.shopwebmvc.common.dto.LoginRequest;
+import com.toy.shopwebmvc.dto.request.LoginRequest;
+import com.toy.shopwebmvc.dto.response.ApiResponse;
+import com.toy.shopwebmvc.dto.response.LoginResponse;
 import com.toy.shopwebmvc.service.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -24,7 +27,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     private final TokenService tokenService;
 
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+    public Authentication attemptAuthentication(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) throws AuthenticationException {
         LoginRequest loginRequest;
 
         try {
@@ -33,17 +39,27 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             throw new RuntimeException(e);
         }
 
-        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(loginRequest.account(), loginRequest.password());
+        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
+                new UsernamePasswordAuthenticationToken(loginRequest.account(), loginRequest.password());
 
         return authenticationManager.authenticate(usernamePasswordAuthenticationToken);
     }
 
     @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
+    protected void successfulAuthentication(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain chain,
+            Authentication authResult
+    ) throws IOException, ServletException {
         String accessToken = tokenService.createAccessToken(authResult);
         String refreshToken = tokenService.createRefreshToken(authResult);
 
-        response.addHeader("Authorization", "Bearer " + accessToken);
-        response.addHeader("Authorization-refresh", "Bearer " + refreshToken);
+        LoginResponse loginResponse = new LoginResponse(accessToken, refreshToken);
+        String result = objectMapper.writeValueAsString(new ApiResponse<>(loginResponse));
+
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write(result);
     }
 }

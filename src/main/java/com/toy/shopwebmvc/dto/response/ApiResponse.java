@@ -2,7 +2,7 @@ package com.toy.shopwebmvc.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-import static com.toy.shopwebmvc.common.ApiResponseCode.SUCCESS;
+import static com.toy.shopwebmvc.constant.ApiResponseCode.OK;
 
 public record ApiResponse<T>(
         String resultCode,
@@ -11,10 +11,10 @@ public record ApiResponse<T>(
         T data
 ) {
     public ApiResponse() {
-        this(SUCCESS.getCode(), SUCCESS.getMessage(), null);
+        this(OK.getCode(), OK.getMessage(), null);
     }
 
     public ApiResponse(T data) {
-        this(SUCCESS.getCode(), SUCCESS.getMessage(), data);
+        this(OK.getCode(), OK.getMessage(), data);
     }
 }

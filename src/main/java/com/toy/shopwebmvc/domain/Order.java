@@ -1,6 +1,8 @@
 package com.toy.shopwebmvc.domain;
 
-import com.toy.shopwebmvc.common.ApiResponseCode;
+import com.toy.shopwebmvc.constant.ApiResponseCode;
+import com.toy.shopwebmvc.constant.DeliveryStatus;
+import com.toy.shopwebmvc.constant.OrderStatus;
 import com.toy.shopwebmvc.exception.CommonException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -67,7 +69,7 @@ public class Order extends BaseDomain {
 
     public void cancel() {
         if (delivery.getStatus() == DeliveryStatus.COMP) {
-            throw new CommonException(ApiResponseCode.ORDER_NOT_CANCEL);
+            throw new CommonException(ApiResponseCode.DATA_NOT_FOUND);
         }
 
         this.status = OrderStatus.CANCEL;

@@ -2,9 +2,9 @@ package com.toy.shopwebmvc.repository.custom;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.toy.shopwebmvc.domain.DeliveryStatus;
+import com.toy.shopwebmvc.constant.DeliveryStatus;
 import com.toy.shopwebmvc.domain.Order;
-import com.toy.shopwebmvc.domain.OrderStatus;
+import com.toy.shopwebmvc.constant.OrderStatus;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import org.springframework.stereotype.Repository;

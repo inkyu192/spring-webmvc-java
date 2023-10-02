@@ -1,8 +1,8 @@
 package com.toy.shopwebmvc.repository.custom;
 
-import com.toy.shopwebmvc.domain.DeliveryStatus;
+import com.toy.shopwebmvc.constant.DeliveryStatus;
 import com.toy.shopwebmvc.domain.Order;
-import com.toy.shopwebmvc.domain.OrderStatus;
+import com.toy.shopwebmvc.constant.OrderStatus;
 
 import java.util.List;
 

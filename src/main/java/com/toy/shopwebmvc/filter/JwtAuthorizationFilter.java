@@ -24,27 +24,28 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+    protected void doFilterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain chain
+    ) throws IOException, ServletException {
         try {
-            String accessToken = getToken(request, "Authorization");
-            String refreshToken = getToken(request, "Authorization-refresh");
+            String accessToken = null;
 
-            if (accessToken != null) {
+            String token = request.getHeader("Authorization");
+            if (StringUtils.hasText(token) && token.startsWith("Bearer")) {
+                accessToken = token.replace("Bearer ", "");
+            }
+
+            if (StringUtils.hasText(accessToken)) {
                 Authentication authentication = tokenService.getAuthentication(accessToken);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
 
             chain.doFilter(request, response);
         } catch (Exception e) {
+            //예외 별 응답 메시지 처리
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         }
-    }
-
-    private String getToken(HttpServletRequest request, String key) {
-        String token = request.getHeader(key);
-        if (StringUtils.hasText(token) && token.startsWith("Bearer")) {
-            return token.replace("Bearer ", "");
-        }
-        return null;
     }
 }
