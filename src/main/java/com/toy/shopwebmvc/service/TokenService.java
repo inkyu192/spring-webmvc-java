@@ -108,13 +108,32 @@ public class TokenService {
     }
 
     public Authentication getAuthentication(String token) {
-        Claims claims = getClaims(token);
+        Claims claims;
+
+        try {
+            claims = parseClaims(token);
+        } catch (ExpiredJwtException e) {
+            throw new JwtException("만료된 토큰", e);
+        }
+
         UserDetails userDetails = new UserDetailsImpl(claims);
 
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 
     public Claims getClaims(String token) {
+        Claims claims;
+
+        try {
+            claims = parseClaims(token);
+        } catch (ExpiredJwtException e) {
+            claims = e.getClaims();
+        }
+
+        return claims;
+    }
+
+    public Claims parseClaims(String token) {
         Claims claims;
 
         try {
@@ -125,8 +144,6 @@ public class TokenService {
                     .getBody();
         } catch (SecurityException | MalformedJwtException e) {
             throw new JwtException("잘못된 토큰", e);
-        } catch (ExpiredJwtException e) {
-            throw new JwtException("만료된 토큰", e);
         } catch (UnsupportedJwtException e) {
             throw new JwtException("지원되지 않는 토큰", e);
         }
