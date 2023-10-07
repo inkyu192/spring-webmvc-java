@@ -1,8 +1,8 @@
 package com.toy.shopwebmvc.service;
 
-import com.toy.shopwebmvc.common.UserDetailsImpl;
 import com.toy.shopwebmvc.constant.ApiResponseCode;
 import com.toy.shopwebmvc.domain.Token;
+import com.toy.shopwebmvc.dto.request.TokenRequest;
 import com.toy.shopwebmvc.dto.response.TokenResponse;
 import com.toy.shopwebmvc.exception.CommonException;
 import com.toy.shopwebmvc.repository.TokenRepository;
@@ -12,11 +12,9 @@ import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SecurityException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -29,8 +27,6 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class TokenService {
 
-    private static final String AUTHORIZATION = "Authorization";
-    private static final String BEARER = "Bearer";
     private final Key accessTokenKey;
     private final long accessTokenExpirationTime;
     private final Key refreshTokenKey;
@@ -51,29 +47,43 @@ public class TokenService {
         this.tokenRepository = tokenRepository;
     }
 
-    public TokenResponse refresh(String accessToken, String refreshToken) {
-        Claims claims = getClaims(accessToken);
+    public TokenResponse refresh(TokenRequest tokenRequest) {
+        String accessToken = tokenRequest.accessToken();
+        String refreshToken = tokenRequest.refreshToken();
 
-        String accountId = String.valueOf(claims.get("accountId"));
+        Claims claims;
 
-        String findRefreshToken = tokenRepository.findById(accountId)
+        try {
+            claims = parseClaims(accessToken);
+        } catch (ExpiredJwtException e) {
+            claims = e.getClaims();
+        }
+
+        try {
+            parseClaims(refreshToken);
+        } catch (ExpiredJwtException e) {
+            throw new CommonException(ApiResponseCode.LOGIN_REQUIRED);
+        }
+
+        String account = String.valueOf(claims.get("account"));
+
+        String findRefreshToken = tokenRepository.findById(account)
                 .map(Token::getRefreshToken)
                 .orElseThrow(() -> new CommonException(ApiResponseCode.BAD_REQUEST));
 
         if (!refreshToken.equals(findRefreshToken)) {
-            tokenRepository.deleteById(accountId);
             throw new CommonException(ApiResponseCode.BAD_REQUEST);
         }
 
-        return createToken(SecurityContextHolder.getContext().getAuthentication());
+        return new TokenResponse(createAccessToken(SecurityContextHolder.getContext().getAuthentication()));
     }
 
-    public TokenResponse createToken(Authentication authentication) {
+    public String createAccessToken(Authentication authentication) {
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
-        String accessToken = Jwts.builder()
+        return Jwts.builder()
                 .setHeaderParam("alg", "HS256")
                 .setHeaderParam("typ", "JWT")
                 .claim("account", authentication.getName())
@@ -82,7 +92,10 @@ public class TokenService {
                 .setExpiration(new Date(new Date().getTime() + accessTokenExpirationTime))
                 .signWith(accessTokenKey, SignatureAlgorithm.HS256)
                 .compact();
+    }
 
+    @Transactional
+    public String createRefreshToken(Authentication authentication) {
         String refreshToken = Jwts.builder()
                 .setHeaderParam("alg", "HS256")
                 .setHeaderParam("typ", "JWT")
@@ -93,44 +106,18 @@ public class TokenService {
 
         tokenRepository.save(Token.createToken(authentication.getName(), refreshToken));
 
-        return new TokenResponse(accessToken, refreshToken);
+        return refreshToken;
     }
 
     public String getAccessToken(HttpServletRequest request) {
         String accessToken = null;
-        String token = request.getHeader(AUTHORIZATION);
+        String token = request.getHeader("Authorization");
 
-        if (StringUtils.hasText(token) && token.startsWith(BEARER)) {
-            accessToken = token.replace(BEARER + " ", "");
+        if (StringUtils.hasText(token) && token.startsWith("Bearer")) {
+            accessToken = token.replace("Bearer ", "");
         }
 
         return accessToken;
-    }
-
-    public Authentication getAuthentication(String token) {
-        Claims claims;
-
-        try {
-            claims = parseClaims(token);
-        } catch (ExpiredJwtException e) {
-            throw new JwtException("만료된 토큰", e);
-        }
-
-        UserDetails userDetails = new UserDetailsImpl(claims);
-
-        return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-    }
-
-    public Claims getClaims(String token) {
-        Claims claims;
-
-        try {
-            claims = parseClaims(token);
-        } catch (ExpiredJwtException e) {
-            claims = e.getClaims();
-        }
-
-        return claims;
     }
 
     public Claims parseClaims(String token) {
@@ -142,10 +129,14 @@ public class TokenService {
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
-        } catch (SecurityException | MalformedJwtException e) {
-            throw new JwtException("잘못된 토큰", e);
-        } catch (UnsupportedJwtException e) {
-            throw new JwtException("지원되지 않는 토큰", e);
+        } catch (SecurityException e) {
+            throw new SecurityException("잘못된 토큰", e);
+        }  catch (MalformedJwtException e) {
+            throw new MalformedJwtException("잘못된 토큰", e);
+        }  catch (UnsupportedJwtException e) {
+            throw new UnsupportedJwtException("지원되지 않는 토큰", e);
+        } catch (ExpiredJwtException e) {
+            throw new ExpiredJwtException(e.getHeader(), e.getClaims(), "만료된 토큰", e);
         }
 
         return claims;

@@ -48,6 +48,7 @@ public class SecurityConfig {
                         httpSecuritySessionManagementConfigurer
                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
+                .logout(AbstractHttpConfigurer::disable)
                 .formLogin(httpSecurityFormLoginConfigurer ->
                         httpSecurityFormLoginConfigurer
                                 .usernameParameter("account")
@@ -58,10 +59,9 @@ public class SecurityConfig {
                 .addFilter(new JwtAuthorizationFilter(authenticationManager(), tokenService))
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
                         authorizationManagerRequestMatcherRegistry
-                                .requestMatchers("/token/**").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/member").permitAll()
-                                .requestMatchers("/member/**").authenticated()
-                                .anyRequest().permitAll()
+                                .requestMatchers("/token/refresh").permitAll()
+                                .anyRequest().authenticated()
                 )
                 .build();
     }

@@ -54,7 +54,11 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             FilterChain chain,
             Authentication authResult
     ) throws IOException, ServletException {
-        TokenResponse tokenResponse = tokenService.createToken(authResult);
+        String accessToken = tokenService.createAccessToken(authResult);
+        String refreshToken = tokenService.createRefreshToken(authResult);
+
+        TokenResponse tokenResponse = new TokenResponse(accessToken, refreshToken);
+
         String result = objectMapper.writeValueAsString(new ApiResponse<>(tokenResponse));
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);

@@ -22,7 +22,7 @@ logging:
 jwt:
   access-token:
     key: VlwEyVBsYt9V7zq57TejMnVUyZblYcfPQye08f7MgAA9XkHa
-    expiration-time: 1
+    expiration-time: 5
   refresh-token:
     key: VlwEyVBsYt9V7zq57TejMnVUyZblYcfPQye08f7MgAA9XkHa
     expiration-time: 60
