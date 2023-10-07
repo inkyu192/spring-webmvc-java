@@ -6,9 +6,15 @@ import lombok.Getter;
 @Getter
 public class CommonException extends RuntimeException {
 
-    private final ApiResponseCode apiResponseCode;
+    private final String code;
+    private final String message;
 
     public CommonException(ApiResponseCode apiResponseCode) {
-        this.apiResponseCode = apiResponseCode;
+        this(apiResponseCode.getCode(), apiResponseCode.getMessage());
+    }
+
+    public CommonException(String code, String message) {
+        this.code = code;
+        this.message = message;
     }
 }

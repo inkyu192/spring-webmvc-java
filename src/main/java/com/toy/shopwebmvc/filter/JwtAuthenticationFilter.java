@@ -3,7 +3,7 @@ package com.toy.shopwebmvc.filter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.toy.shopwebmvc.dto.request.LoginRequest;
 import com.toy.shopwebmvc.dto.response.ApiResponse;
-import com.toy.shopwebmvc.dto.response.LoginResponse;
+import com.toy.shopwebmvc.dto.response.TokenResponse;
 import com.toy.shopwebmvc.service.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -54,11 +54,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             FilterChain chain,
             Authentication authResult
     ) throws IOException, ServletException {
-        String accessToken = tokenService.createAccessToken(authResult);
-        String refreshToken = tokenService.createRefreshToken(authResult);
-
-        LoginResponse loginResponse = new LoginResponse(accessToken, refreshToken);
-        String result = objectMapper.writeValueAsString(new ApiResponse<>(loginResponse));
+        TokenResponse tokenResponse = tokenService.createToken(authResult);
+        String result = objectMapper.writeValueAsString(new ApiResponse<>(tokenResponse));
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");

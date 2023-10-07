@@ -29,12 +29,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             HttpServletResponse response,
             FilterChain chain
     ) throws IOException, ServletException {
-        String accessToken = null;
-
-        String token = request.getHeader("Authorization");
-        if (StringUtils.hasText(token) && token.startsWith("Bearer")) {
-            accessToken = token.replace("Bearer ", "");
-        }
+        String accessToken = tokenService.getAccessToken(request);
 
         if (StringUtils.hasText(accessToken)) {
             Authentication authentication = tokenService.getAuthentication(accessToken);

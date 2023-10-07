@@ -24,7 +24,7 @@ public class LogAspect {
             Object result = joinPoint.proceed();
 
             //@AfterReturning
-            log.info("[around] {} result={}", joinPoint.getSignature(), result);
+            log.info("[around] {} code={}", joinPoint.getSignature(), result);
 
             return result;
         } catch (Exception exception) {
@@ -45,7 +45,7 @@ public class LogAspect {
 
     @AfterReturning(value = "pointcut()", returning = "result")
     public void after(JoinPoint joinPoint, Object result) {
-        log.info("[after] {} result={}", joinPoint.getSignature(), result);
+        log.info("[after] {} code={}", joinPoint.getSignature(), result);
     }
 
     @AfterThrowing(value = "pointcut()", throwing = "exception")

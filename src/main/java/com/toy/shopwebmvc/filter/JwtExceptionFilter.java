@@ -32,17 +32,13 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
         try {
             filterChain.doFilter(request, response);
-        } catch (SignatureException e) {
-            setResponse(response, "잘못된 토큰");
-        } catch (MalformedJwtException e) {
-            setResponse(response, "미지원 토큰");
-        } catch (ExpiredJwtException e) {
-            setResponse(response, "만료된 토큰");
+        } catch (JwtException e) {
+            setResponse(response, e);
         }
     }
 
-    private void setResponse(HttpServletResponse response, String message) throws RuntimeException, IOException {
-        String result = objectMapper.writeValueAsString(new ApiResponse<>(BAD_REQUEST.getCode(), message));
+    private void setResponse(HttpServletResponse response, JwtException e) throws RuntimeException, IOException {
+        String result = objectMapper.writeValueAsString(new ApiResponse<>(BAD_REQUEST.getCode(), e.getMessage()));
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");

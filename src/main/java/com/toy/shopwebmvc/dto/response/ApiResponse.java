@@ -5,13 +5,13 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import static com.toy.shopwebmvc.constant.ApiResponseCode.OK;
 
 public record ApiResponse<T>(
-        String resultCode,
-        String resultMessage,
+        String code,
+        String message,
         @JsonInclude(JsonInclude.Include.NON_NULL)
         T data
 ) {
     public ApiResponse() {
-        this(OK.getCode(), OK.getMessage(), null);
+        this(OK.getCode(), OK.getMessage());
     }
 
     public ApiResponse(T data) {

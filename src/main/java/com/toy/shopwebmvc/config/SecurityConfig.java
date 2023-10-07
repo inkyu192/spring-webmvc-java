@@ -58,8 +58,8 @@ public class SecurityConfig {
                 .addFilter(new JwtAuthorizationFilter(authenticationManager(), tokenService))
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
                         authorizationManagerRequestMatcherRegistry
+                                .requestMatchers("/token/**").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/member").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/member").hasRole("ADMIN")
                                 .requestMatchers("/member/**").authenticated()
                                 .anyRequest().permitAll()
                 )
