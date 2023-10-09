@@ -1,9 +1,9 @@
 package com.toy.shopwebmvc.config;
 
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.scheduling.annotation.EnableAsync;
 
-@EnableJpaAuditing
+@EnableAsync
 @Configuration(proxyBeanMethods = false)
-public class JpaConfig {
+public class AsyncConfig {
 }

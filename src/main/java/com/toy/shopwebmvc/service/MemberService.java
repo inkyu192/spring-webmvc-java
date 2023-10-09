@@ -1,6 +1,5 @@
 package com.toy.shopwebmvc.service;
 
-import com.toy.shopwebmvc.constant.ApiResponseCode;
 import com.toy.shopwebmvc.domain.Member;
 import com.toy.shopwebmvc.dto.request.MemberSaveRequest;
 import com.toy.shopwebmvc.dto.request.MemberUpdateRequest;
@@ -8,6 +7,7 @@ import com.toy.shopwebmvc.dto.response.MemberResponse;
 import com.toy.shopwebmvc.exception.CommonException;
 import com.toy.shopwebmvc.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,11 +15,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
-import java.util.function.Consumer;
 
-import static com.toy.shopwebmvc.constant.ApiResponseCode.*;
+import static com.toy.shopwebmvc.constant.ApiResponseCode.DATA_DUPLICATE;
+import static com.toy.shopwebmvc.constant.ApiResponseCode.DATA_NOT_FOUND;
 
-
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor

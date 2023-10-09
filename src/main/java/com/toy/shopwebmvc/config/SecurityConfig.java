@@ -10,7 +10,6 @@ import lombok.SneakyThrows;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -19,23 +18,17 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-@Configuration
 @RequiredArgsConstructor
+@Configuration(proxyBeanMethods = false)
 public class SecurityConfig {
 
+    private final AuthenticationConfiguration authenticationConfiguration;
     private final ObjectMapper objectMapper;
     private final TokenService tokenService;
-    private final AuthenticationConfiguration authenticationConfiguration;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    @SneakyThrows
-    public AuthenticationManager authenticationManager() {
-        return authenticationConfiguration.getAuthenticationManager();
     }
 
     @Bean
@@ -55,8 +48,19 @@ public class SecurityConfig {
                                 .disable()
                 )
                 .addFilterBefore(new JwtExceptionFilter(objectMapper), JwtAuthenticationFilter.class)
-                .addFilter(new JwtAuthenticationFilter(authenticationManager(), objectMapper, tokenService))
-                .addFilter(new JwtAuthorizationFilter(authenticationManager(), tokenService))
+                .addFilter(
+                        new JwtAuthenticationFilter(
+                                authenticationConfiguration.getAuthenticationManager(),
+                                objectMapper,
+                                tokenService
+                        )
+                )
+                .addFilter(
+                        new JwtAuthorizationFilter(
+                                authenticationConfiguration.getAuthenticationManager(),
+                                tokenService
+                        )
+                )
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
                         authorizationManagerRequestMatcherRegistry
                                 .requestMatchers(HttpMethod.POST, "/member").permitAll()
