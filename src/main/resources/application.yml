@@ -7,10 +7,6 @@ spring:
         format_sql: true
         default_batch_fetch_size: 10
     open-in-view: false
-  data:
-    redis:
-      host: localhost
-      port: 6379
 
 logging:
   level:
@@ -26,39 +22,3 @@ jwt:
   refresh-token:
     key: VlwEyVBsYt9V7zq57TejMnVUyZblYcfPQye08f7MgAA9XkHa
     expiration-time: 60
-
----
-
-spring:
-  config:
-    activate:
-      on-profile: local
-
-  datasource:
-    url: jdbc:h2:tcp://localhost/~/shop
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
-
-  jpa:
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.H2Dialect
-
----
-
-spring:
-  config:
-    activate:
-      on-profile: dev
-
-  datasource:
-    url: jdbc:mysql://localhost:3306/shop
-    username: root
-    password: root
-    driver-class-name: com.mysql.cj.jdbc.Driver
-
-  jpa:
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQLDialect
