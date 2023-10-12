@@ -3,7 +3,7 @@
     <property name="LOG_LEVEL" value="info"/>
     <property name="LOG_PATH" value="log"/>
     <property name="LOG_FILE_NAME" value="shop-webmvc"/>
-    <property name="LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"/>
+    <property name="LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level[%thread] %logger{36} : %msg%n"/>
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
