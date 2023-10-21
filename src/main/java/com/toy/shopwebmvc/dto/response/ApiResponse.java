@@ -8,7 +8,7 @@ public record ApiResponse<T>(
         String code,
         String message,
         @JsonInclude(JsonInclude.Include.NON_NULL)
-        T data
+        T payload
 ) {
     public ApiResponse() {
         this(OK.getCode(), OK.getMessage());

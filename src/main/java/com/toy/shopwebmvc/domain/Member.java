@@ -1,15 +1,11 @@
 package com.toy.shopwebmvc.domain;
 
 import com.toy.shopwebmvc.constant.Role;
-import com.toy.shopwebmvc.dto.request.MemberSaveRequest;
-import com.toy.shopwebmvc.dto.request.MemberUpdateRequest;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,22 +32,20 @@ public class Member extends BaseDomain {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    public static Member createMember(MemberSaveRequest memberSaveRequest, PasswordEncoder passwordEncoder) {
-        Member member = new Member();
-
-        member.account = memberSaveRequest.account();
-        member.password = passwordEncoder.encode(memberSaveRequest.password());
-        member.name = memberSaveRequest.name();
-        member.role = memberSaveRequest.role();
-        member.address = Address.createAddress((memberSaveRequest.city()), memberSaveRequest.street(), memberSaveRequest.zipcode());
-
-        return member;
+    @Builder(builderMethodName = "create")
+    public Member(String account, String password, String name, Address address, Role role) {
+        this.account = account;
+        this.password = password;
+        this.name = name;
+        this.address = address;
+        this.role = role;
     }
 
-    public void updateMember(MemberUpdateRequest memberUpdateRequest, PasswordEncoder passwordEncoder) {
-        if (StringUtils.hasText(memberUpdateRequest.password())) this.name = passwordEncoder.encode(memberUpdateRequest.password());
-        if (StringUtils.hasText(memberUpdateRequest.name())) this.name = memberUpdateRequest.name();
-        if (!ObjectUtils.isEmpty(memberUpdateRequest.role())) this.role = memberUpdateRequest.role();
-        this.address.updateAddress((memberUpdateRequest.city()), memberUpdateRequest.street(), memberUpdateRequest.zipcode());
+    @Builder(builderMethodName = "update", toBuilder = true)
+    public Member(String password, String name, Address address, Role role) {
+        this.password = password;
+        this.name = name;
+        this.address = address;
+        this.role = role;
     }
 }

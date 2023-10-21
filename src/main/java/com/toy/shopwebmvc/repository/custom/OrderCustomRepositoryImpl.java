@@ -29,7 +29,7 @@ public class OrderCustomRepositoryImpl implements OrderCustomRepository {
     }
 
     @Override
-    public List<Order> findAllOfJpql(Long memberId, OrderStatus orderStatus, DeliveryStatus deliveryStatus) {
+    public List<Order> findAllWithJpql(Long memberId, OrderStatus orderStatus, DeliveryStatus deliveryStatus) {
         String jpql = "select o from Order o" +
                 " join fetch o.member m" +
                 " join fetch o.delivery d";
@@ -55,7 +55,7 @@ public class OrderCustomRepositoryImpl implements OrderCustomRepository {
     }
 
     @Override
-    public List<Order> findAllOfQuery(Long memberId, OrderStatus orderStatus, DeliveryStatus deliveryStatus) {
+    public List<Order> findAllWithQuerydsl(Long memberId, OrderStatus orderStatus, DeliveryStatus deliveryStatus) {
         return queryFactory
                 .select(order)
                 .from(order)

@@ -26,7 +26,7 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
     }
 
     @Override
-    public List<Item> findAllOfJpql(String name) {
+    public List<Item> findAllWithJpql(String name) {
         String jpql = "select i from Item i" +
                 " join fetch i.category c";
 
@@ -47,7 +47,7 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
     }
 
     @Override
-    public List<Item> findAllOfQuery(String name) {
+    public List<Item> findAllWithQuerydsl(String name) {
         return queryFactory
                 .select(item)
                 .from(item)

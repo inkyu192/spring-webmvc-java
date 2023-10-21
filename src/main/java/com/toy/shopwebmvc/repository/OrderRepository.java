@@ -28,5 +28,10 @@ public interface OrderRepository extends JpaRepository<Order, Long>, OrderCustom
             " and (:orderStatus is null or o.status = :orderStatus)" +
             " and (:deliveryStatus is null or d.status = :deliveryStatus)"
     )
-    Page<Order> findAllOfQueryMethod(@Param("memberId") Long memberId, @Param("orderStatus") OrderStatus orderStatus, @Param("deliveryStatus") DeliveryStatus deliveryStatus, Pageable pageable);
+    Page<Order> findAll(
+            @Param("memberId") Long memberId,
+            @Param("orderStatus") OrderStatus orderStatus,
+            @Param("deliveryStatus") DeliveryStatus deliveryStatus,
+            Pageable pageable
+    );
 }

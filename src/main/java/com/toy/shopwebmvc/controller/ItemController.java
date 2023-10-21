@@ -41,8 +41,10 @@ public class ItemController {
     }
 
     @PatchMapping("/{id}")
-    public ApiResponse<ItemResponse> updateItem(@PathVariable Long id,
-                             @RequestBody @Valid ItemUpdateRequest itemUpdateRequest) {
+    public ApiResponse<ItemResponse> updateItem(
+            @PathVariable Long id,
+            @RequestBody @Valid ItemUpdateRequest itemUpdateRequest
+    ) {
         ItemResponse responseDto = itemService.updateItem(id, itemUpdateRequest);
 
         return new ApiResponse<>(responseDto);

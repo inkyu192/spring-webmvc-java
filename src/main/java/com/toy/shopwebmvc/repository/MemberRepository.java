@@ -12,17 +12,18 @@ import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<Member, Long>, MemberCustomRepository {
 
-    @Query(
-        "select m" +
-        " from Member m" +
-        " where (:name is null or m.name like concat('%', :name, '%'))"
-    )
-    Page<Member> findAllOfQueryMethod(@Param("name") String name, Pageable pageable);
+    @Query("""
+            SELECT m
+            FROM Member m
+            WHERE (:account IS NULL OR m.account LIKE CONCAT('%', :account, '%'))
+            AND (:name IS NULL OR m.name LIKE CONCAT('%', :name, '%'))
+            """)
+    Page<Member> findAll(Pageable pageable, @Param("account") String account, @Param("name") String name);
 
-    @Query(
-        "select m" +
-        " from Member m" +
-        " where m.account = :account"
-    )
+    @Query("""
+            SELECT m
+            FROM Member m
+            WHERE m.account = :account
+            """)
     Optional<Member> findByAccount(String account);
 }

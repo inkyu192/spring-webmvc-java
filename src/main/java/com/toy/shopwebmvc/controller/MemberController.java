@@ -26,15 +26,19 @@ public class MemberController {
     }
 
     @GetMapping
-    public ApiResponse<Page<MemberResponse>> members(Pageable pageable, @RequestParam(required = false) String name) {
-        Page<MemberResponse> members = memberService.members(name, pageable);
+    public ApiResponse<Page<MemberResponse>> findMembers(
+            Pageable pageable,
+            @RequestParam(required = false) String account,
+            @RequestParam(required = false) String name
+    ) {
+        Page<MemberResponse> members = memberService.findMembers(pageable, account, name);
 
         return new ApiResponse<>(members);
     }
 
     @GetMapping("{id}")
-    public ApiResponse<MemberResponse> member(@PathVariable Long id) {
-        MemberResponse responseDto = memberService.member(id);
+    public ApiResponse<MemberResponse> findMember(@PathVariable Long id) {
+        MemberResponse responseDto = memberService.findMember(id);
 
         return new ApiResponse<>(responseDto);
     }

@@ -44,20 +44,37 @@ public class OrderService {
             Item item = itemRepository.findById(orderItem.itemId())
                     .orElseThrow(() -> new CommonException(DATA_NOT_FOUND));
 
-            orderItems.add(OrderItem.createOrderItem(item, item.getPrice(), orderItem.count()));
+            orderItems.add(OrderItem.create()
+                    .item(item)
+                    .orderPrice(item.getPrice())
+                    .count(orderItem.count())
+                    .build());
         });
 
-        Delivery delivery = Delivery.createDelivery(orderSaveRequest);
+        Delivery delivery = Delivery.create()
+                .city(orderSaveRequest.city())
+                .street(orderSaveRequest.street())
+                .zipcode(orderSaveRequest.zipcode())
+                .build();
 
-        Order order = Order.createOrder(member, delivery, orderItems);
+        Order order = Order.create()
+                .member(member)
+                .delivery(delivery)
+                .orderItems(orderItems)
+                .build();
 
         orderRepository.save(order);
 
         return new OrderResponse(order);
     }
 
-    public Page<OrderResponse> orders(Long memberId, OrderStatus orderStatus, DeliveryStatus deliveryStatus, Pageable pageable) {
-        return orderRepository.findAllOfQueryMethod(memberId, orderStatus, deliveryStatus, pageable)
+    public Page<OrderResponse> orders(
+            Long memberId,
+            OrderStatus orderStatus,
+            DeliveryStatus deliveryStatus,
+            Pageable pageable
+    ) {
+        return orderRepository.findAll(memberId, orderStatus, deliveryStatus, pageable)
                 .map(OrderResponse::new);
     }
 

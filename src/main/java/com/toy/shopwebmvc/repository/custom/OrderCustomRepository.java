@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface OrderCustomRepository {
 
-    List<Order> findAllOfJpql(Long memberId, OrderStatus orderStatus, DeliveryStatus deliveryStatus);
+    List<Order> findAllWithJpql(Long memberId, OrderStatus orderStatus, DeliveryStatus deliveryStatus);
 
-    List<Order> findAllOfQuery(Long memberId, OrderStatus orderStatus, DeliveryStatus deliveryStatus);
+    List<Order> findAllWithQuerydsl(Long memberId, OrderStatus orderStatus, DeliveryStatus deliveryStatus);
 }

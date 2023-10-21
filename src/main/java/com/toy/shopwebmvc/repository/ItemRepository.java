@@ -15,5 +15,5 @@ public interface ItemRepository extends JpaRepository<Item, Long>, ItemCustomRep
         " from Item i" +
         " where (:name is null or i.name like concat('%', :name, '%'))"
     )
-    Page<Item> findAllOfQueryMethod(@Param("name") String name, Pageable pageable);
+    Page<Item> findAll(@Param("name") String name, Pageable pageable);
 }

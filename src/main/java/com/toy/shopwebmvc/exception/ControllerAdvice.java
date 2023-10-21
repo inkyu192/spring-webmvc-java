@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static com.toy.shopwebmvc.constant.ApiResponseCode.BAD_REQUEST;
 import static com.toy.shopwebmvc.constant.ApiResponseCode.INTERNAL_SERVER_ERROR;
@@ -28,15 +29,15 @@ public class ControllerAdvice {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiResponse<List<String>> methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException e) {
-        ArrayList<String> errors = new ArrayList<>();
+    public ApiResponse<List<Map<String, Object>>> methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException e) {
+        ArrayList<Map<String, Object>> maps = new ArrayList<>();
 
         List<FieldError> fieldErrors = e.getBindingResult().getFieldErrors();
         for (FieldError fieldError : fieldErrors) {
-            errors.add(fieldError.getField());
+            maps.add(Map.of("field", fieldError.getField(), "message", fieldError.getDefaultMessage()));
         }
 
-        return new ApiResponse<>(BAD_REQUEST.getCode(), BAD_REQUEST.getMessage(), errors);
+        return new ApiResponse<>(BAD_REQUEST.getCode(), BAD_REQUEST.getMessage(), maps);
     }
 
     @ExceptionHandler

@@ -1,15 +1,12 @@
 package com.toy.shopwebmvc.domain;
 
 import com.toy.shopwebmvc.constant.Category;
-import com.toy.shopwebmvc.dto.request.ItemSaveRequest;
-import com.toy.shopwebmvc.dto.request.ItemUpdateRequest;
 import com.toy.shopwebmvc.exception.CommonException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
 
 import static com.toy.shopwebmvc.constant.ApiResponseCode.BAD_REQUEST;
 
@@ -31,24 +28,13 @@ public class Item extends BaseDomain {
     @Enumerated(EnumType.STRING)
     private Category category;
 
-    public static Item createItem(ItemSaveRequest itemSaveRequest) {
-        Item item = new Item();
-
-        item.name = itemSaveRequest.name();
-        item.description = itemSaveRequest.description();
-        item.price = itemSaveRequest.price();
-        item.quantity = itemSaveRequest.quantity();
-        item.category = itemSaveRequest.category();
-
-        return item;
-    }
-
-    public void updateItem(ItemUpdateRequest itemUpdateRequest) {
-        if (StringUtils.hasText(itemUpdateRequest.name())) this.name = itemUpdateRequest.name();
-        if (StringUtils.hasText(itemUpdateRequest.description())) this.description = itemUpdateRequest.description();
-        if (!ObjectUtils.isEmpty(itemUpdateRequest.category())) this.category = itemUpdateRequest.category();
-        this.price = itemUpdateRequest.price();
-        this.quantity = itemUpdateRequest.quantity();
+    @Builder(builderMethodName = "create", toBuilder = true)
+    public Item(String name, String description, int price, int quantity, Category category) {
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.quantity = quantity;
+        this.category = category;
     }
 
     public void removeQuantity(int quantity) {

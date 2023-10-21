@@ -1,5 +1,6 @@
 package com.toy.shopwebmvc.service;
 
+import com.toy.shopwebmvc.domain.Address;
 import com.toy.shopwebmvc.domain.Member;
 import com.toy.shopwebmvc.dto.request.MemberSaveRequest;
 import com.toy.shopwebmvc.dto.request.MemberUpdateRequest;
@@ -34,30 +35,47 @@ public class MemberService {
 
         if (account.isPresent()) throw new CommonException(DATA_DUPLICATE);
 
-        Member member = Member.createMember(memberSaveRequest, passwordEncoder);
+        Member member = Member.create()
+                .account(memberSaveRequest.account())
+                .password(passwordEncoder.encode(memberSaveRequest.password()))
+                .name(memberSaveRequest.name())
+                .address(Address.create()
+                        .city(memberSaveRequest.city())
+                        .street(memberSaveRequest.street())
+                        .zipcode(memberSaveRequest.zipcode())
+                        .build())
+                .role(memberSaveRequest.role())
+                .build();
 
         memberRepository.save(member);
 
         return new MemberResponse(member);
     }
 
-    public Page<MemberResponse> members(String name, Pageable pageable) {
-        return memberRepository.findAllOfQueryMethod(name, pageable)
+    public Page<MemberResponse> findMembers(Pageable pageable, String account, String name) {
+        return memberRepository.findAll(pageable, account, name)
                 .map(MemberResponse::new);
     }
 
-    public MemberResponse member(Long id) {
+    public MemberResponse findMember(Long id) {
         return memberRepository.findById(id)
                 .map(MemberResponse::new)
                 .orElseThrow(() -> new CommonException(DATA_NOT_FOUND));
     }
 
     @Transactional
-    public MemberResponse updateMember(Long id, MemberUpdateRequest requestDto) {
+    public MemberResponse updateMember(Long id, MemberUpdateRequest memberUpdateRequest) {
         Member member = memberRepository.findById(id)
-                .orElseThrow(() -> new CommonException(DATA_NOT_FOUND));
-
-        member.updateMember(requestDto, passwordEncoder);
+                .orElseThrow(() -> new CommonException(DATA_NOT_FOUND))
+                .toBuilder()
+                .name(memberUpdateRequest.name())
+                .address(Address.create()
+                        .city(memberUpdateRequest.city())
+                        .street(memberUpdateRequest.street())
+                        .zipcode(memberUpdateRequest.zipcode())
+                        .build())
+                .role(memberUpdateRequest.role())
+                .build();
 
         return new MemberResponse(member);
     }

@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface ItemCustomRepository {
 
-    List<Item> findAllOfJpql(String searchWord);
+    List<Item> findAllWithJpql(String name);
 
-    List<Item> findAllOfQuery(String searchWord);
+    List<Item> findAllWithQuerydsl(String name);
 }
