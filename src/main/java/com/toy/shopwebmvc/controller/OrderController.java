@@ -14,7 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/order")
+@RequestMapping("order")
 @RequiredArgsConstructor
 public class OrderController {
 
@@ -28,25 +28,25 @@ public class OrderController {
     }
 
     @GetMapping
-    public ApiResponse<Page<OrderResponse>> orders(
+    public ApiResponse<Page<OrderResponse>> findOrders(
             Pageable pageable,
             @RequestParam Long memberId,
             @RequestParam(required = false) OrderStatus orderStatus,
             @RequestParam(required = false) DeliveryStatus deliveryStatus
     ) {
-        Page<OrderResponse> list = orderService.orders(memberId, orderStatus, deliveryStatus, pageable);
+        Page<OrderResponse> list = orderService.findOrders(memberId, orderStatus, deliveryStatus, pageable);
 
         return new ApiResponse<>(list);
     }
 
-    @GetMapping("/{id}")
-    public ApiResponse<OrderResponse> order(@PathVariable Long id) {
-        OrderResponse responseDto = orderService.order(id);
+    @GetMapping("{id}")
+    public ApiResponse<OrderResponse> findOrder(@PathVariable Long id) {
+        OrderResponse responseDto = orderService.findOrder(id);
 
         return new ApiResponse<>(responseDto);
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("{id}")
     public ApiResponse<OrderResponse> cancelOrder(@PathVariable Long id) {
         OrderResponse responseDto = orderService.cancelOrder(id);
 

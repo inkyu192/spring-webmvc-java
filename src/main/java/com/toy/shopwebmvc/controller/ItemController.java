@@ -13,7 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/item")
+@RequestMapping("item")
 @RequiredArgsConstructor
 public class ItemController {
 
@@ -27,20 +27,20 @@ public class ItemController {
     }
 
     @GetMapping
-    public ApiResponse<Page<ItemResponse>> items(Pageable pageable, @RequestParam(required = false) String name) {
-        Page<ItemResponse> page = itemService.items(name, pageable);
+    public ApiResponse<Page<ItemResponse>> findItems(Pageable pageable, @RequestParam(required = false) String name) {
+        Page<ItemResponse> page = itemService.findItems(name, pageable);
 
         return new ApiResponse<>(page);
     }
 
-    @GetMapping("/{id}")
-    public ApiResponse<ItemResponse> item(@PathVariable Long id) {
-        ItemResponse responseDto = itemService.item(id);
+    @GetMapping("{id}")
+    public ApiResponse<ItemResponse> findItem(@PathVariable Long id) {
+        ItemResponse responseDto = itemService.findItem(id);
 
         return new ApiResponse<>(responseDto);
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("{id}")
     public ApiResponse<ItemResponse> updateItem(
             @PathVariable Long id,
             @RequestBody @Valid ItemUpdateRequest itemUpdateRequest
@@ -50,7 +50,7 @@ public class ItemController {
         return new ApiResponse<>(responseDto);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("{id}")
     public ApiResponse<ItemResponse> deleteItem(@PathVariable Long id) {
         itemService.deleteItem(id);
 

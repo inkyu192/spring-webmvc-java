@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import static com.toy.shopwebmvc.constant.ApiResponseCode.DATA_DUPLICATE;
 import static com.toy.shopwebmvc.constant.ApiResponseCode.DATA_NOT_FOUND;
@@ -31,9 +32,10 @@ public class MemberService {
 
     @Transactional
     public MemberResponse saveMember(MemberSaveRequest memberSaveRequest) {
-        Optional<Member> account = memberRepository.findByAccount(memberSaveRequest.account());
-
-        if (account.isPresent()) throw new CommonException(DATA_DUPLICATE);
+        memberRepository.findByAccount(memberSaveRequest.account())
+                .ifPresent(member -> {
+                    throw new CommonException(DATA_DUPLICATE);
+                });
 
         Member member = Member.create()
                 .account(memberSaveRequest.account())
@@ -49,42 +51,72 @@ public class MemberService {
 
         memberRepository.save(member);
 
-        return new MemberResponse(member);
+        return MemberResponse.builder()
+                .id(member.getId())
+                .account(member.getAccount())
+                .name(member.getName())
+                .city(member.getAddress().getCity())
+                .street(member.getAddress().getStreet())
+                .zipcode(member.getAddress().getCity())
+                .role(member.getRole())
+                .build();
     }
 
     public Page<MemberResponse> findMembers(Pageable pageable, String account, String name) {
         return memberRepository.findAll(pageable, account, name)
-                .map(MemberResponse::new);
+                .map(member -> MemberResponse.builder()
+                        .id(member.getId())
+                        .account(member.getAccount())
+                        .name(member.getName())
+                        .city(member.getAddress().getCity())
+                        .street(member.getAddress().getStreet())
+                        .zipcode(member.getAddress().getCity())
+                        .role(member.getRole())
+                        .build());
     }
 
     public MemberResponse findMember(Long id) {
         return memberRepository.findById(id)
-                .map(MemberResponse::new)
+                .map(member -> MemberResponse.builder()
+                        .id(member.getId())
+                        .account(member.getAccount())
+                        .name(member.getName())
+                        .city(member.getAddress().getCity())
+                        .street(member.getAddress().getStreet())
+                        .zipcode(member.getAddress().getCity())
+                        .role(member.getRole())
+                        .build())
                 .orElseThrow(() -> new CommonException(DATA_NOT_FOUND));
     }
 
     @Transactional
     public MemberResponse updateMember(Long id, MemberUpdateRequest memberUpdateRequest) {
         Member member = memberRepository.findById(id)
-                .orElseThrow(() -> new CommonException(DATA_NOT_FOUND))
-                .toBuilder()
-                .name(memberUpdateRequest.name())
-                .address(Address.create()
+                .orElseThrow(() -> new CommonException(DATA_NOT_FOUND));
+
+        member.update(
+                memberUpdateRequest.name(),
+                Address.create()
                         .city(memberUpdateRequest.city())
                         .street(memberUpdateRequest.street())
                         .zipcode(memberUpdateRequest.zipcode())
-                        .build())
-                .role(memberUpdateRequest.role())
-                .build();
+                        .build(),
+                memberUpdateRequest.role()
+        );
 
-        return new MemberResponse(member);
+        return MemberResponse.builder()
+                .id(member.getId())
+                .account(member.getAccount())
+                .name(member.getName())
+                .city(member.getAddress().getCity())
+                .street(member.getAddress().getStreet())
+                .zipcode(member.getAddress().getCity())
+                .role(member.getRole())
+                .build();
     }
 
     @Transactional
     public void deleteMember(Long id) {
-        Member member = memberRepository.findById(id)
-                .orElseThrow(() -> new CommonException(DATA_NOT_FOUND));
-
-        memberRepository.delete(member);
+        memberRepository.deleteById(id);
     }
 }

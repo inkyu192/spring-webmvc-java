@@ -68,7 +68,7 @@ public class OrderService {
         return new OrderResponse(order);
     }
 
-    public Page<OrderResponse> orders(
+    public Page<OrderResponse> findOrders(
             Long memberId,
             OrderStatus orderStatus,
             DeliveryStatus deliveryStatus,
@@ -78,7 +78,7 @@ public class OrderService {
                 .map(OrderResponse::new);
     }
 
-    public OrderResponse order(Long id) {
+    public OrderResponse findOrder(Long id) {
         return orderRepository.findById(id)
                 .map(OrderResponse::new)
                 .orElseThrow(() -> new CommonException(ApiResponseCode.DATA_NOT_FOUND));

@@ -1,21 +1,21 @@
 package com.toy.shopwebmvc.dto.request;
 
 import com.toy.shopwebmvc.constant.Role;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
 public record MemberSaveRequest(
-        @NotEmpty
+        @NotNull
         String account,
-        @NotEmpty
+        @NotNull
         String password,
-        @NotEmpty
+        @NotNull
         String name,
         Role role,
-        @NotEmpty
+        @NotNull
         String city,
-        @NotEmpty
+        @NotNull
         String street,
-        @NotEmpty
+        @NotNull
         String zipcode
 ) {
 }

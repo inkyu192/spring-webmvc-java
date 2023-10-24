@@ -36,12 +36,12 @@ public class ItemService {
         return new ItemResponse(item);
     }
 
-    public Page<ItemResponse> items(String name, Pageable pageable) {
+    public Page<ItemResponse> findItems(String name, Pageable pageable) {
         return itemRepository.findAll(name, pageable)
                 .map(ItemResponse::new);
     }
 
-    public ItemResponse item(Long id) {
+    public ItemResponse findItem(Long id) {
         return itemRepository.findById(id)
                 .map(ItemResponse::new)
                 .orElseThrow(() -> new CommonException(DATA_NOT_FOUND));
@@ -50,23 +50,21 @@ public class ItemService {
     @Transactional
     public ItemResponse updateItem(Long id, ItemUpdateRequest itemUpdateRequest) {
         Item item = itemRepository.findById(id)
-                .orElseThrow(() -> new CommonException(DATA_NOT_FOUND))
-                .toBuilder()
-                .name(itemUpdateRequest.name())
-                .description(itemUpdateRequest.description())
-                .price(itemUpdateRequest.price())
-                .quantity(itemUpdateRequest.quantity())
-                .category(itemUpdateRequest.category())
-                .build();
+                .orElseThrow(() -> new CommonException(DATA_NOT_FOUND));
+
+        item.update(
+                itemUpdateRequest.name(),
+                itemUpdateRequest.description(),
+                itemUpdateRequest.price(),
+                itemUpdateRequest.quantity(),
+                itemUpdateRequest.category()
+        );
 
         return new ItemResponse(item);
     }
 
     @Transactional
     public void deleteItem(Long id) {
-        Item item = itemRepository.findById(id)
-                .orElseThrow(() -> new CommonException(DATA_NOT_FOUND));
-
-        itemRepository.delete(item);
+        itemRepository.deleteById(id);
     }
 }

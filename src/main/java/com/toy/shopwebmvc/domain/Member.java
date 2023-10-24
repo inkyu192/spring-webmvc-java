@@ -41,9 +41,7 @@ public class Member extends BaseDomain {
         this.role = role;
     }
 
-    @Builder(builderMethodName = "update", toBuilder = true)
-    public Member(String password, String name, Address address, Role role) {
-        this.password = password;
+    public void update(String name, Address address, Role role) {
         this.name = name;
         this.address = address;
         this.role = role;

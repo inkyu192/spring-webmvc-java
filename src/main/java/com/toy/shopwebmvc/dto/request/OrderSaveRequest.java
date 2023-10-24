@@ -8,11 +8,11 @@ import java.util.List;
 public record OrderSaveRequest(
         @NotNull
         Long memberId,
-        @NotEmpty
+        @NotNull
         String city,
-        @NotEmpty
+        @NotNull
         String street,
-        @NotEmpty
+        @NotNull
         String zipcode,
         @NotNull
         List<OrderItemSaveRequest> orderItems

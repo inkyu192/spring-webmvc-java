@@ -1,6 +1,7 @@
 package com.toy.shopwebmvc.domain;
 
 import com.toy.shopwebmvc.constant.Category;
+import com.toy.shopwebmvc.constant.Role;
 import com.toy.shopwebmvc.exception.CommonException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -28,8 +29,16 @@ public class Item extends BaseDomain {
     @Enumerated(EnumType.STRING)
     private Category category;
 
-    @Builder(builderMethodName = "create", toBuilder = true)
+    @Builder(builderMethodName = "create")
     public Item(String name, String description, int price, int quantity, Category category) {
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.quantity = quantity;
+        this.category = category;
+    }
+
+    public void update(String name, String description, int price, int quantity, Category category) {
         this.name = name;
         this.description = description;
         this.price = price;
