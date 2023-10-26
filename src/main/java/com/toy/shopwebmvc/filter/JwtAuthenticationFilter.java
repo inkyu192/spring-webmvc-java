@@ -1,6 +1,7 @@
 package com.toy.shopwebmvc.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.toy.shopwebmvc.constant.ApiResponseCode;
 import com.toy.shopwebmvc.dto.request.LoginRequest;
 import com.toy.shopwebmvc.dto.response.ApiResponse;
 import com.toy.shopwebmvc.dto.response.TokenResponse;
@@ -19,7 +20,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import java.io.IOException;
 
-import static com.toy.shopwebmvc.constant.ApiResponseCode.BAD_REQUEST;
 
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
@@ -72,7 +72,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             HttpServletResponse response,
             AuthenticationException failed
     ) throws IOException, ServletException {
-        String result = objectMapper.writeValueAsString(new ApiResponse<>(BAD_REQUEST.getCode(), "인증 실패"));
+        String result = objectMapper.writeValueAsString(
+                new ApiResponse<>(ApiResponseCode.BAD_REQUEST.name(), "인증 실패")
+        );
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");

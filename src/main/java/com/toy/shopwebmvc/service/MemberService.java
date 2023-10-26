@@ -1,5 +1,6 @@
 package com.toy.shopwebmvc.service;
 
+import com.toy.shopwebmvc.constant.ApiResponseCode;
 import com.toy.shopwebmvc.domain.Address;
 import com.toy.shopwebmvc.domain.Member;
 import com.toy.shopwebmvc.dto.request.MemberSaveRequest;
@@ -15,11 +16,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-import java.util.function.Consumer;
-
-import static com.toy.shopwebmvc.constant.ApiResponseCode.DATA_DUPLICATE;
-import static com.toy.shopwebmvc.constant.ApiResponseCode.DATA_NOT_FOUND;
 
 @Slf4j
 @Service
@@ -34,7 +30,7 @@ public class MemberService {
     public MemberResponse saveMember(MemberSaveRequest memberSaveRequest) {
         memberRepository.findByAccount(memberSaveRequest.account())
                 .ifPresent(member -> {
-                    throw new CommonException(DATA_DUPLICATE);
+                    throw new CommonException(ApiResponseCode.DATA_DUPLICATE);
                 });
 
         Member member = Member.create()
@@ -86,13 +82,13 @@ public class MemberService {
                         .zipcode(member.getAddress().getCity())
                         .role(member.getRole())
                         .build())
-                .orElseThrow(() -> new CommonException(DATA_NOT_FOUND));
+                .orElseThrow(() -> new CommonException(ApiResponseCode.DATA_NOT_FOUND));
     }
 
     @Transactional
     public MemberResponse updateMember(Long id, MemberUpdateRequest memberUpdateRequest) {
         Member member = memberRepository.findById(id)
-                .orElseThrow(() -> new CommonException(DATA_NOT_FOUND));
+                .orElseThrow(() -> new CommonException(ApiResponseCode.DATA_NOT_FOUND));
 
         member.update(
                 memberUpdateRequest.name(),

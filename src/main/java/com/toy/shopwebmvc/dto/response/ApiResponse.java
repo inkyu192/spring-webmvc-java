@@ -1,8 +1,8 @@
 package com.toy.shopwebmvc.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.toy.shopwebmvc.constant.ApiResponseCode;
 
-import static com.toy.shopwebmvc.constant.ApiResponseCode.OK;
 
 public record ApiResponse<T>(
         String code,
@@ -11,11 +11,11 @@ public record ApiResponse<T>(
         T payload
 ) {
     public ApiResponse() {
-        this(OK.getCode(), OK.getMessage());
+        this(ApiResponseCode.SUCCESS.name(), ApiResponseCode.SUCCESS.getMessage());
     }
 
     public ApiResponse(T data) {
-        this(OK.getCode(), OK.getMessage(), data);
+        this(ApiResponseCode.SUCCESS.name(), ApiResponseCode.SUCCESS.getMessage(), data);
     }
 
     public ApiResponse(String code, String message) {

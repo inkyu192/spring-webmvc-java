@@ -1,7 +1,7 @@
 package com.toy.shopwebmvc.domain;
 
+import com.toy.shopwebmvc.constant.ApiResponseCode;
 import com.toy.shopwebmvc.constant.Category;
-import com.toy.shopwebmvc.constant.Role;
 import com.toy.shopwebmvc.exception.CommonException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -9,7 +9,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import static com.toy.shopwebmvc.constant.ApiResponseCode.BAD_REQUEST;
 
 @Entity
 @Getter
@@ -50,7 +49,7 @@ public class Item extends BaseDomain {
         int differenceQuantity = this.quantity - quantity;
 
         if (differenceQuantity < 0) {
-            throw new CommonException(BAD_REQUEST);
+            throw new CommonException(ApiResponseCode.QUANTITY_NOT_ENOUGH);
         }
 
         this.quantity = differenceQuantity;

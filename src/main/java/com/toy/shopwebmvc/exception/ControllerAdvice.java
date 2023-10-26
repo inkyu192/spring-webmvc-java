@@ -13,8 +13,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.toy.shopwebmvc.constant.ApiResponseCode.BAD_REQUEST;
-import static com.toy.shopwebmvc.constant.ApiResponseCode.INTERNAL_SERVER_ERROR;
+import static com.toy.shopwebmvc.constant.ApiResponseCode.*;
 
 
 @Slf4j
@@ -36,13 +35,13 @@ public class ControllerAdvice {
             errors.add(fieldError.getField());
         }
 
-        return new ApiResponse<>(BAD_REQUEST.getCode(), BAD_REQUEST.getMessage(), errors);
+        return new ApiResponse<>(PARAMETER_NOT_VALID.name(), PARAMETER_NOT_VALID.getMessage(), errors);
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiResponse<Void> jwtExceptionHandler(JwtException e) {
-        return new ApiResponse<>(BAD_REQUEST.getCode(), e.getMessage());
+        return new ApiResponse<>(BAD_REQUEST.name(), e.getMessage());
     }
 
     @ExceptionHandler
@@ -50,6 +49,6 @@ public class ControllerAdvice {
     public ApiResponse<Void> exceptionHandler(Exception e) {
         log.error("[ExceptionHandler]", e);
 
-        return new ApiResponse<>(INTERNAL_SERVER_ERROR.getCode(), INTERNAL_SERVER_ERROR.getMessage());
+        return new ApiResponse<>(SYSTEM_ERROR.name(), SYSTEM_ERROR.getMessage());
     }
 }

@@ -67,7 +67,7 @@ public class Order extends BaseDomain {
 
     public void cancel() {
         if (delivery.getStatus() == DeliveryStatus.COMP) {
-            throw new CommonException(ApiResponseCode.DATA_NOT_FOUND);
+            throw new CommonException(ApiResponseCode.ORDER_NOT_CANCEL);
         }
 
         this.status = OrderStatus.CANCEL;

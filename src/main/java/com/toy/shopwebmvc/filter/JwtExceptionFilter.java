@@ -38,7 +38,7 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
     }
 
     private void setResponse(HttpServletResponse response, JwtException e) throws RuntimeException, IOException {
-        String result = objectMapper.writeValueAsString(new ApiResponse<>(BAD_REQUEST.getCode(), e.getMessage()));
+        String result = objectMapper.writeValueAsString(new ApiResponse<>(BAD_REQUEST.name(), e.getMessage()));
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");

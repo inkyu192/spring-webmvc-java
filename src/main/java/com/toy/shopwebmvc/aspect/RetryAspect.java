@@ -27,6 +27,6 @@ public class RetryAspect {
                 log.error("[retry] {}", joinPoint.getSignature(), exception);
             }
         }
-        throw new CommonException(ApiResponseCode.INTERNAL_SERVER_ERROR);
+        throw new CommonException(ApiResponseCode.SYSTEM_ERROR);
     }
 }
