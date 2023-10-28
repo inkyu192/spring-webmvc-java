@@ -1,5 +1,6 @@
 package com.toy.shopwebmvc.exception;
 
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.toy.shopwebmvc.dto.response.ApiResponse;
 import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
@@ -21,13 +22,13 @@ import static com.toy.shopwebmvc.constant.ApiResponseCode.*;
 public class ControllerAdvice {
 
     @ExceptionHandler
-    public ApiResponse<Void> commonExceptionHandler(CommonException e) {
+    public ApiResponse<Void> handler(CommonException e) {
         return new ApiResponse<>(e.getCode(), e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiResponse<List<String>> methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException e) {
+    public ApiResponse<List<String>> handler(MethodArgumentNotValidException e) {
         ArrayList<String> errors = new ArrayList<>();
 
         List<FieldError> fieldErrors = e.getBindingResult().getFieldErrors();
@@ -40,13 +41,13 @@ public class ControllerAdvice {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiResponse<Void> jwtExceptionHandler(JwtException e) {
+    public ApiResponse<Void> handler(JwtException e) {
         return new ApiResponse<>(BAD_REQUEST.name(), e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ApiResponse<Void> exceptionHandler(Exception e) {
+    public ApiResponse<Void> handler(Exception e) {
         log.error("[ExceptionHandler]", e);
 
         return new ApiResponse<>(SYSTEM_ERROR.name(), SYSTEM_ERROR.getMessage());

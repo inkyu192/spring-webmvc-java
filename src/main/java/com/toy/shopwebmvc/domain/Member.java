@@ -23,14 +23,14 @@ public class Member extends BaseDomain {
     private String password;
     private String name;
 
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
     @Embedded
     private Address address;
 
     @OneToMany(mappedBy = "member")
     private List<Order> orders = new ArrayList<>();
-
-    @Enumerated(EnumType.STRING)
-    private Role role;
 
     @Builder(builderMethodName = "create")
     public Member(String account, String password, String name, Address address, Role role) {

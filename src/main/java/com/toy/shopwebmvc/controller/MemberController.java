@@ -43,7 +43,7 @@ public class MemberController {
         return new ApiResponse<>(responseDto);
     }
 
-    @PatchMapping("{id}")
+    @PutMapping("{id}")
     public ApiResponse<MemberResponse> updateMember(
             @PathVariable Long id,
             @RequestBody @Valid MemberUpdateRequest memberUpdateRequest
@@ -54,7 +54,7 @@ public class MemberController {
     }
 
     @DeleteMapping("{id}")
-    public ApiResponse<MemberResponse> deleteMember(@PathVariable Long id) {
+    public ApiResponse<Void> deleteMember(@PathVariable Long id) {
         memberService.deleteMember(id);
 
         return new ApiResponse<>();

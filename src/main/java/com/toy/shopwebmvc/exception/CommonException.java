@@ -10,7 +10,7 @@ public class CommonException extends RuntimeException {
     private final String message;
 
     public CommonException(ApiResponseCode apiResponseCode) {
-        this(apiResponseCode.getCode(), apiResponseCode.getMessage());
+        this(apiResponseCode.name(), apiResponseCode.getMessage());
     }
 
     public CommonException(String code, String message) {
