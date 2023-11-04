@@ -10,7 +10,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.toy.shopwebmvc.domain.QItem.item;
@@ -32,35 +31,29 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
         String countJpql = """
                 SELECT COUNT(i)
                 FROM Item i
+                WHERE 1 = 1
                 """;
         String contentJpql = """
                 SELECT i
                 FROM Item i
                 JOIN FETCH i.category c
+                WHERE 1 = 1
                 """;
 
-        ArrayList<String> whereCondition = new ArrayList<>();
-
-        if (StringUtils.hasText(name)) whereCondition.add("i.name LIKE CONCAT('%', :name, '%')");
-
-        if (!whereCondition.isEmpty()) {
-            countJpql += " WHERE ";
-            countJpql += String.join(" AND ", whereCondition);
-
-            contentJpql += " WHERE ";
-            contentJpql += String.join(" AND ", whereCondition);
+        if (StringUtils.hasText(name)) {
+            countJpql += " AND i.name LIKE CONCAT('%', :name, '%')";
+            contentJpql += " AND i.name LIKE CONCAT('%', :name, '%')";
         }
 
         TypedQuery<Long> countQuery = entityManager.createQuery(countJpql, Long.class);
-        TypedQuery<Item> contentQuery = entityManager.createQuery(contentJpql, Item.class);
+        TypedQuery<Item> contentQuery = entityManager.createQuery(contentJpql, Item.class)
+                .setFirstResult((int) pageable.getOffset())
+                .setMaxResults(pageable.getPageSize());
 
-        if (StringUtils.hasText(name)){
+        if (StringUtils.hasText(name)) {
             countQuery.setParameter("name", name);
             contentQuery.setParameter("name", name);
         }
-
-        contentQuery.setFirstResult((int) pageable.getOffset());
-        contentQuery.setMaxResults(pageable.getPageSize());
 
         return new PageImpl<>(contentQuery.getResultList(), pageable, countQuery.getSingleResult());
     }

@@ -10,7 +10,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.toy.shopwebmvc.domain.QMember.member;
@@ -31,35 +30,36 @@ public class MemberCustomRepositoryImpl implements MemberCustomRepository {
         String countJpql = """
                 SELECT COUNT(m)
                 FROM Member m
+                WHERE 1 = 1
                 """;
 
         String contentJpql = """
                 SELECT m
                 FROM Member m
+                WHERE 1 = 1
                 """;
 
-        ArrayList<String> whereCondition = new ArrayList<>();
+        if (StringUtils.hasText(account)) {
+            countJpql += " AND m.account LIKE CONCAT('%', :account, '%')";
+            contentJpql += " AND m.account LIKE CONCAT('%', :account, '%')";
+        }
 
-        if (StringUtils.hasText(account)) whereCondition.add("m.account LIKE CONCAT('%', :account, '%')");
-        if (StringUtils.hasText(name)) whereCondition.add("m.name LIKE CONCAT('%', :name, '%')");
-
-        if (!whereCondition.isEmpty()) {
-            countJpql += " WHERE ";
-            countJpql += String.join(" AND ", whereCondition);
-
-            contentJpql += " WHERE ";
-            contentJpql += String.join(" AND ", whereCondition);
+        if (StringUtils.hasText(name)) {
+            countJpql += " AND m.name LIKE CONCAT('%', :name, '%')";
+            contentJpql += " AND m.name LIKE CONCAT('%', :name, '%')";
         }
 
         TypedQuery<Long> countQuery = entityManager.createQuery(countJpql, Long.class);
-        TypedQuery<Member> contentQuery = entityManager.createQuery(contentJpql, Member.class);
+        TypedQuery<Member> contentQuery = entityManager.createQuery(contentJpql, Member.class)
+                .setFirstResult((int) pageable.getOffset())
+                .setMaxResults(pageable.getPageSize());
 
-        if (StringUtils.hasText(account)){
+        if (StringUtils.hasText(account)) {
             countQuery.setParameter("account", account);
             contentQuery.setParameter("account", account);
         }
 
-        if (StringUtils.hasText(name)){
+        if (StringUtils.hasText(name)) {
             countQuery.setParameter("name", name);
             contentQuery.setParameter("name", name);
         }
