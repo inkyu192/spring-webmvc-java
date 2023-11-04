@@ -34,6 +34,8 @@ public class OrderItem extends BaseDomain {
         orderItem.orderPrice = orderPrice;
         orderItem.count = count;
 
+        item.removeQuantity(count);
+
         return orderItem;
     }
 

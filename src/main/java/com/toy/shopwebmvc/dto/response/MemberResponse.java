@@ -12,14 +12,14 @@ public record MemberResponse(
         String zipcode,
         Role role
 ) {
-    public static MemberResponse create(Member member) {
-        return new MemberResponse(
+    public MemberResponse(Member member) {
+        this(
                 member.getId(),
                 member.getAccount(),
                 member.getName(),
                 member.getAddress().getCity(),
                 member.getAddress().getStreet(),
-                member.getAddress().getCity(),
+                member.getAddress().getZipcode(),
                 member.getRole()
         );
     }

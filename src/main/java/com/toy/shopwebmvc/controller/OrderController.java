@@ -1,12 +1,11 @@
 package com.toy.shopwebmvc.controller;
 
-import com.toy.shopwebmvc.dto.request.OrderSaveRequest;
-import com.toy.shopwebmvc.dto.response.ItemResponse;
-import com.toy.shopwebmvc.dto.response.OrderResponse;
-import com.toy.shopwebmvc.service.OrderService;
-import com.toy.shopwebmvc.dto.response.ApiResponse;
 import com.toy.shopwebmvc.constant.DeliveryStatus;
 import com.toy.shopwebmvc.constant.OrderStatus;
+import com.toy.shopwebmvc.dto.request.OrderSaveRequest;
+import com.toy.shopwebmvc.dto.response.ApiResponse;
+import com.toy.shopwebmvc.dto.response.OrderResponse;
+import com.toy.shopwebmvc.service.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -46,7 +45,7 @@ public class OrderController {
         return new ApiResponse<>(responseDto);
     }
 
-    @PatchMapping("{id}")
+    @PostMapping("{id}")
     public ApiResponse<OrderResponse> cancelOrder(@PathVariable Long id) {
         OrderResponse responseDto = orderService.cancelOrder(id);
 

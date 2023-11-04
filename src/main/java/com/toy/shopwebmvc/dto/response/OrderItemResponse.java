@@ -8,6 +8,10 @@ public record OrderItemResponse(
         int count
 ) {
     public OrderItemResponse(OrderItem orderItem) {
-        this(orderItem.getItem().getName(), orderItem.getOrderPrice(), orderItem.getCount());
+        this(
+                orderItem.getItem().getName(),
+                orderItem.getOrderPrice(),
+                orderItem.getCount()
+        );
     }
 }

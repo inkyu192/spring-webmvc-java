@@ -16,7 +16,15 @@ public record OrderResponse(
         List<OrderItemResponse> orderItems
 ) {
     public OrderResponse(Order order) {
-        this(order.getId(), order.getMember().getName(), order.getOrderDate(), order.getStatus(),
-                order.getMember().getAddress(), order.getOrderItems().stream().map(OrderItemResponse::new).toList());
+        this(
+                order.getId(),
+                order.getMember().getName(),
+                order.getOrderDate(),
+                order.getStatus(),
+                order.getMember().getAddress(),
+                order.getOrderItems().stream()
+                        .map(OrderItemResponse::new)
+                        .toList()
+        );
     }
 }

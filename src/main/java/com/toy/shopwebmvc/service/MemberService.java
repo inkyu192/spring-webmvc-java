@@ -45,17 +45,17 @@ public class MemberService {
 
         memberRepository.save(member);
 
-        return MemberResponse.create(member);
+        return new MemberResponse(member);
     }
 
     public Page<MemberResponse> findMembers(Pageable pageable, String account, String name) {
         return memberRepository.findAllWithQuerydsl(pageable, account, name)
-                .map(MemberResponse::create);
+                .map(MemberResponse::new);
     }
 
     public MemberResponse findMember(Long id) {
         return memberRepository.findById(id)
-                .map(MemberResponse::create)
+                .map(MemberResponse::new)
                 .orElseThrow(() -> new CommonException(ApiResponseCode.DATA_NOT_FOUND));
     }
 
@@ -74,7 +74,7 @@ public class MemberService {
                 )
         );
 
-        return MemberResponse.create(member);
+        return new MemberResponse(member);
     }
 
     @Transactional

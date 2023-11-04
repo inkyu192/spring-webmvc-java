@@ -43,7 +43,7 @@ public class MemberController {
         return new ApiResponse<>(responseDto);
     }
 
-    @PutMapping("{id}")
+    @PatchMapping("{id}")
     public ApiResponse<MemberResponse> updateMember(
             @PathVariable Long id,
             @RequestBody @Valid MemberUpdateRequest memberUpdateRequest

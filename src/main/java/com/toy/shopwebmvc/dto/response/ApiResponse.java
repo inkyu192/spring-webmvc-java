@@ -11,7 +11,7 @@ public record ApiResponse<T>(
         T payload
 ) {
     public ApiResponse() {
-        this(ApiResponseCode.SUCCESS.name(), ApiResponseCode.SUCCESS.getMessage());
+        this(ApiResponseCode.SUCCESS.name(), ApiResponseCode.SUCCESS.getMessage(), null);
     }
 
     public ApiResponse(T data) {

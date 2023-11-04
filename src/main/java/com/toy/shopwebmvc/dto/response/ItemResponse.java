@@ -9,8 +9,8 @@ public record ItemResponse(
         int price,
         int quantity
 ) {
-    public static ItemResponse create(Item item) {
-        return new ItemResponse(
+    public ItemResponse(Item item) {
+        this(
                 item.getId(),
                 item.getName(),
                 item.getDescription(),

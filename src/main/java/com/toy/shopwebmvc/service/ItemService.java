@@ -1,7 +1,6 @@
 package com.toy.shopwebmvc.service;
 
 import com.toy.shopwebmvc.dto.request.ItemSaveRequest;
-import com.toy.shopwebmvc.dto.request.ItemUpdateRequest;
 import com.toy.shopwebmvc.dto.response.ItemResponse;
 import com.toy.shopwebmvc.repository.ItemRepository;
 import com.toy.shopwebmvc.domain.Item;
@@ -33,34 +32,43 @@ public class ItemService {
 
         itemRepository.save(item);
 
-        return ItemResponse.create(item);
+        return new ItemResponse(item);
     }
 
     public Page<ItemResponse> findItems(Pageable pageable, String name) {
         return itemRepository.findAllWithQuerydsl(pageable, name)
-                .map(ItemResponse::create);
+                .map(ItemResponse::new);
     }
 
     public ItemResponse findItem(Long id) {
         return itemRepository.findById(id)
-                .map(ItemResponse::create)
+                .map(ItemResponse::new)
                 .orElseThrow(() -> new CommonException(DATA_NOT_FOUND));
     }
 
     @Transactional
-    public ItemResponse updateItem(Long id, ItemUpdateRequest itemUpdateRequest) {
+    public ItemResponse updateItem(Long id, ItemSaveRequest itemSaveRequest) {
         Item item = itemRepository.findById(id)
-                .orElseThrow(() -> new CommonException(DATA_NOT_FOUND));
+                .map(findItem -> {
+                    findItem.update(
+                            itemSaveRequest.name(),
+                            itemSaveRequest.description(),
+                            itemSaveRequest.price(),
+                            itemSaveRequest.quantity(),
+                            itemSaveRequest.category()
+                    );
 
-        item.update(
-                itemUpdateRequest.name(),
-                itemUpdateRequest.description(),
-                itemUpdateRequest.price(),
-                itemUpdateRequest.quantity(),
-                itemUpdateRequest.category()
-        );
+                    return findItem;
+                })
+                .orElseGet(() -> Item.create(
+                        itemSaveRequest.name(),
+                        itemSaveRequest.description(),
+                        itemSaveRequest.price(),
+                        itemSaveRequest.quantity(),
+                        itemSaveRequest.category()
+                ));
 
-        return ItemResponse.create(item);
+        return new ItemResponse(item);
     }
 
     @Transactional

@@ -1,7 +1,6 @@
 package com.toy.shopwebmvc.controller;
 
 import com.toy.shopwebmvc.dto.request.ItemSaveRequest;
-import com.toy.shopwebmvc.dto.request.ItemUpdateRequest;
 import com.toy.shopwebmvc.dto.response.ApiResponse;
 import com.toy.shopwebmvc.dto.response.ItemResponse;
 import com.toy.shopwebmvc.service.ItemService;
@@ -39,12 +38,12 @@ public class ItemController {
         return new ApiResponse<>(responseDto);
     }
 
-    @PatchMapping("{id}")
+    @PutMapping("{id}")
     public ApiResponse<ItemResponse> updateItem(
             @PathVariable Long id,
-            @RequestBody @Valid ItemUpdateRequest itemUpdateRequest
+            @RequestBody @Valid ItemSaveRequest itemSaveRequest
     ) {
-        ItemResponse responseDto = itemService.updateItem(id, itemUpdateRequest);
+        ItemResponse responseDto = itemService.updateItem(id, itemSaveRequest);
 
         return new ApiResponse<>(responseDto);
     }

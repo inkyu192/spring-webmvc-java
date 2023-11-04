@@ -37,4 +37,8 @@ public class Delivery {
     public void setOrder(Order order) {
         this.order = order;
     }
+
+    public void cancel() {
+        this.status = DeliveryStatus.CANCEL;
+    }
 }
