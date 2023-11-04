@@ -1,6 +1,6 @@
 package com.toy.shopwebmvc.exception;
 
-import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import com.toy.shopwebmvc.constant.ApiResponseCode;
 import com.toy.shopwebmvc.dto.response.ApiResponse;
 import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
@@ -11,10 +11,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import static com.toy.shopwebmvc.constant.ApiResponseCode.*;
 
 
 @Slf4j
@@ -29,20 +27,19 @@ public class ControllerAdvice {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiResponse<List<String>> handler(MethodArgumentNotValidException e) {
-        ArrayList<String> errors = new ArrayList<>();
-
-        List<FieldError> fieldErrors = e.getBindingResult().getFieldErrors();
-        for (FieldError fieldError : fieldErrors) {
-            errors.add(fieldError.getField());
-        }
-
-        return new ApiResponse<>(PARAMETER_NOT_VALID.name(), PARAMETER_NOT_VALID.getMessage(), errors);
+        return new ApiResponse<>(
+                ApiResponseCode.PARAMETER_NOT_VALID.name(),
+                ApiResponseCode.PARAMETER_NOT_VALID.getMessage(),
+                e.getBindingResult().getFieldErrors().stream()
+                        .map(FieldError::getField)
+                        .toList()
+        );
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiResponse<Void> handler(JwtException e) {
-        return new ApiResponse<>(BAD_REQUEST.name(), e.getMessage());
+        return new ApiResponse<>(ApiResponseCode.BAD_REQUEST.name(), e.getMessage());
     }
 
     @ExceptionHandler
@@ -50,6 +47,6 @@ public class ControllerAdvice {
     public ApiResponse<Void> handler(Exception e) {
         log.error("[ExceptionHandler]", e);
 
-        return new ApiResponse<>(SYSTEM_ERROR.name(), SYSTEM_ERROR.getMessage());
+        return new ApiResponse<>(ApiResponseCode.SYSTEM_ERROR.name(), ApiResponseCode.SYSTEM_ERROR.getMessage());
     }
 }

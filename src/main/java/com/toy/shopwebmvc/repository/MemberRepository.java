@@ -15,14 +15,6 @@ public interface MemberRepository extends JpaRepository<Member, Long>, MemberCus
     @Query("""
             SELECT m
             FROM Member m
-            WHERE (:account IS NULL OR m.account LIKE CONCAT('%', :account, '%'))
-            AND (:name IS NULL OR m.name LIKE CONCAT('%', :name, '%'))
-            """)
-    Page<Member> findAll(Pageable pageable, @Param("account") String account, @Param("name") String name);
-
-    @Query("""
-            SELECT m
-            FROM Member m
             WHERE m.account = :account
             """)
     Optional<Member> findByAccount(String account);

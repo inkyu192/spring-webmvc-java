@@ -10,6 +10,7 @@ public record MemberSaveRequest(
         String password,
         @NotNull
         String name,
+        @NotNull
         Role role,
         @NotNull
         String city,

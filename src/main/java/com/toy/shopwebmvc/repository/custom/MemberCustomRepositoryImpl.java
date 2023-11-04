@@ -1,10 +1,11 @@
 package com.toy.shopwebmvc.repository.custom;
 
-import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.toy.shopwebmvc.domain.Member;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
@@ -26,8 +27,9 @@ public class MemberCustomRepositoryImpl implements MemberCustomRepository {
     }
 
     @Override
-    public List<Member> findAllWithJpql(Pageable pageable, String account, String name) {
-        String jpql = "SELECT m FROM Member m";
+    public Page<Member> findAllWithJpql(Pageable pageable, String account, String name) {
+        String countJpql = "SELECT COUNT(m) FROM Member m";
+        String contentJpql = "SELECT m FROM Member m";
 
         ArrayList<String> whereCondition = new ArrayList<>();
 
@@ -35,49 +37,55 @@ public class MemberCustomRepositoryImpl implements MemberCustomRepository {
         if (StringUtils.hasText(name)) whereCondition.add("m.name LIKE CONCAT('%', :name, '%')");
 
         if (!whereCondition.isEmpty()) {
-            jpql += " WHERE ";
-            jpql += String.join(" AND ", whereCondition);
+            countJpql += " WHERE ";
+            countJpql += String.join(" AND ", whereCondition);
+
+            contentJpql += " WHERE ";
+            contentJpql += String.join(" AND ", whereCondition);
         }
 
-        jpql += " LIMIT :offset, :pageSize";
+        TypedQuery<Long> countQuery = entityManager.createQuery(countJpql, Long.class);
+        TypedQuery<Member> contentQuery = entityManager.createQuery(contentJpql, Member.class);
 
-        TypedQuery<Member> query = entityManager.createQuery(jpql, Member.class);
+        if (StringUtils.hasText(account)){
+            countQuery.setParameter("account", account);
+            contentQuery.setParameter("account", account);
+        }
 
-        if (StringUtils.hasText(account)) query.setParameter("account", account);
-        if (StringUtils.hasText(name)) query.setParameter("name", name);
-        query.setParameter("pageSize", pageable.getPageSize());
-        query.setParameter("offset", pageable.getOffset());
+        if (StringUtils.hasText(name)){
+            countQuery.setParameter("name", name);
+            contentQuery.setParameter("name", name);
+        }
 
-        return query.getResultList();
+        contentQuery.setFirstResult((int) pageable.getOffset());
+        contentQuery.setMaxResults(pageable.getPageSize());
+
+        return new PageImpl<>(contentQuery.getResultList(), pageable, countQuery.getSingleResult());
     }
 
     @Override
-    public List<Member> findAllWithQuerydsl(Pageable pageable, String account, String name) {
-        return queryFactory
+    public Page<Member> findAllWithQuerydsl(Pageable pageable, String account, String name) {
+        int count = queryFactory
                 .select(member)
                 .from(member)
                 .where(
-                        account(account),
-                        name(name)
+                        StringUtils.hasText(account) ? member.account.like("%" + account + "%") : null,
+                        StringUtils.hasText(name) ? member.name.like("%" + name + "%") : null
+                )
+                .fetch()
+                .size();
+
+        List<Member> content = queryFactory
+                .select(member)
+                .from(member)
+                .where(
+                        StringUtils.hasText(account) ? member.account.like("%" + account + "%") : null,
+                        StringUtils.hasText(name) ? member.name.like("%" + name + "%") : null
                 )
                 .limit(pageable.getPageSize())
                 .offset(pageable.getOffset())
                 .fetch();
-    }
 
-    private BooleanExpression account(String account) {
-        if (StringUtils.hasText(account)) {
-            return member.account.like("%" + account + "%");
-        }
-
-        return null;
-    }
-
-    private BooleanExpression name(String name) {
-        if (StringUtils.hasText(name)) {
-            return member.name.like("%" + name + "%");
-        }
-
-        return null;
+        return new PageImpl<>(content, pageable, count);
     }
 }

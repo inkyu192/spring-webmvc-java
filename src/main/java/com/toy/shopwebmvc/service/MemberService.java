@@ -1,7 +1,6 @@
 package com.toy.shopwebmvc.service;
 
 import com.toy.shopwebmvc.constant.ApiResponseCode;
-import com.toy.shopwebmvc.domain.Address;
 import com.toy.shopwebmvc.domain.Member;
 import com.toy.shopwebmvc.dto.request.MemberSaveRequest;
 import com.toy.shopwebmvc.dto.request.MemberUpdateRequest;
@@ -31,55 +30,21 @@ public class MemberService {
                     throw new CommonException(ApiResponseCode.DATA_DUPLICATE);
                 });
 
-        Member member = Member.create()
-                .account(memberSaveRequest.account())
-                .password(passwordEncoder.encode(memberSaveRequest.password()))
-                .name(memberSaveRequest.name())
-                .address(Address.create()
-                        .city(memberSaveRequest.city())
-                        .street(memberSaveRequest.street())
-                        .zipcode(memberSaveRequest.zipcode())
-                        .build())
-                .role(memberSaveRequest.role())
-                .build();
+        Member member = Member.create(memberSaveRequest, passwordEncoder);
 
         memberRepository.save(member);
 
-        return MemberResponse.builder()
-                .id(member.getId())
-                .account(member.getAccount())
-                .name(member.getName())
-                .city(member.getAddress().getCity())
-                .street(member.getAddress().getStreet())
-                .zipcode(member.getAddress().getCity())
-                .role(member.getRole())
-                .build();
+        return MemberResponse.create(member);
     }
 
     public Page<MemberResponse> findMembers(Pageable pageable, String account, String name) {
-        return memberRepository.findAll(pageable, account, name)
-                .map(member -> MemberResponse.builder()
-                        .id(member.getId())
-                        .account(member.getAccount())
-                        .name(member.getName())
-                        .city(member.getAddress().getCity())
-                        .street(member.getAddress().getStreet())
-                        .zipcode(member.getAddress().getCity())
-                        .role(member.getRole())
-                        .build());
+        return memberRepository.findAllWithQuerydsl(pageable, account, name)
+                .map(MemberResponse::create);
     }
 
     public MemberResponse findMember(Long id) {
         return memberRepository.findById(id)
-                .map(member -> MemberResponse.builder()
-                        .id(member.getId())
-                        .account(member.getAccount())
-                        .name(member.getName())
-                        .city(member.getAddress().getCity())
-                        .street(member.getAddress().getStreet())
-                        .zipcode(member.getAddress().getCity())
-                        .role(member.getRole())
-                        .build())
+                .map(MemberResponse::create)
                 .orElseThrow(() -> new CommonException(ApiResponseCode.DATA_NOT_FOUND));
     }
 
@@ -88,25 +53,9 @@ public class MemberService {
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new CommonException(ApiResponseCode.DATA_NOT_FOUND));
 
-        member.update(
-                memberUpdateRequest.name(),
-                Address.create()
-                        .city(memberUpdateRequest.city())
-                        .street(memberUpdateRequest.street())
-                        .zipcode(memberUpdateRequest.zipcode())
-                        .build(),
-                memberUpdateRequest.role()
-        );
+        member.update(memberUpdateRequest);
 
-        return MemberResponse.builder()
-                .id(member.getId())
-                .account(member.getAccount())
-                .name(member.getName())
-                .city(member.getAddress().getCity())
-                .street(member.getAddress().getStreet())
-                .zipcode(member.getAddress().getCity())
-                .role(member.getRole())
-                .build();
+        return MemberResponse.create(member);
     }
 
     @Transactional

@@ -29,11 +29,7 @@ public class Delivery {
     @Builder(builderMethodName = "create")
     public Delivery(String city, String street, String zipcode) {
         this.status = DeliveryStatus.READY;
-        this.address = Address.create()
-                .city(city)
-                .street(street)
-                .zipcode(zipcode)
-                .build();
+        this.address = Address.create(city, street, zipcode);
     }
 
     public void setOrder(Order order) {

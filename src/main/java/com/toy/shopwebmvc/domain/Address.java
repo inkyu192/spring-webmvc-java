@@ -15,10 +15,13 @@ public class Address {
     private String street;
     private String zipcode;
 
-    @Builder(builderMethodName = "create")
-    public Address(String city, String street, String zipcode) {
-        this.city = city;
-        this.street = street;
-        this.zipcode = zipcode;
+    public static Address create(String city, String street, String zipcode) {
+        Address address = new Address();
+
+        address.city = city;
+        address.street = street;
+        address.zipcode = zipcode;
+
+        return address;
     }
 }

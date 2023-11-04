@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 public enum ApiResponseCode {
 
     SUCCESS("성공"),
-    PARAMETER_NOT_VALID("파라미터 유효하지 않음"),
+    PARAMETER_NOT_VALID("유효성 검증 실패"),
     ORDER_NOT_CANCEL("주문 취소가 불가"),
     QUANTITY_NOT_ENOUGH("수량 부족"),
     DATA_DUPLICATE("데이터 중복"),
