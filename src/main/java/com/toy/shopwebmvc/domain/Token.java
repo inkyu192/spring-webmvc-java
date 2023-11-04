@@ -1,6 +1,5 @@
 package com.toy.shopwebmvc.domain;
 
-import lombok.Builder;
 import lombok.Getter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
@@ -13,9 +12,12 @@ public class Token {
     private String account;
     private String refreshToken;
 
-    @Builder(builderMethodName = "create")
-    public Token(String account, String refreshToken) {
-        this.account = account;
-        this.refreshToken = refreshToken;
+    public static Token create(String account, String refreshToken) {
+        Token token = new Token();
+
+        token.account = account;
+        token.refreshToken = refreshToken;
+
+        return token;
     }
 }

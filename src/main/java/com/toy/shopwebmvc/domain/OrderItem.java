@@ -2,7 +2,6 @@ package com.toy.shopwebmvc.domain;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -28,13 +27,14 @@ public class OrderItem extends BaseDomain {
     private int orderPrice;
     private int count;
 
-    @Builder(builderMethodName = "create")
-    public OrderItem(Item item, int orderPrice, int count) {
-        this.item = item;
-        this.orderPrice = orderPrice;
-        this.count = count;
+    public static OrderItem create(Item item, int orderPrice, int count) {
+        OrderItem orderItem = new OrderItem();
 
-        item.removeQuantity(count);
+        orderItem.item = item;
+        orderItem.orderPrice = orderPrice;
+        orderItem.count = count;
+
+        return orderItem;
     }
 
     public void setOrder(Order order) {

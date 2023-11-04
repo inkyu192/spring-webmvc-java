@@ -23,27 +23,27 @@ public class ItemService {
 
     @Transactional
     public ItemResponse saveItem(ItemSaveRequest itemSaveRequest) {
-        Item item = Item.create()
-                .name(itemSaveRequest.name())
-                .description(itemSaveRequest.description())
-                .price(itemSaveRequest.price())
-                .quantity(itemSaveRequest.quantity())
-                .category(itemSaveRequest.category())
-                .build();
+        Item item = Item.create(
+                itemSaveRequest.name(),
+                itemSaveRequest.description(),
+                itemSaveRequest.price(),
+                itemSaveRequest.quantity(),
+                itemSaveRequest.category()
+        );
 
         itemRepository.save(item);
 
-        return new ItemResponse(item);
+        return ItemResponse.create(item);
     }
 
     public Page<ItemResponse> findItems(String name, Pageable pageable) {
         return itemRepository.findAll(name, pageable)
-                .map(ItemResponse::new);
+                .map(ItemResponse::create);
     }
 
     public ItemResponse findItem(Long id) {
         return itemRepository.findById(id)
-                .map(ItemResponse::new)
+                .map(ItemResponse::create)
                 .orElseThrow(() -> new CommonException(DATA_NOT_FOUND));
     }
 
@@ -60,7 +60,7 @@ public class ItemService {
                 itemUpdateRequest.category()
         );
 
-        return new ItemResponse(item);
+        return ItemResponse.create(item);
     }
 
     @Transactional

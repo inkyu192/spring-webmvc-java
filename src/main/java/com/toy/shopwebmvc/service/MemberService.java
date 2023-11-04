@@ -1,6 +1,7 @@
 package com.toy.shopwebmvc.service;
 
 import com.toy.shopwebmvc.constant.ApiResponseCode;
+import com.toy.shopwebmvc.domain.Address;
 import com.toy.shopwebmvc.domain.Member;
 import com.toy.shopwebmvc.dto.request.MemberSaveRequest;
 import com.toy.shopwebmvc.dto.request.MemberUpdateRequest;
@@ -30,7 +31,17 @@ public class MemberService {
                     throw new CommonException(ApiResponseCode.DATA_DUPLICATE);
                 });
 
-        Member member = Member.create(memberSaveRequest, passwordEncoder);
+        Member member = Member.create(
+                memberSaveRequest.account(),
+                passwordEncoder.encode(memberSaveRequest.password()),
+                memberSaveRequest.name(),
+                memberSaveRequest.role(),
+                Address.create(
+                        memberSaveRequest.city(),
+                        memberSaveRequest.street(),
+                        memberSaveRequest.zipcode()
+                )
+        );
 
         memberRepository.save(member);
 
@@ -53,7 +64,15 @@ public class MemberService {
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new CommonException(ApiResponseCode.DATA_NOT_FOUND));
 
-        member.update(memberUpdateRequest);
+        member.update(
+                memberUpdateRequest.name(),
+                memberUpdateRequest.role(),
+                Address.create(
+                        memberUpdateRequest.city(),
+                        memberUpdateRequest.street(),
+                        memberUpdateRequest.zipcode()
+                )
+        );
 
         return MemberResponse.create(member);
     }

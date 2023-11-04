@@ -3,7 +3,6 @@ package com.toy.shopwebmvc.domain;
 import com.toy.shopwebmvc.constant.DeliveryStatus;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -26,10 +25,13 @@ public class Delivery {
     @Enumerated(EnumType.STRING)
     private DeliveryStatus status;
 
-    @Builder(builderMethodName = "create")
-    public Delivery(String city, String street, String zipcode) {
-        this.status = DeliveryStatus.READY;
-        this.address = Address.create(city, street, zipcode);
+    public static Delivery create(Address address) {
+        Delivery delivery = new Delivery();
+
+        delivery.status = DeliveryStatus.READY;
+        delivery.address = address;
+
+        return delivery;
     }
 
     public void setOrder(Order order) {

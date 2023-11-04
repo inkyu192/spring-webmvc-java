@@ -5,7 +5,6 @@ import com.toy.shopwebmvc.constant.Category;
 import com.toy.shopwebmvc.exception.CommonException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -28,13 +27,16 @@ public class Item extends BaseDomain {
     @Enumerated(EnumType.STRING)
     private Category category;
 
-    @Builder(builderMethodName = "create")
-    public Item(String name, String description, int price, int quantity, Category category) {
-        this.name = name;
-        this.description = description;
-        this.price = price;
-        this.quantity = quantity;
-        this.category = category;
+    public static Item create(String name, String description, int price, int quantity, Category category) {
+        Item item = new Item();
+
+        item.name = name;
+        item.description = description;
+        item.price = price;
+        item.quantity = quantity;
+        item.category = category;
+
+        return item;
     }
 
     public void update(String name, String description, int price, int quantity, Category category) {

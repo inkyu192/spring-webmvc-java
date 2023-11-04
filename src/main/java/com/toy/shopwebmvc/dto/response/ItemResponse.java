@@ -9,7 +9,13 @@ public record ItemResponse(
         int price,
         int quantity
 ) {
-    public ItemResponse(Item item) {
-        this(item.getId(), item.getName(), item.getDescription(), item.getPrice(), item.getQuantity());
+    public static ItemResponse create(Item item) {
+        return new ItemResponse(
+                item.getId(),
+                item.getName(),
+                item.getDescription(),
+                item.getPrice(),
+                item.getQuantity()
+        );
     }
 }

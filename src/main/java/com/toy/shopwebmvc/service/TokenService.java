@@ -104,10 +104,7 @@ public class TokenService {
                 .signWith(refreshTokenKey, SignatureAlgorithm.HS256)
                 .compact();
 
-        tokenRepository.save(Token.create()
-                .account(authentication.getName())
-                .refreshToken(refreshToken)
-                .build());
+        tokenRepository.save(Token.create(authentication.getName(), refreshToken));
 
         return refreshToken;
     }

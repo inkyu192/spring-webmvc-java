@@ -6,7 +6,6 @@ import com.toy.shopwebmvc.constant.OrderStatus;
 import com.toy.shopwebmvc.exception.CommonException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -41,13 +40,16 @@ public class Order extends BaseDomain {
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
-    @Builder(builderMethodName = "create")
-    public Order(Member member, Delivery delivery, List<OrderItem> orderItems) {
-        this.setMember(member);
-        this.setDelivery(delivery);
-        orderItems.forEach(this::setOrderItem);
-        this.status = OrderStatus.ORDER;
-        this.orderDate = LocalDateTime.now();
+    public static Order create(Member member, Delivery delivery, List<OrderItem> orderItems) {
+        Order order = new Order();
+
+        order.setMember(member);
+        order.setDelivery(delivery);
+        orderItems.forEach(order::setOrderItem);
+        order.status = OrderStatus.ORDER;
+        order.orderDate = LocalDateTime.now();
+
+        return order;
     }
 
     public void setMember(Member member) {
