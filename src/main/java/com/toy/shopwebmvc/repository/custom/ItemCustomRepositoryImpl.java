@@ -1,10 +1,12 @@
 package com.toy.shopwebmvc.repository.custom;
 
-import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.toy.shopwebmvc.domain.Item;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
@@ -26,39 +28,64 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
     }
 
     @Override
-    public List<Item> findAllWithJpql(String name) {
-        String jpql = "select i from Item i" +
-                " join fetch i.category c";
+    public Page<Item> findAllWithJpql(Pageable pageable, String name) {
+        String countJpql = """
+                SELECT COUNT(i)
+                FROM Item i
+                """;
+        String contentJpql = """
+                SELECT i
+                FROM Item i
+                JOIN FETCH i.category c
+                """;
 
         ArrayList<String> whereCondition = new ArrayList<>();
 
-        if (StringUtils.hasText(name)) whereCondition.add("i.name like concat('%', :name, '%')");
+        if (StringUtils.hasText(name)) whereCondition.add("i.name LIKE CONCAT('%', :name, '%')");
 
         if (!whereCondition.isEmpty()) {
-            jpql += " where ";
-            jpql += String.join(" and ", whereCondition);
+            countJpql += " WHERE ";
+            countJpql += String.join(" AND ", whereCondition);
+
+            contentJpql += " WHERE ";
+            contentJpql += String.join(" AND ", whereCondition);
         }
 
-        TypedQuery<Item> query = entityManager.createQuery(jpql, Item.class);
+        TypedQuery<Long> countQuery = entityManager.createQuery(countJpql, Long.class);
+        TypedQuery<Item> contentQuery = entityManager.createQuery(contentJpql, Item.class);
 
-        if (StringUtils.hasText(name)) query.setParameter("name", name);
+        if (StringUtils.hasText(name)){
+            countQuery.setParameter("name", name);
+            contentQuery.setParameter("name", name);
+        }
 
-        return query.getResultList();
+        contentQuery.setFirstResult((int) pageable.getOffset());
+        contentQuery.setMaxResults(pageable.getPageSize());
+
+        return new PageImpl<>(contentQuery.getResultList(), pageable, countQuery.getSingleResult());
     }
 
     @Override
-    public List<Item> findAllWithQuerydsl(String name) {
-        return queryFactory
+    public Page<Item> findAllWithQuerydsl(Pageable pageable, String name) {
+        int count = queryFactory
+                .selectOne()
+                .from(item)
+                .where(
+                        StringUtils.hasText(name) ? item.name.like("%" + name + "%") : null
+                )
+                .fetch()
+                .size();
+
+        List<Item> content = queryFactory
                 .select(item)
                 .from(item)
-                .where(name(name))
+                .where(
+                        StringUtils.hasText(name) ? item.name.like("%" + name + "%") : null
+                )
+                .limit(pageable.getPageSize())
+                .offset(pageable.getOffset())
                 .fetch();
-    }
 
-    private BooleanExpression name(String name) {
-        if (StringUtils.hasText(name)) {
-            return item.name.like("%" + name + "%");
-        }
-        return null;
+        return new PageImpl<>(content, pageable, count);
     }
 }

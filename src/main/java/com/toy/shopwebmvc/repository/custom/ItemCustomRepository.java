@@ -1,12 +1,12 @@
 package com.toy.shopwebmvc.repository.custom;
 
 import com.toy.shopwebmvc.domain.Item;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface ItemCustomRepository {
 
-    List<Item> findAllWithJpql(String name);
+    Page<Item> findAllWithJpql(Pageable pageable, String name);
 
-    List<Item> findAllWithQuerydsl(String name);
+    Page<Item> findAllWithQuerydsl(Pageable pageable, String name);
 }

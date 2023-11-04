@@ -28,8 +28,15 @@ public class MemberCustomRepositoryImpl implements MemberCustomRepository {
 
     @Override
     public Page<Member> findAllWithJpql(Pageable pageable, String account, String name) {
-        String countJpql = "SELECT COUNT(m) FROM Member m";
-        String contentJpql = "SELECT m FROM Member m";
+        String countJpql = """
+                SELECT COUNT(m)
+                FROM Member m
+                """;
+
+        String contentJpql = """
+                SELECT m
+                FROM Member m
+                """;
 
         ArrayList<String> whereCondition = new ArrayList<>();
 
@@ -66,7 +73,7 @@ public class MemberCustomRepositoryImpl implements MemberCustomRepository {
     @Override
     public Page<Member> findAllWithQuerydsl(Pageable pageable, String account, String name) {
         int count = queryFactory
-                .select(member)
+                .selectOne()
                 .from(member)
                 .where(
                         StringUtils.hasText(account) ? member.account.like("%" + account + "%") : null,

@@ -2,10 +2,9 @@ package com.toy.shopwebmvc.controller;
 
 import com.toy.shopwebmvc.dto.request.ItemSaveRequest;
 import com.toy.shopwebmvc.dto.request.ItemUpdateRequest;
-import com.toy.shopwebmvc.dto.response.ItemResponse;
-import com.toy.shopwebmvc.dto.response.MemberResponse;
-import com.toy.shopwebmvc.service.ItemService;
 import com.toy.shopwebmvc.dto.response.ApiResponse;
+import com.toy.shopwebmvc.dto.response.ItemResponse;
+import com.toy.shopwebmvc.service.ItemService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,7 +27,7 @@ public class ItemController {
 
     @GetMapping
     public ApiResponse<Page<ItemResponse>> findItems(Pageable pageable, @RequestParam(required = false) String name) {
-        Page<ItemResponse> page = itemService.findItems(name, pageable);
+        Page<ItemResponse> page = itemService.findItems(pageable, name);
 
         return new ApiResponse<>(page);
     }

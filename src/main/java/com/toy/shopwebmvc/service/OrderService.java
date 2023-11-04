@@ -66,7 +66,7 @@ public class OrderService {
             DeliveryStatus deliveryStatus,
             Pageable pageable
     ) {
-        return orderRepository.findAll(memberId, orderStatus, deliveryStatus, pageable)
+        return orderRepository.findAllWithQuerydsl(pageable, memberId, orderStatus, deliveryStatus)
                 .map(OrderResponse::new);
     }
 

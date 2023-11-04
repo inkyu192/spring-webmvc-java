@@ -1,12 +1,14 @@
 package com.toy.shopwebmvc.repository.custom;
 
-import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.toy.shopwebmvc.constant.DeliveryStatus;
-import com.toy.shopwebmvc.domain.Order;
 import com.toy.shopwebmvc.constant.OrderStatus;
+import com.toy.shopwebmvc.domain.Order;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -29,10 +31,25 @@ public class OrderCustomRepositoryImpl implements OrderCustomRepository {
     }
 
     @Override
-    public List<Order> findAllWithJpql(Long memberId, OrderStatus orderStatus, DeliveryStatus deliveryStatus) {
-        String jpql = "select o from Order o" +
-                " join fetch o.member m" +
-                " join fetch o.delivery d";
+    public Page<Order> findAllWithJpql(
+            Pageable pageable,
+            Long memberId,
+            OrderStatus orderStatus,
+            DeliveryStatus deliveryStatus
+    ) {
+        String countJpql = """
+                SELECT COUNT(o)
+                FROM Order o
+                JOIN o.member m
+                JOIN o.delivery d
+                """;
+
+        String contentJpql = """
+                SELECT o
+                FROM Order o
+                JOIN FETCH o.member m
+                JOIN FETCH o.delivery d
+                """;
 
         ArrayList<String> whereCondition = new ArrayList<>();
 
@@ -41,22 +58,58 @@ public class OrderCustomRepositoryImpl implements OrderCustomRepository {
         if (deliveryStatus != null) whereCondition.add("d.status = :deliveryStatus");
 
         if (!whereCondition.isEmpty()) {
-            jpql += " where ";
-            jpql += String.join(" and ", whereCondition);
+            countJpql += " WHERE ";
+            countJpql += String.join(" AND ", whereCondition);
+
+            contentJpql += " WHERE ";
+            contentJpql += String.join(" AND ", whereCondition);
         }
 
-        TypedQuery<Order> query = entityManager.createQuery(jpql, Order.class);
+        TypedQuery<Long> countQuery = entityManager.createQuery(countJpql, Long.class);
+        TypedQuery<Order> contentQuery = entityManager.createQuery(contentJpql, Order.class);
 
-        if (memberId != null) query.setParameter("memberId", memberId);
-        if (orderStatus != null) query.setParameter("orderStatus", orderStatus);
-        if (deliveryStatus != null) query.setParameter("deliveryStatus", deliveryStatus);
+        if (memberId != null){
+            countQuery.setParameter("memberId", memberId);
+            contentQuery.setParameter("memberId", memberId);
+        }
 
-        return query.getResultList();
+        if (orderStatus != null){
+            countQuery.setParameter("orderStatus", orderStatus);
+            contentQuery.setParameter("orderStatus", orderStatus);
+        }
+
+        if (deliveryStatus != null){
+            countQuery.setParameter("deliveryStatus", deliveryStatus);
+            contentQuery.setParameter("deliveryStatus", deliveryStatus);
+        }
+
+        contentQuery.setFirstResult((int) pageable.getOffset());
+        contentQuery.setMaxResults(pageable.getPageSize());
+
+        return new PageImpl<>(contentQuery.getResultList(), pageable, countQuery.getSingleResult());
     }
 
     @Override
-    public List<Order> findAllWithQuerydsl(Long memberId, OrderStatus orderStatus, DeliveryStatus deliveryStatus) {
-        return queryFactory
+    public Page<Order> findAllWithQuerydsl(
+            Pageable pageable,
+            Long memberId,
+            OrderStatus orderStatus,
+            DeliveryStatus deliveryStatus
+    ) {
+        int count = queryFactory
+                .selectOne()
+                .from(order)
+                .join(order.member, member)
+                .join(order.delivery, delivery)
+                .where(
+                        memberId != null ? member.id.eq(memberId) : null,
+                        orderStatus != null ? order.status.eq(orderStatus) : null,
+                        deliveryStatus != null ? delivery.status.eq(deliveryStatus) : null
+                )
+                .fetch()
+                .size();
+
+        List<Order> content = queryFactory
                 .select(order)
                 .from(order)
                 .join(order.member, member)
@@ -64,31 +117,14 @@ public class OrderCustomRepositoryImpl implements OrderCustomRepository {
                 .join(order.delivery, delivery)
                 .fetchJoin()
                 .where(
-                        memberId(memberId),
-                        orderStatus(orderStatus),
-                        deliveryStatus(deliveryStatus)
+                        memberId != null ? member.id.eq(memberId) : null,
+                        orderStatus != null ? order.status.eq(orderStatus) : null,
+                        deliveryStatus != null ? delivery.status.eq(deliveryStatus) : null
                 )
+                .limit(pageable.getPageSize())
+                .offset(pageable.getOffset())
                 .fetch();
-    }
 
-    private BooleanExpression memberId(Long memberId) {
-        if (memberId != null) {
-            return member.id.eq(memberId);
-        }
-        return null;
-    }
-
-    private BooleanExpression orderStatus(OrderStatus orderStatus) {
-        if (orderStatus != null) {
-            return order.status.eq(orderStatus);
-        }
-        return null;
-    }
-
-    private BooleanExpression deliveryStatus(DeliveryStatus deliveryStatus) {
-        if (deliveryStatus != null) {
-            return delivery.status.eq(deliveryStatus);
-        }
-        return null;
+        return new PageImpl<>(content, pageable, count);
     }
 }
