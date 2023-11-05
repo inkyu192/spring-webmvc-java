@@ -73,7 +73,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             AuthenticationException failed
     ) throws IOException, ServletException {
         String result = objectMapper.writeValueAsString(
-                new ApiResponse<>(ApiResponseCode.BAD_REQUEST.name(), "인증 실패")
+                new ApiResponse<>(ApiResponseCode.BAD_REQUEST, "인증 실패")
         );
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);

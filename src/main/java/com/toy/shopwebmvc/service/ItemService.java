@@ -1,5 +1,6 @@
 package com.toy.shopwebmvc.service;
 
+import com.toy.shopwebmvc.constant.ApiResponseCode;
 import com.toy.shopwebmvc.dto.request.ItemSaveRequest;
 import com.toy.shopwebmvc.dto.response.ItemResponse;
 import com.toy.shopwebmvc.repository.ItemRepository;
@@ -11,7 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.toy.shopwebmvc.constant.ApiResponseCode.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -43,7 +43,7 @@ public class ItemService {
     public ItemResponse findItem(Long id) {
         return itemRepository.findById(id)
                 .map(ItemResponse::new)
-                .orElseThrow(() -> new CommonException(DATA_NOT_FOUND));
+                .orElseThrow(() -> new CommonException(ApiResponseCode.DATA_NOT_FOUND));
     }
 
     @Transactional

@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.toy.shopwebmvc.constant.ApiResponseCode.DATA_NOT_FOUND;
 
 
 @Service
@@ -34,13 +33,13 @@ public class OrderService {
     @Transactional
     public OrderResponse saveOrder(OrderSaveRequest orderSaveRequest) {
         Member member = memberRepository.findById(orderSaveRequest.memberId())
-                .orElseThrow(() -> new CommonException(DATA_NOT_FOUND));
+                .orElseThrow(() -> new CommonException(ApiResponseCode.DATA_NOT_FOUND));
 
         List<OrderItem> orderItems = new ArrayList<>();
 
         orderSaveRequest.orderItems().forEach(orderItem -> {
             Item item = itemRepository.findById(orderItem.itemId())
-                    .orElseThrow(() -> new CommonException(DATA_NOT_FOUND));
+                    .orElseThrow(() -> new CommonException(ApiResponseCode.DATA_NOT_FOUND));
 
             orderItems.add(OrderItem.create(item, item.getPrice(), orderItem.count()));
         });

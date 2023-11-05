@@ -21,15 +21,14 @@ public class ControllerAdvice {
 
     @ExceptionHandler
     public ApiResponse<Void> handler(CommonException e) {
-        return new ApiResponse<>(e.getCode(), e.getMessage());
+        return new ApiResponse<>(e.getApiResponseCode());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiResponse<List<String>> handler(MethodArgumentNotValidException e) {
         return new ApiResponse<>(
-                ApiResponseCode.PARAMETER_NOT_VALID.name(),
-                ApiResponseCode.PARAMETER_NOT_VALID.getMessage(),
+                ApiResponseCode.PARAMETER_NOT_VALID,
                 e.getBindingResult().getFieldErrors().stream()
                         .map(FieldError::getField)
                         .toList()
@@ -39,7 +38,7 @@ public class ControllerAdvice {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiResponse<Void> handler(JwtException e) {
-        return new ApiResponse<>(ApiResponseCode.BAD_REQUEST.name(), e.getMessage());
+        return new ApiResponse<>(ApiResponseCode.BAD_REQUEST, e.getMessage());
     }
 
     @ExceptionHandler
@@ -47,6 +46,6 @@ public class ControllerAdvice {
     public ApiResponse<Void> handler(Exception e) {
         log.error("[ExceptionHandler]", e);
 
-        return new ApiResponse<>(ApiResponseCode.SYSTEM_ERROR.name(), ApiResponseCode.SYSTEM_ERROR.getMessage());
+        return new ApiResponse<>(ApiResponseCode.SYSTEM_ERROR);
     }
 }

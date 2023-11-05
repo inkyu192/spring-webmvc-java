@@ -18,7 +18,15 @@ public record ApiResponse<T>(
         this(ApiResponseCode.SUCCESS.name(), ApiResponseCode.SUCCESS.getMessage(), data);
     }
 
-    public ApiResponse(String code, String message) {
-        this(code, message, null);
+    public ApiResponse(ApiResponseCode apiResponseCode) {
+        this(apiResponseCode.name(), apiResponseCode.getMessage(), null);
+    }
+
+    public ApiResponse(ApiResponseCode apiResponseCode, T data) {
+        this(apiResponseCode.name(), apiResponseCode.getMessage(), data);
+    }
+
+    public ApiResponse(ApiResponseCode apiResponseCode, String message) {
+        this(apiResponseCode.name(), message, null);
     }
 }
