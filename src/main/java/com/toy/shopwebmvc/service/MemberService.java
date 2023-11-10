@@ -49,7 +49,7 @@ public class MemberService {
     }
 
     public Page<MemberResponse> findMembers(Pageable pageable, String account, String name) {
-        return memberRepository.findAllWithQuerydsl(pageable, account, name)
+        return memberRepository.findAllWithJpql(pageable, account, name)
                 .map(MemberResponse::new);
     }
 

@@ -14,16 +14,16 @@ public record ApiResponse<T>(
         this(ApiResponseCode.SUCCESS.name(), ApiResponseCode.SUCCESS.getMessage(), null);
     }
 
-    public ApiResponse(T data) {
-        this(ApiResponseCode.SUCCESS.name(), ApiResponseCode.SUCCESS.getMessage(), data);
+    public ApiResponse(T payload) {
+        this(ApiResponseCode.SUCCESS.name(), ApiResponseCode.SUCCESS.getMessage(), payload);
     }
 
     public ApiResponse(ApiResponseCode apiResponseCode) {
         this(apiResponseCode.name(), apiResponseCode.getMessage(), null);
     }
 
-    public ApiResponse(ApiResponseCode apiResponseCode, T data) {
-        this(apiResponseCode.name(), apiResponseCode.getMessage(), data);
+    public ApiResponse(ApiResponseCode apiResponseCode, T payload) {
+        this(apiResponseCode.name(), apiResponseCode.getMessage(), payload);
     }
 
     public ApiResponse(ApiResponseCode apiResponseCode, String message) {
