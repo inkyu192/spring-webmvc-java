@@ -8,14 +8,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
 
 import static com.toy.shopwebmvc.domain.QMember.member;
 
-@Repository
 public class MemberCustomRepositoryImpl implements MemberCustomRepository {
 
     private final EntityManager entityManager;

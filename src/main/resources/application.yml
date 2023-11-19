@@ -22,3 +22,9 @@ jwt:
   refresh-token:
     key: VlwEyVBsYt9V7zq57TejMnVUyZblYcfPQye08f7MgAA9XkHa
     expiration-time: 60
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"

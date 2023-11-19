@@ -63,9 +63,8 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
                         authorizationManagerRequestMatcherRegistry
-                                .requestMatchers(HttpMethod.POST, "/member").permitAll()
-                                .requestMatchers("/token/refresh").permitAll()
-                                .anyRequest().authenticated()
+                                .requestMatchers(HttpMethod.GET, "/member").authenticated()
+                                .anyRequest().permitAll()
                 )
                 .build();
     }
