@@ -1,6 +1,5 @@
 package com.toy.shopwebmvc.common;
 
-import com.toy.shopwebmvc.constant.Role;
 import com.toy.shopwebmvc.domain.Member;
 import io.jsonwebtoken.Claims;
 import lombok.Getter;
