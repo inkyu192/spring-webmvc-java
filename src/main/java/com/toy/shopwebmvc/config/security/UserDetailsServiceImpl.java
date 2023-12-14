@@ -1,4 +1,4 @@
-package com.toy.shopwebmvc.common;
+package com.toy.shopwebmvc.config.security;
 
 import com.toy.shopwebmvc.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;

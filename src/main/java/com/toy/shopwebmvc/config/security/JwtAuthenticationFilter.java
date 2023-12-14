@@ -1,8 +1,6 @@
-package com.toy.shopwebmvc.filter;
+package com.toy.shopwebmvc.config.security;
 
 
-import com.toy.shopwebmvc.common.UserDetailsImpl;
-import com.toy.shopwebmvc.service.TokenService;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -18,13 +16,13 @@ import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 
-public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
+public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
 
-    private final TokenService tokenService;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, TokenService tokenService) {
+    public JwtAuthenticationFilter(AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider) {
         super(authenticationManager);
-        this.tokenService = tokenService;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @Override
@@ -33,10 +31,10 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             HttpServletResponse response,
             FilterChain chain
     ) throws IOException, ServletException {
-        String accessToken = tokenService.getAccessToken(request);
+        String accessToken = jwtTokenProvider.getAccessToken(request);
 
         if (StringUtils.hasText(accessToken)) {
-            Claims claims = tokenService.parseClaims(accessToken);
+            Claims claims = jwtTokenProvider.parseClaims(accessToken);
             UserDetails userDetails = new UserDetailsImpl(claims);
             Authentication authentication = new UsernamePasswordAuthenticationToken(
                     userDetails,

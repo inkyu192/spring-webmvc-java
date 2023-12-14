@@ -1,4 +1,4 @@
-package com.toy.shopwebmvc.filter;
+package com.toy.shopwebmvc.config.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.toy.shopwebmvc.constant.ApiResponseCode;

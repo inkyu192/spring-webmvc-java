@@ -1,15 +1,16 @@
 package com.toy.shopwebmvc.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.toy.shopwebmvc.filter.JwtAuthenticationFilter;
-import com.toy.shopwebmvc.filter.JwtAuthorizationFilter;
-import com.toy.shopwebmvc.filter.JwtExceptionFilter;
-import com.toy.shopwebmvc.service.TokenService;
+import com.toy.shopwebmvc.config.security.JwtAuthenticationFilter;
+import com.toy.shopwebmvc.config.security.JwtExceptionFilter;
+import com.toy.shopwebmvc.config.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -22,18 +23,13 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration(proxyBeanMethods = false)
 public class SecurityConfig {
 
-    private final AuthenticationConfiguration authenticationConfiguration;
-    private final ObjectMapper objectMapper;
-    private final TokenService tokenService;
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
     @Bean
     @SneakyThrows
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) {
+    public SecurityFilterChain securityFilterChain(
+            HttpSecurity httpSecurity,
+            JwtAuthenticationFilter jwtAuthenticationFilter,
+            JwtExceptionFilter jwtExceptionFilter
+    ) {
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .rememberMe(AbstractHttpConfigurer::disable)
@@ -42,25 +38,11 @@ public class SecurityConfig {
                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .logout(AbstractHttpConfigurer::disable)
-                .formLogin(httpSecurityFormLoginConfigurer ->
-                        httpSecurityFormLoginConfigurer
-                                .usernameParameter("account")
-                                .disable()
-                )
-                .addFilterBefore(new JwtExceptionFilter(objectMapper), JwtAuthenticationFilter.class)
-                .addFilter(
-                        new JwtAuthenticationFilter(
-                                authenticationConfiguration.getAuthenticationManager(),
-                                objectMapper,
-                                tokenService
-                        )
-                )
-                .addFilter(
-                        new JwtAuthorizationFilter(
-                                authenticationConfiguration.getAuthenticationManager(),
-                                tokenService
-                        )
-                )
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable)
+//                .addFilterBefore(jwtExceptionFilter, JwtAuthenticationFilter.class)
+                .addFilter(jwtExceptionFilter)
+                .addFilter(jwtAuthenticationFilter)
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
                         authorizationManagerRequestMatcherRegistry
                                 .requestMatchers("/actuator/**").permitAll()
@@ -69,5 +51,37 @@ public class SecurityConfig {
                                 .anyRequest().authenticated()
                 )
                 .build();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    @SneakyThrows
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
+
+    @Bean
+    public JwtTokenProvider jwtTokenProvider(
+            @Value("${jwt.access-token.key}") String accessTokenKey,
+            @Value("${jwt.access-token.expiration-time}") long accessTokenExpirationTime
+    ) {
+        return new JwtTokenProvider(accessTokenKey, accessTokenExpirationTime);
+    }
+
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter(
+            AuthenticationManager authenticationManager,
+            JwtTokenProvider jwtTokenProvider
+    ) {
+        return new JwtAuthenticationFilter(authenticationManager, jwtTokenProvider);
+    }
+
+    @Bean
+    public JwtExceptionFilter jwtExceptionFilter(ObjectMapper objectMapper) {
+        return new JwtExceptionFilter(objectMapper);
     }
 }
