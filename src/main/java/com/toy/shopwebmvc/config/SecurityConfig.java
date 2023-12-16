@@ -40,8 +40,7 @@ public class SecurityConfig {
                 .logout(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
-//                .addFilterBefore(jwtExceptionFilter, JwtAuthenticationFilter.class)
-                .addFilter(jwtExceptionFilter)
+                .addFilterBefore(jwtExceptionFilter, JwtAuthenticationFilter.class)
                 .addFilter(jwtAuthenticationFilter)
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
                         authorizationManagerRequestMatcherRegistry
