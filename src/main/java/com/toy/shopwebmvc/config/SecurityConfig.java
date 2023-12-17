@@ -48,8 +48,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
                         authorizationManagerRequestMatcherRegistry
                                 .requestMatchers("/actuator/**").permitAll()
-                                .requestMatchers("/login").permitAll()
-                                .requestMatchers("/refresh").permitAll()
+                                .requestMatchers("/auth/**").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/member").permitAll()
                                 .anyRequest().authenticated()
                 )
