@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -65,6 +66,12 @@ public class SecurityConfig {
     }
 
     @Bean
+    @SneakyThrows
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
+
+    @Bean
     public JwtTokenProvider jwtTokenProvider(
             @Value("${jwt.access-token.key}") String accessTokenKey,
             @Value("${jwt.access-token.expiration-time}") long accessTokenExpirationTime
@@ -75,10 +82,10 @@ public class SecurityConfig {
     @Bean
     @SneakyThrows
     public JwtAuthenticationFilter jwtAuthenticationFilter(
-            AuthenticationConfiguration authenticationConfiguration,
+            AuthenticationManager authenticationManager,
             JwtTokenProvider jwtTokenProvider
     ) {
-        return new JwtAuthenticationFilter(authenticationConfiguration.getAuthenticationManager(), jwtTokenProvider);
+        return new JwtAuthenticationFilter(authenticationManager, jwtTokenProvider);
     }
 
     @Bean
