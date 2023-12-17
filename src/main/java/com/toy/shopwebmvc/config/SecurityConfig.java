@@ -4,17 +4,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.toy.shopwebmvc.config.security.JwtAuthenticationFilter;
 import com.toy.shopwebmvc.config.security.JwtExceptionFilter;
 import com.toy.shopwebmvc.config.security.JwtTokenProvider;
+import com.toy.shopwebmvc.config.security.UserDetailsServiceImpl;
+import com.toy.shopwebmvc.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -58,9 +60,8 @@ public class SecurityConfig {
     }
 
     @Bean
-    @SneakyThrows
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) {
-        return authenticationConfiguration.getAuthenticationManager();
+    public UserDetailsService userDetailsService(MemberRepository memberRepository) {
+        return new UserDetailsServiceImpl(memberRepository);
     }
 
     @Bean
@@ -72,11 +73,12 @@ public class SecurityConfig {
     }
 
     @Bean
+    @SneakyThrows
     public JwtAuthenticationFilter jwtAuthenticationFilter(
-            AuthenticationManager authenticationManager,
+            AuthenticationConfiguration authenticationConfiguration,
             JwtTokenProvider jwtTokenProvider
     ) {
-        return new JwtAuthenticationFilter(authenticationManager, jwtTokenProvider);
+        return new JwtAuthenticationFilter(authenticationConfiguration.getAuthenticationManager(), jwtTokenProvider);
     }
 
     @Bean
