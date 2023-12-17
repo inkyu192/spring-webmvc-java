@@ -31,10 +31,10 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
             HttpServletResponse response,
             FilterChain chain
     ) throws IOException, ServletException {
-        String accessToken = jwtTokenProvider.getAccessToken(request);
+        String accessToken = getAccessToken(request);
 
         if (StringUtils.hasText(accessToken)) {
-            Claims claims = jwtTokenProvider.parseClaims(accessToken);
+            Claims claims = jwtTokenProvider.parseAccessToken(accessToken);
             UserDetails userDetails = new UserDetailsImpl(claims);
             Authentication authentication = new UsernamePasswordAuthenticationToken(
                     userDetails,
@@ -46,5 +46,16 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
         }
 
         chain.doFilter(request, response);
+    }
+
+    public String getAccessToken(HttpServletRequest request) {
+        String accessToken = null;
+        String token = request.getHeader("Authorization");
+
+        if (StringUtils.hasText(token) && token.startsWith("Bearer")) {
+            accessToken = token.replace("Bearer ", "");
+        }
+
+        return accessToken;
     }
 }

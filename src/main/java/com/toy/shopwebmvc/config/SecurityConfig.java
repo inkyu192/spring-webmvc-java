@@ -49,6 +49,7 @@ public class SecurityConfig {
                         authorizationManagerRequestMatcherRegistry
                                 .requestMatchers("/actuator/**").permitAll()
                                 .requestMatchers("/login").permitAll()
+                                .requestMatchers("/refresh").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/member").permitAll()
                                 .anyRequest().authenticated()
                 )
@@ -74,9 +75,11 @@ public class SecurityConfig {
     @Bean
     public JwtTokenProvider jwtTokenProvider(
             @Value("${jwt.access-token.key}") String accessTokenKey,
-            @Value("${jwt.access-token.expiration-time}") long accessTokenExpirationTime
+            @Value("${jwt.access-token.expiration-time}") long accessTokenExpirationTime,
+            @Value("${jwt.refresh-token.key}") String refreshTokenKey,
+            @Value("${jwt.refresh-token.expiration-time}") long refreshTokenExpirationTime
     ) {
-        return new JwtTokenProvider(accessTokenKey, accessTokenExpirationTime);
+        return new JwtTokenProvider(accessTokenKey, accessTokenExpirationTime, refreshTokenKey, refreshTokenExpirationTime);
     }
 
     @Bean
