@@ -5,12 +5,9 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 
 import java.security.Key;
 import java.util.Date;
-import java.util.stream.Collectors;
 
 public class JwtTokenProvider {
 
@@ -31,14 +28,12 @@ public class JwtTokenProvider {
         this.refreshTokenExpirationTime = refreshTokenExpirationTime * 60 * 1000;
     }
 
-    public String createAccessToken(Authentication authentication) {
+    public String createAccessToken(String account, String authorities) {
         return Jwts.builder()
                 .setHeaderParam("alg", "HS256")
                 .setHeaderParam("typ", "JWT")
-                .claim("account", authentication.getName())
-                .claim("authorities", authentication.getAuthorities().stream()
-                        .map(GrantedAuthority::getAuthority)
-                        .collect(Collectors.joining(",")))
+                .claim("account", account)
+                .claim("authorities", authorities)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(new Date().getTime() + accessTokenExpirationTime))
                 .signWith(accessTokenKey, SignatureAlgorithm.HS256)

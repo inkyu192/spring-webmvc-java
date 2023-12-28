@@ -15,9 +15,11 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -41,7 +43,12 @@ public class AuthService {
             throw new CommonException(ApiResponseCode.BAD_CREDENTIALS);
         }
 
-        String accessToken = jwtTokenProvider.createAccessToken(authentication);
+        String accessToken = jwtTokenProvider.createAccessToken(
+                authentication.getName(),
+                authentication.getAuthorities().stream()
+                        .map(GrantedAuthority::getAuthority)
+                        .collect(Collectors.joining(","))
+        );
         String refreshToken = jwtTokenProvider.createRefreshToken();
 
         tokenRepository.save(Token.create(authentication.getName(), refreshToken));
@@ -58,7 +65,10 @@ public class AuthService {
             claims = e.getClaims();
         }
 
-        String refreshToken = tokenRepository.findById((String) claims.get("account"))
+        String account = (String) claims.get("account");
+        String authorities = claims.get("authorities").toString();
+
+        String refreshToken = tokenRepository.findById(account)
                 .map(Token::getRefreshToken)
                 .orElseThrow(() -> new CommonException(ApiResponseCode.BAD_CREDENTIALS));
 
@@ -66,6 +76,6 @@ public class AuthService {
             throw new CommonException(ApiResponseCode.BAD_CREDENTIALS);
         }
 
-        return new TokenResponse(jwtTokenProvider.createAccessToken(SecurityContextHolder.getContext().getAuthentication()));
+        return new TokenResponse(jwtTokenProvider.createAccessToken(account, authorities));
     }
 }
