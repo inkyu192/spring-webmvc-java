@@ -15,8 +15,7 @@ class ItemService(
 
     @Transactional
     fun saveItem(itemSaveRequest: ItemSaveRequest): ItemResponse {
-        val item = Item(
-            null,
+        val item = Item.create(
             itemSaveRequest.name,
             itemSaveRequest.description,
             itemSaveRequest.price,

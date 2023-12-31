@@ -1,6 +1,7 @@
 package spring.web.kotlin.controller
 
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import spring.web.kotlin.dto.response.ItemResponse
@@ -13,9 +14,8 @@ import spring.web.kotlin.service.ItemService
 class ItemController(
     val itemService: ItemService
 ) {
-
     @PostMapping
-    fun saveItem(itemSaveRequest: ItemSaveRequest): ApiResponse<ItemResponse> {
+    fun saveItem(@RequestBody itemSaveRequest: ItemSaveRequest): ApiResponse<ItemResponse> {
         val saveItem = itemService.saveItem(itemSaveRequest)
 
         return ApiResponse(saveItem)
