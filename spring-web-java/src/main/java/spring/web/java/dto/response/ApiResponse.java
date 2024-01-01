@@ -25,8 +25,4 @@ public record ApiResponse<T>(
     public ApiResponse(ApiResponseCode apiResponseCode, T payload) {
         this(apiResponseCode.name(), apiResponseCode.getMessage(), payload);
     }
-
-    public ApiResponse(ApiResponseCode apiResponseCode, String message) {
-        this(apiResponseCode.name(), message, null);
-    }
 }

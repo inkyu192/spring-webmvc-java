@@ -18,7 +18,6 @@ public class Item extends BaseDomain {
     @GeneratedValue
     @Column(name = "item_id")
     private Long id;
-
     private String name;
     private String description;
     private int price;

@@ -49,8 +49,8 @@ public class SecurityConfig {
                         authorizationManagerRequestMatcherRegistry
                                 .requestMatchers("/actuator/**").permitAll()
                                 .requestMatchers("/auth/**").permitAll()
-                                .requestMatchers(HttpMethod.POST, "/member").permitAll()
-                                .anyRequest().authenticated()
+                                .requestMatchers(HttpMethod.GET, "/member/**").authenticated()
+                                .anyRequest().permitAll()
                 )
                 .build();
     }

@@ -6,6 +6,7 @@ import jakarta.persistence.TypedQuery;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.util.StringUtils;
 import spring.web.java.domain.Item;
 
@@ -35,13 +36,22 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
         String contentJpql = """
                 SELECT i
                 FROM Item i
-                JOIN FETCH i.category c
                 WHERE 1 = 1
                 """;
 
         if (StringUtils.hasText(name)) {
             countJpql += " AND i.name LIKE CONCAT('%', :name, '%')";
             contentJpql += " AND i.name LIKE CONCAT('%', :name, '%')";
+        }
+
+        Sort sort = pageable.getSort();
+        if (sort.isSorted()) {
+            List<String> orderList = sort
+                    .map(order -> " i." + order.getProperty() + " " + order.getDirection())
+                    .toList();
+
+            contentJpql += " ORDER BY ";
+            contentJpql += String.join(",", orderList);
         }
 
         TypedQuery<Long> countQuery = entityManager.createQuery(countJpql, Long.class);

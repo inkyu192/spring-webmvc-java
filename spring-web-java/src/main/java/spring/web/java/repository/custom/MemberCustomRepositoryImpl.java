@@ -74,9 +74,6 @@ public class MemberCustomRepositoryImpl implements MemberCustomRepository {
             contentQuery.setParameter("name", name);
         }
 
-        contentQuery.setFirstResult((int) pageable.getOffset());
-        contentQuery.setMaxResults(pageable.getPageSize());
-
         return new PageImpl<>(contentQuery.getResultList(), pageable, countQuery.getSingleResult());
     }
 

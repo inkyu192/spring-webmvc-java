@@ -36,7 +36,8 @@ public class ItemService {
     }
 
     public Page<ItemResponse> findItems(Pageable pageable, String name) {
-        return itemRepository.findAllWithQuerydsl(pageable, name)
+//        return itemRepository.findAllWithQuerydsl(pageable, name)
+            return itemRepository.findAllWithJpql(pageable,name)
                 .map(ItemResponse::new);
     }
 

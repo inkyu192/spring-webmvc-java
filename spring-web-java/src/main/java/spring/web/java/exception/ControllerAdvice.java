@@ -21,26 +21,26 @@ import java.util.List;
 public class ControllerAdvice {
 
     @ExceptionHandler
-    public ApiResponse<Void> handler(CommonException e) {
-        return new ApiResponse<>(e.getApiResponseCode());
+    public ApiResponse<Void> handler(CommonException commonException) {
+        return new ApiResponse<>(commonException.getApiResponseCode());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiResponse<List<String>> handler(MethodArgumentNotValidException e) {
+    public ApiResponse<List<String>> handler(MethodArgumentNotValidException methodArgumentNotValidException) {
         return new ApiResponse<>(
                 ApiResponseCode.PARAMETER_NOT_VALID,
-                e.getBindingResult().getFieldErrors().stream()
+                methodArgumentNotValidException.getBindingResult().getFieldErrors().stream()
                         .map(FieldError::getField)
                         .toList()
         );
     }
 
     @ExceptionHandler
-    public ApiResponse<Void> handler(JwtException e) {
-        if (e instanceof UnsupportedJwtException) {
+    public ApiResponse<Void> handler(JwtException jwtException) {
+        if (jwtException instanceof UnsupportedJwtException) {
             return new ApiResponse<>(ApiResponseCode.UNSUPPORTED_TOKEN);
-        } else if (e instanceof ExpiredJwtException) {
+        } else if (jwtException instanceof ExpiredJwtException) {
             return new ApiResponse<>(ApiResponseCode.EXPIRED_TOKEN);
         } else{
             return new ApiResponse<>(ApiResponseCode.BAD_TOKEN);
@@ -49,8 +49,8 @@ public class ControllerAdvice {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ApiResponse<Void> handler(Exception e) {
-        log.error("[ExceptionHandler]", e);
+    public ApiResponse<Void> handler(Exception exception) {
+        log.error("[ExceptionHandler]", exception);
 
         return new ApiResponse<>(ApiResponseCode.SYSTEM_ERROR);
     }
