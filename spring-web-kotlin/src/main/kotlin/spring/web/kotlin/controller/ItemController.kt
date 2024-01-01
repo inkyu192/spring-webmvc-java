@@ -26,7 +26,7 @@ class ItemController(
     }
 
     @GetMapping
-    fun findItems(pageable: Pageable, @RequestParam(required = false) name: String): ApiResponse<Page<ItemResponse>> {
+    fun findItems(pageable: Pageable, @RequestParam(required = false) name: String?): ApiResponse<Page<ItemResponse>> {
         val page = itemService.findItems(pageable, name)
 
         return ApiResponse(page)

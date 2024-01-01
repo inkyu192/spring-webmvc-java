@@ -29,7 +29,7 @@ class ItemService(
         return ItemResponse(item)
     }
 
-    fun findItems(pageable: Pageable, name: String): Page<ItemResponse> {
+    fun findItems(pageable: Pageable, name: String?): Page<ItemResponse> {
         return itemRepository.findAllWithJpql(pageable, name)
             .map { item -> ItemResponse(item) }
     }
