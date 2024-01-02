@@ -33,7 +33,6 @@ class ItemCustomRepositoryImpl(
             ?.run {
                 val orderList = map { order -> " i.${order.property} ${order.direction}" }
                 contentJpql += " ORDER BY " + orderList.joinToString(",")
-
             }
 
         val countQuery: TypedQuery<Long> = entityManager.createQuery(countJpql, Long::class.java)
