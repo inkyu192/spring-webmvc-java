@@ -16,13 +16,13 @@ class Item private constructor(
     @Id
     @GeneratedValue
     @Column(name = "item_id")
-    var id: Long? = null
+    val id: Long? = null
 
     companion object {
-        fun create(name: String, description: String, price: Int, quantity: Int, category: Category): Item {
-            return Item(name, description, price, quantity, category)
-        }
+        fun create(name: String, description: String, price: Int, quantity: Int, category: Category) =
+            Item(name, description, price, quantity, category)
     }
+
     fun update(name: String, description: String, price: Int, quantity: Int, category: Category) {
         this.name = name
         this.description = description

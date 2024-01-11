@@ -5,6 +5,8 @@ import jakarta.persistence.TypedQuery
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
+import org.springframework.util.StringUtils
 import spring.web.kotlin.domain.Item
 
 class ItemCustomRepositoryImpl(
@@ -23,24 +25,26 @@ class ItemCustomRepositoryImpl(
             WHERE 1 = 1
         """.trimIndent()
 
-        name?.let {
+        if (StringUtils.hasText(name)) {
             countJpql += " AND i.name LIKE CONCAT('%', :name, '%')"
             contentJpql += " AND i.name LIKE CONCAT('%', :name, '%')"
         }
 
-        pageable.sort
-            .takeIf { it.isSorted }
-            ?.run {
-                val orderList = map { order -> " i.${order.property} ${order.direction}" }
-                contentJpql += " ORDER BY " + orderList.joinToString(",")
-            }
+        val sort = pageable.sort
+        if (sort.isSorted) {
+            val orderList = sort
+                .map { order -> " i.${order.property} ${order.direction}" }
+                .toList()
+
+            contentJpql += " ORDER BY " + orderList.joinToString(",")
+        }
 
         val countQuery: TypedQuery<Long> = entityManager.createQuery(countJpql, Long::class.java)
         val contentQuery: TypedQuery<Item> = entityManager.createQuery(contentJpql, Item::class.java)
             .setFirstResult(pageable.offset.toInt())
             .setMaxResults(pageable.pageSize)
 
-        name?.let {
+        if (StringUtils.hasText(name)) {
             countQuery.setParameter("name", name)
             contentQuery.setParameter("name", name)
         }
