@@ -3,9 +3,11 @@ package spring.web.kotlin.service
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import spring.web.kotlin.constant.ApiResponseCode
 import spring.web.kotlin.domain.Item
 import spring.web.kotlin.dto.request.ItemSaveRequest
 import spring.web.kotlin.dto.response.ItemResponse
+import spring.web.kotlin.exception.CommonException
 import spring.web.kotlin.repository.ItemRepository
 
 @Service
@@ -28,4 +30,8 @@ class ItemService(
 
     fun findItems(pageable: Pageable, name: String?) = itemRepository.findAllWithJpql(pageable, name)
         .map { item -> ItemResponse(item) }
+
+    fun findItem(id: Long) = itemRepository.findById(id)
+        .map { ItemResponse(it) }
+        .orElseThrow { CommonException(ApiResponseCode.DATA_NOT_FOUND) }
 }

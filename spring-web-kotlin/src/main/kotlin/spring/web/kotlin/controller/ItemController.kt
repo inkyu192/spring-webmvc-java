@@ -17,4 +17,7 @@ class ItemController(
     @GetMapping
     fun findItems(pageable: Pageable, @RequestParam(required = false) name: String?) =
         ApiResponse(itemService.findItems(pageable, name))
+
+    @GetMapping
+    fun findItem(id: Long) = ApiResponse(itemService.findItem(id))
 }
