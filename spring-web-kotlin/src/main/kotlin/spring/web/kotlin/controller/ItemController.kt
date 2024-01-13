@@ -12,7 +12,8 @@ class ItemController(
     private val itemService: ItemService
 ) {
     @PostMapping
-    fun saveItem(@RequestBody itemSaveRequest: ItemSaveRequest) = ApiResponse(itemService.saveItem(itemSaveRequest))
+    fun saveItem(@RequestBody itemSaveRequest: ItemSaveRequest) =
+        ApiResponse(itemService.saveItem(itemSaveRequest))
 
     @GetMapping
     fun findItems(pageable: Pageable, @RequestParam(required = false) name: String?) =
@@ -20,4 +21,8 @@ class ItemController(
 
     @GetMapping
     fun findItem(id: Long) = ApiResponse(itemService.findItem(id))
+
+    @PutMapping("{id}")
+    fun updateItem(id: Long, itemSaveRequest: ItemSaveRequest) =
+        ApiResponse(itemService.updateItem(id, itemSaveRequest))
 }
