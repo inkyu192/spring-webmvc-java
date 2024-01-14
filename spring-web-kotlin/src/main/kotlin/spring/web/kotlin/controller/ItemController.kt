@@ -19,10 +19,17 @@ class ItemController(
     fun findItems(pageable: Pageable, @RequestParam(required = false) name: String?) =
         ApiResponse(itemService.findItems(pageable, name))
 
-    @GetMapping
-    fun findItem(id: Long) = ApiResponse(itemService.findItem(id))
+    @GetMapping("{id}")
+    fun findItem(@PathVariable id: Long) = ApiResponse(itemService.findItem(id))
 
     @PutMapping("{id}")
-    fun updateItem(id: Long, itemSaveRequest: ItemSaveRequest) =
+    fun updateItem(@PathVariable id: Long, @RequestBody itemSaveRequest: ItemSaveRequest) =
         ApiResponse(itemService.updateItem(id, itemSaveRequest))
+
+    @DeleteMapping("{id}")
+    fun deleteItem(@PathVariable id: Long): ApiResponse<Unit> {
+        itemService.deleteItem(id)
+
+        return ApiResponse()
+    }
 }

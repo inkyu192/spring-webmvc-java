@@ -58,4 +58,7 @@ class ItemService(
                 )
             }
     )
+
+    @Transactional
+    fun deleteItem(id: Long) = itemRepository.deleteById(id)
 }

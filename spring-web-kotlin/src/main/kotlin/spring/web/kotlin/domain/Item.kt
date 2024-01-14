@@ -20,7 +20,13 @@ class Item private constructor(
 
     companion object {
         fun create(name: String, description: String, price: Int, quantity: Int, category: Category) =
-            Item(name, description, price, quantity, category)
+            Item(
+                name = name,
+                description = description,
+                price = price,
+                quantity = quantity,
+                category = category
+            )
     }
 
     fun update(name: String, description: String, price: Int, quantity: Int, category: Category) {
