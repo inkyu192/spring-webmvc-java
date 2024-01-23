@@ -49,7 +49,7 @@ public class ItemController {
     }
 
     @DeleteMapping("{id}")
-    public ApiResponse<ItemResponse> deleteItem(@PathVariable Long id) {
+    public ApiResponse<Void> deleteItem(@PathVariable Long id) {
         itemService.deleteItem(id);
 
         return new ApiResponse<>();

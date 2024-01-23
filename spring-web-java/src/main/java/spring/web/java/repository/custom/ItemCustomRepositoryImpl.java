@@ -50,8 +50,7 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
                     .map(order -> " i." + order.getProperty() + " " + order.getDirection())
                     .toList();
 
-            contentJpql += " ORDER BY ";
-            contentJpql += String.join(",", orderList);
+            contentJpql += " ORDER BY " + String.join(",", orderList);
         }
 
         TypedQuery<Long> countQuery = entityManager.createQuery(countJpql, Long.class);
