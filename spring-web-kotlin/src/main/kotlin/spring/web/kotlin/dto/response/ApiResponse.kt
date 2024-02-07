@@ -9,8 +9,24 @@ data class ApiResponse<T>(
     @JsonInclude(JsonInclude.Include.NON_NULL)
     val payload: T?
 ) {
-    constructor() : this(ApiResponseCode.SUCCESS.name, ApiResponseCode.SUCCESS.message, null)
-    constructor(payload: T?) : this(ApiResponseCode.SUCCESS.name, ApiResponseCode.SUCCESS.message, payload)
-    constructor(apiResponseCode: ApiResponseCode) : this(apiResponseCode.name, apiResponseCode.message, null)
-    constructor(apiResponseCode: ApiResponseCode, payload: T?) : this(apiResponseCode.name, apiResponseCode.message, payload)
+    constructor() : this(
+        code = ApiResponseCode.SUCCESS.name,
+        message = ApiResponseCode.SUCCESS.message,
+        payload = null
+    )
+    constructor(payload: T?) : this(
+        code = ApiResponseCode.SUCCESS.name,
+        message = ApiResponseCode.SUCCESS.message,
+        payload = payload
+    )
+    constructor(apiResponseCode: ApiResponseCode) : this(
+        code = apiResponseCode.name,
+        message = apiResponseCode.message,
+        payload = null
+    )
+    constructor(apiResponseCode: ApiResponseCode, payload: T?) : this(
+        code = apiResponseCode.name,
+        message = apiResponseCode.message,
+        payload = payload
+    )
 }

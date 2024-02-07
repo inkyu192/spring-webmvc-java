@@ -5,6 +5,10 @@ import spring.web.kotlin.constant.Category
 
 @Entity
 class Item private constructor(
+    @Id
+    @GeneratedValue
+    @Column(name = "item_id")
+    val id: Long? = null,
     var name: String,
     var description: String,
     var price: Int,
@@ -13,11 +17,6 @@ class Item private constructor(
     @Enumerated(EnumType.STRING)
     var category: Category
 ) {
-    @Id
-    @GeneratedValue
-    @Column(name = "item_id")
-    val id: Long? = null
-
     companion object {
         fun create(name: String, description: String, price: Int, quantity: Int, category: Category) =
             Item(
