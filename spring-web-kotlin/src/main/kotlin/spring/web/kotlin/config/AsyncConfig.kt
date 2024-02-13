@@ -11,10 +11,10 @@ class AsyncConfig {
 
     @Bean
     fun threadPoolTaskExecutor() = ThreadPoolTaskExecutor()
-        .apply {
-            corePoolSize = 3
-            maxPoolSize = 10
-            queueCapacity = 100
-            setThreadNamePrefix("Executor-")
+        .also {
+            it.corePoolSize = 3
+            it.maxPoolSize = 10
+            it.queueCapacity = 100
+            it.setThreadNamePrefix("Executor-")
         }
 }

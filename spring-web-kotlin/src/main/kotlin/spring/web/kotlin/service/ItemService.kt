@@ -16,48 +16,43 @@ class ItemService(
     private val itemRepository: ItemRepository
 ) {
     @Transactional
-    fun saveItem(itemSaveRequest: ItemSaveRequest) = ItemResponse(
-        itemRepository.save(
-            Item.create(
+    fun saveItem(itemSaveRequest: ItemSaveRequest) = Item.create(
+        itemSaveRequest.name,
+        itemSaveRequest.description,
+        itemSaveRequest.price,
+        itemSaveRequest.quantity,
+        itemSaveRequest.category
+    )
+        .also { itemRepository.save(it) }
+        .let { ItemResponse(it) }
+
+    fun findItems(pageable: Pageable, name: String?) = itemRepository.findAllWithJpql(pageable, name)
+        .map { ItemResponse(it) }
+
+    fun findItem(id: Long) = itemRepository.findById(id).orElse(null)
+        ?.let { ItemResponse(it) }
+        ?: CommonException(ApiResponseCode.DATA_NOT_FOUND)
+
+    @Transactional
+    fun updateItem(id: Long, itemSaveRequest: ItemSaveRequest) = itemRepository.findById(id).orElse(null)
+        ?.also {
+            it.update(
                 itemSaveRequest.name,
                 itemSaveRequest.description,
                 itemSaveRequest.price,
                 itemSaveRequest.quantity,
                 itemSaveRequest.category
             )
+        }
+        ?: Item.create(
+            itemSaveRequest.name,
+            itemSaveRequest.description,
+            itemSaveRequest.price,
+            itemSaveRequest.quantity,
+            itemSaveRequest.category
         )
-    )
+            .let { ItemResponse(it) }
 
-    fun findItems(pageable: Pageable, name: String?) = itemRepository.findAllWithJpql(pageable, name)
-        .map { item -> ItemResponse(item) }
-
-    fun findItem(id: Long) = itemRepository.findById(id)
-        .map { ItemResponse(it) }
-        .orElseThrow { CommonException(ApiResponseCode.DATA_NOT_FOUND) }
-
-    @Transactional
-    fun updateItem(id: Long, itemSaveRequest: ItemSaveRequest) = ItemResponse(
-        itemRepository.findById(id)
-            .map {
-                it.update(
-                    itemSaveRequest.name,
-                    itemSaveRequest.description,
-                    itemSaveRequest.price,
-                    itemSaveRequest.quantity,
-                    itemSaveRequest.category
-                )
-                it
-            }
-            .orElseGet {
-                Item.create(
-                    itemSaveRequest.name,
-                    itemSaveRequest.description,
-                    itemSaveRequest.price,
-                    itemSaveRequest.quantity,
-                    itemSaveRequest.category
-                )
-            }
-    )
 
     @Transactional
     fun deleteItem(id: Long) = itemRepository.deleteById(id)

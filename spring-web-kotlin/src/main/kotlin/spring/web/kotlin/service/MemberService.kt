@@ -1,6 +1,5 @@
 package spring.web.kotlin.service
 
-import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -18,63 +17,50 @@ import spring.web.kotlin.repository.MemberRepository
 class MemberService(
     val memberRepository: MemberRepository
 ) {
-
     @Transactional
-    fun saveMember(memberSaveRequest: MemberSaveRequest): MemberResponse {
-        memberRepository.findByAccount(memberSaveRequest.account)
-            .ifPresent { member ->
-                throw CommonException(ApiResponseCode.DATA_DUPLICATE)
-            }
-
-        val member = Member.create(
-            account = memberSaveRequest.account,
-            password = memberSaveRequest.password,
-            name = memberSaveRequest.name,
-            role = memberSaveRequest.role,
-            address = Address.create(
-                city = memberSaveRequest.city,
-                street = memberSaveRequest.street,
-                zipcode = memberSaveRequest.zipcode
+    fun saveMember(memberSaveRequest: MemberSaveRequest) =
+        memberRepository.findByAccount(memberSaveRequest.account).orElse(null)
+            ?.also { throw CommonException(ApiResponseCode.DATA_DUPLICATE) }
+            ?: Member.create(
+                account = memberSaveRequest.account,
+                password = memberSaveRequest.password,
+                name = memberSaveRequest.name,
+                role = memberSaveRequest.role,
+                address = Address.create(
+                    city = memberSaveRequest.city,
+                    street = memberSaveRequest.street,
+                    zipcode = memberSaveRequest.zipcode
+                )
             )
-        )
+                .also { memberRepository.save(it) }
+                .let { MemberResponse(it) }
 
-        memberRepository.save(member)
-
-        return MemberResponse(member)
-    }
-
-    fun findMembers(pageable: Pageable, account: String?, name: String?): Page<MemberResponse> {
-        return memberRepository.findAllWithJpql(pageable, account, name)
+    fun findMembers(pageable: Pageable, account: String?, name: String?) =
+        memberRepository.findAllWithJpql(pageable, account, name)
             .map { MemberResponse(it) }
-    }
 
-    fun findMember(id: Long): MemberResponse {
-        val member = memberRepository.findById(id)
-            .orElseThrow { CommonException(ApiResponseCode.DATA_NOT_FOUND) }
-
-        return MemberResponse(member)
-    }
+    fun findMember(id: Long) = memberRepository.findById(id).orElse(null)
+        ?.let { MemberResponse(it) }
+        ?: CommonException(ApiResponseCode.DATA_NOT_FOUND)
 
     @Transactional
-    fun updateMember(id: Long, memberUpdateRequest: MemberUpdateRequest): MemberResponse {
-        val member = memberRepository.findById(id)
-            .orElseThrow { CommonException(ApiResponseCode.DATA_NOT_FOUND) }
+    fun updateMember(id: Long, memberUpdateRequest: MemberUpdateRequest) =
+        memberRepository.findById(id).orElse(null)
+            ?.let {
+                it.update(
+                    name = memberUpdateRequest.name,
+                    role = memberUpdateRequest.role,
+                    address = Address.create(
+                        city = memberUpdateRequest.city,
+                        street = memberUpdateRequest.street,
+                        zipcode = memberUpdateRequest.zipcode
+                    )
+                )
 
-        member.update(
-            name = memberUpdateRequest.name,
-            role = memberUpdateRequest.role,
-            address = Address.create(
-                city = memberUpdateRequest.city,
-                street = memberUpdateRequest.street,
-                zipcode = memberUpdateRequest.zipcode
-            )
-        )
-
-        return MemberResponse(member)
-    }
+                MemberResponse(it)
+            }
+            ?: CommonException(ApiResponseCode.DATA_NOT_FOUND)
 
     @Transactional
-    fun deleteMember(id: Long) {
-        memberRepository.deleteById(id)
-    }
+    fun deleteMember(id: Long) = memberRepository.deleteById(id)
 }
