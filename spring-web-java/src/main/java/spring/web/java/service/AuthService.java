@@ -76,6 +76,6 @@ public class AuthService {
             throw new CommonException(ApiResponseCode.BAD_CREDENTIALS);
         }
 
-        return new TokenResponse(jwtTokenProvider.createAccessToken(account, authorities));
+        return new TokenResponse(jwtTokenProvider.createAccessToken(account, authorities), refreshToken);
     }
 }
