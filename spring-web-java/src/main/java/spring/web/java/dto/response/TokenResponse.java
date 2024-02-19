@@ -7,7 +7,4 @@ public record TokenResponse(
         @JsonInclude(JsonInclude.Include.NON_NULL)
         String refreshToken
 ) {
-    public TokenResponse(String accessToken) {
-        this(accessToken, null);
-    }
 }
