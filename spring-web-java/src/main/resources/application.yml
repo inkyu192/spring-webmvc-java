@@ -17,10 +17,10 @@ logging:
 
 jwt:
   access-token:
-    key: VlwEyVBsYt9V7zq57TejMnVUyZblYcfPQye08f7MgAA9XkHa
+    key: PQ8nDTkS2Rp17clN87/L02OgVe77EOwMnDY0Irq7w04=
     expiration-time: 10
   refresh-token:
-    key: VlwEyVBsYt9V7zq57TejMnVUyZblYcfPQye08f7MgAA9XkHa
+    key: crCWzavmz2D382GG68dymsghw+UnWo3MnmWkPzc6Gik=
     expiration-time: 60
 
 management:
