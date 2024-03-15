@@ -1,5 +1,6 @@
 package spring.web.kotlin.config.security
 
+import io.jsonwebtoken.JwsHeader
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.io.Decoders
@@ -26,8 +27,8 @@ class JwtTokenProvider private constructor(
     )
 
     fun createAccessToken(account: String, authorities: String) = Jwts.builder()
-        .setHeaderParam("alg", "HS256")
-        .setHeaderParam("typ", "JWT")
+        .setHeaderParam(JwsHeader.ALGORITHM, SignatureAlgorithm.HS256)
+        .setHeaderParam(JwsHeader.TYPE, JwsHeader.JWT_TYPE)
         .claim("account", account)
         .claim("authorities", authorities)
         .setIssuedAt(Date())
@@ -36,8 +37,8 @@ class JwtTokenProvider private constructor(
         .compact()
 
     fun createRefreshToken() = Jwts.builder()
-        .setHeaderParam("alg", "HS256")
-        .setHeaderParam("typ", "JWT")
+        .setHeaderParam(JwsHeader.ALGORITHM, SignatureAlgorithm.HS256)
+        .setHeaderParam(JwsHeader.TYPE, JwsHeader.JWT_TYPE)
         .setIssuedAt(Date())
         .setExpiration(Date(Date().time + refreshTokenExpirationTime))
         .signWith(refreshTokenKey, SignatureAlgorithm.HS256)

@@ -1,6 +1,7 @@
 package spring.web.java.config.security;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwsHeader;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -30,8 +31,8 @@ public class JwtTokenProvider {
 
     public String createAccessToken(String account, String authorities) {
         return Jwts.builder()
-                .setHeaderParam("alg", "HS256")
-                .setHeaderParam("typ", "JWT")
+                .setHeaderParam(JwsHeader.ALGORITHM, SignatureAlgorithm.HS256)
+                .setHeaderParam(JwsHeader.TYPE, JwsHeader.JWT_TYPE)
                 .claim("account", account)
                 .claim("authorities", authorities)
                 .setIssuedAt(new Date())
@@ -42,8 +43,8 @@ public class JwtTokenProvider {
 
     public String createRefreshToken() {
         return Jwts.builder()
-                .setHeaderParam("alg", "HS256")
-                .setHeaderParam("typ", "JWT")
+                .setHeaderParam(JwsHeader.ALGORITHM, SignatureAlgorithm.HS256)
+                .setHeaderParam(JwsHeader.TYPE, JwsHeader.JWT_TYPE)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(new Date().getTime() + refreshTokenExpirationTime))
                 .signWith(refreshTokenKey, SignatureAlgorithm.HS256)
