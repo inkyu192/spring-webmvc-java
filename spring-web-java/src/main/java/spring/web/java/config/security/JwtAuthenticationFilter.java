@@ -6,6 +6,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -38,7 +39,7 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
             UserDetails userDetails = new UserDetailsImpl(claims);
             Authentication authentication = new UsernamePasswordAuthenticationToken(
                     userDetails,
-                    null,
+                    userDetails.getPassword(),
                     userDetails.getAuthorities()
             );
 
@@ -50,7 +51,7 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
 
     public String getAccessToken(HttpServletRequest request) {
         String accessToken = null;
-        String token = request.getHeader("Authorization");
+        String token = request.getHeader(HttpHeaders.AUTHORIZATION);
 
         if (StringUtils.hasText(token) && token.startsWith("Bearer")) {
             accessToken = token.replace("Bearer ", "");
