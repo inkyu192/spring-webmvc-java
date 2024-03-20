@@ -12,7 +12,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Member extends BaseDomain {
+public class Member extends Base {
 
     @Id
     @GeneratedValue

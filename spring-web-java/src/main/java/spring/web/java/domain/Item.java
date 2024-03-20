@@ -12,7 +12,7 @@ import spring.web.java.exception.CommonException;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Item extends BaseDomain {
+public class Item extends Base {
 
     @Id
     @GeneratedValue

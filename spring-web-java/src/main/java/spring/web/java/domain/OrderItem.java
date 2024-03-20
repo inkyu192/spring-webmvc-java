@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Table(name = "order_item")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class OrderItem extends BaseDomain {
+public class OrderItem extends Base {
 
     @Id
     @GeneratedValue

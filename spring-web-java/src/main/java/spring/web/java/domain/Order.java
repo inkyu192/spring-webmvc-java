@@ -17,7 +17,7 @@ import java.util.List;
 @Getter
 @Table(name = "orders")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Order extends BaseDomain {
+public class Order extends Base {
 
     @Id
     @GeneratedValue

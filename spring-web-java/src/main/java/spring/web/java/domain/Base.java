@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class BaseDomain {
+public class Base {
 
     @CreatedDate
     @Column(updatable = false)
