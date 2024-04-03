@@ -20,5 +20,5 @@ public enum ApiResponseCode {
     BAD_REQUEST("잘못된 요청"),
     SYSTEM_ERROR("시스템 오류");
 
-    private final String message;
+    private final String description;
 }

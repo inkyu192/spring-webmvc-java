@@ -58,7 +58,7 @@ public class Order extends Base {
     }
 
     public void setOrderItem(OrderItem orderItem) {
-        this.orderItems.add(orderItem);
+        orderItems.add(orderItem);
         orderItem.setOrder(this);
     }
 
@@ -72,8 +72,8 @@ public class Order extends Base {
             throw new CommonException(ApiResponseCode.ORDER_NOT_CANCEL);
         }
 
-        this.status = OrderStatus.CANCEL;
-        this.orderItems.forEach(OrderItem::cancel);
-        this.delivery.cancel();
+        status = OrderStatus.CANCEL;
+        orderItems.forEach(OrderItem::cancel);
+        delivery.cancel();
     }
 }

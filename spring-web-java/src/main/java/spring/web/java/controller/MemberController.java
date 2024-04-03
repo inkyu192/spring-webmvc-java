@@ -2,13 +2,15 @@ package spring.web.java.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import spring.web.java.config.security.UserDetailsImpl;
+import spring.web.java.dto.request.LoginRequest;
 import spring.web.java.dto.request.MemberSaveRequest;
 import spring.web.java.dto.request.MemberUpdateRequest;
 import spring.web.java.dto.response.ApiResponse;
 import spring.web.java.dto.response.MemberResponse;
+import spring.web.java.dto.response.TokenResponse;
 import spring.web.java.service.MemberService;
 
 @RestController
@@ -25,37 +27,33 @@ public class MemberController {
         return new ApiResponse<>(responseDto);
     }
 
-    @GetMapping
-    public ApiResponse<Page<MemberResponse>> findMembers(
-            Pageable pageable,
-            @RequestParam(required = false) String account,
-            @RequestParam(required = false) String name
-    ) {
-        Page<MemberResponse> members = memberService.findMembers(pageable, account, name);
+    @PostMapping("login")
+    public ApiResponse<TokenResponse> login(@RequestBody LoginRequest loginRequest) {
+        TokenResponse tokenResponse = memberService.login(loginRequest);
 
-        return new ApiResponse<>(members);
+        return new ApiResponse<>(tokenResponse);
     }
 
-    @GetMapping("{id}")
-    public ApiResponse<MemberResponse> findMember(@PathVariable Long id) {
-        MemberResponse responseDto = memberService.findMember(id);
+    @GetMapping
+    public ApiResponse<MemberResponse> findMember(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        MemberResponse responseDto = memberService.findMember(userDetails.getMemberId());
 
         return new ApiResponse<>(responseDto);
     }
 
-    @PatchMapping("{id}")
+    @PatchMapping
     public ApiResponse<MemberResponse> updateMember(
-            @PathVariable Long id,
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestBody @Valid MemberUpdateRequest memberUpdateRequest
     ) {
-        MemberResponse responseDto = memberService.updateMember(id, memberUpdateRequest);
+        MemberResponse responseDto = memberService.updateMember(userDetails.getMemberId(), memberUpdateRequest);
 
         return new ApiResponse<>(responseDto);
     }
 
-    @DeleteMapping("{id}")
-    public ApiResponse<Void> deleteMember(@PathVariable Long id) {
-        memberService.deleteMember(id);
+    @DeleteMapping
+    public ApiResponse<Void> deleteMember(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        memberService.deleteMember(userDetails.getMemberId());
 
         return new ApiResponse<>();
     }

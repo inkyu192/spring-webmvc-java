@@ -11,18 +11,18 @@ public record ApiResponse<T>(
         T payload
 ) {
     public ApiResponse() {
-        this(ApiResponseCode.SUCCESS.name(), ApiResponseCode.SUCCESS.getMessage(), null);
+        this(ApiResponseCode.SUCCESS.name(), ApiResponseCode.SUCCESS.getDescription(), null);
     }
 
     public ApiResponse(T payload) {
-        this(ApiResponseCode.SUCCESS.name(), ApiResponseCode.SUCCESS.getMessage(), payload);
+        this(ApiResponseCode.SUCCESS.name(), ApiResponseCode.SUCCESS.getDescription(), payload);
     }
 
     public ApiResponse(ApiResponseCode apiResponseCode) {
-        this(apiResponseCode.name(), apiResponseCode.getMessage(), null);
+        this(apiResponseCode.name(), apiResponseCode.getDescription(), null);
     }
 
     public ApiResponse(ApiResponseCode apiResponseCode, T payload) {
-        this(apiResponseCode.name(), apiResponseCode.getMessage(), payload);
+        this(apiResponseCode.name(), apiResponseCode.getDescription(), payload);
     }
 }

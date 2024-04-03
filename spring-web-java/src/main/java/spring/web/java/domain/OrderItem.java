@@ -44,6 +44,6 @@ public class OrderItem extends Base {
     }
 
     public void cancel() {
-        this.item.addQuantity(count);
+        item.addQuantity(count);
     }
 }

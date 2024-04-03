@@ -47,8 +47,10 @@ public class SecurityConfig {
                 .addFilter(jwtAuthenticationFilter)
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
                         authorizationManagerRequestMatcherRegistry
+                                .requestMatchers(HttpMethod.OPTIONS).permitAll()
                                 .requestMatchers("/actuator/**").permitAll()
-                                .requestMatchers("/auth/**").permitAll()
+                                .requestMatchers("/token/**").permitAll()
+                                .requestMatchers("/member/login").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/member/**").authenticated()
                                 .anyRequest().permitAll()
                 )

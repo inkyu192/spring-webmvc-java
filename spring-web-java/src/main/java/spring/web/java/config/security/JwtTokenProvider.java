@@ -6,6 +6,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import spring.web.java.constant.Role;
 
 import java.security.Key;
 import java.util.Date;
@@ -29,12 +30,12 @@ public class JwtTokenProvider {
         this.refreshTokenExpirationTime = refreshTokenExpirationTime * 60 * 1000;
     }
 
-    public String createAccessToken(String account, String authorities) {
+    public String createAccessToken(Long memberId, Role role) {
         return Jwts.builder()
                 .setHeaderParam(JwsHeader.ALGORITHM, SignatureAlgorithm.HS256)
                 .setHeaderParam(JwsHeader.TYPE, JwsHeader.JWT_TYPE)
-                .claim("account", account)
-                .claim("authorities", authorities)
+                .claim("memberId", memberId)
+                .claim("role", role)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(new Date().getTime() + accessTokenExpirationTime))
                 .signWith(accessTokenKey, SignatureAlgorithm.HS256)
@@ -54,6 +55,14 @@ public class JwtTokenProvider {
     public Claims parseAccessToken(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(accessTokenKey)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
+    public Claims parseRefreshToken(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(refreshTokenKey)
                 .build()
                 .parseClaimsJws(token)
                 .getBody();

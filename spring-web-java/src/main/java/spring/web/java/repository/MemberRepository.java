@@ -3,11 +3,10 @@ package spring.web.java.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import spring.web.java.domain.Member;
-import spring.web.java.repository.custom.MemberCustomRepository;
 
 import java.util.Optional;
 
-public interface MemberRepository extends JpaRepository<Member, Long>, MemberCustomRepository {
+public interface MemberRepository extends JpaRepository<Member, Long> {
 
     @Query("""
             SELECT m

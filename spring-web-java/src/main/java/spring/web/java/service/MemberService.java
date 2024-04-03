@@ -3,17 +3,27 @@ package spring.web.java.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import spring.web.java.config.security.JwtTokenProvider;
+import spring.web.java.config.security.UserDetailsImpl;
 import spring.web.java.constant.ApiResponseCode;
 import spring.web.java.domain.Address;
 import spring.web.java.domain.Member;
+import spring.web.java.domain.Token;
+import spring.web.java.dto.request.LoginRequest;
 import spring.web.java.dto.request.MemberSaveRequest;
 import spring.web.java.dto.request.MemberUpdateRequest;
 import spring.web.java.dto.response.MemberResponse;
+import spring.web.java.dto.response.TokenResponse;
 import spring.web.java.exception.CommonException;
 import spring.web.java.repository.MemberRepository;
+import spring.web.java.repository.TokenRepository;
 
 
 @Service
@@ -21,6 +31,9 @@ import spring.web.java.repository.MemberRepository;
 @RequiredArgsConstructor
 public class MemberService {
 
+    private final JwtTokenProvider jwtTokenProvider;
+    private final AuthenticationManager authenticationManager;
+    private final TokenRepository tokenRepository;
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -48,9 +61,27 @@ public class MemberService {
         return new MemberResponse(member);
     }
 
-    public Page<MemberResponse> findMembers(Pageable pageable, String account, String name) {
-        return memberRepository.findAllWithJpql(pageable, account, name)
-                .map(MemberResponse::new);
+    @Transactional
+    public TokenResponse login(LoginRequest loginRequest) {
+        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
+                new UsernamePasswordAuthenticationToken(loginRequest.account(), loginRequest.password());
+
+        Authentication authentication;
+
+        try {
+            authentication = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
+        } catch (BadCredentialsException e) {
+            throw new CommonException(ApiResponseCode.BAD_CREDENTIALS);
+        }
+
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+
+        String accessToken = jwtTokenProvider.createAccessToken(userDetails.getMemberId(), userDetails.getRole());
+        String refreshToken = jwtTokenProvider.createRefreshToken();
+
+        tokenRepository.save(Token.create(userDetails.getMemberId(), refreshToken));
+
+        return new TokenResponse(accessToken, refreshToken);
     }
 
     public MemberResponse findMember(Long id) {

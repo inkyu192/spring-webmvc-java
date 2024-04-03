@@ -5,36 +5,37 @@ import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import spring.web.java.constant.Role;
 import spring.web.java.domain.Member;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 @Getter
 public class UserDetailsImpl implements UserDetails {
 
+    private final Long memberId;
     private final String account;
     private final String password;
-    private final String role;
+    private final Role role;
 
     public UserDetailsImpl(Member member) {
+        this.memberId = member.getId();
         this.account = member.getAccount();
         this.password = member.getPassword();
-        this.role = member.getRole().toString();
+        this.role = member.getRole();
     }
 
     public UserDetailsImpl(Claims claims) {
-        this.account = claims.getSubject();
+        this.memberId = Long.valueOf(String.valueOf(claims.get("memberId")));
+        this.account = String.valueOf(claims.get("account"));
         this.password = null;
-        this.role = claims.get("authorities").toString();
+        this.role = Role.of(claims.get("role"));
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<GrantedAuthority> list = new ArrayList<>();
-        list.add(new SimpleGrantedAuthority(role));
-        return list;
+        return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
     @Override
