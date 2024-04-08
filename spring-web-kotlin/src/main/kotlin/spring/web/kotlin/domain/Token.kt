@@ -1,16 +1,18 @@
 package spring.web.kotlin.domain
 
+import org.springframework.data.annotation.Id
 import org.springframework.data.redis.core.RedisHash
 
 @RedisHash(value = "token", timeToLive = 604800)
 class Token private constructor(
-    val account: String,
+    @Id
+    val memberId: Long,
     val refreshToken: String
 ){
     companion object {
-        fun create(account: String, refreshToken: String) {
+        fun create(memberId: Long, refreshToken: String) {
             Token(
-                account = account,
+                memberId = memberId,
                 refreshToken = refreshToken
             )
         }

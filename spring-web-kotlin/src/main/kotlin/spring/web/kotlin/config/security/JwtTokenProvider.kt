@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.io.Decoders
 import io.jsonwebtoken.security.Keys
+import spring.web.kotlin.constant.Role
 import java.security.Key
 import java.util.*
 
@@ -26,11 +27,11 @@ class JwtTokenProvider private constructor(
         refreshTokenExpirationTime = refreshTokenExpirationTime * 60 * 1000
     )
 
-    fun createAccessToken(account: String, authorities: String) = Jwts.builder()
+    fun createAccessToken(memberId: Long, role: Role) = Jwts.builder()
         .setHeaderParam(JwsHeader.ALGORITHM, SignatureAlgorithm.HS256)
         .setHeaderParam(JwsHeader.TYPE, JwsHeader.JWT_TYPE)
-        .claim("account", account)
-        .claim("authorities", authorities)
+        .claim("memberId", memberId)
+        .claim("role", role)
         .setIssuedAt(Date())
         .setExpiration(Date(Date().time + accessTokenExpirationTime))
         .signWith(accessTokenKey, SignatureAlgorithm.HS256)
@@ -46,6 +47,12 @@ class JwtTokenProvider private constructor(
 
     fun parseAccessToken(token: String) = Jwts.parserBuilder()
         .setSigningKey(accessTokenKey)
+        .build()
+        .parseClaimsJws(token)
+        .body
+
+    fun parseRefreshToken(token: String) = Jwts.parserBuilder()
+        .setSigningKey(refreshTokenKey)
         .build()
         .parseClaimsJws(token)
         .body

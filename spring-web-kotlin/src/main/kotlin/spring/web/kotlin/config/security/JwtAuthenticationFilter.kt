@@ -10,16 +10,23 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter
 
 class JwtAuthenticationFilter(
-    private val authenticationManager: AuthenticationManager,
+    authenticationManager: AuthenticationManager,
     private val jwtTokenProvider: JwtTokenProvider
 ) : BasicAuthenticationFilter(authenticationManager) {
-    override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
 
+    override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
         getAccessToken(request)
-            ?.let(jwtTokenProvider::parseAccessToken)
-            ?.let(::UserDetailsImpl)
-            ?.let { UsernamePasswordAuthenticationToken(it, it.password, it.authorities) }
-            ?.let { SecurityContextHolder.getContext().authentication = it }
+            ?.let {
+                val claims = jwtTokenProvider.parseAccessToken(it)
+                val userDetails = UserDetailsImpl(claims)
+                val authentication = UsernamePasswordAuthenticationToken(
+                    userDetails,
+                    userDetails.password,
+                    userDetails.authorities
+                )
+
+                SecurityContextHolder.getContext().authentication = authentication
+            }
 
         chain.doFilter(request, response)
     }

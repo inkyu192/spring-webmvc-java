@@ -11,22 +11,22 @@ data class ApiResponse<T>(
 ) {
     constructor() : this(
         code = ApiResponseCode.SUCCESS.name,
-        message = ApiResponseCode.SUCCESS.message,
+        message = ApiResponseCode.SUCCESS.description,
         payload = null
     )
     constructor(payload: T?) : this(
         code = ApiResponseCode.SUCCESS.name,
-        message = ApiResponseCode.SUCCESS.message,
+        message = ApiResponseCode.SUCCESS.description,
         payload = payload
     )
     constructor(apiResponseCode: ApiResponseCode) : this(
         code = apiResponseCode.name,
-        message = apiResponseCode.message,
+        message = apiResponseCode.description,
         payload = null
     )
     constructor(apiResponseCode: ApiResponseCode, payload: T?) : this(
         code = apiResponseCode.name,
-        message = apiResponseCode.message,
+        message = apiResponseCode.description,
         payload = payload
     )
 }

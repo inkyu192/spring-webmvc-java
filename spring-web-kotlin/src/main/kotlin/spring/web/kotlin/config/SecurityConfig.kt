@@ -35,7 +35,8 @@ class SecurityConfig {
         .addFilterBefore(jwtExceptionFilter, jwtAuthenticationFilter.javaClass)
         .addFilter(jwtAuthenticationFilter)
         .authorizeHttpRequests {
-            it.requestMatchers("/actuator/**").permitAll()
+            it.requestMatchers(HttpMethod.OPTIONS).permitAll()
+                .requestMatchers("/actuator/**").permitAll()
                 .requestMatchers("/auth/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/member/**").authenticated()
                 .anyRequest().permitAll()

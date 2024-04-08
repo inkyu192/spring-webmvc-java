@@ -1,7 +1,7 @@
 package spring.web.kotlin.constant
 
 enum class ApiResponseCode(
-    val message: String
+    val description: String
 ) {
     SUCCESS("성공"),
     PARAMETER_NOT_VALID("유효성 검증 실패"),

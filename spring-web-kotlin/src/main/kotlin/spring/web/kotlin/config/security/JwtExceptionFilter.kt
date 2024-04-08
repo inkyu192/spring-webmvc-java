@@ -29,10 +29,8 @@ class JwtExceptionFilter(
     private fun setResponse(response: ServletResponse, apiResponseCode: ApiResponseCode) {
         val result = objectMapper.writeValueAsString(ApiResponse<ApiResponseCode>(apiResponseCode))
 
-        with(response) {
-            contentType = MediaType.APPLICATION_JSON_VALUE
-            characterEncoding = "UTF-8"
-            writer.write(result)
-        }
+        response.contentType = MediaType.APPLICATION_JSON_VALUE
+        response.characterEncoding = "UTF-8"
+        response.writer.write(result)
     }
 }
