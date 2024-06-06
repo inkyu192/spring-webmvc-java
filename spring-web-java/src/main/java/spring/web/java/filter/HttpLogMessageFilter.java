@@ -20,13 +20,15 @@ import java.util.UUID;
 @Component
 public class HttpLogMessageFilter extends GenericFilterBean {
 
+    public static final String TRANSACTION_ID = "transactionId";
+
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws ServletException, IOException {
         String transactionId = UUID.randomUUID().toString();
         ContentCachingRequestWrapper requestWrapper = new ContentCachingRequestWrapper((HttpServletRequest) servletRequest);
         ContentCachingResponseWrapper responseWrapper = new ContentCachingResponseWrapper((HttpServletResponse) servletResponse);
 
-        servletRequest.setAttribute("transactionId", transactionId);
+        servletRequest.setAttribute(TRANSACTION_ID, transactionId);
 
         long startTime = System.currentTimeMillis();
         filterChain.doFilter(requestWrapper, responseWrapper);

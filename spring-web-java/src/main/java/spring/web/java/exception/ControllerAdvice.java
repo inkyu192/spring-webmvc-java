@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import spring.web.java.constant.ApiResponseCode;
 import spring.web.java.dto.response.ApiResponse;
+import spring.web.java.filter.HttpLogMessageFilter;
 
 import java.util.List;
 
@@ -54,7 +55,7 @@ public class ControllerAdvice {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ApiResponse<Void> handler(Exception e) {
-        log.error("[{}]",servletRequest.getAttribute("transactionId") , e);
+        log.error("[{}]",servletRequest.getAttribute(HttpLogMessageFilter.TRANSACTION_ID) , e);
 
         return new ApiResponse<>(ApiResponseCode.SYSTEM_ERROR);
     }
