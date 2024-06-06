@@ -1,6 +1,8 @@
 package spring.web.java.exception;
 
 import io.jsonwebtoken.JwtException;
+import jakarta.servlet.ServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
@@ -17,7 +19,10 @@ import java.util.List;
 
 @Slf4j
 @RestControllerAdvice
+@RequiredArgsConstructor
 public class ControllerAdvice {
+
+    private final ServletRequest servletRequest;
 
     @ExceptionHandler
     public ApiResponse<Void> handler(CommonException e) {
@@ -49,7 +54,7 @@ public class ControllerAdvice {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ApiResponse<Void> handler(Exception e) {
-        log.error("[ExceptionHandler]", e);
+        log.error("[{}]",servletRequest.getAttribute("transactionId") , e);
 
         return new ApiResponse<>(ApiResponseCode.SYSTEM_ERROR);
     }
