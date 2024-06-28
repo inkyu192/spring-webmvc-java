@@ -1,4 +1,4 @@
-package spring.web.java.config.security;
+package spring.web.java.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.ExpiredJwtException;
