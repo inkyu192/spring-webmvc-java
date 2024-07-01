@@ -1,4 +1,4 @@
-package spring.web.java.config;
+package spring.web.java.config.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -16,10 +16,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import spring.web.java.config.security.JwtAuthenticationFilter;
-import spring.web.java.config.security.JwtExceptionFilter;
-import spring.web.java.config.security.JwtTokenProvider;
-import spring.web.java.config.security.UserDetailsServiceImpl;
+import spring.web.java.common.JwtTokenProvider;
+import spring.web.java.filter.JwtAuthenticationFilter;
+import spring.web.java.filter.JwtExceptionFilter;
 import spring.web.java.repository.MemberRepository;
 
 @RequiredArgsConstructor

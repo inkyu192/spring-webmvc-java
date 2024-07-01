@@ -1,4 +1,4 @@
-package spring.web.java.config.security;
+package spring.web.java.common;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwsHeader;

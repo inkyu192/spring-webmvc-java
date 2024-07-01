@@ -1,4 +1,4 @@
-package spring.web.java.config.security;
+package spring.web.java.filter;
 
 
 import io.jsonwebtoken.Claims;
@@ -14,6 +14,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.util.StringUtils;
+import spring.web.java.common.JwtTokenProvider;
+import spring.web.java.config.security.UserDetailsImpl;
 
 import java.io.IOException;
 

@@ -5,7 +5,7 @@ import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import spring.web.java.config.security.JwtTokenProvider;
+import spring.web.java.common.JwtTokenProvider;
 import spring.web.java.constant.ApiResponseCode;
 import spring.web.java.domain.Member;
 import spring.web.java.domain.Token;
