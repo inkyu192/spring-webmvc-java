@@ -1,5 +1,9 @@
 package spring.web.java.constant;
 
+import java.util.Arrays;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -9,4 +13,12 @@ public enum DeliveryStatus {
     COMP("완료");
 
     private final String description;
+
+    @JsonCreator
+    public static DeliveryStatus of(Object name) {
+        return Arrays.stream(DeliveryStatus.values())
+            .filter(deliveryStatus -> deliveryStatus.name().equals(name))
+            .findFirst()
+            .orElse(null);
+    }
 }
