@@ -14,9 +14,8 @@ public class AESCrypto {
 
     private final static String SECRET_KEY = "I5XyzQGnXTdnTzdiC1UXzJcKsF75rWg0";
 
-    public SecretKey getKeyFromString() {
+    private SecretKey getKeyFromString() {
         byte[] keyBytes = SECRET_KEY.getBytes(StandardCharsets.UTF_8);
-
         return new SecretKeySpec(keyBytes, "AES");
     }
 
