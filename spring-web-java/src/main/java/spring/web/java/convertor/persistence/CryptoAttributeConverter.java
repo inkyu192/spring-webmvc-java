@@ -1,4 +1,4 @@
-package spring.web.java.convert;
+package spring.web.java.convertor.persistence;
 
 import jakarta.persistence.AttributeConverter;
 import lombok.RequiredArgsConstructor;
@@ -7,7 +7,7 @@ import spring.web.java.common.AESCrypto;
 
 @Component
 @RequiredArgsConstructor
-public class CryptoConverter implements AttributeConverter<String, String> {
+public class CryptoAttributeConverter implements AttributeConverter<String, String> {
 
     private final AESCrypto aesCrypto;
 

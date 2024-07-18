@@ -5,7 +5,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import spring.web.java.constant.Role;
-import spring.web.java.convert.CryptoConverter;
+import spring.web.java.convertor.persistence.CryptoAttributeConverter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +22,7 @@ public class Member extends Base {
     private String account;
     private String password;
 
-    @Convert(converter = CryptoConverter.class)
+    @Convert(converter = CryptoAttributeConverter.class)
     private String name;
 
     @Enumerated(EnumType.STRING)
