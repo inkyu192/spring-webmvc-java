@@ -3,8 +3,6 @@ package spring.web.java.filter;
 import java.io.IOException;
 import java.util.UUID;
 
-import org.springframework.core.Ordered;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
@@ -19,15 +17,22 @@ import lombok.extern.slf4j.Slf4j;
 import spring.web.java.dto.HttpLog;
 
 @Slf4j
-@Component
-public class HttpLogFilter extends GenericFilterBean implements Ordered {
+public class HttpLogFilter extends GenericFilterBean {
 
     public static final String TRANSACTION_ID = "transactionId";
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws ServletException, IOException {
-        ContentCachingRequestWrapper requestWrapper = new ContentCachingRequestWrapper((HttpServletRequest) servletRequest);
-        ContentCachingResponseWrapper responseWrapper = new ContentCachingResponseWrapper((HttpServletResponse) servletResponse);
+        HttpServletRequest httpServletRequest = (HttpServletRequest)servletRequest;
+        HttpServletResponse httpServletResponse = (HttpServletResponse)servletResponse;
+
+        if (httpServletRequest.getRequestURI().startsWith("/actuator")) {
+            filterChain.doFilter(httpServletRequest, httpServletResponse);
+            return;
+        }
+
+        ContentCachingRequestWrapper requestWrapper = new ContentCachingRequestWrapper(httpServletRequest);
+        ContentCachingResponseWrapper responseWrapper = new ContentCachingResponseWrapper(httpServletResponse);
 
         String transactionId = UUID.randomUUID().toString();
         servletRequest.setAttribute(TRANSACTION_ID, transactionId);
@@ -40,10 +45,5 @@ public class HttpLogFilter extends GenericFilterBean implements Ordered {
         httpLog.log();
 
         responseWrapper.copyBodyToResponse();
-    }
-
-    @Override
-    public int getOrder() {
-        return Integer.MIN_VALUE;
     }
 }
