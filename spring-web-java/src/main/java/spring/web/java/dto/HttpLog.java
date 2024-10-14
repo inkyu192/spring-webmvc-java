@@ -78,15 +78,19 @@ public record HttpLog(
 			body = new String(content, StandardCharsets.UTF_8);
 		}
 
-		return StringUtils.hasText(body) ? setPretty(body) : body;
+		return setPretty(body);
 	}
 
 	@SneakyThrows
 	private static String setPretty(String body) {
-		ObjectMapper objectMapper = new ObjectMapper();
-		ObjectWriter objectWriter = objectMapper.writerWithDefaultPrettyPrinter();
-		Object json = objectMapper.readValue(body, Object.class);
-		return objectWriter.writeValueAsString(json);
+		try {
+			ObjectMapper objectMapper = new ObjectMapper();
+			ObjectWriter objectWriter = objectMapper.writerWithDefaultPrettyPrinter();
+			Object json = objectMapper.readValue(body, Object.class);
+			return objectWriter.writeValueAsString(json);
+		} catch (Exception e) {
+			return body;
+		}
 	}
 
 	public void log() {
