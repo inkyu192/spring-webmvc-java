@@ -1,0 +1,7 @@
+= API 문서
+
+== Example API
+
+include::../../../build/generated-snippets/example/http-request.adoc[]  // 요청 스니펫 포함
+
+include::../../../build/generated-snippets/example/http-response.adoc[] // 응답 스니펫 포함
