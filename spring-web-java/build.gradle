@@ -33,6 +33,7 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
     // Querydsl 추가 시작
     implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
@@ -54,5 +55,6 @@ tasks.named('test') {
 tasks.named('asciidoctor') {
     inputs.dir snippetsDir
     dependsOn test
+    attributes 'snippetsDir': snippetsDir
 }
 
