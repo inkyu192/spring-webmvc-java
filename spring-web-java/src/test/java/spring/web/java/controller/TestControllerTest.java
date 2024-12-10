@@ -25,11 +25,8 @@ class TestControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
 
-	@Autowired
-	private WebApplicationContext webApplicationContext;
-
 	@BeforeEach
-	public void setUp(RestDocumentationContextProvider restDocumentation) {
+	public void setUp(RestDocumentationContextProvider restDocumentation, WebApplicationContext webApplicationContext) {
 		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
 			.apply(MockMvcRestDocumentation.documentationConfiguration(restDocumentation))
 			.build();
