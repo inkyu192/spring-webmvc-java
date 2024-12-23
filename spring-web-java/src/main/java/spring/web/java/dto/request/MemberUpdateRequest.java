@@ -1,7 +1,7 @@
 package spring.web.java.dto.request;
 
 import jakarta.validation.constraints.NotNull;
-import spring.web.java.constant.Role;
+import spring.web.java.common.constant.Role;
 
 public record MemberUpdateRequest(
         @NotNull

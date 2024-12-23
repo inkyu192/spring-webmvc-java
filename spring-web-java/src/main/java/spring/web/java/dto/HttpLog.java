@@ -4,7 +4,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 
 import org.springframework.http.HttpMethod;
-import org.springframework.util.StringUtils;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 
@@ -95,15 +94,14 @@ public record HttpLog(
 
 	public void log() {
 		String message = """
-                
-                |>> REQUEST: %s %s (%s)
-                |>> TRANSACTION_ID: %s
-                |>> CLIENT_IP: %s
-                |>> REQUEST_HEADER: %s
-                |>> REQUEST_PARAMETER: %s
-                |>> REQUEST_BODY: %s
-                |>> RESPONSE_BODY: %s
-                """
+			\n|>> REQUEST: %s %s (%s)
+			|>> TRANSACTION_ID: %s
+			|>> CLIENT_IP: %s
+			|>> REQUEST_HEADER: %s
+			|>> REQUEST_PARAMETER: %s
+			|>> REQUEST_BODY: %s
+			|>> RESPONSE_BODY: %s
+			"""
 			.formatted(
 				httpMethod,
 				requestUri,

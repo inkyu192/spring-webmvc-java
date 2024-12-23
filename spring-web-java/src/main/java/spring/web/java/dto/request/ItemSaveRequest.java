@@ -3,7 +3,7 @@ package spring.web.java.dto.request;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import spring.web.java.constant.Category;
+import spring.web.java.common.constant.Category;
 
 public record ItemSaveRequest(
         @NotNull

@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import spring.web.java.constant.DeliveryStatus;
+import spring.web.java.common.constant.DeliveryStatus;
 
 @Entity
 @Getter

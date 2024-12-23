@@ -4,8 +4,8 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import spring.web.java.constant.Role;
-import spring.web.java.convertor.persistence.CryptoAttributeConverter;
+import spring.web.java.common.constant.Role;
+import spring.web.java.infrastructure.configuration.convertor.persistence.CryptoAttributeConverter;
 
 import java.util.ArrayList;
 import java.util.List;

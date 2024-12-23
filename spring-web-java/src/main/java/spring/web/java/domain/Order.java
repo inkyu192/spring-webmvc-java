@@ -4,10 +4,10 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import spring.web.java.constant.ApiResponseCode;
-import spring.web.java.constant.DeliveryStatus;
-import spring.web.java.constant.OrderStatus;
-import spring.web.java.exception.CommonException;
+import spring.web.java.common.ApiResponseCode;
+import spring.web.java.common.constant.DeliveryStatus;
+import spring.web.java.common.constant.OrderStatus;
+import spring.web.java.infrastructure.configuration.exception.CommonException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

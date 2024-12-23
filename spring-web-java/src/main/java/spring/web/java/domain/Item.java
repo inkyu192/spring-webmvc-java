@@ -4,9 +4,9 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import spring.web.java.constant.ApiResponseCode;
-import spring.web.java.constant.Category;
-import spring.web.java.exception.CommonException;
+import spring.web.java.common.ApiResponseCode;
+import spring.web.java.common.constant.Category;
+import spring.web.java.infrastructure.configuration.exception.CommonException;
 
 
 @Entity
