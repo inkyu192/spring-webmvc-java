@@ -2,17 +2,18 @@ package spring.web.java.application.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import spring.web.java.application.port.in.ItemServicePort;
 import spring.web.java.application.port.out.ItemRepositoryPort;
-import spring.web.java.common.ApiResponseCode;
+import spring.web.java.common.ResponseMessage;
 import spring.web.java.domain.Item;
 import spring.web.java.dto.request.ItemSaveRequest;
 import spring.web.java.dto.response.ItemResponse;
-import spring.web.java.infrastructure.configuration.exception.CommonException;
+import spring.web.java.infrastructure.configuration.exception.DomainException;
 
 @Service
 @Transactional(readOnly = true)
@@ -44,7 +45,7 @@ public class ItemService implements ItemServicePort {
 	public ItemResponse findItem(Long id) {
 		return itemRepository.findById(id)
 			.map(ItemResponse::new)
-			.orElseThrow(() -> new CommonException(ApiResponseCode.DATA_NOT_FOUND));
+			.orElseThrow(() -> new DomainException(ResponseMessage.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));
 	}
 
 	@Override

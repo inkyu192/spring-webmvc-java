@@ -1,5 +1,6 @@
 package spring.web.java.application.service;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -13,8 +14,7 @@ import spring.web.java.application.port.in.MemberServicePort;
 import spring.web.java.application.port.out.MemberRepositoryPort;
 import spring.web.java.application.port.out.TokenRepositoryPort;
 import spring.web.java.common.JwtTokenProvider;
-import spring.web.java.infrastructure.configuration.security.UserDetailsImpl;
-import spring.web.java.common.ApiResponseCode;
+import spring.web.java.common.ResponseMessage;
 import spring.web.java.domain.Address;
 import spring.web.java.domain.Member;
 import spring.web.java.domain.Token;
@@ -23,7 +23,8 @@ import spring.web.java.dto.request.MemberSaveRequest;
 import spring.web.java.dto.request.MemberUpdateRequest;
 import spring.web.java.dto.response.MemberResponse;
 import spring.web.java.dto.response.TokenResponse;
-import spring.web.java.infrastructure.configuration.exception.CommonException;
+import spring.web.java.infrastructure.configuration.exception.DomainException;
+import spring.web.java.infrastructure.configuration.security.UserDetailsImpl;
 
 @Service
 @Transactional(readOnly = true)
@@ -41,7 +42,7 @@ public class MemberService implements MemberServicePort {
 	public MemberResponse saveMember(MemberSaveRequest memberSaveRequest) {
 		memberRepository.findByAccount(memberSaveRequest.account())
 			.ifPresent(member -> {
-				throw new CommonException(ApiResponseCode.DATA_DUPLICATE);
+				throw new DomainException(ResponseMessage.DUPLICATE_DATA, HttpStatus.CONFLICT);
 			});
 
 		Member member = Member.create(
@@ -70,7 +71,7 @@ public class MemberService implements MemberServicePort {
 		try {
 			authentication = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
 		} catch (BadCredentialsException e) {
-			throw new CommonException(ApiResponseCode.BAD_CREDENTIALS);
+			throw new DomainException(ResponseMessage.AUTHENTICATION_FAILED, HttpStatus.UNAUTHORIZED);
 		}
 
 		UserDetailsImpl userDetails = (UserDetailsImpl)authentication.getPrincipal();
@@ -87,14 +88,14 @@ public class MemberService implements MemberServicePort {
 	public MemberResponse findMember(Long id) {
 		return memberRepository.findById(id)
 			.map(MemberResponse::new)
-			.orElseThrow(() -> new CommonException(ApiResponseCode.DATA_NOT_FOUND));
+			.orElseThrow(() -> new DomainException(ResponseMessage.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));
 	}
 
 	@Override
 	@Transactional
 	public MemberResponse updateMember(Long id, MemberUpdateRequest memberUpdateRequest) {
 		Member member = memberRepository.findById(id)
-			.orElseThrow(() -> new CommonException(ApiResponseCode.DATA_NOT_FOUND));
+			.orElseThrow(() -> new DomainException(ResponseMessage.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));
 
 		member.update(
 			memberUpdateRequest.name(),

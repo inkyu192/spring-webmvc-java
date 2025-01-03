@@ -22,45 +22,55 @@ public class ControllerAdvice {
 	private final ServletRequest servletRequest;
 
 	@ExceptionHandler
-	public ProblemDetail handler(HttpRequestMethodNotSupportedException e) {
+	public ProblemDetail handler(DomainException exception) {
+		ProblemDetail problemDetail = ProblemDetail.forStatus(exception.getHttpStatus());
+		problemDetail.setTitle(exception.getResponseMessage().getTitle());
+		problemDetail.setDetail(exception.getResponseMessage().getDetail());
+
+		return problemDetail;
+	}
+
+	@ExceptionHandler
+	public ProblemDetail handler(HttpRequestMethodNotSupportedException exception) {
 		ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.METHOD_NOT_ALLOWED);
-
 		problemDetail.setTitle(HttpStatus.METHOD_NOT_ALLOWED.getReasonPhrase());
-		problemDetail.setDetail(e.getMessage());
+		problemDetail.setDetail(exception.getMessage());
 
 		return problemDetail;
 	}
 
 	@ExceptionHandler
-	public ProblemDetail handler(MethodArgumentNotValidException e) {
+	public ProblemDetail handler(MethodArgumentNotValidException exception) {
 		ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
-
 		problemDetail.setTitle(HttpStatus.BAD_REQUEST.getReasonPhrase());
-		problemDetail.setDetail(e.getMessage() + ": " + e.getBindingResult().getFieldErrors().stream()
-			.map(FieldError::getField)
-			.toList());
+		problemDetail.setDetail(
+			"%s: %s".formatted(
+				exception.getMessage(),
+				exception.getBindingResult().getFieldErrors().stream()
+					.map(FieldError::getField)
+					.toList()
+			)
+		);
 
 		return problemDetail;
 	}
 
 	@ExceptionHandler
-	public ProblemDetail handler(JwtException e) {
+	public ProblemDetail handler(JwtException exception) {
 		ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
-
 		problemDetail.setTitle(HttpStatus.UNAUTHORIZED.getReasonPhrase());
-		problemDetail.setDetail(e.getMessage());
+		problemDetail.setDetail(exception.getMessage());
 
 		return problemDetail;
 	}
 
 	@ExceptionHandler
-	public ProblemDetail handler(Exception e) {
-		log.error("[{}]", servletRequest.getAttribute(HttpLogFilter.TRANSACTION_ID), e);
+	public ProblemDetail handler(Exception exception) {
+		log.error("[{}]", servletRequest.getAttribute(HttpLogFilter.TRANSACTION_ID), exception);
 
 		ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-
 		problemDetail.setTitle(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
-		problemDetail.setDetail(e.getMessage());
+		problemDetail.setDetail(exception.getMessage());
 
 		return problemDetail;
 	}

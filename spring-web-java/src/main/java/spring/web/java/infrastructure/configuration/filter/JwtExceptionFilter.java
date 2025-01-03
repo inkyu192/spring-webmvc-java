@@ -1,13 +1,15 @@
 package spring.web.java.infrastructure.configuration.filter;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ProblemDetail;
 import org.springframework.web.filter.GenericFilterBean;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import jakarta.servlet.FilterChain;
@@ -15,8 +17,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import lombok.RequiredArgsConstructor;
-import spring.web.java.common.ApiResponseCode;
-import spring.web.java.dto.response.ApiResponse;
 
 @RequiredArgsConstructor
 public class JwtExceptionFilter extends GenericFilterBean {
@@ -30,21 +30,23 @@ public class JwtExceptionFilter extends GenericFilterBean {
 		try {
 			chain.doFilter(request, response);
 		} catch (UnsupportedJwtException e) {
-			setResponse(response, ApiResponseCode.UNSUPPORTED_TOKEN);
-		} catch (ExpiredJwtException e) {
-			setResponse(response, ApiResponseCode.EXPIRED_TOKEN);
+			ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+			problemDetail.setTitle(HttpStatus.BAD_REQUEST.getReasonPhrase());
+			problemDetail.setDetail(e.getMessage());
+
+			writeResponse(response, problemDetail);
 		} catch (JwtException e) {
-			setResponse(response, ApiResponseCode.BAD_TOKEN);
+			ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
+			problemDetail.setTitle(HttpStatus.UNAUTHORIZED.getReasonPhrase());
+			problemDetail.setDetail(e.getMessage());
+
+			writeResponse(response, problemDetail);
 		}
 	}
 
-	private void setResponse(
-		ServletResponse response, ApiResponseCode apiResponseCode
-	) throws RuntimeException, IOException {
-		String result = objectMapper.writeValueAsString(new ApiResponse<>(apiResponseCode));
-
+	private void writeResponse(ServletResponse response, ProblemDetail problemDetail) throws IOException {
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-		response.setCharacterEncoding("UTF-8");
-		response.getWriter().write(result);
+		response.setCharacterEncoding(String.valueOf(StandardCharsets.UTF_8));
+		response.getWriter().write(objectMapper.writeValueAsString(problemDetail));
 	}
 }

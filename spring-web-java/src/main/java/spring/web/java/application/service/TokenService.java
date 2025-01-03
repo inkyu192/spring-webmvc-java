@@ -1,5 +1,6 @@
 package spring.web.java.application.service;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,12 +11,12 @@ import spring.web.java.application.port.in.TokenServicePort;
 import spring.web.java.application.port.out.MemberRepositoryPort;
 import spring.web.java.application.port.out.TokenRepositoryPort;
 import spring.web.java.common.JwtTokenProvider;
-import spring.web.java.common.ApiResponseCode;
+import spring.web.java.common.ResponseMessage;
 import spring.web.java.domain.Member;
 import spring.web.java.domain.Token;
 import spring.web.java.dto.request.TokenRequest;
 import spring.web.java.dto.response.TokenResponse;
-import spring.web.java.infrastructure.configuration.exception.CommonException;
+import spring.web.java.infrastructure.configuration.exception.DomainException;
 
 @Service
 @Transactional(readOnly = true)
@@ -43,10 +44,10 @@ public class TokenService implements TokenServicePort {
 		String refreshToken = tokenRepository.findById(memberId)
 			.map(Token::getRefreshToken)
 			.filter(token -> tokenRequest.refreshToken().equals(token))
-			.orElseThrow(() -> new CommonException(ApiResponseCode.BAD_CREDENTIALS));
+			.orElseThrow(() -> new DomainException(ResponseMessage.AUTHENTICATION_FAILED, HttpStatus.UNAUTHORIZED));
 
 		Member member = memberRepository.findById(memberId)
-			.orElseThrow(() -> new CommonException(ApiResponseCode.BAD_CREDENTIALS));
+			.orElseThrow(() -> new DomainException(ResponseMessage.AUTHENTICATION_FAILED, HttpStatus.UNAUTHORIZED));
 
 		return new TokenResponse(jwtTokenProvider.createAccessToken(member.getId(), member.getRole()), refreshToken);
 	}

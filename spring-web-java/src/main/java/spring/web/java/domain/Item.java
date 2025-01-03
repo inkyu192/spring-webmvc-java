@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import spring.web.java.common.ApiResponseCode;
+import spring.web.java.common.ResponseMessage;
 import spring.web.java.common.constant.Category;
 import spring.web.java.infrastructure.configuration.exception.CommonException;
 
@@ -50,7 +50,7 @@ public class Item extends Base {
         int differenceQuantity = this.quantity - quantity;
 
         if (differenceQuantity < 0) {
-            throw new CommonException(ApiResponseCode.QUANTITY_NOT_ENOUGH);
+            throw new CommonException(ResponseMessage.INSUFFICIENT_QUANTITY);
         }
 
         this.quantity = differenceQuantity;

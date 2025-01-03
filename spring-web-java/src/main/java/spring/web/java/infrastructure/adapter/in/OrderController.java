@@ -1,16 +1,21 @@
 package spring.web.java.infrastructure.adapter.in;
 
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import spring.web.java.application.port.in.OrderServicePort;
 import spring.web.java.common.constant.DeliveryStatus;
 import spring.web.java.common.constant.OrderStatus;
 import spring.web.java.dto.request.OrderSaveRequest;
-import spring.web.java.dto.response.ApiResponse;
 import spring.web.java.dto.response.OrderResponse;
 
 @RestController
@@ -18,38 +23,30 @@ import spring.web.java.dto.response.OrderResponse;
 @RequiredArgsConstructor
 public class OrderController {
 
-    private final OrderServicePort orderService;
+	private final OrderServicePort orderService;
 
-    @PostMapping
-    public ApiResponse<OrderResponse> saveOrder(@RequestBody @Valid OrderSaveRequest orderSaveRequest) {
-        OrderResponse responseDto = orderService.saveOrder(orderSaveRequest);
+	@PostMapping
+	public OrderResponse saveOrder(@RequestBody @Valid OrderSaveRequest orderSaveRequest) {
+		return orderService.saveOrder(orderSaveRequest);
+	}
 
-        return new ApiResponse<>(responseDto);
-    }
+	@GetMapping
+	public Page<OrderResponse> findOrders(
+		Pageable pageable,
+		@RequestParam Long memberId,
+		@RequestParam(required = false) OrderStatus orderStatus,
+		@RequestParam(required = false) DeliveryStatus deliveryStatus
+	) {
+		return orderService.findOrders(memberId, orderStatus, deliveryStatus, pageable);
+	}
 
-    @GetMapping
-    public ApiResponse<Page<OrderResponse>> findOrders(
-            Pageable pageable,
-            @RequestParam Long memberId,
-            @RequestParam(required = false) OrderStatus orderStatus,
-            @RequestParam(required = false) DeliveryStatus deliveryStatus
-    ) {
-        Page<OrderResponse> list = orderService.findOrders(memberId, orderStatus, deliveryStatus, pageable);
+	@GetMapping("{id}")
+	public OrderResponse findOrder(@PathVariable Long id) {
+		return orderService.findOrder(id);
+	}
 
-        return new ApiResponse<>(list);
-    }
-
-    @GetMapping("{id}")
-    public ApiResponse<OrderResponse> findOrder(@PathVariable Long id) {
-        OrderResponse responseDto = orderService.findOrder(id);
-
-        return new ApiResponse<>(responseDto);
-    }
-
-    @PostMapping("{id}")
-    public ApiResponse<OrderResponse> cancelOrder(@PathVariable Long id) {
-        OrderResponse responseDto = orderService.cancelOrder(id);
-
-        return new ApiResponse<>(responseDto);
-    }
+	@PostMapping("{id}")
+	public OrderResponse cancelOrder(@PathVariable Long id) {
+		return orderService.cancelOrder(id);
+	}
 }

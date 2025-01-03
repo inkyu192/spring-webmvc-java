@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import spring.web.java.common.ApiResponseCode;
+import spring.web.java.common.ResponseMessage;
 import spring.web.java.common.constant.DeliveryStatus;
 import spring.web.java.common.constant.OrderStatus;
 import spring.web.java.infrastructure.configuration.exception.CommonException;
@@ -69,7 +69,7 @@ public class Order extends Base {
 
     public void cancel() {
         if (delivery.getStatus() == DeliveryStatus.COMP) {
-            throw new CommonException(ApiResponseCode.ORDER_NOT_CANCEL);
+            throw new CommonException(ResponseMessage.ORDER_CANCEL_NOT_ALLOWED);
         }
 
         status = OrderStatus.CANCEL;
