@@ -11,8 +11,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
-import spring.web.kotlin.config.security.JwtAuthenticationFilter
-import spring.web.kotlin.config.security.JwtExceptionFilter
+import spring.web.kotlin.filter.JwtAuthenticationFilter
+import spring.web.kotlin.filter.JwtExceptionFilter
 import spring.web.kotlin.config.security.JwtTokenProvider
 import spring.web.kotlin.config.security.UserDetailsServiceImpl
 import spring.web.kotlin.repository.MemberRepository
