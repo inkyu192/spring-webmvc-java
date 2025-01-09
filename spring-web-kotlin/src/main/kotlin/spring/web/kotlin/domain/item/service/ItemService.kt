@@ -1,0 +1,59 @@
+package spring.web.kotlin.domain.item.service
+
+import org.springframework.data.domain.Pageable
+import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
+import spring.web.kotlin.global.common.ApiResponseCode
+import spring.web.kotlin.domain.item.Item
+import spring.web.kotlin.domain.item.dto.ItemSaveRequest
+import spring.web.kotlin.domain.item.dto.ItemResponse
+import spring.web.kotlin.global.exception.CommonException
+import spring.web.kotlin.domain.item.repository.ItemRepository
+
+@Service
+@Transactional(readOnly = true)
+class ItemService(
+    private val itemRepository: ItemRepository
+) {
+    @Transactional
+    fun saveItem(itemSaveRequest: ItemSaveRequest) = Item.create(
+        itemSaveRequest.name,
+        itemSaveRequest.description,
+        itemSaveRequest.price,
+        itemSaveRequest.quantity,
+        itemSaveRequest.category
+    )
+        .also { itemRepository.save(it) }
+        .let { ItemResponse(it) }
+
+    fun findItems(pageable: Pageable, name: String?) = itemRepository.findAllWithJpql(pageable, name)
+        .map { ItemResponse(it) }
+
+    fun findItem(id: Long) = itemRepository.findById(id).orElse(null)
+        ?.let { ItemResponse(it) }
+        ?: CommonException(ApiResponseCode.DATA_NOT_FOUND)
+
+    @Transactional
+    fun updateItem(id: Long, itemSaveRequest: ItemSaveRequest) = itemRepository.findById(id).orElse(null)
+        ?.also {
+            it.update(
+                itemSaveRequest.name,
+                itemSaveRequest.description,
+                itemSaveRequest.price,
+                itemSaveRequest.quantity,
+                itemSaveRequest.category
+            )
+        }
+        ?: Item.create(
+            itemSaveRequest.name,
+            itemSaveRequest.description,
+            itemSaveRequest.price,
+            itemSaveRequest.quantity,
+            itemSaveRequest.category
+        )
+            .let { ItemResponse(it) }
+
+
+    @Transactional
+    fun deleteItem(id: Long) = itemRepository.deleteById(id)
+}

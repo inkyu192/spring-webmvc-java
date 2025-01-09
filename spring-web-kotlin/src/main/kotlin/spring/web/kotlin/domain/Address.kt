@@ -3,7 +3,7 @@ package spring.web.kotlin.domain
 import jakarta.persistence.Embeddable
 
 @Embeddable
-class Address private constructor(
+class Address protected constructor(
     val city: String,
     val street: String,
     val zipcode: String
