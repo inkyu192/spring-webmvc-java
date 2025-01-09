@@ -8,16 +8,16 @@ class Delivery protected constructor(
     @Id
     @GeneratedValue
     @Column(name = "delivery_id")
-    val id: Long? = null,
+    var id: Long? = null,
 
     @OneToOne(mappedBy = "delivery", fetch = FetchType.LAZY)
-    val order: Order? = null,
+    var order: Order? = null,
 
     @Embedded
-    val address: Address,
+    var address: Address,
 
     @Enumerated(EnumType.STRING)
-    val status: Status
+    var status: Status
 ) {
     companion object {
         fun create(address: Address) = Delivery(

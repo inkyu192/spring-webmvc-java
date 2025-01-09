@@ -8,9 +8,9 @@ class Member protected constructor(
     @Id
     @GeneratedValue
     @Column(name = "member_id")
-    val id: Long? = null,
-    val account: String,
-    val password: String,
+    var id: Long? = null,
+    var account: String,
+    var password: String,
     var name: String,
 
     @Enumerated(EnumType.STRING)

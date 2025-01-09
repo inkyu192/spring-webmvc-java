@@ -10,7 +10,7 @@ class Item protected constructor(
     @Id
     @GeneratedValue
     @Column(name = "item_id")
-    val id: Long? = null,
+    var id: Long? = null,
     var name: String,
     var description: String,
     var price: Int,

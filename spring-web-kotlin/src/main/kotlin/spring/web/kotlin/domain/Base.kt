@@ -13,8 +13,8 @@ import java.time.LocalDateTime
 class Base {
     @CreatedDate
     @Column(updatable = false)
-    val createdDate: LocalDateTime? = null
+    var createdDate: LocalDateTime? = null
 
     @LastModifiedDate
-    val lastModifiedDate: LocalDateTime? = null
+    var lastModifiedDate: LocalDateTime? = null
 }

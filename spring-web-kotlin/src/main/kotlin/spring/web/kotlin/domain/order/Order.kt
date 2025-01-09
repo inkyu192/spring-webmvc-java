@@ -11,23 +11,23 @@ class Order protected constructor(
     @Id
     @GeneratedValue
     @Column(name = "order_id")
-    val id: Long? = null,
+    var id: Long? = null,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
-    val member: Member,
+    var member: Member,
 
     @OneToMany(mappedBy = "order", cascade = [CascadeType.ALL])
-    val orderItems: MutableList<OrderItem> = mutableListOf(),
+    var orderItems: MutableList<OrderItem> = mutableListOf(),
 
     @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     @JoinColumn(name = "delivery_id")
-    val delivery: Delivery,
+    var delivery: Delivery,
 
-    val orderDate: LocalDateTime,
+    var orderDate: LocalDateTime,
 
     @Enumerated(EnumType.STRING)
-    val status: Status
+    var status: Status
 ) : Base() {
     companion object {
         fun create(member: Member, delivery: Delivery, orderItems: List<OrderItem>): Order {
