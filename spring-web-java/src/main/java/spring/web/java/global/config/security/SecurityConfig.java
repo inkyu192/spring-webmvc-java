@@ -16,14 +16,12 @@ import org.springframework.security.web.SecurityFilterChain;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import spring.web.java.domain.member.repository.MemberRepository;
 import spring.web.java.global.common.JwtTokenProvider;
 import spring.web.java.global.filter.JwtAuthenticationFilter;
 import spring.web.java.global.filter.JwtExceptionFilter;
 
-@RequiredArgsConstructor
 @Configuration(proxyBeanMethods = false)
 public class SecurityConfig {
 
