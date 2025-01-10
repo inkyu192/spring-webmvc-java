@@ -17,17 +17,11 @@ class JwtAuthenticationFilter(
 ) : BasicAuthenticationFilter(authenticationManager) {
 
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
-        getAccessToken(request)?.let { accessToken ->
-            val claims = jwtTokenProvider.parseAccessToken(accessToken)
-            val userDetails = UserDetailsImpl(claims)
-            val authentication = UsernamePasswordAuthenticationToken(
-                userDetails,
-                userDetails.password,
-                userDetails.authorities
-            )
-
-            SecurityContextHolder.getContext().authentication = authentication
-        }
+        getAccessToken(request)
+            ?.let { jwtTokenProvider.parseAccessToken(it) }
+            ?.let { UserDetailsImpl(it) }
+            ?.let { UsernamePasswordAuthenticationToken(it, it.password, it.authorities) }
+            ?.also { SecurityContextHolder.getContext().authentication = it }
 
         chain.doFilter(request, response)
     }

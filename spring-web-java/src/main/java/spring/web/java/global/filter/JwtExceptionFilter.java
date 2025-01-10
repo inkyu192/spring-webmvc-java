@@ -29,12 +29,6 @@ public class JwtExceptionFilter extends GenericFilterBean {
 	) throws IOException, ServletException {
 		try {
 			chain.doFilter(request, response);
-		} catch (UnsupportedJwtException e) {
-			ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
-			problemDetail.setTitle(HttpStatus.BAD_REQUEST.getReasonPhrase());
-			problemDetail.setDetail(e.getMessage());
-
-			writeResponse(response, problemDetail);
 		} catch (JwtException e) {
 			ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
 			problemDetail.setTitle(HttpStatus.UNAUTHORIZED.getReasonPhrase());

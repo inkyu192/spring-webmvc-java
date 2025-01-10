@@ -1,9 +1,10 @@
 package spring.web.kotlin.domain.item
 
 import jakarta.persistence.*
+import org.springframework.http.HttpStatus
 import spring.web.kotlin.domain.Base
-import spring.web.kotlin.global.common.ApiResponseCode
-import spring.web.kotlin.global.exception.CommonException
+import spring.web.kotlin.global.common.ResponseMessage
+import spring.web.kotlin.global.exception.DomainException
 
 @Entity
 class Item protected constructor(
@@ -42,7 +43,7 @@ class Item protected constructor(
         val differenceQuantity = this.quantity - quantity
 
         if (differenceQuantity < 0) {
-            throw CommonException(ApiResponseCode.QUANTITY_NOT_ENOUGH)
+            throw DomainException(ResponseMessage.INSUFFICIENT_QUANTITY, HttpStatus.CONFLICT)
         }
 
         this.quantity = differenceQuantity

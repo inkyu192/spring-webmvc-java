@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 import jakarta.persistence.CascadeType;
@@ -27,7 +29,7 @@ import lombok.RequiredArgsConstructor;
 import spring.web.java.domain.Base;
 import spring.web.java.domain.member.Member;
 import spring.web.java.global.common.ResponseMessage;
-import spring.web.java.global.exception.CommonException;
+import spring.web.java.global.exception.DomainException;
 
 @Entity
 @Getter
@@ -85,7 +87,7 @@ public class Order extends Base {
 
 	public void cancel() {
 		if (delivery.getStatus() == Delivery.Status.COMP) {
-			throw new CommonException(ResponseMessage.ORDER_CANCEL_NOT_ALLOWED);
+			throw new DomainException(ResponseMessage.ORDER_CANCEL_NOT_ALLOWED, HttpStatus.UNPROCESSABLE_ENTITY);
 		}
 
 		status = Status.CANCEL;

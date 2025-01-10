@@ -14,5 +14,5 @@ interface MemberRepository : JpaRepository<Member, Long>, MemberCustomRepository
             WHERE m.account = :account
             """
     )
-    fun findByAccount(account: String): Optional<Member>
+    fun findByAccount(account: String): Member?
 }
