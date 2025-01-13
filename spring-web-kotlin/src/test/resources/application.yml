@@ -1,0 +1,15 @@
+spring:
+  profiles:
+    active: test
+
+logging:
+  level:
+    org:
+      springframework:
+        jdbc: DEBUG
+      hibernate:
+        SQL: DEBUG
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE
