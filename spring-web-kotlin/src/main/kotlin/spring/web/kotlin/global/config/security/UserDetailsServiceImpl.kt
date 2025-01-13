@@ -1,4 +1,4 @@
-package spring.web.kotlin.global.config
+package spring.web.kotlin.global.config.security
 
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException

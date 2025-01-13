@@ -23,16 +23,15 @@ class JwtExceptionFilter(
                         it.detail = throwable.message
                         writeResponse(response, it)
                     }
+
                     else -> throw throwable
                 }
             }
     }
 
     private fun writeResponse(response: ServletResponse, problemDetail: ProblemDetail) {
-        response.also {
-            it.contentType = MediaType.APPLICATION_JSON_VALUE
-            it.characterEncoding = StandardCharsets.UTF_8.toString()
-            it.writer.write(objectMapper.writeValueAsString(problemDetail))
-        }
+        response.contentType = MediaType.APPLICATION_JSON_VALUE
+        response.characterEncoding = StandardCharsets.UTF_8.toString()
+        response.writer.write(objectMapper.writeValueAsString(problemDetail))
     }
 }

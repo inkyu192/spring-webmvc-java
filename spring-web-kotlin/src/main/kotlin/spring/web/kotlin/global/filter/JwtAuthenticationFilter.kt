@@ -9,7 +9,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter
 import spring.web.kotlin.global.config.JwtTokenProvider
-import spring.web.kotlin.global.config.UserDetailsImpl
+import spring.web.kotlin.global.config.security.UserDetailsImpl
 
 class JwtAuthenticationFilter(
     authenticationManager: AuthenticationManager,

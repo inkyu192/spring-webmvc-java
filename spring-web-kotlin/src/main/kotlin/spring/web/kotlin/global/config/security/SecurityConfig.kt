@@ -1,4 +1,4 @@
-package spring.web.kotlin.global.config
+package spring.web.kotlin.global.config.security
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Value
@@ -14,6 +14,7 @@ import org.springframework.security.web.SecurityFilterChain
 import spring.web.kotlin.global.filter.JwtAuthenticationFilter
 import spring.web.kotlin.global.filter.JwtExceptionFilter
 import spring.web.kotlin.domain.member.repository.MemberRepository
+import spring.web.kotlin.global.config.JwtTokenProvider
 
 @Configuration(proxyBeanMethods = false)
 class SecurityConfig {

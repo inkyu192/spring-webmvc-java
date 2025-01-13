@@ -1,4 +1,4 @@
-package spring.web.kotlin.global.config
+package spring.web.kotlin.global.config.security
 
 import io.jsonwebtoken.Claims
 import org.springframework.security.core.authority.SimpleGrantedAuthority
