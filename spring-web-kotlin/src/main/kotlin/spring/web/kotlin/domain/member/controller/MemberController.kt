@@ -9,7 +9,7 @@ import spring.web.kotlin.domain.member.service.MemberService
 @RestController
 @RequestMapping("member")
 class MemberController(
-    val memberService: MemberService,
+    private val memberService: MemberService,
 ) {
     @PostMapping
     fun saveMember(

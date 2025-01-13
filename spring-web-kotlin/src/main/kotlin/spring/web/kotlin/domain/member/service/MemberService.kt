@@ -17,7 +17,7 @@ import spring.web.kotlin.global.exception.DomainException
 @Service
 @Transactional(readOnly = true)
 class MemberService(
-    val memberRepository: MemberRepository,
+    private val memberRepository: MemberRepository,
 ) {
     @Transactional
     fun saveMember(memberSaveRequest: MemberSaveRequest): MemberResponse {
