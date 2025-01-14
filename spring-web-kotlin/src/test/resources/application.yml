@@ -1,15 +1,12 @@
 spring:
   profiles:
     active: test
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
 
 logging:
   level:
-    org:
-      springframework:
-        jdbc: DEBUG
-      hibernate:
-        SQL: DEBUG
-        type:
-          descriptor:
-            sql:
-              BasicBinder: TRACE
+    org.springframework.orm.jpa: DEBUG
+    org.springframework.transaction: DEBUG

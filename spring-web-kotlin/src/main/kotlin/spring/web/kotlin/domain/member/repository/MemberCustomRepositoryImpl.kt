@@ -9,7 +9,7 @@ import org.springframework.util.StringUtils
 import spring.web.kotlin.domain.member.Member
 
 class MemberCustomRepositoryImpl(
-    val entityManager: EntityManager
+    private val entityManager: EntityManager
 ) : MemberCustomRepository {
     override fun findAllWithJpql(pageable: Pageable, account: String?, name: String?): Page<Member> {
         var countJpql = """
@@ -45,8 +45,10 @@ class MemberCustomRepositoryImpl(
 
         val countQuery: TypedQuery<Long> = entityManager.createQuery(countJpql, Long::class.java)
         val contentQuery: TypedQuery<Member> = entityManager.createQuery(contentJpql, Member::class.java)
-            .setFirstResult(pageable.offset.toInt())
-            .setMaxResults(pageable.pageSize)
+
+        if (pageable.isPaged) {
+            contentQuery.setFirstResult(pageable.offset.toInt()).setMaxResults(pageable.pageSize)
+        }
 
         if (StringUtils.hasText(account)) {
             countQuery.setParameter("account", account)

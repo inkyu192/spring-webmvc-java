@@ -45,7 +45,7 @@ public class ItemService {
 	}
 
 	@Transactional
-	public ItemResponse updateItem(Long id, ItemSaveRequest itemSaveRequest) {
+	public ItemResponse putItem(Long id, ItemSaveRequest itemSaveRequest) {
 		Item item = itemRepository.findById(id)
 			.map(findItem -> {
 				findItem.update(

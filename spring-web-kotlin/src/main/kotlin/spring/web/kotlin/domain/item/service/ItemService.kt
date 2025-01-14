@@ -19,59 +19,49 @@ class ItemService(
 ) {
     @Transactional
     fun saveItem(itemSaveRequest: ItemSaveRequest): ItemResponse {
-        val item =
-            itemRepository.save(
-                Item.create(
-                    itemSaveRequest.name,
-                    itemSaveRequest.description,
-                    itemSaveRequest.price,
-                    itemSaveRequest.quantity,
-                    itemSaveRequest.category,
-                ),
-            )
+        val item = itemRepository.save(
+            Item.create(
+                itemSaveRequest.name,
+                itemSaveRequest.description,
+                itemSaveRequest.price,
+                itemSaveRequest.quantity,
+                itemSaveRequest.category,
+            ),
+        )
 
         return ItemResponse(item)
     }
 
-    fun findItems(
-        pageable: Pageable,
-        name: String?,
-    ) = itemRepository
+    fun findItems(pageable: Pageable, name: String?) = itemRepository
         .findAllWithJpql(pageable, name)
         .map { ItemResponse(it) }
 
     fun findItem(id: Long): ItemResponse {
-        val item =
-            itemRepository.findByIdOrNull(id)
-                ?: throw DomainException(ResponseMessage.DATA_NOT_FOUND, HttpStatus.NOT_FOUND)
+        val item = itemRepository.findByIdOrNull(id)
+            ?: throw DomainException(ResponseMessage.DATA_NOT_FOUND, HttpStatus.NOT_FOUND)
 
         return ItemResponse(item)
     }
 
     @Transactional
-    fun putItem(
-        id: Long,
-        itemSaveRequest: ItemSaveRequest,
-    ): ItemResponse {
-        val item =
-            itemRepository
-                .findByIdOrNull(id)
-                ?.apply {
-                    update(
-                        itemSaveRequest.name,
-                        itemSaveRequest.description,
-                        itemSaveRequest.price,
-                        itemSaveRequest.quantity,
-                        itemSaveRequest.category,
-                    )
-                }
-                ?: Item.create(
-                    itemSaveRequest.name,
-                    itemSaveRequest.description,
-                    itemSaveRequest.price,
-                    itemSaveRequest.quantity,
-                    itemSaveRequest.category,
-                )
+    fun putItem(id: Long, itemSaveRequest: ItemSaveRequest): ItemResponse {
+        val item = itemRepository.findByIdOrNull(id)?.apply {
+            update(
+                itemSaveRequest.name,
+                itemSaveRequest.description,
+                itemSaveRequest.price,
+                itemSaveRequest.quantity,
+                itemSaveRequest.category,
+            )
+        } ?: itemRepository.save(
+            Item.create(
+                itemSaveRequest.name,
+                itemSaveRequest.description,
+                itemSaveRequest.price,
+                itemSaveRequest.quantity,
+                itemSaveRequest.category,
+            ),
+        )
 
         return ItemResponse(item)
     }

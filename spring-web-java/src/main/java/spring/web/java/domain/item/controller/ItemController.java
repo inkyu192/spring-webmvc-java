@@ -41,8 +41,8 @@ public class ItemController {
 	}
 
 	@PutMapping("{id}")
-	public ItemResponse updateItem(@PathVariable Long id, @RequestBody @Valid ItemSaveRequest itemSaveRequest) {
-		return itemService.updateItem(id, itemSaveRequest);
+	public ItemResponse putItem(@PathVariable Long id, @RequestBody @Valid ItemSaveRequest itemSaveRequest) {
+		return itemService.putItem(id, itemSaveRequest);
 	}
 
 	@DeleteMapping("{id}")

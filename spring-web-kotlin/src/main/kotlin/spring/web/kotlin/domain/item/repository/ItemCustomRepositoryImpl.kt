@@ -40,8 +40,10 @@ class ItemCustomRepositoryImpl(
 
         val countQuery: TypedQuery<Long> = entityManager.createQuery(countJpql, Long::class.java)
         val contentQuery: TypedQuery<Item> = entityManager.createQuery(contentJpql, Item::class.java)
-            .setFirstResult(pageable.offset.toInt())
-            .setMaxResults(pageable.pageSize)
+
+        if (pageable.isPaged) {
+            contentQuery.setFirstResult(pageable.offset.toInt()).setMaxResults(pageable.pageSize)
+        }
 
         if (StringUtils.hasText(name)) {
             countQuery.setParameter("name", name)

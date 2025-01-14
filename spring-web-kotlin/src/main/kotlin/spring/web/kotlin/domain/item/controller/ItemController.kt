@@ -21,7 +21,7 @@ class ItemController(
     fun findItem(@PathVariable id: Long) = itemService.findItem(id)
 
     @PutMapping("{id}")
-    fun updateItem(@PathVariable id: Long, @RequestBody itemSaveRequest: ItemSaveRequest) =
+    fun putItem(@PathVariable id: Long, @RequestBody itemSaveRequest: ItemSaveRequest) =
         itemService.putItem(id, itemSaveRequest)
 
     @DeleteMapping("{id}")
