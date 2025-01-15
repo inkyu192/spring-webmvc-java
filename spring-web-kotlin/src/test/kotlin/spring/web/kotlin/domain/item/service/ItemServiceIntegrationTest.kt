@@ -16,7 +16,7 @@ import spring.web.kotlin.global.exception.DomainException
 
 @DataJpaTest
 @Import(TestConfig::class)
-class ItemServiceTest(
+class ItemServiceIntegrationTest(
     private val itemRepository: ItemRepository,
     private val itemService: ItemService = ItemService(itemRepository)
 ) : DescribeSpec({
@@ -31,7 +31,9 @@ class ItemServiceTest(
         }
 
         context("데이터가 있을 때") {
-            val item = itemRepository.save(Item.create("이름", "설명", 100, 1, Item.Category.ROLE_BOOK))
+            val item = Item.create("이름", "설명", 100, 1, Item.Category.ROLE_BOOK).also {
+                itemRepository.save(it)
+            }
 
             it("조회 되어야 한다") {
                 itemService.findItem(item.id!!).apply {
@@ -47,8 +49,9 @@ class ItemServiceTest(
     describe("putItem 메서드는") {
         context("데이터가 없을 때") {
             it("저장 되어야 한다") {
-                val request = ItemSaveRequest("이름", "설명", 100, 1, Item.Category.ROLE_BOOK)
-                itemService.putItem(1, request)
+                val request = ItemSaveRequest("이름", "설명", 100, 1, Item.Category.ROLE_BOOK).also {
+                    itemService.putItem(1, it)
+                }
 
                 itemRepository.findByIdOrNull(1)?.apply {
                     name shouldBe request.name
@@ -60,13 +63,16 @@ class ItemServiceTest(
         }
 
         context("데이터가 있을 때") {
-            val savedItem = itemRepository.save(Item.create("이름", "설명", 100, 1, Item.Category.ROLE_BOOK))
+            val item = Item.create("이름", "설명", 100, 1, Item.Category.ROLE_BOOK).also {
+                itemRepository.save(it)
+            }
 
             it("수정 되어야 한다") {
-                val request = ItemSaveRequest("이름2", "설명2", 200, 2, Item.Category.ROLE_TICKET)
-                itemService.putItem(savedItem.id!!, request)
+                val request = ItemSaveRequest("이름2", "설명2", 200, 2, Item.Category.ROLE_TICKET).also {
+                    itemService.putItem(item.id!!, it)
+                }
 
-                itemRepository.findByIdOrNull(savedItem.id)?.apply {
+                itemRepository.findByIdOrNull(item.id)?.apply {
                     name shouldBe request.name
                     description shouldBe request.description
                     price shouldBe request.price

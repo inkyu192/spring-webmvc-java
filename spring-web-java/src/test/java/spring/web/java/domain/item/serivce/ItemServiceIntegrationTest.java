@@ -15,13 +15,13 @@ import spring.web.java.global.TestConfig;
 
 @DataJpaTest
 @Import(TestConfig.class)
-class ItemServiceTest {
+class ItemServiceIntegrationTest {
 
 	private final ItemRepository itemRepository;
 	private final ItemService itemService;
 
 	@Autowired
-	public ItemServiceTest(ItemRepository itemRepository) {
+	public ItemServiceIntegrationTest(ItemRepository itemRepository) {
 		this.itemRepository = itemRepository;
 		this.itemService = new ItemService(itemRepository);
 	}
