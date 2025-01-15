@@ -144,6 +144,8 @@ class ItemServiceUnitTest {
 		Assertions.assertThat(request.description()).isEqualTo(response.description());
 		Assertions.assertThat(request.price()).isEqualTo(response.price());
 		Assertions.assertThat(request.quantity()).isEqualTo(response.quantity());
+
+		Mockito.verify(itemRepository, Mockito.times(1)).save(Mockito.any());
 	}
 
 	@Test
