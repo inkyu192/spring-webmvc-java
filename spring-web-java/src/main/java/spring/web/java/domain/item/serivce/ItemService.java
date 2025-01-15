@@ -58,12 +58,14 @@ public class ItemService {
 
 				return findItem;
 			})
-			.orElseGet(() -> Item.create(
-				itemSaveRequest.name(),
-				itemSaveRequest.description(),
-				itemSaveRequest.price(),
-				itemSaveRequest.quantity(),
-				itemSaveRequest.category()
+			.orElseGet(() -> itemRepository.save(
+				Item.create(
+					itemSaveRequest.name(),
+					itemSaveRequest.description(),
+					itemSaveRequest.price(),
+					itemSaveRequest.quantity(),
+					itemSaveRequest.category()
+				)
 			));
 
 		return new ItemResponse(item);
