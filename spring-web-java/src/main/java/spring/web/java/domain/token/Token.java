@@ -1,11 +1,15 @@
 package spring.web.java.domain.token;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
 @Getter
 @RedisHash(value = "token", timeToLive = 604800)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Token {
 
     @Id
