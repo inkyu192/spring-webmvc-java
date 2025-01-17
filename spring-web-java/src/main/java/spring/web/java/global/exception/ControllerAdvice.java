@@ -2,6 +2,7 @@ package spring.web.java.global.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -21,8 +22,8 @@ public class ControllerAdvice {
 
 	private final ServletRequest servletRequest;
 
-	@ExceptionHandler
-	public ProblemDetail handler(DomainException exception) {
+	@ExceptionHandler(DomainException.class)
+	public ProblemDetail domain(DomainException exception) {
 		ProblemDetail problemDetail = ProblemDetail.forStatus(exception.getHttpStatus());
 		problemDetail.setTitle(exception.getResponseMessage().getTitle());
 		problemDetail.setDetail(exception.getResponseMessage().getDetail());
@@ -30,8 +31,8 @@ public class ControllerAdvice {
 		return problemDetail;
 	}
 
-	@ExceptionHandler
-	public ProblemDetail handler(HttpRequestMethodNotSupportedException exception) {
+	@ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+	public ProblemDetail methodNotAllowed(HttpRequestMethodNotSupportedException exception) {
 		ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.METHOD_NOT_ALLOWED);
 		problemDetail.setTitle(HttpStatus.METHOD_NOT_ALLOWED.getReasonPhrase());
 		problemDetail.setDetail(exception.getMessage());
@@ -39,8 +40,8 @@ public class ControllerAdvice {
 		return problemDetail;
 	}
 
-	@ExceptionHandler
-	public ProblemDetail handler(MethodArgumentNotValidException exception) {
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public ProblemDetail badRequest(MethodArgumentNotValidException exception) {
 		ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
 		problemDetail.setTitle(HttpStatus.BAD_REQUEST.getReasonPhrase());
 		problemDetail.setDetail(
@@ -55,8 +56,8 @@ public class ControllerAdvice {
 		return problemDetail;
 	}
 
-	@ExceptionHandler
-	public ProblemDetail handler(JwtException exception) {
+	@ExceptionHandler({AuthorizationDeniedException.class, JwtException.class})
+	public ProblemDetail unauthorized(Exception exception) {
 		ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
 		problemDetail.setTitle(HttpStatus.UNAUTHORIZED.getReasonPhrase());
 		problemDetail.setDetail(exception.getMessage());
@@ -64,8 +65,9 @@ public class ControllerAdvice {
 		return problemDetail;
 	}
 
-	@ExceptionHandler
-	public ProblemDetail handler(Exception exception) {
+
+	@ExceptionHandler(Exception.class)
+	public ProblemDetail internalServerError(Exception exception) {
 		log.error("[{}]", servletRequest.getAttribute(HttpLogFilter.TRANSACTION_ID), exception);
 
 		ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR);
