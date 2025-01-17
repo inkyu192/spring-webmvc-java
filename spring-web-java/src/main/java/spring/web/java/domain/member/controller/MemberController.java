@@ -1,6 +1,6 @@
 package spring.web.java.domain.member.controller;
 
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -11,13 +11,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import spring.web.java.domain.member.serivce.MemberService;
 import spring.web.java.domain.member.dto.MemberLoginRequest;
+import spring.web.java.domain.member.dto.MemberResponse;
 import spring.web.java.domain.member.dto.MemberSaveRequest;
 import spring.web.java.domain.member.dto.MemberUpdateRequest;
-import spring.web.java.domain.member.dto.MemberResponse;
+import spring.web.java.domain.member.serivce.MemberService;
 import spring.web.java.domain.token.dto.TokenResponse;
-import spring.web.java.global.config.security.UserDetailsImpl;
 
 @RestController
 @RequestMapping("member")
@@ -36,21 +35,21 @@ public class MemberController {
 		return memberService.login(memberLoginRequest);
 	}
 
+	@PreAuthorize("isAuthenticated()")
 	@GetMapping
-	public MemberResponse findMember(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-		return memberService.findMember(userDetails.getMemberId());
+	public MemberResponse findMember() {
+		return memberService.findMember();
 	}
 
+	@PreAuthorize("isAuthenticated()")
 	@PatchMapping
-	public MemberResponse updateMember(
-		@AuthenticationPrincipal UserDetailsImpl userDetails,
-		@RequestBody @Valid MemberUpdateRequest memberUpdateRequest
-	) {
-		return memberService.updateMember(userDetails.getMemberId(), memberUpdateRequest);
+	public MemberResponse updateMember(@RequestBody @Valid MemberUpdateRequest memberUpdateRequest) {
+		return memberService.updateMember(memberUpdateRequest);
 	}
 
+	@PreAuthorize("isAuthenticated()")
 	@DeleteMapping
-	public void deleteMember(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-		memberService.deleteMember(userDetails.getMemberId());
+	public void deleteMember() {
+		memberService.deleteMember();
 	}
 }

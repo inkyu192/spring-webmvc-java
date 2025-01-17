@@ -1,62 +1,57 @@
 package spring.web.java.global.filter;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.springframework.http.HttpHeaders;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.util.StringUtils;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import spring.web.java.global.common.JwtTokenProvider;
-import spring.web.java.global.config.security.UserDetailsImpl;
 
-public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
+@RequiredArgsConstructor
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private final JwtTokenProvider jwtTokenProvider;
 
-	public JwtAuthenticationFilter(AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider) {
-		super(authenticationManager);
-		this.jwtTokenProvider = jwtTokenProvider;
-	}
-
 	@Override
 	protected void doFilterInternal(
-		HttpServletRequest request, HttpServletResponse response, FilterChain chain
-	) throws IOException, ServletException {
-		String accessToken = getAccessToken(request);
+		HttpServletRequest request,
+		HttpServletResponse response,
+		FilterChain filterChain
+	) throws ServletException, IOException {
+		String token = getToken(request);
 
-		if (StringUtils.hasText(accessToken)) {
-			Claims claims = jwtTokenProvider.parseAccessToken(accessToken);
-			UserDetails userDetails = new UserDetailsImpl(claims);
+		if (StringUtils.hasText(token)) {
+			Claims claims = jwtTokenProvider.parseAccessToken(token);
 			Authentication authentication = new UsernamePasswordAuthenticationToken(
-				userDetails,
-				userDetails.getPassword(),
-				userDetails.getAuthorities()
+				claims.get("memberId"),
+				token,
+				List.of(new SimpleGrantedAuthority(String.valueOf(claims.get("role"))))
 			);
-
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 		}
 
-		chain.doFilter(request, response);
+		filterChain.doFilter(request, response);
 	}
 
-	public String getAccessToken(HttpServletRequest request) {
-		String accessToken = null;
-		String token = request.getHeader(HttpHeaders.AUTHORIZATION);
+	public String getToken(HttpServletRequest request) {
+		String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
 
-		if (StringUtils.hasText(token) && token.startsWith("Bearer")) {
-			accessToken = token.replace("Bearer ", "");
+		if (StringUtils.hasText(authorization) && authorization.startsWith("Bearer")) {
+			return authorization.replace("Bearer ", "");
 		}
 
-		return accessToken;
+		return null;
 	}
 }

@@ -1,10 +1,6 @@
 package spring.web.java.domain.member.serivce;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,16 +9,16 @@ import lombok.RequiredArgsConstructor;
 import spring.web.java.domain.Address;
 import spring.web.java.domain.member.Member;
 import spring.web.java.domain.member.dto.MemberLoginRequest;
-import spring.web.java.domain.member.repository.MemberRepository;
-import spring.web.java.domain.token.Token;
-import spring.web.java.domain.token.repository.TokenRepository;
+import spring.web.java.domain.member.dto.MemberResponse;
 import spring.web.java.domain.member.dto.MemberSaveRequest;
 import spring.web.java.domain.member.dto.MemberUpdateRequest;
-import spring.web.java.domain.member.dto.MemberResponse;
+import spring.web.java.domain.member.repository.MemberRepository;
+import spring.web.java.domain.token.Token;
 import spring.web.java.domain.token.dto.TokenResponse;
+import spring.web.java.domain.token.repository.TokenRepository;
 import spring.web.java.global.common.JwtTokenProvider;
 import spring.web.java.global.common.ResponseMessage;
-import spring.web.java.global.config.security.UserDetailsImpl;
+import spring.web.java.global.common.SecurityService;
 import spring.web.java.global.exception.DomainException;
 
 @Service
@@ -31,10 +27,10 @@ import spring.web.java.global.exception.DomainException;
 public class MemberService {
 
 	private final JwtTokenProvider jwtTokenProvider;
-	private final AuthenticationManager authenticationManager;
 	private final TokenRepository tokenRepository;
 	private final MemberRepository memberRepository;
 	private final PasswordEncoder passwordEncoder;
+	private final SecurityService securityService;
 
 	@Transactional
 	public MemberResponse saveMember(MemberSaveRequest memberSaveRequest) {
@@ -60,36 +56,30 @@ public class MemberService {
 
 	@Transactional
 	public TokenResponse login(MemberLoginRequest memberLoginRequest) {
-		UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-			new UsernamePasswordAuthenticationToken(memberLoginRequest.account(), memberLoginRequest.password());
+		Member member = memberRepository.findByAccount(memberLoginRequest.account())
+			.orElseThrow(() -> new DomainException(ResponseMessage.AUTHENTICATION_FAILED, HttpStatus.UNAUTHORIZED));
 
-		Authentication authentication;
-
-		try {
-			authentication = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
-		} catch (BadCredentialsException e) {
+		if (!passwordEncoder.matches(memberLoginRequest.password(), member.getPassword())) {
 			throw new DomainException(ResponseMessage.AUTHENTICATION_FAILED, HttpStatus.UNAUTHORIZED);
 		}
 
-		UserDetailsImpl userDetails = (UserDetailsImpl)authentication.getPrincipal();
-
-		String accessToken = jwtTokenProvider.createAccessToken(userDetails.getMemberId(), userDetails.getRole());
+		String accessToken = jwtTokenProvider.createAccessToken(member.getId(), member.getRole());
 		String refreshToken = jwtTokenProvider.createRefreshToken();
 
-		tokenRepository.save(Token.create(userDetails.getMemberId(), refreshToken));
+		tokenRepository.save(Token.create(member.getId(), refreshToken));
 
 		return new TokenResponse(accessToken, refreshToken);
 	}
 
-	public MemberResponse findMember(Long id) {
-		return memberRepository.findById(id)
+	public MemberResponse findMember() {
+		return memberRepository.findById(securityService.getMemberId())
 			.map(MemberResponse::new)
 			.orElseThrow(() -> new DomainException(ResponseMessage.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));
 	}
 
 	@Transactional
-	public MemberResponse updateMember(Long id, MemberUpdateRequest memberUpdateRequest) {
-		Member member = memberRepository.findById(id)
+	public MemberResponse updateMember(MemberUpdateRequest memberUpdateRequest) {
+		Member member = memberRepository.findById(securityService.getMemberId())
 			.orElseThrow(() -> new DomainException(ResponseMessage.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));
 
 		member.update(
@@ -106,7 +96,7 @@ public class MemberService {
 	}
 
 	@Transactional
-	public void deleteMember(Long id) {
-		memberRepository.deleteById(id);
+	public void deleteMember() {
+		memberRepository.deleteById(securityService.getMemberId());
 	}
 }

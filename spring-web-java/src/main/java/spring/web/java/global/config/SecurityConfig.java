@@ -1,27 +1,25 @@
-package spring.web.java.global.config.security;
+package spring.web.java.global.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.SneakyThrows;
-import spring.web.java.domain.member.repository.MemberRepository;
 import spring.web.java.global.common.JwtTokenProvider;
 import spring.web.java.global.filter.JwtAuthenticationFilter;
 import spring.web.java.global.filter.JwtExceptionFilter;
 
+@EnableMethodSecurity
 @Configuration(proxyBeanMethods = false)
 public class SecurityConfig {
 
@@ -36,40 +34,18 @@ public class SecurityConfig {
 			.csrf(AbstractHttpConfigurer::disable)
 			.rememberMe(AbstractHttpConfigurer::disable)
 			.sessionManagement(httpSecuritySessionManagementConfigurer ->
-				httpSecuritySessionManagementConfigurer
-					.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-			)
+				httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.logout(AbstractHttpConfigurer::disable)
 			.httpBasic(AbstractHttpConfigurer::disable)
 			.formLogin(AbstractHttpConfigurer::disable)
+			.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
 			.addFilterBefore(jwtExceptionFilter, JwtAuthenticationFilter.class)
-			.addFilter(jwtAuthenticationFilter)
-			.authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
-				authorizationManagerRequestMatcherRegistry
-					.requestMatchers(HttpMethod.OPTIONS).permitAll()
-					.requestMatchers("/actuator/**").permitAll()
-					.requestMatchers("/token/**").permitAll()
-					.requestMatchers("/member/login").permitAll()
-					.requestMatchers(HttpMethod.GET, "/member/**").authenticated()
-					.anyRequest().permitAll()
-			)
 			.build();
 	}
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
-	}
-
-	@Bean
-	public UserDetailsService userDetailsService(MemberRepository memberRepository) {
-		return new UserDetailsServiceImpl(memberRepository);
-	}
-
-	@Bean
-	@SneakyThrows
-	public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) {
-		return authenticationConfiguration.getAuthenticationManager();
 	}
 
 	@Bean
@@ -84,12 +60,8 @@ public class SecurityConfig {
 	}
 
 	@Bean
-	@SneakyThrows
-	public JwtAuthenticationFilter jwtAuthenticationFilter(
-		AuthenticationManager authenticationManager,
-		JwtTokenProvider jwtTokenProvider
-	) {
-		return new JwtAuthenticationFilter(authenticationManager, jwtTokenProvider);
+	public JwtAuthenticationFilter jwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider) {
+		return new JwtAuthenticationFilter(jwtTokenProvider);
 	}
 
 	@Bean
