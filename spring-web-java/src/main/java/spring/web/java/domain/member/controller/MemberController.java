@@ -1,5 +1,6 @@
 package spring.web.java.domain.member.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -7,32 +8,27 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import spring.web.java.domain.member.dto.MemberLoginRequest;
 import spring.web.java.domain.member.dto.MemberResponse;
 import spring.web.java.domain.member.dto.MemberSaveRequest;
 import spring.web.java.domain.member.dto.MemberUpdateRequest;
 import spring.web.java.domain.member.serivce.MemberService;
-import spring.web.java.domain.token.dto.TokenResponse;
 
 @RestController
-@RequestMapping("member")
+@RequestMapping("/members")
 @RequiredArgsConstructor
 public class MemberController {
 
 	private final MemberService memberService;
 
 	@PostMapping
+	@ResponseStatus(HttpStatus.CREATED)
 	public MemberResponse saveMember(@RequestBody @Valid MemberSaveRequest memberSaveRequest) {
 		return memberService.saveMember(memberSaveRequest);
-	}
-
-	@PostMapping("login")
-	public TokenResponse login(@RequestBody MemberLoginRequest memberLoginRequest) {
-		return memberService.login(memberLoginRequest);
 	}
 
 	@PreAuthorize("isAuthenticated()")
@@ -49,6 +45,7 @@ public class MemberController {
 
 	@PreAuthorize("isAuthenticated()")
 	@DeleteMapping
+	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void deleteMember() {
 		memberService.deleteMember();
 	}
