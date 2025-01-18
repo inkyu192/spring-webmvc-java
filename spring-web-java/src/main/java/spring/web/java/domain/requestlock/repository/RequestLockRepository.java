@@ -1,8 +1,22 @@
 package spring.web.java.domain.requestlock.repository;
 
-import org.springframework.data.repository.CrudRepository;
+import java.time.Duration;
 
-import spring.web.java.domain.requestlock.RequestLock;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Repository;
 
-public interface RequestLockRepository extends CrudRepository<RequestLock, String> {
+import lombok.RequiredArgsConstructor;
+
+@Repository
+@RequiredArgsConstructor
+public class RequestLockRepository {
+
+	private final RedisTemplate<String, String> redisTemplate;
+
+	public boolean setIfAbsent(Long memberId, String method, String uri) {
+		Boolean result = redisTemplate.opsForValue()
+			.setIfAbsent("request_lock", String.format("%s:%s:%s", memberId, method, uri), Duration.ofSeconds(1));
+
+		return Boolean.TRUE.equals(result);
+	}
 }

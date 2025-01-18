@@ -1,45 +1,54 @@
 package spring.web.java.domain.requestlock.repository;
 
 import java.time.Duration;
-import java.util.Optional;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.redis.DataRedisTest;
-
-import spring.web.java.domain.requestlock.RequestLock;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpMethod;
 
 @DataRedisTest
 class RequestLockRepositoryTest {
 
+	private final RequestLockRepository requestLockRepository;
+
 	@Autowired
-	private RequestLockRepository requestLockRepository;
+	public RequestLockRepositoryTest(RedisTemplate<String, String> redisTemplate) {
+		this.requestLockRepository = new RequestLockRepository(redisTemplate);
+	}
 
 	@Test
 	void notExpiration() {
 		// Given
-		RequestLock requestLock = RequestLock.create("1|POST|/members");
-		requestLockRepository.save(requestLock);
+		Long memberId = 1L;
+		String method = "GET";
+		String uri = "/members";
+
+		requestLockRepository.setIfAbsent(memberId, method, uri);
 
 		// When
-		Optional<RequestLock> result = requestLockRepository.findById(requestLock.getRequestId());
+		boolean result = requestLockRepository.setIfAbsent(memberId, method, uri);
 
 		// Then
-		Assertions.assertThat(result).isPresent();
+		Assertions.assertThat(result).isFalse();
 	}
 
 	@Test
 	void expiration() throws InterruptedException {
 		// Given
-		RequestLock requestLock = RequestLock.create("1|POST|/members");
-		requestLockRepository.save(requestLock);
+		Long memberId = 1L;
+		String method = "GET";
+		String uri = "/members";
+
+		requestLockRepository.setIfAbsent(memberId, method, uri);
 
 		// When
 		Thread.sleep(Duration.ofSeconds(1));
-		Optional<RequestLock> result = requestLockRepository.findById(requestLock.getRequestId());
+		boolean result = requestLockRepository.setIfAbsent(memberId, method, uri);
 
 		// Then
-		Assertions.assertThat(result).isNotPresent();
+		Assertions.assertThat(result).isTrue();
 	}
 }
