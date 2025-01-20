@@ -3,19 +3,24 @@ package spring.web.kotlin.global.filter
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.jsonwebtoken.JwtException
 import jakarta.servlet.FilterChain
-import jakarta.servlet.ServletRequest
 import jakarta.servlet.ServletResponse
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ProblemDetail
-import org.springframework.web.filter.GenericFilterBean
+import org.springframework.web.filter.OncePerRequestFilter
 import java.nio.charset.StandardCharsets
 
 class JwtExceptionFilter(
     private val objectMapper: ObjectMapper
-) : GenericFilterBean() {
-    override fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
-        runCatching { chain.doFilter(request, response) }
+) : OncePerRequestFilter() {
+    override fun doFilterInternal(
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        filterChain: FilterChain
+    ) {
+        runCatching { filterChain.doFilter(request, response) }
             .onFailure { throwable ->
                 when (throwable) {
                     is JwtException -> ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED).also {

@@ -6,29 +6,31 @@ import java.nio.charset.StandardCharsets;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ProblemDetail;
-import org.springframework.web.filter.GenericFilterBean;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.UnsupportedJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class JwtExceptionFilter extends GenericFilterBean {
+public class JwtExceptionFilter extends OncePerRequestFilter {
 
 	private final ObjectMapper objectMapper;
 
 	@Override
-	public void doFilter(
-		ServletRequest request, ServletResponse response, FilterChain chain
-	) throws IOException, ServletException {
+	protected void doFilterInternal(
+		HttpServletRequest request,
+		HttpServletResponse response,
+		FilterChain filterChain
+	) throws ServletException, IOException {
 		try {
-			chain.doFilter(request, response);
+			filterChain.doFilter(request, response);
 		} catch (JwtException e) {
 			ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
 			problemDetail.setTitle(HttpStatus.UNAUTHORIZED.getReasonPhrase());

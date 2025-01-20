@@ -1,21 +1,19 @@
-package spring.web.kotlin.global.config.security
+package spring.web.kotlin.global.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.HttpMethod
-import org.springframework.security.authentication.AuthenticationManager
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import spring.web.kotlin.global.filter.JwtAuthenticationFilter
 import spring.web.kotlin.global.filter.JwtExceptionFilter
-import spring.web.kotlin.domain.member.repository.MemberRepository
-import spring.web.kotlin.global.config.JwtTokenProvider
 
+@EnableMethodSecurity
 @Configuration(proxyBeanMethods = false)
 class SecurityConfig {
 
@@ -26,32 +24,18 @@ class SecurityConfig {
         jwtExceptionFilter: JwtExceptionFilter
     ): SecurityFilterChain = httpSecurity
         .csrf { it.disable() }
+        .anonymous { it.disable() }
         .rememberMe { it.disable() }
         .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
         .logout { it.disable() }
         .httpBasic { it.disable() }
         .formLogin { it.disable() }
+        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
         .addFilterBefore(jwtExceptionFilter, jwtAuthenticationFilter.javaClass)
-        .addFilter(jwtAuthenticationFilter)
-        .authorizeHttpRequests {
-            it.requestMatchers(HttpMethod.OPTIONS).permitAll()
-                .requestMatchers("/actuator/**").permitAll()
-                .requestMatchers("/token/**").permitAll()
-                .requestMatchers("/member/login").permitAll()
-                .requestMatchers(HttpMethod.GET, "/member/**").authenticated()
-                .anyRequest().permitAll()
-        }
         .build()
 
     @Bean
     fun passwordEncoder() = BCryptPasswordEncoder()
-
-    @Bean
-    fun userDetailService(memberRepository: MemberRepository) = UserDetailsServiceImpl(memberRepository)
-
-    @Bean
-    fun authenticationManager(authenticationConfiguration: AuthenticationConfiguration): AuthenticationManager =
-        authenticationConfiguration.authenticationManager
 
     @Bean
     fun jwtTokenProvider(
@@ -62,8 +46,7 @@ class SecurityConfig {
     ) = JwtTokenProvider(accessTokenKey, accessTokenExpirationTime, refreshTokenKey, refreshTokenExpirationTime)
 
     @Bean
-    fun jwtAuthenticationFilter(authenticationManager: AuthenticationManager, jwtTokenProvider: JwtTokenProvider) =
-        JwtAuthenticationFilter(authenticationManager, jwtTokenProvider)
+    fun jwtAuthenticationFilter(jwtTokenProvider: JwtTokenProvider) = JwtAuthenticationFilter(jwtTokenProvider)
 
     @Bean
     fun jwtExceptionFilter(objectMapper: ObjectMapper) = JwtExceptionFilter(objectMapper)

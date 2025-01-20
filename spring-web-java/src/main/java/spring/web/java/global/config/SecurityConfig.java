@@ -32,6 +32,7 @@ public class SecurityConfig {
 	) {
 		return httpSecurity
 			.csrf(AbstractHttpConfigurer::disable)
+			.anonymous(AbstractHttpConfigurer::disable)
 			.rememberMe(AbstractHttpConfigurer::disable)
 			.sessionManagement(httpSecuritySessionManagementConfigurer ->
 				httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
