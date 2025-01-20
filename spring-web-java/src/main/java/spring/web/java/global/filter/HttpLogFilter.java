@@ -1,43 +1,50 @@
 package spring.web.java.global.filter;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
-import org.springframework.web.filter.GenericFilterBean;
+import org.springframework.http.server.PathContainer;
+import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
+import org.springframework.web.util.pattern.PathPattern;
+import org.springframework.web.util.pattern.PathPatternParser;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.extern.slf4j.Slf4j;
 import spring.web.java.global.common.HttpLog;
 
-@Slf4j
-public class HttpLogFilter extends GenericFilterBean {
+public class HttpLogFilter extends OncePerRequestFilter {
 
 	public static final String TRANSACTION_ID = "transactionId";
 
-	@Override
-	public void doFilter(
-		ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain
-	) throws ServletException, IOException {
-		HttpServletRequest httpServletRequest = (HttpServletRequest)servletRequest;
-		HttpServletResponse httpServletResponse = (HttpServletResponse)servletResponse;
+	private final PathPatternParser pathPatternParser = new PathPatternParser();
+	private final List<PathPattern> logExcludeList = List.of(
+		pathPatternParser.parse("/actuator/**"),
+		pathPatternParser.parse("/favicon.ico"),
+		pathPatternParser.parse("/static/**"),
+		pathPatternParser.parse("/public/**")
+	);
 
-		if (httpServletRequest.getRequestURI().startsWith("/actuator")) {
-			filterChain.doFilter(httpServletRequest, httpServletResponse);
+	@Override
+	protected void doFilterInternal(
+		HttpServletRequest request,
+		HttpServletResponse response,
+		FilterChain filterChain
+	) throws ServletException, IOException {
+		if (isLogExclude(request)) {
+			filterChain.doFilter(request, response);
 			return;
 		}
 
-		ContentCachingRequestWrapper requestWrapper = new ContentCachingRequestWrapper(httpServletRequest);
-		ContentCachingResponseWrapper responseWrapper = new ContentCachingResponseWrapper(httpServletResponse);
+		ContentCachingRequestWrapper requestWrapper = new ContentCachingRequestWrapper(request);
+		ContentCachingResponseWrapper responseWrapper = new ContentCachingResponseWrapper(response);
 
 		String transactionId = UUID.randomUUID().toString();
-		servletRequest.setAttribute(TRANSACTION_ID, transactionId);
+		request.setAttribute(TRANSACTION_ID, transactionId);
 
 		long startTime = System.currentTimeMillis();
 		filterChain.doFilter(requestWrapper, responseWrapper);
@@ -47,5 +54,11 @@ public class HttpLogFilter extends GenericFilterBean {
 		httpLog.log();
 
 		responseWrapper.copyBodyToResponse();
+	}
+
+	private boolean isLogExclude(HttpServletRequest request) {
+		String uri = request.getRequestURI();
+		PathContainer pathContainer = PathContainer.parsePath(uri);
+		return logExcludeList.stream().anyMatch(pattern -> pattern.matches(pathContainer));
 	}
 }

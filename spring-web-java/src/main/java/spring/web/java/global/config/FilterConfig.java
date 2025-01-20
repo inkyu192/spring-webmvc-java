@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import jakarta.servlet.Filter;
 import spring.web.java.global.filter.HttpLogFilter;
 
-@Configuration
+@Configuration(proxyBeanMethods = false)
 public class FilterConfig {
 
 	@Bean
