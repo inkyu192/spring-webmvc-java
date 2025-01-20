@@ -1,18 +1,17 @@
 package spring.web.kotlin.global.config
 
-import io.jsonwebtoken.JwsHeader
+import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
-import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.io.Decoders
 import io.jsonwebtoken.security.Keys
 import spring.web.kotlin.domain.member.Member
-import java.security.Key
 import java.util.*
+import javax.crypto.SecretKey
 
 class JwtTokenProvider(
-    private val accessTokenKey: Key,
+    private val accessTokenKey: SecretKey,
     private val accessTokenExpirationTime: Long,
-    private val refreshTokenKey: Key,
+    private val refreshTokenKey: SecretKey,
     private val refreshTokenExpirationTime: Long
 ) {
     constructor(
@@ -27,33 +26,33 @@ class JwtTokenProvider(
         refreshTokenExpirationTime = refreshTokenExpirationTime * 60 * 1000
     )
 
-    fun createAccessToken(memberId: Long, role: Member.Role) = Jwts.builder()
-        .setHeaderParam(JwsHeader.ALGORITHM, SignatureAlgorithm.HS256)
-        .setHeaderParam(JwsHeader.TYPE, JwsHeader.JWT_TYPE)
-        .claim("memberId", memberId)
-        .claim("role", role)
-        .setIssuedAt(Date())
-        .setExpiration(Date(Date().time + accessTokenExpirationTime))
-        .signWith(accessTokenKey, SignatureAlgorithm.HS256)
-        .compact()
+    fun createAccessToken(memberId: Long, role: Member.Role): String =
+        Jwts.builder()
+            .claim("memberId", memberId)
+            .claim("role", role)
+            .issuedAt(Date())
+            .expiration(Date(Date().time + accessTokenExpirationTime))
+            .signWith(accessTokenKey)
+            .compact()
 
-    fun createRefreshToken() = Jwts.builder()
-        .setHeaderParam(JwsHeader.ALGORITHM, SignatureAlgorithm.HS256)
-        .setHeaderParam(JwsHeader.TYPE, JwsHeader.JWT_TYPE)
-        .setIssuedAt(Date())
-        .setExpiration(Date(Date().time + refreshTokenExpirationTime))
-        .signWith(refreshTokenKey, SignatureAlgorithm.HS256)
-        .compact()
+    fun createRefreshToken(): String =
+        Jwts.builder()
+            .issuedAt(Date())
+            .expiration(Date(Date().time + refreshTokenExpirationTime))
+            .signWith(refreshTokenKey)
+            .compact()
 
-    fun parseAccessToken(token: String) = Jwts.parserBuilder()
-        .setSigningKey(accessTokenKey)
-        .build()
-        .parseClaimsJws(token)
-        .body
+    fun parseAccessToken(token: String): Claims =
+        Jwts.parser()
+            .verifyWith(accessTokenKey)
+            .build()
+            .parseSignedClaims(token)
+            .payload
 
-    fun parseRefreshToken(token: String) = Jwts.parserBuilder()
-        .setSigningKey(refreshTokenKey)
-        .build()
-        .parseClaimsJws(token)
-        .body
+    fun parseRefreshToken(token: String): Claims =
+        Jwts.parser()
+            .verifyWith(refreshTokenKey)
+            .build()
+            .parseSignedClaims(token)
+            .payload
 }
