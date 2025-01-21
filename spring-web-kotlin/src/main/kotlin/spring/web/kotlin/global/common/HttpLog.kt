@@ -40,11 +40,11 @@ data class HttpLog(
     companion object {
         private fun getHeader(requestWrapper: ContentCachingRequestWrapper) =
             requestWrapper.headerNames.asSequence()
-                .joinToString("\n") { name -> "  $name: ${requestWrapper.getHeader(name)}" }
+                .joinToString { "\n  ${it}: ${requestWrapper.getHeader(it)}" }
 
         private fun getParameter(requestWrapper: ContentCachingRequestWrapper) =
             requestWrapper.parameterNames.asSequence()
-                .joinToString("\n") { name -> "  $name: ${requestWrapper.getParameter(name)}" }
+                .joinToString { "\n  ${it}: ${requestWrapper.getParameter(it)}" }
 
         private fun convertByteArrayToString(content: ByteArray) =
             if (content.isNotEmpty()) setPretty(String(content, StandardCharsets.UTF_8)) else ""
