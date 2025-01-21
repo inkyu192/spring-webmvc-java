@@ -32,19 +32,21 @@ public class MemberService {
 				throw new DomainException(ResponseMessage.DUPLICATE_DATA, HttpStatus.CONFLICT);
 			});
 
-		Member member = Member.create(
-			memberSaveRequest.account(),
-			passwordEncoder.encode(memberSaveRequest.password()),
-			memberSaveRequest.name(),
-			memberSaveRequest.role(),
-			Address.create(
-				memberSaveRequest.city(),
-				memberSaveRequest.street(),
-				memberSaveRequest.zipcode()
+		Member member = memberRepository.save(
+			Member.create(
+				memberSaveRequest.account(),
+				passwordEncoder.encode(memberSaveRequest.password()),
+				memberSaveRequest.name(),
+				memberSaveRequest.role(),
+				Address.create(
+					memberSaveRequest.city(),
+					memberSaveRequest.street(),
+					memberSaveRequest.zipcode()
+				)
 			)
 		);
 
-		return new MemberResponse(memberRepository.save(member));
+		return new MemberResponse(member);
 	}
 
 	public MemberResponse findMember() {

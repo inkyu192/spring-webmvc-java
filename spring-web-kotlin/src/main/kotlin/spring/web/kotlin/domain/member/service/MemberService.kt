@@ -1,8 +1,9 @@
 package spring.web.kotlin.domain.member.service
 
-import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import spring.web.kotlin.domain.Address
@@ -18,6 +19,7 @@ import spring.web.kotlin.global.exception.DomainException
 @Transactional(readOnly = true)
 class MemberService(
     private val memberRepository: MemberRepository,
+    private val passwordEncoder: PasswordEncoder
 ) {
     @Transactional
     fun saveMember(memberSaveRequest: MemberSaveRequest): MemberResponse {
@@ -28,11 +30,10 @@ class MemberService(
         val member = memberRepository.save(
             Member.create(
                 account = memberSaveRequest.account,
-                password = memberSaveRequest.password,
+                password = passwordEncoder.encode(memberSaveRequest.password),
                 name = memberSaveRequest.name,
                 role = memberSaveRequest.role,
-                address =
-                Address.create(
+                address = Address.create(
                     city = memberSaveRequest.city,
                     street = memberSaveRequest.street,
                     zipcode = memberSaveRequest.zipcode,
@@ -43,11 +44,8 @@ class MemberService(
         return MemberResponse(member)
     }
 
-    fun findMembers(pageable: Pageable, account: String?, name: String?) = memberRepository
-        .findAllWithJpql(pageable, account, name)
-        .map { MemberResponse(it) }
-
-    fun findMember(id: Long): MemberResponse {
+    fun findMember(): MemberResponse {
+        val id = SecurityContextHolder.getContext().authentication.principal as Long
         val member = memberRepository.findByIdOrNull(id)
             ?: throw DomainException(ResponseMessage.DATA_NOT_FOUND, HttpStatus.NOT_FOUND)
 
@@ -55,7 +53,8 @@ class MemberService(
     }
 
     @Transactional
-    fun patchMember(id: Long, memberUpdateRequest: MemberUpdateRequest): MemberResponse {
+    fun patchMember(memberUpdateRequest: MemberUpdateRequest): MemberResponse {
+        val id = SecurityContextHolder.getContext().authentication.principal as Long
         val member = memberRepository.findByIdOrNull(id)
             ?: throw DomainException(ResponseMessage.DATA_NOT_FOUND, HttpStatus.NOT_FOUND)
 
@@ -74,5 +73,8 @@ class MemberService(
     }
 
     @Transactional
-    fun deleteMember(id: Long) = memberRepository.deleteById(id)
+    fun deleteMember() {
+        val id = SecurityContextHolder.getContext().authentication.principal as Long
+        memberRepository.deleteById(id)
+    }
 }
