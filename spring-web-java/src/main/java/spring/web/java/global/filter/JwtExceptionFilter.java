@@ -11,9 +11,10 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -31,16 +32,31 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
 	) throws ServletException, IOException {
 		try {
 			filterChain.doFilter(request, response);
+		} catch (MalformedJwtException | UnsupportedJwtException e) {
+			handleException(response, HttpStatus.BAD_REQUEST, e);
 		} catch (JwtException e) {
-			ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
-			problemDetail.setTitle(HttpStatus.UNAUTHORIZED.getReasonPhrase());
-			problemDetail.setDetail(e.getMessage());
-
-			writeResponse(response, problemDetail);
+			handleException(response, HttpStatus.UNAUTHORIZED, e);
 		}
 	}
 
-	private void writeResponse(ServletResponse response, ProblemDetail problemDetail) throws IOException {
+	private void handleException(
+		HttpServletResponse response,
+		HttpStatus status,
+		Exception exception
+	) throws IOException {
+		ProblemDetail problemDetail = generateProblemDetail(status, exception.getMessage());
+		writeResponse(response, problemDetail);
+	}
+
+	private ProblemDetail generateProblemDetail(HttpStatus status, String detail) {
+		ProblemDetail problemDetail = ProblemDetail.forStatus(status);
+		problemDetail.setTitle(status.getReasonPhrase());
+		problemDetail.setDetail(detail);
+		return problemDetail;
+	}
+
+	private void writeResponse(HttpServletResponse response, ProblemDetail problemDetail) throws IOException {
+		response.setStatus(problemDetail.getStatus());
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 		response.setCharacterEncoding(String.valueOf(StandardCharsets.UTF_8));
 		response.getWriter().write(objectMapper.writeValueAsString(problemDetail));

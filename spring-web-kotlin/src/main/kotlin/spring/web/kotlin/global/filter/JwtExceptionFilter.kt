@@ -2,8 +2,9 @@ package spring.web.kotlin.global.filter
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.jsonwebtoken.JwtException
+import io.jsonwebtoken.MalformedJwtException
+import io.jsonwebtoken.UnsupportedJwtException
 import jakarta.servlet.FilterChain
-import jakarta.servlet.ServletResponse
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.HttpStatus
@@ -23,18 +24,30 @@ class JwtExceptionFilter(
         runCatching { filterChain.doFilter(request, response) }
             .onFailure { throwable ->
                 when (throwable) {
-                    is JwtException -> ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED).also {
-                        it.title = HttpStatus.UNAUTHORIZED.reasonPhrase
-                        it.detail = throwable.message
-                        writeResponse(response, it)
-                    }
+                    is MalformedJwtException, is UnsupportedJwtException ->
+                        handleException(response, HttpStatus.BAD_REQUEST, throwable)
+
+                    is JwtException -> handleException(response, HttpStatus.UNAUTHORIZED, throwable)
 
                     else -> throw throwable
                 }
             }
     }
 
-    private fun writeResponse(response: ServletResponse, problemDetail: ProblemDetail) {
+    private fun handleException(response: HttpServletResponse, status: HttpStatus, throwable: Throwable) {
+        generateProblemDetail(status, throwable.message).also {
+            writeResponse(response, it)
+        }
+    }
+
+    private fun generateProblemDetail(status: HttpStatus, detail: String?) =
+        ProblemDetail.forStatus(status).also {
+            it.title = status.reasonPhrase
+            it.detail = detail
+        }
+
+    private fun writeResponse(response: HttpServletResponse, problemDetail: ProblemDetail) {
+        response.status = problemDetail.status
         response.contentType = MediaType.APPLICATION_JSON_VALUE
         response.characterEncoding = StandardCharsets.UTF_8.toString()
         response.writer.write(objectMapper.writeValueAsString(problemDetail))

@@ -5,7 +5,6 @@ import jakarta.servlet.http.HttpServletRequest
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ProblemDetail
-import org.springframework.security.authorization.AuthorizationDeniedException
 import org.springframework.security.core.AuthenticationException
 import org.springframework.web.HttpRequestMethodNotSupportedException
 import org.springframework.web.bind.MethodArgumentNotValidException
@@ -41,12 +40,17 @@ class ControllerAdvice(
             detail = "${exception.message}: ${exception.bindingResult.fieldErrors.map { it.field }.toList()}"
         }
 
-    @ExceptionHandler(AuthenticationException::class, AuthorizationDeniedException::class, JwtException::class)
+    @ExceptionHandler(AuthenticationException::class, AccessDeniedException::class)
     fun unauthorized(exception: Exception) =
         ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED).apply {
             title = HttpStatus.UNAUTHORIZED.reasonPhrase
             detail = exception.message
         }
+
+    @ExceptionHandler(JwtException::class)
+    fun jwtException(exception: JwtException) {
+        throw exception
+    }
 
     @ExceptionHandler(Exception::class)
     fun internalServerError(exception: Exception): ProblemDetail {

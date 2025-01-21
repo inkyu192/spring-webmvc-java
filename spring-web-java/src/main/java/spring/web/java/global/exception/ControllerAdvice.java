@@ -2,7 +2,7 @@ package spring.web.java.global.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
-import org.springframework.security.authorization.AuthorizationDeniedException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -57,13 +57,18 @@ public class ControllerAdvice {
 		return problemDetail;
 	}
 
-	@ExceptionHandler({AuthenticationException.class, AuthorizationDeniedException.class, JwtException.class})
+	@ExceptionHandler({AuthenticationException.class, AccessDeniedException.class})
 	public ProblemDetail unauthorized(Exception exception) {
 		ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
 		problemDetail.setTitle(HttpStatus.UNAUTHORIZED.getReasonPhrase());
 		problemDetail.setDetail(exception.getMessage());
 
 		return problemDetail;
+	}
+
+	@ExceptionHandler(JwtException.class)
+	public void throwException(JwtException exception) {
+		throw exception;
 	}
 
 	@ExceptionHandler(Exception.class)
