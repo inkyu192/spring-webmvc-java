@@ -30,22 +30,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		HttpServletResponse response,
 		FilterChain filterChain
 	) throws ServletException, IOException {
-		String token = getToken(request);
+		String token = extractToken(request);
 
 		if (StringUtils.hasText(token)) {
-			Claims claims = jwtTokenProvider.parseAccessToken(token);
-			Authentication authentication = new UsernamePasswordAuthenticationToken(
-				claims.get("memberId"),
-				token,
-				List.of(new SimpleGrantedAuthority(String.valueOf(claims.get("role"))))
-			);
-			SecurityContextHolder.getContext().setAuthentication(authentication);
+			SecurityContextHolder.getContext().setAuthentication(generateAuthentication(token));
 		}
 
 		filterChain.doFilter(request, response);
 	}
 
-	public String getToken(HttpServletRequest request) {
+	private String extractToken(HttpServletRequest request) {
 		String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
 
 		if (StringUtils.hasText(authorization) && authorization.startsWith("Bearer")) {
@@ -53,5 +47,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		}
 
 		return null;
+	}
+
+	private Authentication generateAuthentication(String token) {
+		Claims claims = jwtTokenProvider.parseAccessToken(token);
+
+		return new UsernamePasswordAuthenticationToken(
+			claims.get("memberId"),
+			token,
+			List.of(new SimpleGrantedAuthority(String.valueOf(claims.get("role"))))
+		);
 	}
 }

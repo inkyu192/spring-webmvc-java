@@ -18,22 +18,26 @@ class JwtAuthenticationFilter(
         response: HttpServletResponse,
         filterChain: FilterChain
     ) {
-        getAccessToken(request)
-            ?.let { token: String ->
-                val claims = jwtTokenProvider.parseAccessToken(token)
-                UsernamePasswordAuthenticationToken(
-                    claims["memberId"],
-                    token,
-                    listOf(SimpleGrantedAuthority(claims["role"].toString()))
-                )
-            }
-            ?.also { SecurityContextHolder.getContext().authentication = it }
+        val token = extractToken(request)
+
+        if (!token.isNullOrBlank()) {
+            SecurityContextHolder.getContext().authentication = generateAuthentication(token)
+        }
 
         filterChain.doFilter(request, response)
     }
 
-    private fun getAccessToken(request: HttpServletRequest) =
+    private fun extractToken(request: HttpServletRequest) =
         request.getHeader(HttpHeaders.AUTHORIZATION)
             ?.takeIf { it.startsWith("Bearer ") }
             ?.removePrefix("Bearer ")
+
+    private fun generateAuthentication(token: String) =
+        jwtTokenProvider.parseAccessToken(token).let {
+            UsernamePasswordAuthenticationToken(
+                it["accountId"],
+                token,
+                listOf(SimpleGrantedAuthority(it["role"].toString()))
+            )
+        }
 }

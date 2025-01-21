@@ -56,8 +56,12 @@ public class SecurityConfig {
 		@Value("${jwt.refresh-token.key}") String refreshTokenKey,
 		@Value("${jwt.refresh-token.expiration-time}") long refreshTokenExpirationTime
 	) {
-		return new JwtTokenProvider(accessTokenKey, accessTokenExpirationTime, refreshTokenKey,
-			refreshTokenExpirationTime);
+		return new JwtTokenProvider(
+			accessTokenKey,
+			accessTokenExpirationTime,
+			refreshTokenKey,
+			refreshTokenExpirationTime
+		);
 	}
 
 	@Bean
