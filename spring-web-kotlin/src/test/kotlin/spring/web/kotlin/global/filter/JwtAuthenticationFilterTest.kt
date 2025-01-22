@@ -6,9 +6,7 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import io.mockk.Runs
 import io.mockk.every
-import io.mockk.just
 import io.mockk.mockk
 import jakarta.servlet.FilterChain
 import org.springframework.mock.web.MockHttpServletRequest
@@ -17,7 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder
 import spring.web.kotlin.global.config.JwtTokenProvider
 
 class JwtAuthenticationFilterTest : DescribeSpec({
-    val filterChain = mockk<FilterChain>()
+    val filterChain = mockk<FilterChain>(relaxed = true)
     val jwtTokenProvider = mockk<JwtTokenProvider>()
     val jwtAuthenticationFilter = JwtAuthenticationFilter(jwtTokenProvider)
     lateinit var request: MockHttpServletRequest
@@ -27,7 +25,6 @@ class JwtAuthenticationFilterTest : DescribeSpec({
         SecurityContextHolder.clearContext()
         request = MockHttpServletRequest()
         response = MockHttpServletResponse()
-        every { filterChain.doFilter(request, response) } just Runs
     }
 
     describe("JwtAuthenticationFilter는") {
@@ -61,10 +58,8 @@ class JwtAuthenticationFilterTest : DescribeSpec({
         context("유효한 토큰일 경우") {
             it("authentication을 생성 한다") {
                 val token = "valid.jwt.token"
-                val claims = mockk<Claims>()
+                val claims = mockk<Claims>(relaxed = true)
 
-                every { claims["accountId"] } returns mockk()
-                every { claims["role"] } returns mockk()
                 every { jwtTokenProvider.parseAccessToken(any()) } returns claims
 
                 request.addHeader("Authorization", "Bearer $token")

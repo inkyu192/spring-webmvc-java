@@ -14,7 +14,7 @@ import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.mock.web.MockHttpServletResponse
 
 class ExceptionHandlerFilterTest : DescribeSpec({
-    val filterChain = mockk<FilterChain>()
+    val filterChain = mockk<FilterChain>(relaxed = true)
     val objectMapper = mockk<ObjectMapper>()
     val exceptionHandlerFilter = ExceptionHandlerFilter(objectMapper)
     lateinit var request: MockHttpServletRequest
