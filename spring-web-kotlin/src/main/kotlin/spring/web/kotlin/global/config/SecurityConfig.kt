@@ -11,7 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import spring.web.kotlin.global.filter.JwtAuthenticationFilter
-import spring.web.kotlin.global.filter.JwtExceptionFilter
+import spring.web.kotlin.global.filter.ExceptionHandlerFilter
 
 @EnableMethodSecurity
 @Configuration(proxyBeanMethods = false)
@@ -21,7 +21,7 @@ class SecurityConfig {
     fun securityFilterChain(
         httpSecurity: HttpSecurity,
         jwtAuthenticationFilter: JwtAuthenticationFilter,
-        jwtExceptionFilter: JwtExceptionFilter
+        exceptionHandlerFilter: ExceptionHandlerFilter
     ): SecurityFilterChain = httpSecurity
         .csrf { it.disable() }
         .anonymous { it.disable() }
@@ -31,7 +31,7 @@ class SecurityConfig {
         .httpBasic { it.disable() }
         .formLogin { it.disable() }
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
-        .addFilterBefore(jwtExceptionFilter, jwtAuthenticationFilter.javaClass)
+        .addFilterBefore(exceptionHandlerFilter, jwtAuthenticationFilter.javaClass)
         .build()
 
     @Bean
@@ -49,5 +49,5 @@ class SecurityConfig {
     fun jwtAuthenticationFilter(jwtTokenProvider: JwtTokenProvider) = JwtAuthenticationFilter(jwtTokenProvider)
 
     @Bean
-    fun jwtExceptionFilter(objectMapper: ObjectMapper) = JwtExceptionFilter(objectMapper)
+    fun jwtExceptionFilter(objectMapper: ObjectMapper) = ExceptionHandlerFilter(objectMapper)
 }
