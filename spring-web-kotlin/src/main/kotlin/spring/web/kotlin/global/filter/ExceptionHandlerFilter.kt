@@ -10,10 +10,12 @@ import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ProblemDetail
+import org.springframework.security.access.AccessDeniedException
+import org.springframework.security.core.AuthenticationException
 import org.springframework.web.filter.OncePerRequestFilter
 import java.nio.charset.StandardCharsets
 
-class JwtExceptionFilter(
+class ExceptionHandlerFilter(
     private val objectMapper: ObjectMapper
 ) : OncePerRequestFilter() {
     override fun doFilterInternal(
@@ -25,19 +27,19 @@ class JwtExceptionFilter(
             .onFailure { throwable ->
                 when (throwable) {
                     is MalformedJwtException, is UnsupportedJwtException ->
-                        handleException(response, HttpStatus.BAD_REQUEST, throwable)
+                        handleException(response, HttpStatus.BAD_REQUEST, throwable.message)
 
-                    is JwtException -> handleException(response, HttpStatus.UNAUTHORIZED, throwable)
+                    is AuthenticationException, is AccessDeniedException, is JwtException ->
+                        handleException(response, HttpStatus.UNAUTHORIZED, throwable.message)
 
-                    else -> throw throwable
+                    is RuntimeException ->
+                        handleException(response, HttpStatus.INTERNAL_SERVER_ERROR, throwable.message)
                 }
             }
     }
 
-    private fun handleException(response: HttpServletResponse, status: HttpStatus, throwable: Throwable) {
-        generateProblemDetail(status, throwable.message).also {
-            writeResponse(response, it)
-        }
+    private fun handleException(response: HttpServletResponse, status: HttpStatus, message: String?) {
+        generateProblemDetail(status, message).also { writeResponse(response, it) }
     }
 
     private fun generateProblemDetail(status: HttpStatus, detail: String?) =

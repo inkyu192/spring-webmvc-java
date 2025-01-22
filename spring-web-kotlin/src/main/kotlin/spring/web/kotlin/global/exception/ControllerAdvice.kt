@@ -1,23 +1,14 @@
 package spring.web.kotlin.global.exception
 
-import io.jsonwebtoken.JwtException
-import jakarta.servlet.http.HttpServletRequest
-import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ProblemDetail
-import org.springframework.security.core.AuthenticationException
 import org.springframework.web.HttpRequestMethodNotSupportedException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
-import spring.web.kotlin.global.common.HttpLog
-import spring.web.kotlin.global.filter.HttpLogFilter
 
 @RestControllerAdvice
-class ControllerAdvice(
-    private val httpServletRequest: HttpServletRequest
-) {
-    private val log = LoggerFactory.getLogger(HttpLog::class.java)
+class ControllerAdvice {
 
     @ExceptionHandler(DomainException::class)
     fun domain(exception: DomainException) =
@@ -39,26 +30,4 @@ class ControllerAdvice(
             title = HttpStatus.BAD_REQUEST.reasonPhrase
             detail = "${exception.message}: ${exception.bindingResult.fieldErrors.map { it.field }.toList()}"
         }
-
-    @ExceptionHandler(AuthenticationException::class, AccessDeniedException::class)
-    fun unauthorized(exception: Exception) =
-        ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED).apply {
-            title = HttpStatus.UNAUTHORIZED.reasonPhrase
-            detail = exception.message
-        }
-
-    @ExceptionHandler(JwtException::class)
-    fun jwtException(exception: JwtException) {
-        throw exception
-    }
-
-    @ExceptionHandler(Exception::class)
-    fun internalServerError(exception: Exception): ProblemDetail {
-        log.error("[{}]", httpServletRequest.getAttribute(HttpLogFilter.TRANSACTION_ID), exception)
-
-        return ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR).apply {
-            title = HttpStatus.INTERNAL_SERVER_ERROR.reasonPhrase
-            detail = exception.message
-        }
-    }
 }

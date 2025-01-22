@@ -17,7 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import spring.web.java.global.common.JwtTokenProvider;
 import spring.web.java.global.filter.JwtAuthenticationFilter;
-import spring.web.java.global.filter.JwtExceptionFilter;
+import spring.web.java.global.filter.ExceptionHandlerFilter;
 
 @EnableMethodSecurity
 @Configuration(proxyBeanMethods = false)
@@ -28,7 +28,7 @@ public class SecurityConfig {
 	public SecurityFilterChain securityFilterChain(
 		HttpSecurity httpSecurity,
 		JwtAuthenticationFilter jwtAuthenticationFilter,
-		JwtExceptionFilter jwtExceptionFilter
+		ExceptionHandlerFilter exceptionHandlerFilter
 	) {
 		return httpSecurity
 			.csrf(AbstractHttpConfigurer::disable)
@@ -40,7 +40,7 @@ public class SecurityConfig {
 			.httpBasic(AbstractHttpConfigurer::disable)
 			.formLogin(AbstractHttpConfigurer::disable)
 			.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-			.addFilterBefore(jwtExceptionFilter, JwtAuthenticationFilter.class)
+			.addFilterBefore(exceptionHandlerFilter, JwtAuthenticationFilter.class)
 			.build();
 	}
 
@@ -70,7 +70,7 @@ public class SecurityConfig {
 	}
 
 	@Bean
-	public JwtExceptionFilter jwtExceptionFilter(ObjectMapper objectMapper) {
-		return new JwtExceptionFilter(objectMapper);
+	public ExceptionHandlerFilter jwtExceptionFilter(ObjectMapper objectMapper) {
+		return new ExceptionHandlerFilter(objectMapper);
 	}
 }
