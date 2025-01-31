@@ -1,5 +1,6 @@
 package spring.web.java.domain.member.serivce;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -8,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import spring.web.java.domain.Address;
 import spring.web.java.domain.member.Member;
+import spring.web.java.domain.member.dto.MemberEvent;
 import spring.web.java.domain.member.dto.MemberResponse;
 import spring.web.java.domain.member.dto.MemberSaveRequest;
 import spring.web.java.domain.member.dto.MemberUpdateRequest;
@@ -24,6 +26,7 @@ public class MemberService {
 	private final MemberRepository memberRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final SecurityService securityService;
+	private final ApplicationEventPublisher eventPublisher;
 
 	@Transactional
 	public MemberResponse saveMember(MemberSaveRequest memberSaveRequest) {
@@ -45,6 +48,8 @@ public class MemberService {
 				)
 			)
 		);
+
+		eventPublisher.publishEvent(new MemberEvent(member.getAccount(), member.getName()));
 
 		return new MemberResponse(member);
 	}
