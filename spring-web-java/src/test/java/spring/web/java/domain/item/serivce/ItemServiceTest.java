@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -22,7 +23,7 @@ import spring.web.java.domain.item.repository.ItemRepository;
 import spring.web.java.global.exception.DomainException;
 
 @ExtendWith(MockitoExtension.class)
-class ItemServiceUnitTest {
+class ItemServiceTest {
 
 	@InjectMocks
 	private ItemService itemService;
@@ -31,6 +32,7 @@ class ItemServiceUnitTest {
 	private ItemRepository itemRepository;
 
 	@Test
+	@DisplayName("saveItem은 한개를 저장한다")
 	void saveItem() {
 		// Given
 		ItemSaveRequest request = new ItemSaveRequest("item", "description", 1000, 10, Item.Category.ROLE_BOOK);
@@ -49,6 +51,7 @@ class ItemServiceUnitTest {
 	}
 
 	@Test
+	@DisplayName("findItems는 여러개를 조회한다")
 	void findItems() {
 		// Given
 		Pageable pageable = PageRequest.of(0, 10);
@@ -70,6 +73,7 @@ class ItemServiceUnitTest {
 	}
 
 	@Test
+	@DisplayName("findItem은 데이터가 있을경우 조회한다")
 	void findItem_exist_shouldFind() {
 		// Given
 		Long itemId = 1L;
@@ -89,6 +93,7 @@ class ItemServiceUnitTest {
 	}
 
 	@Test
+	@DisplayName("findItem은 데이터가 없을경우 DomainException을 던진다")
 	void findItem_notExist_shouldThrowDomainException() {
 		// Given
 		Long itemId = 1L;
@@ -100,6 +105,7 @@ class ItemServiceUnitTest {
 	}
 
 	@Test
+	@DisplayName("putItem은 데이터가 있을 경우 수정된다")
 	void putItem_exist_shouldUpdate() {
 		// Given
 		Long itemId = 1L;
@@ -121,6 +127,7 @@ class ItemServiceUnitTest {
 	}
 
 	@Test
+	@DisplayName("putItem은 데이터가 없을 경우 저장한다")
 	void putItem_notExist_shouldCreate() {
 		// Given
 		Long itemId = 1L;
@@ -149,6 +156,7 @@ class ItemServiceUnitTest {
 	}
 
 	@Test
+	@DisplayName("deleteItem은 데이터를 삭제한다")
 	void deleteItem() {
 		// Given
 		Long itemId = 1L;

@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -44,7 +45,8 @@ class JwtAuthenticationFilterTest {
 	}
 
 	@Test
-	void nullTokenTest() throws ServletException, IOException {
+	@DisplayName("JwtAuthenticationFilter는 토큰이 null 일 경우 authentication을 생성하지 않는다")
+	void case1() throws ServletException, IOException {
 		// Given
 
 		// When
@@ -55,7 +57,8 @@ class JwtAuthenticationFilterTest {
 	}
 
 	@Test
-	void emptyTokenTest() throws ServletException, IOException {
+	@DisplayName("JwtAuthenticationFilter는 토큰이 비어있을 경우 authentication을 생성하지 않는다")
+	void case2() throws ServletException, IOException {
 		// Given
 		request.addHeader(HttpHeaders.AUTHORIZATION, "");
 
@@ -67,7 +70,8 @@ class JwtAuthenticationFilterTest {
 	}
 
 	@Test
-	void invalidTokenTest() {
+	@DisplayName("JwtAuthenticationFilter는 잘못된 토큰일 경우 JwtException 발생한다")
+	void case3() {
 		// Given
 		String token = "invalid.jwt.token";
 
@@ -81,7 +85,8 @@ class JwtAuthenticationFilterTest {
 	}
 
 	@Test
-	void validTokenTest() throws ServletException, IOException {
+	@DisplayName("JwtAuthenticationFilter는 유효한 토큰일 경우 authentication을 생성 한다")
+	void case4() throws ServletException, IOException {
 		// Given
 		String token = "valid.jwt.token";
 		Claims claims = Mockito.mock(Claims.class);

@@ -1,6 +1,7 @@
 package spring.web.java.domain.requestlock.service;
 
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,7 +22,8 @@ class RequestLockServiceTest {
 	private RequestLockRepository requestLockRepository;
 
 	@Test
-	void validate_notExist_shouldNotThrowException() {
+	@DisplayName("유효성 검사 기능은 데이터가 없을 경우 저장한다")
+	void case1() {
 		// Given
 		Long memberId = 1L;
 		String method = "GET";
@@ -38,7 +40,8 @@ class RequestLockServiceTest {
 	}
 
 	@Test
-	void validate_exist_shouldThrowDomainException() {
+	@DisplayName("유효성 검사 기능은 데이터가 있을 경우 DomainException을 던진다")
+	void case2() {
 		// Given
 		Long memberId = 1L;
 		String method = "GET";

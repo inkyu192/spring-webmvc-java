@@ -29,7 +29,7 @@ class AuthServiceTest : DescribeSpec({
 
     describe("로그인 기능은") {
         context("계정이 존재하지 않을 경우") {
-            it("DomainException을 던진다") {
+            it("DomainException 던진다") {
                 val request = mockk<MemberLoginRequest>(relaxed = true)
 
                 every { memberRepository.findByAccount(request.account) } returns null
@@ -39,7 +39,7 @@ class AuthServiceTest : DescribeSpec({
         }
 
         context("비밀번호가 일치하지 않을 경우") {
-            it("DomainException을 던진다") {
+            it("DomainException 던진다") {
                 val request = mockk<MemberLoginRequest>(relaxed = true)
                 val member = mockk<Member>(relaxed = true)
 
@@ -74,7 +74,7 @@ class AuthServiceTest : DescribeSpec({
 
         describe("갱신 기능은") {
             context("Access 토큰이 유효하지 않을 경우") {
-                it("JwtException을 던진다") {
+                it("JwtException 던진다") {
                     val request = mockk<TokenRequest>(relaxed = true)
 
                     every { jwtTokenProvider.parseAccessToken(request.accessToken) } throws JwtException("invalid access token")
@@ -84,7 +84,7 @@ class AuthServiceTest : DescribeSpec({
             }
 
             context("Refresh 토큰이 유효하지 않을 경우") {
-                it("JwtException을 던진다") {
+                it("JwtException 던진다") {
                     val request = mockk<TokenRequest>(relaxed = true)
                     val claims = mockk<Claims>()
 
@@ -96,7 +96,7 @@ class AuthServiceTest : DescribeSpec({
             }
 
             context("Refresh 토큰이 일치하지 않을 경우") {
-                it("DomainException을 던진다") {
+                it("DomainException 던진다") {
                     val memberId = 1L
                     val request = TokenRequest("accessToken", "fakeRefreshToken")
                     val claims = mockk<Claims>()

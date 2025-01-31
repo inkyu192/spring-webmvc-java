@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -44,10 +45,11 @@ class ExceptionHandlerFilterTest {
 	}
 
 	@Test
-	void malformedJwtException() throws ServletException, IOException {
+	@DisplayName("ExceptionHandlerFilter는 MalformedJwtException 발생할 경우 BAD_REQUEST 반환한다")
+	void case1() throws ServletException, IOException {
 		// Given
 		HttpStatus status = HttpStatus.BAD_REQUEST;
-		String message = "malformedJwtException";
+		String message = "MalformedJwtException";
 		String responseBody = """
 			{
 			  "status": %s,
@@ -68,10 +70,11 @@ class ExceptionHandlerFilterTest {
 	}
 
 	@Test
-	void jwtException() throws ServletException, IOException {
+	@DisplayName("ExceptionHandlerFilter는 JwtException 발생할 경우 UNAUTHORIZED 반환한다")
+	void case2() throws ServletException, IOException {
 		// Given
 		HttpStatus status = HttpStatus.UNAUTHORIZED;
-		String message = "jwtException";
+		String message = "JwtException";
 		String responseBody = """
 			{
 			  "status": %s,
@@ -92,10 +95,11 @@ class ExceptionHandlerFilterTest {
 	}
 
 	@Test
-	void runtimeException() throws ServletException, IOException {
+	@DisplayName("ExceptionHandlerFilter는 RuntimeException 발생할 경우 INTERNAL_SERVER_ERROR 반환한다")
+	void case3() throws ServletException, IOException {
 		// Given
 		HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
-		String message = "runtimeException";
+		String message = "RuntimeException";
 		String responseBody = """
 			{
 			  "status": %s,
