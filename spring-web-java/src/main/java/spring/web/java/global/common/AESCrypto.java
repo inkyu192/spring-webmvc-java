@@ -12,19 +12,16 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-import org.springframework.stereotype.Component;
-
-@Component
-public class AESCrypto {
+public abstract class AESCrypto {
 
 	private final static String SECRET_KEY = "I5XyzQGnXTdnTzdiC1UXzJcKsF75rWg0";
 
-	private SecretKey getKeyFromString() {
+	private static SecretKey getKeyFromString() {
 		byte[] keyBytes = SECRET_KEY.getBytes(StandardCharsets.UTF_8);
 		return new SecretKeySpec(keyBytes, "AES");
 	}
 
-	public String encrypt(String plainText) {
+	public static String encrypt(String plainText) {
 		try {
 			SecretKey key = getKeyFromString();
 			Cipher cipher = Cipher.getInstance("AES");
@@ -37,7 +34,7 @@ public class AESCrypto {
 		}
 	}
 
-	public String decrypt(String encryptedText) {
+	public static String decrypt(String encryptedText) {
 		try {
 			SecretKey key = getKeyFromString();
 			Cipher cipher = Cipher.getInstance("AES");

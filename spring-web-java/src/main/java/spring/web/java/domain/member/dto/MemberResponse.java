@@ -1,5 +1,8 @@
 package spring.web.java.domain.member.dto;
 
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+
 import spring.web.java.domain.member.Member;
 
 public record MemberResponse(
@@ -9,7 +12,8 @@ public record MemberResponse(
 	String city,
 	String street,
 	String zipcode,
-	Member.Role role
+	Member.Role role,
+	OffsetDateTime createdAt
 ) {
 	public MemberResponse(Member member) {
 		this(
@@ -19,7 +23,8 @@ public record MemberResponse(
 			member.getAddress().getCity(),
 			member.getAddress().getStreet(),
 			member.getAddress().getZipcode(),
-			member.getRole()
+			member.getRole(),
+			member.getCreatedAt().atOffset(ZoneOffset.of("+09:00"))
 		);
 	}
 }
