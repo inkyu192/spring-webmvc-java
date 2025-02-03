@@ -1,9 +1,9 @@
 package spring.web.java.domain.member.dto;
 
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 
 import spring.web.java.domain.member.Member;
+import spring.web.java.global.common.DateTimeUtils;
 
 public record MemberResponse(
 	Long id,
@@ -24,7 +24,7 @@ public record MemberResponse(
 			member.getAddress().getStreet(),
 			member.getAddress().getZipcode(),
 			member.getRole(),
-			member.getCreatedAt().atOffset(ZoneOffset.of("+09:00"))
+			DateTimeUtils.toOffsetDateTime(member.getCreatedAt())
 		);
 	}
 }

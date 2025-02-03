@@ -1,23 +1,20 @@
 package spring.web.java.global.converter.persistence;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
+import spring.web.java.global.common.DateTimeUtils;
 
 @Converter(autoApply = true)
-public class KstUtcConverter implements AttributeConverter<LocalDateTime, LocalDateTime> {
-
-	private static final ZoneId KST = ZoneId.of("Asia/Seoul");
-	private static final ZoneId UTC = ZoneId.of("UTC");
+public class LocalDateTimeConverter implements AttributeConverter<LocalDateTime, LocalDateTime> {
 
 	@Override
 	public LocalDateTime convertToDatabaseColumn(LocalDateTime attribute) {
 		if (attribute == null) {
 			return null;
 		}
-		return attribute.atZone(KST).withZoneSameInstant(UTC).toLocalDateTime();
+		return DateTimeUtils.convertKstToUtc(attribute);
 	}
 
 	@Override
@@ -25,6 +22,6 @@ public class KstUtcConverter implements AttributeConverter<LocalDateTime, LocalD
 		if (dbData == null) {
 			return null;
 		}
-		return dbData.atZone(UTC).withZoneSameInstant(KST).toLocalDateTime();
+		return DateTimeUtils.convertUtcToKst(dbData);
 	}
 }

@@ -35,7 +35,7 @@ class JwtAuthenticationFilter(
     private fun generateAuthentication(token: String) =
         jwtTokenProvider.parseAccessToken(token).let {
             UsernamePasswordAuthenticationToken(
-                it["accountId"],
+                it["memberId"],
                 token,
                 listOf(SimpleGrantedAuthority(it["role"].toString()))
             )

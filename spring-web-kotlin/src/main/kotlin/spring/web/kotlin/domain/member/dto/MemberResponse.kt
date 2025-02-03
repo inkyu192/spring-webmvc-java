@@ -1,6 +1,8 @@
 package spring.web.kotlin.domain.member.dto
 
 import spring.web.kotlin.domain.member.Member
+import spring.web.kotlin.global.common.toOffsetDateTime
+import java.time.OffsetDateTime
 
 data class MemberResponse(
     val id: Long,
@@ -9,7 +11,8 @@ data class MemberResponse(
     val city: String,
     val street: String,
     val zipcode: String,
-    val role: Member.Role
+    val role: Member.Role,
+    val createdAt: OffsetDateTime,
 ) {
     constructor(member: Member) : this(
         id = member.id!!,
@@ -18,6 +21,7 @@ data class MemberResponse(
         city = member.address.city,
         street = member.address.street,
         zipcode = member.address.zipcode,
-        role = member.role
+        role = member.role,
+        createdAt = member.createdAt!!.toOffsetDateTime(),
     )
 }

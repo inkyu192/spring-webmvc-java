@@ -1,4 +1,4 @@
-package spring.web.java.global.converter.core;
+package spring.web.java.global.converter.spring;
 
 import org.springframework.core.convert.converter.Converter;
 

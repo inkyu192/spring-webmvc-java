@@ -13,6 +13,7 @@ import spring.web.kotlin.domain.member.dto.MemberSaveRequest
 import spring.web.kotlin.domain.member.dto.MemberUpdateRequest
 import spring.web.kotlin.domain.member.repository.MemberRepository
 import spring.web.kotlin.global.common.ResponseMessage
+import spring.web.kotlin.global.common.SecurityUtils
 import spring.web.kotlin.global.exception.DomainException
 
 @Service
@@ -45,7 +46,9 @@ class MemberService(
     }
 
     fun findMember(): MemberResponse {
-        val id = SecurityContextHolder.getContext().authentication.principal as Long
+        val id = SecurityUtils.getMemberId()
+            ?: throw DomainException(ResponseMessage.AUTHENTICATION_FAILED, HttpStatus.UNAUTHORIZED)
+
         val member = memberRepository.findByIdOrNull(id)
             ?: throw DomainException(ResponseMessage.DATA_NOT_FOUND, HttpStatus.NOT_FOUND)
 
@@ -54,7 +57,9 @@ class MemberService(
 
     @Transactional
     fun patchMember(memberUpdateRequest: MemberUpdateRequest): MemberResponse {
-        val id = SecurityContextHolder.getContext().authentication.principal as Long
+        val id = SecurityUtils.getMemberId()
+            ?: throw DomainException(ResponseMessage.AUTHENTICATION_FAILED, HttpStatus.UNAUTHORIZED)
+
         val member = memberRepository.findByIdOrNull(id)
             ?: throw DomainException(ResponseMessage.DATA_NOT_FOUND, HttpStatus.NOT_FOUND)
 
@@ -74,7 +79,9 @@ class MemberService(
 
     @Transactional
     fun deleteMember() {
-        val id = SecurityContextHolder.getContext().authentication.principal as Long
+        val id = SecurityUtils.getMemberId()
+            ?: throw DomainException(ResponseMessage.AUTHENTICATION_FAILED, HttpStatus.UNAUTHORIZED)
+
         memberRepository.deleteById(id)
     }
 }

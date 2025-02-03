@@ -15,7 +15,7 @@ import spring.web.java.domain.member.dto.MemberSaveRequest;
 import spring.web.java.domain.member.dto.MemberUpdateRequest;
 import spring.web.java.domain.member.repository.MemberRepository;
 import spring.web.java.global.common.ResponseMessage;
-import spring.web.java.global.common.SecurityService;
+import spring.web.java.global.common.SecurityUtils;
 import spring.web.java.global.exception.DomainException;
 
 @Service
@@ -25,7 +25,6 @@ public class MemberService {
 
 	private final MemberRepository memberRepository;
 	private final PasswordEncoder passwordEncoder;
-	private final SecurityService securityService;
 	private final ApplicationEventPublisher eventPublisher;
 
 	@Transactional
@@ -55,14 +54,14 @@ public class MemberService {
 	}
 
 	public MemberResponse findMember() {
-		return memberRepository.findById(securityService.getMemberId())
+		return memberRepository.findById(SecurityUtils.getMemberId())
 			.map(MemberResponse::new)
 			.orElseThrow(() -> new DomainException(ResponseMessage.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));
 	}
 
 	@Transactional
 	public MemberResponse updateMember(MemberUpdateRequest memberUpdateRequest) {
-		Member member = memberRepository.findById(securityService.getMemberId())
+		Member member = memberRepository.findById(SecurityUtils.getMemberId())
 			.orElseThrow(() -> new DomainException(ResponseMessage.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));
 
 		member.update(
@@ -80,6 +79,6 @@ public class MemberService {
 
 	@Transactional
 	public void deleteMember() {
-		memberRepository.deleteById(securityService.getMemberId());
+		memberRepository.deleteById(SecurityUtils.getMemberId());
 	}
 }

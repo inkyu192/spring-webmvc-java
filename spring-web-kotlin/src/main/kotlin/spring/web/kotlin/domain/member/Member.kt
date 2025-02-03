@@ -2,6 +2,8 @@ package spring.web.kotlin.domain.member
 
 import jakarta.persistence.*
 import spring.web.kotlin.domain.Address
+import spring.web.kotlin.domain.Base
+import spring.web.kotlin.global.converter.persistence.CryptoAttributeConverter
 
 @Entity
 class Member protected constructor(
@@ -11,6 +13,8 @@ class Member protected constructor(
     var id: Long? = null,
     var account: String,
     var password: String,
+
+    @Convert(converter = CryptoAttributeConverter::class)
     var name: String,
 
     @Enumerated(EnumType.STRING)
@@ -18,7 +22,7 @@ class Member protected constructor(
 
     @Embedded
     var address: Address
-) {
+) : Base() {
     companion object {
         fun create(account: String, password: String, name: String, role: Role, address: Address) =
             Member(
