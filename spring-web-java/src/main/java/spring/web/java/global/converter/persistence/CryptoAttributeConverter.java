@@ -7,13 +7,19 @@ import spring.web.java.global.common.AESCryptoUtils;
 @Converter
 public class CryptoAttributeConverter implements AttributeConverter<String, String> {
 
+	private final AESCryptoUtils aesCryptoUtils;
+
+	public CryptoAttributeConverter() {
+		this.aesCryptoUtils = new AESCryptoUtils("d9ANIqIyfTygI92m6jWFfAzUbEP73TNB");
+	}
+
 	@Override
 	public String convertToDatabaseColumn(String s) {
-		return AESCryptoUtils.encrypt(s);
+		return aesCryptoUtils.encrypt(s);
 	}
 
 	@Override
 	public String convertToEntityAttribute(String s) {
-		return AESCryptoUtils.decrypt(s);
+		return aesCryptoUtils.decrypt(s);
 	}
 }

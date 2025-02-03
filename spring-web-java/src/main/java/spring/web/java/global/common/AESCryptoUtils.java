@@ -12,14 +12,17 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-public abstract class AESCryptoUtils {
+public class AESCryptoUtils {
 
-	private final static String SECRET_KEY = "d9ANIqIyfTygI92m6jWFfAzUbEP73TNB";
-	private final static String ALGORITHM = "AES";
+	private final SecretKeySpec secretKeySpec;
 
-	public static String encrypt(String plainText) {
+	public AESCryptoUtils(String secretKey) {
+		byte[] keyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
+		this.secretKeySpec = new SecretKeySpec(keyBytes, "AES");
+	}
+
+	public String encrypt(String plainText) {
 		try {
-			SecretKey secretKeySpec = getSecretKeySpec();
 			Cipher cipher = getCipher(Cipher.ENCRYPT_MODE, secretKeySpec);
 			byte[] encryptedBytes = cipher.doFinal(plainText.getBytes(StandardCharsets.UTF_8));
 			return Base64.getEncoder().encodeToString(encryptedBytes);
@@ -28,9 +31,8 @@ public abstract class AESCryptoUtils {
 		}
 	}
 
-	public static String decrypt(String encryptedText) {
+	public String decrypt(String encryptedText) {
 		try {
-			SecretKey secretKeySpec = getSecretKeySpec();
 			Cipher cipher = getCipher(Cipher.DECRYPT_MODE, secretKeySpec);
 			byte[] decryptedBytes = cipher.doFinal(Base64.getDecoder().decode(encryptedText));
 			return new String(decryptedBytes, StandardCharsets.UTF_8);
@@ -39,15 +41,10 @@ public abstract class AESCryptoUtils {
 		}
 	}
 
-	private static SecretKey getSecretKeySpec() {
-		byte[] keyBytes = SECRET_KEY.getBytes(StandardCharsets.UTF_8);
-		return new SecretKeySpec(keyBytes, ALGORITHM);
-	}
-
-	private static Cipher getCipher(int mode, SecretKey secretKeySpec) {
+	private Cipher getCipher(int mode, SecretKey secretKeySpec) {
 		Cipher cipher;
 		try {
-			cipher = Cipher.getInstance(ALGORITHM);
+			cipher = Cipher.getInstance("AES");
 			cipher.init(mode, secretKeySpec);
 		} catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException e) {
 			throw new RuntimeException(e);
