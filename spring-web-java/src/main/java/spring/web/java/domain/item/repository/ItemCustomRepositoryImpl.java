@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.util.StringUtils;
 
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import jakarta.persistence.EntityManager;
@@ -71,22 +72,25 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
 		int count = queryFactory
 			.selectOne()
 			.from(item)
-			.where(
-				StringUtils.hasText(name) ? item.name.like("%" + name + "%") : null
-			)
+			.where(likeName(name))
 			.fetch()
 			.size();
 
 		List<Item> content = queryFactory
 			.select(item)
 			.from(item)
-			.where(
-				StringUtils.hasText(name) ? item.name.like("%" + name + "%") : null
-			)
+			.where(likeName(name))
 			.limit(pageable.getPageSize())
 			.offset(pageable.getOffset())
 			.fetch();
 
 		return new PageImpl<>(content, pageable, count);
+	}
+
+	private BooleanExpression likeName(String name) {
+		if (!StringUtils.hasText(name)) {
+			return null;
+		}
+		return item.name.like("%" + name + "%");
 	}
 }

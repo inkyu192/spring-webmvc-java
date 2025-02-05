@@ -33,7 +33,7 @@ class ItemService(
     }
 
     fun findItems(pageable: Pageable, name: String?) = itemRepository
-        .findAllWithJpql(pageable, name)
+        .findAllUsingQueryDsl(pageable, name)
         .map { ItemResponse(it) }
 
     fun findItem(id: Long): ItemResponse {

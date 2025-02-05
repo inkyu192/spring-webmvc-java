@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import jakarta.persistence.EntityManager;
@@ -94,11 +95,7 @@ public class OrderCustomRepositoryImpl implements OrderCustomRepository {
 			.from(order)
 			.join(order.member, member)
 			.join(order.delivery, delivery)
-			.where(
-				memberId != null ? member.id.eq(memberId) : null,
-				orderStatus != null ? order.status.eq(orderStatus) : null,
-				deliveryStatus != null ? delivery.status.eq(deliveryStatus) : null
-			)
+			.where(eqMemberId(memberId), eqOrderStatus(orderStatus), eqDeliveryStatus(deliveryStatus))
 			.fetch()
 			.size();
 
@@ -109,15 +106,32 @@ public class OrderCustomRepositoryImpl implements OrderCustomRepository {
 			.fetchJoin()
 			.join(order.delivery, delivery)
 			.fetchJoin()
-			.where(
-				memberId != null ? member.id.eq(memberId) : null,
-				orderStatus != null ? order.status.eq(orderStatus) : null,
-				deliveryStatus != null ? delivery.status.eq(deliveryStatus) : null
-			)
+			.where(eqMemberId(memberId), eqOrderStatus(orderStatus), eqDeliveryStatus(deliveryStatus))
 			.limit(pageable.getPageSize())
 			.offset(pageable.getOffset())
 			.fetch();
 
 		return new PageImpl<>(content, pageable, count);
+	}
+
+	private BooleanExpression eqMemberId(Long memberId) {
+		if (memberId == null) {
+			return null;
+		}
+		return member.id.eq(memberId);
+	}
+
+	private BooleanExpression eqOrderStatus(Order.Status orderStatus) {
+		if (orderStatus == null) {
+			return null;
+		}
+		return order.status.eq(orderStatus);
+	}
+
+	private BooleanExpression eqDeliveryStatus(Delivery.Status deliveryStatus) {
+		if (deliveryStatus == null) {
+			return null;
+		}
+		return delivery.status.eq(deliveryStatus);
 	}
 }

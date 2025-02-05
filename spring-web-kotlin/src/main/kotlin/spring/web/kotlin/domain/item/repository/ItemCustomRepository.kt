@@ -6,4 +6,6 @@ import spring.web.kotlin.domain.item.Item
 
 interface ItemCustomRepository {
     fun findAllWithJpql(pageable: Pageable, name: String?): Page<Item>
+
+    fun findAllUsingQueryDsl(pageable: Pageable, name: String?): Page<Item>
 }

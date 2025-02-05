@@ -1,5 +1,7 @@
 package spring.web.kotlin.domain.item.repository
 
+import com.querydsl.core.types.dsl.BooleanExpression
+import com.querydsl.jpa.impl.JPAQueryFactory
 import jakarta.persistence.EntityManager
 import jakarta.persistence.TypedQuery
 import org.springframework.data.domain.Page
@@ -7,9 +9,12 @@ import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.util.StringUtils
 import spring.web.kotlin.domain.item.Item
+import spring.web.kotlin.domain.item.QItem
+import spring.web.kotlin.domain.item.QItem.item
 
 class ItemCustomRepositoryImpl(
-    private val entityManager: EntityManager
+    private val entityManager: EntityManager,
+    private val queryFactory: JPAQueryFactory = JPAQueryFactory(entityManager),
 ) : ItemCustomRepository {
     override fun findAllWithJpql(pageable: Pageable, name: String?): Page<Item> {
         var countJpql: String = """
@@ -52,4 +57,25 @@ class ItemCustomRepositoryImpl(
 
         return PageImpl(contentQuery.resultList, pageable, countQuery.singleResult)
     }
+
+    override fun findAllUsingQueryDsl(pageable: Pageable, name: String?): Page<Item> {
+        val count = queryFactory
+            .selectOne()
+            .from(item)
+            .where(likeName(name))
+            .fetch()
+            .size
+
+        val content = queryFactory
+            .select(item)
+            .from(item)
+            .where(likeName(name))
+            .limit(pageable.pageSize.toLong())
+            .offset(pageable.offset)
+            .fetch()
+
+        return PageImpl(content, pageable, count.toLong())
+    }
+
+    private fun likeName(name: String?) = if (name.isNullOrBlank()) null else item.name.like("%$name%")
 }
