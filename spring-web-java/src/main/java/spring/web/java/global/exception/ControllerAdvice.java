@@ -1,21 +1,25 @@
 package spring.web.java.global.exception;
 
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import lombok.RequiredArgsConstructor;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @RestControllerAdvice
-@RequiredArgsConstructor
 public class ControllerAdvice {
 
 	@ExceptionHandler(DomainException.class)
-	public ProblemDetail domain(DomainException exception) {
+	public ProblemDetail handleDomainException(DomainException exception) {
 		ProblemDetail problemDetail = ProblemDetail.forStatus(exception.getHttpStatus());
 		problemDetail.setTitle(exception.getResponseMessage().getTitle());
 		problemDetail.setDetail(exception.getResponseMessage().getDetail());
@@ -23,27 +27,25 @@ public class ControllerAdvice {
 		return problemDetail;
 	}
 
-	@ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-	public ProblemDetail methodNotAllowed(HttpRequestMethodNotSupportedException exception) {
-		ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.METHOD_NOT_ALLOWED);
-		problemDetail.setTitle(HttpStatus.METHOD_NOT_ALLOWED.getReasonPhrase());
+	@ExceptionHandler(HttpMessageNotReadableException.class)
+	public ProblemDetail handleInvalidRequestBody(HttpMessageNotReadableException exception) {
+		ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+		problemDetail.setTitle(HttpStatus.BAD_REQUEST.getReasonPhrase());
 		problemDetail.setDetail(exception.getMessage());
 
 		return problemDetail;
 	}
 
+	@ExceptionHandler({NoResourceFoundException.class, HttpRequestMethodNotSupportedException.class})
+	public ProblemDetail handleResourceNotFound(ErrorResponse errorResponse) {
+		return errorResponse.getBody();
+	}
+
 	@ExceptionHandler(MethodArgumentNotValidException.class)
-	public ProblemDetail badRequest(MethodArgumentNotValidException exception) {
-		ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
-		problemDetail.setTitle(HttpStatus.BAD_REQUEST.getReasonPhrase());
-		problemDetail.setDetail(
-			"%s: %s".formatted(
-				exception.getMessage(),
-				exception.getBindingResult().getFieldErrors().stream()
-					.map(FieldError::getField)
-					.toList()
-			)
-		);
+	public ProblemDetail handleValidationException(MethodArgumentNotValidException exception) {
+		ProblemDetail problemDetail = exception.getBody();
+		problemDetail.setProperties(Map.of("fieldErrors", exception.getBindingResult().getFieldErrors().stream()
+			.collect(Collectors.toMap(FieldError::getField, DefaultMessageSourceResolvable::getDefaultMessage))));
 
 		return problemDetail;
 	}

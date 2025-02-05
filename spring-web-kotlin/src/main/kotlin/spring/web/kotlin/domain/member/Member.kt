@@ -1,5 +1,6 @@
 package spring.web.kotlin.domain.member
 
+import com.fasterxml.jackson.annotation.JsonCreator
 import jakarta.persistence.*
 import spring.web.kotlin.domain.Address
 import spring.web.kotlin.domain.Base
@@ -48,6 +49,8 @@ class Member protected constructor(
         ROLE_SELLER("판매자");
 
         companion object {
+            @JvmStatic
+            @JsonCreator
             fun of(name: Any?) = entries.find { it.name == name }
         }
     }

@@ -13,10 +13,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.UnsupportedJwtException;
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -33,14 +30,14 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
 		HttpServletRequest request,
 		HttpServletResponse response,
 		FilterChain filterChain
-	) throws ServletException, IOException {
+	) throws IOException {
 		try {
 			filterChain.doFilter(request, response);
-		} catch (MalformedJwtException | UnsupportedJwtException e) {
-			handleException(response, HttpStatus.BAD_REQUEST, e.getMessage());
-		} catch (AuthenticationException | AccessDeniedException | JwtException e) {
+		} catch (JwtException | AuthenticationException e) {
 			handleException(response, HttpStatus.UNAUTHORIZED, e.getMessage());
-		} catch (RuntimeException e) {
+		} catch (AccessDeniedException e) {
+			handleException(response, HttpStatus.FORBIDDEN, e.getMessage());
+		} catch (Exception e) {
 			log.error("[{}]", request.getAttribute(HttpLogFilter.TRANSACTION_ID), e);
 			handleException(response, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
 		}

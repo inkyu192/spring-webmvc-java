@@ -2,8 +2,6 @@ package spring.web.kotlin.global.filter
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.jsonwebtoken.JwtException
-import io.jsonwebtoken.MalformedJwtException
-import io.jsonwebtoken.UnsupportedJwtException
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -26,13 +24,13 @@ class ExceptionHandlerFilter(
         runCatching { filterChain.doFilter(request, response) }
             .onFailure { throwable ->
                 when (throwable) {
-                    is MalformedJwtException, is UnsupportedJwtException ->
-                        handleException(response, HttpStatus.BAD_REQUEST, throwable.message)
-
-                    is AuthenticationException, is AccessDeniedException, is JwtException ->
+                    is JwtException, is AuthenticationException ->
                         handleException(response, HttpStatus.UNAUTHORIZED, throwable.message)
 
-                    is RuntimeException ->
+                    is AccessDeniedException ->
+                        handleException(response, HttpStatus.FORBIDDEN, throwable.message)
+
+                    is Exception ->
                         handleException(response, HttpStatus.INTERNAL_SERVER_ERROR, throwable.message)
                 }
             }

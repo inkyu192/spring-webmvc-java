@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Embedded;
@@ -74,6 +76,7 @@ public class Member extends Base {
 
 		private final String description;
 
+		@JsonCreator
 		public static Role of(Object name) {
 			return Arrays.stream(Role.values())
 				.filter(role -> role.name().equals(name))
