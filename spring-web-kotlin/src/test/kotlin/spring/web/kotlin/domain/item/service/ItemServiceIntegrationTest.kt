@@ -18,8 +18,9 @@ import spring.web.kotlin.global.exception.DomainException
 @Import(TestConfig::class)
 class ItemServiceIntegrationTest(
     private val itemRepository: ItemRepository,
-    private val itemService: ItemService = ItemService(itemRepository)
 ) : DescribeSpec({
+    val itemService = ItemService(itemRepository)
+
     describe("findItem 메서드는") {
         context("데이터가 없을 때") {
             it("DomainException 예외 발생 한다") {
