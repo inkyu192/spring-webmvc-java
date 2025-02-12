@@ -5,6 +5,7 @@ import static spring.web.java.domain.order.QDelivery.*;
 import static spring.web.java.domain.order.QOrder.*;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -90,14 +91,15 @@ public class OrderCustomRepositoryImpl implements OrderCustomRepository {
 	public Page<Order> findAllUsingQueryDsl(
 		Pageable pageable, Long memberId, Order.Status orderStatus, Delivery.Status deliveryStatus
 	) {
-		int count = queryFactory
-			.selectOne()
-			.from(order)
-			.join(order.member, member)
-			.join(order.delivery, delivery)
-			.where(eqMemberId(memberId), eqOrderStatus(orderStatus), eqDeliveryStatus(deliveryStatus))
-			.fetch()
-			.size();
+		long count = Objects.requireNonNullElse(
+			queryFactory
+				.select(order.count())
+				.from(order)
+				.join(order.member, member)
+				.join(order.delivery, delivery)
+				.where(eqMemberId(memberId), eqOrderStatus(orderStatus), eqDeliveryStatus(deliveryStatus))
+				.fetchOne(), 0L
+		);
 
 		List<Order> content = queryFactory
 			.select(order)

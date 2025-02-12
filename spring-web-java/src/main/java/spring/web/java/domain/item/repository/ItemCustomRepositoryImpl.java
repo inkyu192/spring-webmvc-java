@@ -3,6 +3,7 @@ package spring.web.java.domain.item.repository;
 import static spring.web.java.domain.item.QItem.*;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -69,12 +70,13 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
 
 	@Override
 	public Page<Item> findAllUsingQueryDsl(Pageable pageable, String name) {
-		int count = queryFactory
-			.selectOne()
-			.from(item)
-			.where(likeName(name))
-			.fetch()
-			.size();
+		long count = Objects.requireNonNullElse(
+			queryFactory
+				.select(item.count())
+				.from(item)
+				.where(likeName(name))
+				.fetchOne(), 0L
+		);
 
 		List<Item> content = queryFactory
 			.select(item)

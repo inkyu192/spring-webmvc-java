@@ -1,5 +1,6 @@
 package spring.web.kotlin.domain.item.repository
 
+import com.querydsl.core.types.dsl.BooleanExpression
 import com.querydsl.jpa.impl.JPAQueryFactory
 import jakarta.persistence.EntityManager
 import jakarta.persistence.TypedQuery
@@ -59,11 +60,10 @@ class ItemCustomRepositoryImpl(
 
     override fun findAllUsingQueryDsl(pageable: Pageable, name: String?): Page<Item> {
         val count = queryFactory
-            .selectOne()
+            .select(item.count())
             .from(item)
             .where(likeName(name))
-            .fetch()
-            .size
+            .fetchOne() ?: 0
 
         val content = queryFactory
             .select(item)
@@ -73,8 +73,8 @@ class ItemCustomRepositoryImpl(
             .offset(pageable.offset)
             .fetch()
 
-        return PageImpl(content, pageable, count.toLong())
+        return PageImpl(content, pageable, count)
     }
 
-    private fun likeName(name: String?) = if (name.isNullOrBlank()) null else item.name.like("%$name%")
+    private fun likeName(name: String?) = name.takeIf { !it.isNullOrBlank() }?.let { item.name.like("%$it%") }
 }
