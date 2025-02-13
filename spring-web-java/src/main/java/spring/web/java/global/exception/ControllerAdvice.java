@@ -11,8 +11,10 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @RestControllerAdvice
@@ -27,18 +29,18 @@ public class ControllerAdvice {
 		return problemDetail;
 	}
 
-	@ExceptionHandler(HttpMessageNotReadableException.class)
-	public ProblemDetail handleInvalidRequestBody(HttpMessageNotReadableException exception) {
+	@ExceptionHandler({NoResourceFoundException.class, HttpRequestMethodNotSupportedException.class})
+	public ProblemDetail handleResourceNotFound(ErrorResponse errorResponse) {
+		return errorResponse.getBody();
+	}
+
+	@ExceptionHandler({HttpMessageNotReadableException.class, MethodArgumentTypeMismatchException.class})
+	public ProblemDetail handleInvalidRequestBody(Exception exception) {
 		ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
 		problemDetail.setTitle(HttpStatus.BAD_REQUEST.getReasonPhrase());
 		problemDetail.setDetail(exception.getMessage());
 
 		return problemDetail;
-	}
-
-	@ExceptionHandler({NoResourceFoundException.class, HttpRequestMethodNotSupportedException.class})
-	public ProblemDetail handleResourceNotFound(ErrorResponse errorResponse) {
-		return errorResponse.getBody();
 	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
@@ -48,5 +50,10 @@ public class ControllerAdvice {
 			.collect(Collectors.toMap(FieldError::getField, DefaultMessageSourceResolvable::getDefaultMessage))));
 
 		return problemDetail;
+	}
+
+	@ExceptionHandler(ServletRequestBindingException.class)
+	public ProblemDetail handleBindingException(ServletRequestBindingException exception) {
+		return exception.getBody();
 	}
 }
