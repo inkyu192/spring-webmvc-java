@@ -13,7 +13,7 @@ import java.time.LocalDateTime
 class Base protected constructor(
 
     @CreatedDate
-    @Column(updatable = false)
+    @Column(updatable = false, nullable = false)
     var createdAt: LocalDateTime? = null,
 
     @LastModifiedDate

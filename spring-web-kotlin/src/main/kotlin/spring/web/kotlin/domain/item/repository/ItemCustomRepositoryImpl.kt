@@ -1,6 +1,5 @@
 package spring.web.kotlin.domain.item.repository
 
-import com.querydsl.core.types.dsl.BooleanExpression
 import com.querydsl.jpa.impl.JPAQueryFactory
 import jakarta.persistence.EntityManager
 import jakarta.persistence.TypedQuery
@@ -14,7 +13,7 @@ import spring.web.kotlin.domain.item.QItem.item
 class ItemCustomRepositoryImpl(
     private val entityManager: EntityManager
 ) : ItemCustomRepository {
-    private val queryFactory: JPAQueryFactory = JPAQueryFactory(entityManager)
+    private val queryFactory = JPAQueryFactory(entityManager)
 
     override fun findAllWithJpql(pageable: Pageable, name: String?): Page<Item> {
         var countJpql: String = """
