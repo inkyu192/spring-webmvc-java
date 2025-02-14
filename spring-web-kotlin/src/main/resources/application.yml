@@ -17,6 +17,7 @@ logging:
       hibernate:
         SQL: debug
         type: info
+#        orm.jdbc.bind: TRACE
 
 jwt:
   access-token:
