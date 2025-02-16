@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
-import spring.web.java.interfaces.exception.ResponseMessage;
+import spring.web.java.presentation.exception.ResponseMessage;
 import spring.web.java.domain.model.entity.Address;
 import spring.web.java.domain.model.entity.Delivery;
 import spring.web.java.domain.model.entity.Item;
@@ -22,9 +22,9 @@ import spring.web.java.domain.model.enums.OrderStatus;
 import spring.web.java.domain.repository.ItemRepository;
 import spring.web.java.domain.repository.MemberRepository;
 import spring.web.java.domain.repository.OrderRepository;
-import spring.web.java.interfaces.dto.response.OrderResponse;
-import spring.web.java.interfaces.dto.request.OrderSaveRequest;
-import spring.web.java.interfaces.exception.DomainException;
+import spring.web.java.presentation.dto.response.OrderResponse;
+import spring.web.java.presentation.dto.request.OrderSaveRequest;
+import spring.web.java.presentation.exception.DomainException;
 
 @Service
 @Transactional(readOnly = true)

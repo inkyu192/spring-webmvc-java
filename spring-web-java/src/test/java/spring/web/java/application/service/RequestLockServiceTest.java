@@ -10,7 +10,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import spring.web.java.domain.repository.RequestLockRepository;
-import spring.web.java.interfaces.exception.DomainException;
+import spring.web.java.presentation.exception.DomainException;
 
 @ExtendWith(MockitoExtension.class)
 class RequestLockServiceTest {

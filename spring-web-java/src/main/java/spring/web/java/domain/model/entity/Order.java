@@ -22,10 +22,10 @@ import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import spring.web.java.interfaces.exception.ResponseMessage;
+import spring.web.java.presentation.exception.ResponseMessage;
 import spring.web.java.domain.model.enums.DeliveryStatus;
 import spring.web.java.domain.model.enums.OrderStatus;
-import spring.web.java.interfaces.exception.DomainException;
+import spring.web.java.presentation.exception.DomainException;
 
 @Entity
 @Getter

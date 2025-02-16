@@ -8,16 +8,16 @@ import org.springframework.transaction.annotation.Transactional;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
-import spring.web.java.interfaces.exception.ResponseMessage;
+import spring.web.java.presentation.exception.ResponseMessage;
 import spring.web.java.domain.model.entity.Member;
 import spring.web.java.domain.model.entity.Token;
 import spring.web.java.domain.repository.MemberRepository;
 import spring.web.java.domain.repository.TokenRepository;
 import spring.web.java.infrastructure.security.JwtTokenProvider;
-import spring.web.java.interfaces.dto.request.MemberLoginRequest;
-import spring.web.java.interfaces.dto.request.TokenRequest;
-import spring.web.java.interfaces.dto.response.TokenResponse;
-import spring.web.java.interfaces.exception.DomainException;
+import spring.web.java.presentation.dto.request.MemberLoginRequest;
+import spring.web.java.presentation.dto.request.TokenRequest;
+import spring.web.java.presentation.dto.response.TokenResponse;
+import spring.web.java.presentation.exception.DomainException;
 
 @Service
 @Transactional(readOnly = true)

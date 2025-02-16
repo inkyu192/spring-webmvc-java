@@ -11,9 +11,9 @@ import jakarta.persistence.Id;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import spring.web.java.interfaces.exception.ResponseMessage;
+import spring.web.java.presentation.exception.ResponseMessage;
 import spring.web.java.domain.model.enums.Category;
-import spring.web.java.interfaces.exception.DomainException;
+import spring.web.java.presentation.exception.DomainException;
 
 @Entity
 @Getter

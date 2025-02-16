@@ -4,9 +4,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
-import spring.web.java.interfaces.exception.ResponseMessage;
+import spring.web.java.presentation.exception.ResponseMessage;
 import spring.web.java.domain.repository.RequestLockRepository;
-import spring.web.java.interfaces.exception.DomainException;
+import spring.web.java.presentation.exception.DomainException;
 
 @Service
 @RequiredArgsConstructor

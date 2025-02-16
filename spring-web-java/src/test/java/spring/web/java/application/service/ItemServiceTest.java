@@ -19,9 +19,9 @@ import org.springframework.data.domain.Pageable;
 import spring.web.java.domain.model.entity.Item;
 import spring.web.java.domain.model.enums.Category;
 import spring.web.java.domain.repository.ItemRepository;
-import spring.web.java.interfaces.dto.response.ItemResponse;
-import spring.web.java.interfaces.dto.request.ItemSaveRequest;
-import spring.web.java.interfaces.exception.DomainException;
+import spring.web.java.presentation.dto.response.ItemResponse;
+import spring.web.java.presentation.dto.request.ItemSaveRequest;
+import spring.web.java.presentation.exception.DomainException;
 
 @ExtendWith(MockitoExtension.class)
 class ItemServiceTest {

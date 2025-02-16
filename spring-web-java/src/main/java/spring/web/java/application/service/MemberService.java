@@ -11,12 +11,12 @@ import spring.web.java.domain.model.entity.Address;
 import spring.web.java.domain.model.entity.Member;
 import spring.web.java.application.event.MemberEvent;
 import spring.web.java.domain.repository.MemberRepository;
-import spring.web.java.interfaces.dto.response.MemberResponse;
-import spring.web.java.interfaces.dto.request.MemberSaveRequest;
-import spring.web.java.interfaces.dto.request.MemberUpdateRequest;
-import spring.web.java.interfaces.exception.ResponseMessage;
+import spring.web.java.presentation.dto.response.MemberResponse;
+import spring.web.java.presentation.dto.request.MemberSaveRequest;
+import spring.web.java.presentation.dto.request.MemberUpdateRequest;
+import spring.web.java.presentation.exception.ResponseMessage;
 import spring.web.java.infrastructure.util.SecurityContextUtil;
-import spring.web.java.interfaces.exception.DomainException;
+import spring.web.java.presentation.exception.DomainException;
 
 @Service
 @Transactional(readOnly = true)

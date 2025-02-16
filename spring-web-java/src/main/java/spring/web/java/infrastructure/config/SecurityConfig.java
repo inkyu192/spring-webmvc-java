@@ -17,7 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import spring.web.java.infrastructure.security.JwtTokenProvider;
 import spring.web.java.infrastructure.security.JwtAuthenticationFilter;
-import spring.web.java.interfaces.exception.ExceptionHandlerFilter;
+import spring.web.java.presentation.exception.ExceptionHandlerFilter;
 
 @EnableMethodSecurity
 @Configuration(proxyBeanMethods = false)
