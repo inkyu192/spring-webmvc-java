@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
-import spring.web.java.presentation.exception.ResponseMessage;
 import spring.web.java.domain.model.entity.Address;
 import spring.web.java.domain.model.entity.Delivery;
 import spring.web.java.domain.model.entity.Item;
@@ -22,9 +21,10 @@ import spring.web.java.domain.model.enums.OrderStatus;
 import spring.web.java.domain.repository.ItemRepository;
 import spring.web.java.domain.repository.MemberRepository;
 import spring.web.java.domain.repository.OrderRepository;
-import spring.web.java.presentation.dto.response.OrderResponse;
 import spring.web.java.presentation.dto.request.OrderSaveRequest;
-import spring.web.java.presentation.exception.DomainException;
+import spring.web.java.presentation.dto.response.OrderResponse;
+import spring.web.java.presentation.exception.BaseException;
+import spring.web.java.presentation.exception.ResponseMessage;
 
 @Service
 @Transactional(readOnly = true)
@@ -38,13 +38,13 @@ public class OrderService {
 	@Transactional
 	public OrderResponse saveOrder(OrderSaveRequest orderSaveRequest) {
 		Member member = memberRepository.findById(orderSaveRequest.memberId())
-			.orElseThrow(() -> new DomainException(ResponseMessage.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));
+			.orElseThrow(() -> new BaseException(ResponseMessage.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));
 
 		List<OrderItem> orderItems = new ArrayList<>();
 
 		orderSaveRequest.orderItems().forEach(orderItem -> {
 			Item item = itemRepository.findById(orderItem.itemId())
-				.orElseThrow(() -> new DomainException(ResponseMessage.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));
+				.orElseThrow(() -> new BaseException(ResponseMessage.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));
 
 			orderItems.add(OrderItem.create(item, item.getPrice(), orderItem.count()));
 		});
@@ -75,12 +75,12 @@ public class OrderService {
 	public OrderResponse findOrder(Long id) {
 		return orderRepository.findById(id)
 			.map(OrderResponse::new)
-			.orElseThrow(() -> new DomainException(ResponseMessage.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));
+			.orElseThrow(() -> new BaseException(ResponseMessage.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));
 	}
 
 	public OrderResponse cancelOrder(Long id) {
 		Order order = orderRepository.findById(id)
-			.orElseThrow(() -> new DomainException(ResponseMessage.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));
+			.orElseThrow(() -> new BaseException(ResponseMessage.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));
 
 		order.cancel();
 

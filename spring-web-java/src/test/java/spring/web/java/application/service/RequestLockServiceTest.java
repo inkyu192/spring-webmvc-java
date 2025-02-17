@@ -10,7 +10,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import spring.web.java.domain.repository.RequestLockRepository;
-import spring.web.java.presentation.exception.DomainException;
+import spring.web.java.presentation.exception.BaseException;
 
 @ExtendWith(MockitoExtension.class)
 class RequestLockServiceTest {
@@ -40,7 +40,7 @@ class RequestLockServiceTest {
 	}
 
 	@Test
-	@DisplayName("유효성 검사 기능은 데이터가 있을 경우 DomainException을 던진다")
+	@DisplayName("유효성 검사 기능은 데이터가 있을 경우 BaseException을 던진다")
 	void case2() {
 		// Given
 		Long memberId = 1L;
@@ -51,7 +51,7 @@ class RequestLockServiceTest {
 
 		// When & Then
 		Assertions.assertThatThrownBy(() -> requestLockService.validate(memberId, method, uri))
-			.isInstanceOf(DomainException.class);
+			.isInstanceOf(BaseException.class);
 
 		Mockito.verify(requestLockRepository, Mockito.times(1))
 			.setIfAbsent(memberId, method, uri);

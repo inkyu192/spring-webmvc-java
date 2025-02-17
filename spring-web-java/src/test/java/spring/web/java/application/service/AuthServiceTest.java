@@ -22,7 +22,7 @@ import spring.web.java.infrastructure.security.JwtTokenProvider;
 import spring.web.java.presentation.dto.request.MemberLoginRequest;
 import spring.web.java.presentation.dto.request.TokenRequest;
 import spring.web.java.presentation.dto.response.TokenResponse;
-import spring.web.java.presentation.exception.DomainException;
+import spring.web.java.presentation.exception.BaseException;
 
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
@@ -43,7 +43,7 @@ class AuthServiceTest {
 	private PasswordEncoder passwordEncoder;
 
 	@Test
-	@DisplayName("로그인 기능은 계정이 존재하지 않을 경우 DomainException을 던진다")
+	@DisplayName("로그인 기능은 계정이 존재하지 않을 경우 BaseException을 던진다")
 	void login_case1() {
 		// Given
 		MemberLoginRequest request = Mockito.mock(MemberLoginRequest.class);
@@ -51,11 +51,11 @@ class AuthServiceTest {
 		Mockito.when(memberRepository.findByAccount(request.account())).thenReturn(Optional.empty());
 
 		// When & Then
-		Assertions.assertThatThrownBy(() -> authService.login(request)).isInstanceOf(DomainException.class);
+		Assertions.assertThatThrownBy(() -> authService.login(request)).isInstanceOf(BaseException.class);
 	}
 
 	@Test
-	@DisplayName("로그인 기능은 비밀번호가 일치하지 않을 경우 DomainException을 던진다")
+	@DisplayName("로그인 기능은 비밀번호가 일치하지 않을 경우 BaseException을 던진다")
 	void login_case2() {
 		// Given
 		MemberLoginRequest request = Mockito.mock(MemberLoginRequest.class);
@@ -65,7 +65,7 @@ class AuthServiceTest {
 		Mockito.when(passwordEncoder.matches(request.password(), member.getPassword())).thenReturn(false);
 
 		// When & Then
-		Assertions.assertThatThrownBy(() -> authService.login(request)).isInstanceOf(DomainException.class);
+		Assertions.assertThatThrownBy(() -> authService.login(request)).isInstanceOf(BaseException.class);
 	}
 
 	@Test
@@ -120,7 +120,7 @@ class AuthServiceTest {
 	}
 
 	@Test
-	@DisplayName("갱신 기능은 Refresh 토큰이 일치하지 않을 경우 DomainException을 던진다")
+	@DisplayName("갱신 기능은 Refresh 토큰이 일치하지 않을 경우 BaseException을 던진다")
 	void refreshToken_case3() {
 		// Given
 		Long memberId = 1L;
@@ -134,7 +134,7 @@ class AuthServiceTest {
 		Mockito.when(tokenRepository.findById(memberId)).thenReturn(Optional.of(token));
 
 		// When & Then
-		Assertions.assertThatThrownBy(() -> authService.refreshToken(request)).isInstanceOf(DomainException.class);
+		Assertions.assertThatThrownBy(() -> authService.refreshToken(request)).isInstanceOf(BaseException.class);
 	}
 
 	@Test

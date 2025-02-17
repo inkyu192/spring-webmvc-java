@@ -15,12 +15,8 @@ import org.springframework.web.servlet.resource.NoResourceFoundException
 @RestControllerAdvice
 class ControllerAdvice {
 
-    @ExceptionHandler(DomainException::class)
-    fun handleDomainException(exception: DomainException) =
-        ProblemDetail.forStatus(exception.httpStatus).apply {
-            title = exception.responseMessage.title
-            detail = exception.responseMessage.detail
-        }
+    @ExceptionHandler(BaseException::class)
+    fun handleBaseException(exception: BaseException) = exception.body
 
     @ExceptionHandler(NoResourceFoundException::class, HttpRequestMethodNotSupportedException::class)
     fun handleResourceNotFound(errorResponse: ErrorResponse) = errorResponse.body

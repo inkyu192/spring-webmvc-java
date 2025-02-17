@@ -18,7 +18,7 @@ import spring.web.kotlin.domain.token.Token
 import spring.web.kotlin.domain.token.dto.TokenRequest
 import spring.web.kotlin.domain.token.repository.TokenRepository
 import spring.web.kotlin.global.config.JwtTokenProvider
-import spring.web.kotlin.global.exception.DomainException
+import spring.web.kotlin.global.exception.BaseException
 
 class AuthServiceTest : DescribeSpec({
     val jwtTokenProvider = mockk<JwtTokenProvider>()
@@ -29,24 +29,24 @@ class AuthServiceTest : DescribeSpec({
 
     describe("로그인 기능은") {
         context("계정이 존재하지 않을 경우") {
-            it("DomainException 던진다") {
+            it("BaseException 던진다") {
                 val request = mockk<MemberLoginRequest>(relaxed = true)
 
                 every { memberRepository.findByAccount(request.account) } returns null
 
-                shouldThrow<DomainException> { authService.login(request) }
+                shouldThrow<BaseException> { authService.login(request) }
             }
         }
 
         context("비밀번호가 일치하지 않을 경우") {
-            it("DomainException 던진다") {
+            it("BaseException 던진다") {
                 val request = mockk<MemberLoginRequest>(relaxed = true)
                 val member = mockk<Member>(relaxed = true)
 
                 every { memberRepository.findByAccount(request.account) } returns member
                 every { passwordEncoder.matches(request.password, member.password) } returns false
 
-                shouldThrow<DomainException> { authService.login(request) }
+                shouldThrow<BaseException> { authService.login(request) }
             }
         }
 
@@ -96,7 +96,7 @@ class AuthServiceTest : DescribeSpec({
             }
 
             context("Refresh 토큰이 일치하지 않을 경우") {
-                it("DomainException 던진다") {
+                it("BaseException 던진다") {
                     val memberId = 1L
                     val request = TokenRequest("accessToken", "fakeRefreshToken")
                     val claims = mockk<Claims>()
@@ -107,7 +107,7 @@ class AuthServiceTest : DescribeSpec({
                     every { claims["memberId"] } returns memberId
                     every { tokenRepository.findByIdOrNull(memberId) } returns token
 
-                    shouldThrow<DomainException> { authService.refreshToken(request) }
+                    shouldThrow<BaseException> { authService.refreshToken(request) }
                 }
             }
 

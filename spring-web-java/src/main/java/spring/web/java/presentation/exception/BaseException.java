@@ -1,16 +1,31 @@
 package spring.web.java.presentation.exception;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ProblemDetail;
+import org.springframework.web.ErrorResponse;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @Getter
-public abstract class BaseException extends RuntimeException {
+@RequiredArgsConstructor
+public class BaseException extends RuntimeException implements ErrorResponse {
 
+	private final ResponseMessage responseMessage;
 	private final HttpStatus httpStatus;
 
-	public BaseException(String message, HttpStatus httpStatus) {
-		super(message);
-		this.httpStatus = httpStatus;
+	@Override
+	public HttpStatusCode getStatusCode() {
+		return httpStatus;
+	}
+
+	@Override
+	public ProblemDetail getBody() {
+		ProblemDetail problemDetail = ProblemDetail.forStatus(httpStatus);
+		problemDetail.setTitle(httpStatus.getReasonPhrase());
+		problemDetail.setDetail(responseMessage.getDetail());
+
+		return problemDetail;
 	}
 }

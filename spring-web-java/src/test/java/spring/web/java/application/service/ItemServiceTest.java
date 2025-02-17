@@ -19,9 +19,9 @@ import org.springframework.data.domain.Pageable;
 import spring.web.java.domain.model.entity.Item;
 import spring.web.java.domain.model.enums.Category;
 import spring.web.java.domain.repository.ItemRepository;
-import spring.web.java.presentation.dto.response.ItemResponse;
 import spring.web.java.presentation.dto.request.ItemSaveRequest;
-import spring.web.java.presentation.exception.DomainException;
+import spring.web.java.presentation.dto.response.ItemResponse;
+import spring.web.java.presentation.exception.BaseException;
 
 @ExtendWith(MockitoExtension.class)
 class ItemServiceTest {
@@ -94,15 +94,15 @@ class ItemServiceTest {
 	}
 
 	@Test
-	@DisplayName("findItem은 데이터가 없을경우 DomainException을 던진다")
-	void findItem_notExist_shouldThrowDomainException() {
+	@DisplayName("findItem은 데이터가 없을경우 BaseException을 던진다")
+	void findItem_notExist_shouldThrowBaseException() {
 		// Given
 		Long itemId = 1L;
 
 		Mockito.when(itemRepository.findById(itemId)).thenReturn(Optional.empty());
 
 		// When & Then
-		Assertions.assertThatThrownBy(() -> itemService.findItem(itemId)).isInstanceOf(DomainException.class);
+		Assertions.assertThatThrownBy(() -> itemService.findItem(itemId)).isInstanceOf(BaseException.class);
 	}
 
 	@Test

@@ -13,7 +13,7 @@ import spring.web.kotlin.domain.member.dto.MemberUpdateRequest
 import spring.web.kotlin.domain.member.repository.MemberRepository
 import spring.web.kotlin.global.common.ResponseMessage
 import spring.web.kotlin.global.common.SecurityUtils
-import spring.web.kotlin.global.exception.DomainException
+import spring.web.kotlin.global.exception.BaseException
 
 @Service
 @Transactional(readOnly = true)
@@ -24,7 +24,7 @@ class MemberService(
     @Transactional
     fun saveMember(memberSaveRequest: MemberSaveRequest): MemberResponse {
         memberRepository.findByAccount(memberSaveRequest.account)?.let {
-            throw DomainException(ResponseMessage.DUPLICATE_DATA, HttpStatus.CONFLICT)
+            throw BaseException(ResponseMessage.DUPLICATE_DATA, HttpStatus.CONFLICT)
         }
 
         val member = memberRepository.save(
@@ -46,10 +46,10 @@ class MemberService(
 
     fun findMember(): MemberResponse {
         val id = SecurityUtils.getMemberId()
-            ?: throw DomainException(ResponseMessage.AUTHENTICATION_FAILED, HttpStatus.UNAUTHORIZED)
+            ?: throw BaseException(ResponseMessage.AUTHENTICATION_FAILED, HttpStatus.UNAUTHORIZED)
 
         val member = memberRepository.findByIdOrNull(id)
-            ?: throw DomainException(ResponseMessage.DATA_NOT_FOUND, HttpStatus.NOT_FOUND)
+            ?: throw BaseException(ResponseMessage.DATA_NOT_FOUND, HttpStatus.NOT_FOUND)
 
         return MemberResponse(member)
     }
@@ -57,10 +57,10 @@ class MemberService(
     @Transactional
     fun patchMember(memberUpdateRequest: MemberUpdateRequest): MemberResponse {
         val id = SecurityUtils.getMemberId()
-            ?: throw DomainException(ResponseMessage.AUTHENTICATION_FAILED, HttpStatus.UNAUTHORIZED)
+            ?: throw BaseException(ResponseMessage.AUTHENTICATION_FAILED, HttpStatus.UNAUTHORIZED)
 
         val member = memberRepository.findByIdOrNull(id)
-            ?: throw DomainException(ResponseMessage.DATA_NOT_FOUND, HttpStatus.NOT_FOUND)
+            ?: throw BaseException(ResponseMessage.DATA_NOT_FOUND, HttpStatus.NOT_FOUND)
 
         member.update(
             name = memberUpdateRequest.name,
@@ -79,7 +79,7 @@ class MemberService(
     @Transactional
     fun deleteMember() {
         val id = SecurityUtils.getMemberId()
-            ?: throw DomainException(ResponseMessage.AUTHENTICATION_FAILED, HttpStatus.UNAUTHORIZED)
+            ?: throw BaseException(ResponseMessage.AUTHENTICATION_FAILED, HttpStatus.UNAUTHORIZED)
 
         memberRepository.deleteById(id)
     }

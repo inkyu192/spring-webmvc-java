@@ -10,7 +10,7 @@ import spring.web.kotlin.domain.item.dto.ItemResponse
 import spring.web.kotlin.domain.item.dto.ItemSaveRequest
 import spring.web.kotlin.domain.item.repository.ItemRepository
 import spring.web.kotlin.global.common.ResponseMessage
-import spring.web.kotlin.global.exception.DomainException
+import spring.web.kotlin.global.exception.BaseException
 
 @Service
 @Transactional(readOnly = true)
@@ -38,7 +38,7 @@ class ItemService(
 
     fun findItem(id: Long): ItemResponse {
         val item = itemRepository.findByIdOrNull(id)
-            ?: throw DomainException(ResponseMessage.DATA_NOT_FOUND, HttpStatus.NOT_FOUND)
+            ?: throw BaseException(ResponseMessage.DATA_NOT_FOUND, HttpStatus.NOT_FOUND)
 
         return ItemResponse(item)
     }

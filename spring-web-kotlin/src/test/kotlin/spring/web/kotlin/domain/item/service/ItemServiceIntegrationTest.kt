@@ -12,7 +12,7 @@ import spring.web.kotlin.domain.item.dto.ItemSaveRequest
 import spring.web.kotlin.domain.item.repository.ItemRepository
 import spring.web.kotlin.global.TestConfig
 import spring.web.kotlin.global.common.ResponseMessage
-import spring.web.kotlin.global.exception.DomainException
+import spring.web.kotlin.global.exception.BaseException
 
 @DataJpaTest
 @Import(TestConfig::class)
@@ -23,8 +23,8 @@ class ItemServiceIntegrationTest(
 
     describe("findItem 메서드는") {
         context("데이터가 없을 때") {
-            it("DomainException 예외 발생 한다") {
-                shouldThrow<DomainException> { itemService.findItem(0) }.apply {
+            it("BaseException 예외 발생 한다") {
+                shouldThrow<BaseException> { itemService.findItem(0) }.apply {
                     httpStatus shouldBe HttpStatus.NOT_FOUND
                     responseMessage shouldBe ResponseMessage.DATA_NOT_FOUND
                 }

@@ -7,12 +7,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
-import spring.web.java.presentation.exception.ResponseMessage;
 import spring.web.java.domain.model.entity.Item;
 import spring.web.java.domain.repository.ItemRepository;
-import spring.web.java.presentation.dto.response.ItemResponse;
 import spring.web.java.presentation.dto.request.ItemSaveRequest;
-import spring.web.java.presentation.exception.DomainException;
+import spring.web.java.presentation.dto.response.ItemResponse;
+import spring.web.java.presentation.exception.BaseException;
+import spring.web.java.presentation.exception.ResponseMessage;
 
 @Service
 @Transactional(readOnly = true)
@@ -41,7 +41,7 @@ public class ItemService {
 	public ItemResponse findItem(Long id) {
 		return itemRepository.findById(id)
 			.map(ItemResponse::new)
-			.orElseThrow(() -> new DomainException(ResponseMessage.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));
+			.orElseThrow(() -> new BaseException(ResponseMessage.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));
 	}
 
 	@Transactional

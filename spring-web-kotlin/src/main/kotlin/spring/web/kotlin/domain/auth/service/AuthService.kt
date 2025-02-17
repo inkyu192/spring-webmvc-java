@@ -14,7 +14,7 @@ import spring.web.kotlin.domain.token.dto.TokenResponse
 import spring.web.kotlin.domain.token.repository.TokenRepository
 import spring.web.kotlin.global.common.ResponseMessage
 import spring.web.kotlin.global.config.JwtTokenProvider
-import spring.web.kotlin.global.exception.DomainException
+import spring.web.kotlin.global.exception.BaseException
 
 @Service
 @Transactional(readOnly = true)
@@ -28,10 +28,10 @@ class AuthService(
     @Transactional
     fun login(memberLoginRequest: MemberLoginRequest): TokenResponse {
         val member = (memberRepository.findByAccount(memberLoginRequest.account)
-            ?: throw DomainException(ResponseMessage.AUTHENTICATION_FAILED, HttpStatus.UNAUTHORIZED))
+            ?: throw BaseException(ResponseMessage.AUTHENTICATION_FAILED, HttpStatus.UNAUTHORIZED))
 
         if (!passwordEncoder.matches(memberLoginRequest.password, member.password)) {
-            throw DomainException(ResponseMessage.AUTHENTICATION_FAILED, HttpStatus.UNAUTHORIZED)
+            throw BaseException(ResponseMessage.AUTHENTICATION_FAILED, HttpStatus.UNAUTHORIZED)
         }
 
         val accessToken = jwtTokenProvider.createAccessToken(member.id!!, member.role)
@@ -56,14 +56,14 @@ class AuthService(
         val memberId = claims["memberId"] as Long
 
         val token = tokenRepository.findByIdOrNull(memberId)
-            ?: throw DomainException(ResponseMessage.AUTHENTICATION_FAILED, HttpStatus.UNAUTHORIZED)
+            ?: throw BaseException(ResponseMessage.AUTHENTICATION_FAILED, HttpStatus.UNAUTHORIZED)
 
         if (token.refreshToken != tokenRequest.refreshToken) {
-            throw DomainException(ResponseMessage.AUTHENTICATION_FAILED, HttpStatus.UNAUTHORIZED)
+            throw BaseException(ResponseMessage.AUTHENTICATION_FAILED, HttpStatus.UNAUTHORIZED)
         }
 
         val member = memberRepository.findByIdOrNull(memberId)
-            ?: throw DomainException(ResponseMessage.AUTHENTICATION_FAILED, HttpStatus.UNAUTHORIZED)
+            ?: throw BaseException(ResponseMessage.AUTHENTICATION_FAILED, HttpStatus.UNAUTHORIZED)
 
         return TokenResponse(jwtTokenProvider.createAccessToken(member.id!!, member.role), token.refreshToken)
     }

@@ -7,16 +7,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import spring.web.java.application.event.MemberEvent;
 import spring.web.java.domain.model.entity.Address;
 import spring.web.java.domain.model.entity.Member;
-import spring.web.java.application.event.MemberEvent;
 import spring.web.java.domain.repository.MemberRepository;
-import spring.web.java.presentation.dto.response.MemberResponse;
+import spring.web.java.infrastructure.util.SecurityContextUtil;
 import spring.web.java.presentation.dto.request.MemberSaveRequest;
 import spring.web.java.presentation.dto.request.MemberUpdateRequest;
+import spring.web.java.presentation.dto.response.MemberResponse;
+import spring.web.java.presentation.exception.BaseException;
 import spring.web.java.presentation.exception.ResponseMessage;
-import spring.web.java.infrastructure.util.SecurityContextUtil;
-import spring.web.java.presentation.exception.DomainException;
 
 @Service
 @Transactional(readOnly = true)
@@ -31,7 +31,7 @@ public class MemberService {
 	public MemberResponse saveMember(MemberSaveRequest memberSaveRequest) {
 		memberRepository.findByAccount(memberSaveRequest.account())
 			.ifPresent(member -> {
-				throw new DomainException(ResponseMessage.DUPLICATE_DATA, HttpStatus.CONFLICT);
+				throw new BaseException(ResponseMessage.DUPLICATE_DATA, HttpStatus.CONFLICT);
 			});
 
 		Member member = memberRepository.save(
@@ -56,13 +56,13 @@ public class MemberService {
 	public MemberResponse findMember() {
 		return memberRepository.findById(SecurityContextUtil.getMemberId())
 			.map(MemberResponse::new)
-			.orElseThrow(() -> new DomainException(ResponseMessage.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));
+			.orElseThrow(() -> new BaseException(ResponseMessage.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));
 	}
 
 	@Transactional
 	public MemberResponse updateMember(MemberUpdateRequest memberUpdateRequest) {
 		Member member = memberRepository.findById(SecurityContextUtil.getMemberId())
-			.orElseThrow(() -> new DomainException(ResponseMessage.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));
+			.orElseThrow(() -> new BaseException(ResponseMessage.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));
 
 		member.update(
 			memberUpdateRequest.name(),
