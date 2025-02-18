@@ -12,7 +12,7 @@ import spring.web.kotlin.domain.member.dto.MemberSaveRequest
 import spring.web.kotlin.domain.member.dto.MemberUpdateRequest
 import spring.web.kotlin.domain.member.repository.MemberRepository
 import spring.web.kotlin.global.common.ResponseMessage
-import spring.web.kotlin.global.common.SecurityUtils
+import spring.web.kotlin.global.common.SecurityContextUtil
 import spring.web.kotlin.global.exception.BaseException
 
 @Service
@@ -45,9 +45,7 @@ class MemberService(
     }
 
     fun findMember(): MemberResponse {
-        val id = SecurityUtils.getMemberId()
-            ?: throw BaseException(ResponseMessage.AUTHENTICATION_FAILED, HttpStatus.UNAUTHORIZED)
-
+        val id = SecurityContextUtil.getMemberId()
         val member = memberRepository.findByIdOrNull(id)
             ?: throw BaseException(ResponseMessage.DATA_NOT_FOUND, HttpStatus.NOT_FOUND)
 
@@ -56,9 +54,7 @@ class MemberService(
 
     @Transactional
     fun patchMember(memberUpdateRequest: MemberUpdateRequest): MemberResponse {
-        val id = SecurityUtils.getMemberId()
-            ?: throw BaseException(ResponseMessage.AUTHENTICATION_FAILED, HttpStatus.UNAUTHORIZED)
-
+        val id = SecurityContextUtil.getMemberId()
         val member = memberRepository.findByIdOrNull(id)
             ?: throw BaseException(ResponseMessage.DATA_NOT_FOUND, HttpStatus.NOT_FOUND)
 
@@ -78,9 +74,7 @@ class MemberService(
 
     @Transactional
     fun deleteMember() {
-        val id = SecurityUtils.getMemberId()
-            ?: throw BaseException(ResponseMessage.AUTHENTICATION_FAILED, HttpStatus.UNAUTHORIZED)
-
+        val id = SecurityContextUtil.getMemberId()
         memberRepository.deleteById(id)
     }
 }
