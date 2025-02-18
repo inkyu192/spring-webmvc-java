@@ -16,7 +16,7 @@ import spring.web.java.presentation.dto.request.MemberSaveRequest;
 import spring.web.java.presentation.dto.request.MemberUpdateRequest;
 import spring.web.java.presentation.dto.response.MemberResponse;
 import spring.web.java.presentation.exception.BaseException;
-import spring.web.java.presentation.exception.ResponseMessage;
+import spring.web.java.presentation.exception.ErrorResponse;
 
 @Service
 @Transactional(readOnly = true)
@@ -31,7 +31,7 @@ public class MemberService {
 	public MemberResponse saveMember(MemberSaveRequest memberSaveRequest) {
 		memberRepository.findByAccount(memberSaveRequest.account())
 			.ifPresent(member -> {
-				throw new BaseException(ResponseMessage.DUPLICATE_DATA, HttpStatus.CONFLICT);
+				throw new BaseException(ErrorResponse.DUPLICATE_DATA, HttpStatus.CONFLICT);
 			});
 
 		Member member = memberRepository.save(
@@ -56,13 +56,13 @@ public class MemberService {
 	public MemberResponse findMember() {
 		return memberRepository.findById(SecurityContextUtil.getMemberId())
 			.map(MemberResponse::new)
-			.orElseThrow(() -> new BaseException(ResponseMessage.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));
+			.orElseThrow(() -> new BaseException(ErrorResponse.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));
 	}
 
 	@Transactional
 	public MemberResponse updateMember(MemberUpdateRequest memberUpdateRequest) {
 		Member member = memberRepository.findById(SecurityContextUtil.getMemberId())
-			.orElseThrow(() -> new BaseException(ResponseMessage.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));
+			.orElseThrow(() -> new BaseException(ErrorResponse.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));
 
 		member.update(
 			memberUpdateRequest.name(),

@@ -1,4 +1,4 @@
-package spring.web.java.presentation.exception;
+package spring.web.java.presentation.exception.handler;
 
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -17,8 +17,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
+import spring.web.java.presentation.exception.BaseException;
+
 @RestControllerAdvice
-public class ExceptionAdvisor {
+public class ApplicationExceptionHandler {
 
 	@ExceptionHandler(BaseException.class)
 	public ProblemDetail handleBaseException(BaseException exception) {
@@ -33,7 +35,6 @@ public class ExceptionAdvisor {
 	@ExceptionHandler({HttpMessageNotReadableException.class, MethodArgumentTypeMismatchException.class})
 	public ProblemDetail handleInvalidRequestBody(Exception exception) {
 		ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
-		problemDetail.setTitle(HttpStatus.BAD_REQUEST.getReasonPhrase());
 		problemDetail.setDetail(exception.getMessage());
 
 		return problemDetail;

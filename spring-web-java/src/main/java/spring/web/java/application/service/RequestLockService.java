@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import spring.web.java.domain.repository.RequestLockRepository;
 import spring.web.java.presentation.exception.BaseException;
-import spring.web.java.presentation.exception.ResponseMessage;
+import spring.web.java.presentation.exception.ErrorResponse;
 
 @Service
 @RequiredArgsConstructor
@@ -16,7 +16,7 @@ public class RequestLockService {
 
 	public void validate(Long memberId, String method, String uri) {
 		if (!requestLockRepository.setIfAbsent(memberId, method, uri)) {
-			throw new BaseException(ResponseMessage.DUPLICATE_REQUEST, HttpStatus.TOO_MANY_REQUESTS);
+			throw new BaseException(ErrorResponse.DUPLICATE_REQUEST, HttpStatus.TOO_MANY_REQUESTS);
 		}
 	}
 }

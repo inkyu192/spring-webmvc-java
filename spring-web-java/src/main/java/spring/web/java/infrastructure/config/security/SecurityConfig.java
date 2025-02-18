@@ -16,7 +16,9 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import lombok.SneakyThrows;
-import spring.web.java.presentation.exception.ExceptionFilter;
+import spring.web.java.presentation.exception.handler.ExceptionHandlingFilter;
+import spring.web.java.presentation.exception.handler.AccessDeniedExceptionHandler;
+import spring.web.java.presentation.exception.handler.AuthenticationExceptionHandler;
 
 @EnableMethodSecurity
 @Configuration(proxyBeanMethods = false)
@@ -27,8 +29,10 @@ public class SecurityConfig {
 	public SecurityFilterChain securityFilterChain(
 		HttpSecurity httpSecurity,
 		CorsProperties corsProperties,
+		AuthenticationExceptionHandler authenticationExceptionHandler,
+		AccessDeniedExceptionHandler accessDeniedExceptionHandler,
 		JwtAuthenticationFilter jwtAuthenticationFilter,
-		ExceptionFilter exceptionFilter
+		ExceptionHandlingFilter exceptionHandlingFilter
 	) {
 		return httpSecurity
 			.csrf(AbstractHttpConfigurer::disable)
@@ -37,12 +41,16 @@ public class SecurityConfig {
 			.logout(AbstractHttpConfigurer::disable)
 			.httpBasic(AbstractHttpConfigurer::disable)
 			.formLogin(AbstractHttpConfigurer::disable)
+			.exceptionHandling(httpSecurityExceptionHandlingConfigurer -> {
+				httpSecurityExceptionHandlingConfigurer.authenticationEntryPoint(authenticationExceptionHandler);
+				httpSecurityExceptionHandlingConfigurer.accessDeniedHandler(accessDeniedExceptionHandler);
+			})
 			.sessionManagement(httpSecuritySessionManagementConfigurer ->
 				httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.cors(httpSecurityCorsConfigurer ->
 				httpSecurityCorsConfigurer.configurationSource(generateCorsConfig(corsProperties)))
 			.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-			.addFilterBefore(exceptionFilter, JwtAuthenticationFilter.class)
+			.addFilterBefore(exceptionHandlingFilter, JwtAuthenticationFilter.class)
 			.build();
 	}
 

@@ -25,7 +25,7 @@ import lombok.NoArgsConstructor;
 import spring.web.java.domain.model.enums.DeliveryStatus;
 import spring.web.java.domain.model.enums.OrderStatus;
 import spring.web.java.presentation.exception.BaseException;
-import spring.web.java.presentation.exception.ResponseMessage;
+import spring.web.java.presentation.exception.ErrorResponse;
 
 @Entity
 @Getter
@@ -83,7 +83,7 @@ public class Order extends Base {
 
 	public void cancel() {
 		if (delivery.getStatus() == DeliveryStatus.COMP) {
-			throw new BaseException(ResponseMessage.ORDER_CANCEL_NOT_ALLOWED, HttpStatus.UNPROCESSABLE_ENTITY);
+			throw new BaseException(ErrorResponse.ORDER_CANCEL_NOT_ALLOWED, HttpStatus.UNPROCESSABLE_ENTITY);
 		}
 
 		status = OrderStatus.CANCEL;

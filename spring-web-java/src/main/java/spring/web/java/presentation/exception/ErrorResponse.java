@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum ResponseMessage {
+public enum ErrorResponse {
 
     AUTHENTICATION_FAILED("The credentials provided are invalid or missing."),
     ORDER_CANCEL_NOT_ALLOWED("The order cannot be canceled due to the current state."),

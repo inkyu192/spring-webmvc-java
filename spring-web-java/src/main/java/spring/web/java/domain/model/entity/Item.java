@@ -13,7 +13,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import spring.web.java.domain.model.enums.Category;
 import spring.web.java.presentation.exception.BaseException;
-import spring.web.java.presentation.exception.ResponseMessage;
+import spring.web.java.presentation.exception.ErrorResponse;
 
 @Entity
 @Getter
@@ -56,7 +56,7 @@ public class Item extends Base {
 		int differenceQuantity = this.quantity - quantity;
 
 		if (differenceQuantity < 0) {
-			throw new BaseException(ResponseMessage.INSUFFICIENT_QUANTITY, HttpStatus.CONFLICT);
+			throw new BaseException(ErrorResponse.INSUFFICIENT_QUANTITY, HttpStatus.CONFLICT);
 		}
 
 		this.quantity = differenceQuantity;
