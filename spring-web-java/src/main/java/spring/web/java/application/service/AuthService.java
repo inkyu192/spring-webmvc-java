@@ -12,7 +12,7 @@ import spring.web.java.domain.model.entity.Member;
 import spring.web.java.domain.model.entity.Token;
 import spring.web.java.domain.repository.MemberRepository;
 import spring.web.java.domain.repository.TokenRepository;
-import spring.web.java.infrastructure.security.JwtTokenProvider;
+import spring.web.java.infrastructure.config.security.JwtTokenProvider;
 import spring.web.java.presentation.dto.request.MemberLoginRequest;
 import spring.web.java.presentation.dto.request.TokenRequest;
 import spring.web.java.presentation.dto.response.TokenResponse;

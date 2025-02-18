@@ -27,6 +27,18 @@ jwt:
     key: crCWzavmz2D382GG68dymsghw+UnWo3MnmWkPzc6Gik=
     expiration-time: 60
 
+cors:
+  allowed-origins:
+    - "http://localhost:3000"
+  allowed-methods:
+    - "HEAD"
+    - "GET"
+    - "POST"
+    - "PUT"
+    - "DELETE"
+  allowed-headers:
+    - "*"
+
 management:
   endpoints:
     web:

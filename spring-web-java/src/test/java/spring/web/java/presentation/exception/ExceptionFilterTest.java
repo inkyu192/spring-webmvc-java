@@ -24,10 +24,10 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 
 @ExtendWith(MockitoExtension.class)
-class ExceptionHandlerFilterTest {
+class ExceptionFilterTest {
 
 	@InjectMocks
-	private ExceptionHandlerFilter exceptionHandlerFilter;
+	private ExceptionFilter exceptionFilter;
 
 	@Mock
 	private ObjectMapper objectMapper;
@@ -62,7 +62,7 @@ class ExceptionHandlerFilterTest {
 		Mockito.when(objectMapper.writeValueAsString(Mockito.any(ProblemDetail.class))).thenReturn(responseBody);
 
 		// When
-		exceptionHandlerFilter.doFilter(request, response, filterChain);
+		exceptionFilter.doFilter(request, response, filterChain);
 
 		// Then
 		Assertions.assertThat(response.getStatus()).isEqualTo(status.value());
@@ -87,7 +87,7 @@ class ExceptionHandlerFilterTest {
 		Mockito.when(objectMapper.writeValueAsString(Mockito.any(ProblemDetail.class))).thenReturn(responseBody);
 
 		// When
-		exceptionHandlerFilter.doFilter(request, response, filterChain);
+		exceptionFilter.doFilter(request, response, filterChain);
 
 		// Then
 		Assertions.assertThat(response.getStatus()).isEqualTo(status.value());
@@ -112,7 +112,7 @@ class ExceptionHandlerFilterTest {
 		Mockito.when(objectMapper.writeValueAsString(Mockito.any(ProblemDetail.class))).thenReturn(responseBody);
 
 		// When
-		exceptionHandlerFilter.doFilter(request, response, filterChain);
+		exceptionFilter.doFilter(request, response, filterChain);
 
 		// Then
 		Assertions.assertThat(response.getStatus()).isEqualTo(status.value());

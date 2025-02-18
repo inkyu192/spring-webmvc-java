@@ -1,4 +1,4 @@
-package spring.web.java.infrastructure.security;
+package spring.web.java.infrastructure.config.security;
 
 import java.util.Date;
 

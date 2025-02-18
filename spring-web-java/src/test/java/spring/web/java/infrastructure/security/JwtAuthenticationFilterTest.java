@@ -20,6 +20,8 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import spring.web.java.infrastructure.config.security.JwtAuthenticationFilter;
+import spring.web.java.infrastructure.config.security.JwtTokenProvider;
 
 @ExtendWith(MockitoExtension.class)
 class JwtAuthenticationFilterTest {

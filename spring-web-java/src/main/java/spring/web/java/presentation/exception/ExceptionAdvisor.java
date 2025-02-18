@@ -18,7 +18,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @RestControllerAdvice
-public class ExceptionControllerAdvice {
+public class ExceptionAdvisor {
 
 	@ExceptionHandler(BaseException.class)
 	public ProblemDetail handleBaseException(BaseException exception) {

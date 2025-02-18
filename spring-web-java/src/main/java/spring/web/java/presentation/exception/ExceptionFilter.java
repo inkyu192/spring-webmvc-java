@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ProblemDetail;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,8 +22,9 @@ import lombok.extern.slf4j.Slf4j;
 import spring.web.java.infrastructure.logging.HttpLogFilter;
 
 @Slf4j
+@Component
 @RequiredArgsConstructor
-public class ExceptionHandlerFilter extends OncePerRequestFilter {
+public class ExceptionFilter extends OncePerRequestFilter {
 
 	private final ObjectMapper objectMapper;
 

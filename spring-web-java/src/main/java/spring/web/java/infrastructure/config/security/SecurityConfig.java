@@ -1,4 +1,4 @@
-package spring.web.java.infrastructure.config;
+package spring.web.java.infrastructure.config.security;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -11,13 +11,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import lombok.SneakyThrows;
-import spring.web.java.infrastructure.security.JwtTokenProvider;
-import spring.web.java.infrastructure.security.JwtAuthenticationFilter;
-import spring.web.java.presentation.exception.ExceptionHandlerFilter;
+import spring.web.java.presentation.exception.ExceptionFilter;
 
 @EnableMethodSecurity
 @Configuration(proxyBeanMethods = false)
@@ -27,21 +26,36 @@ public class SecurityConfig {
 	@SneakyThrows
 	public SecurityFilterChain securityFilterChain(
 		HttpSecurity httpSecurity,
+		CorsProperties corsProperties,
 		JwtAuthenticationFilter jwtAuthenticationFilter,
-		ExceptionHandlerFilter exceptionHandlerFilter
+		ExceptionFilter exceptionFilter
 	) {
 		return httpSecurity
 			.csrf(AbstractHttpConfigurer::disable)
 			.anonymous(AbstractHttpConfigurer::disable)
 			.rememberMe(AbstractHttpConfigurer::disable)
-			.sessionManagement(httpSecuritySessionManagementConfigurer ->
-				httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.logout(AbstractHttpConfigurer::disable)
 			.httpBasic(AbstractHttpConfigurer::disable)
 			.formLogin(AbstractHttpConfigurer::disable)
+			.sessionManagement(httpSecuritySessionManagementConfigurer ->
+				httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+			.cors(httpSecurityCorsConfigurer ->
+				httpSecurityCorsConfigurer.configurationSource(generateCorsConfig(corsProperties)))
 			.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-			.addFilterBefore(exceptionHandlerFilter, JwtAuthenticationFilter.class)
+			.addFilterBefore(exceptionFilter, JwtAuthenticationFilter.class)
 			.build();
+	}
+
+	private CorsConfigurationSource generateCorsConfig(CorsProperties corsProperties) {
+		CorsConfiguration config = new CorsConfiguration();
+		config.setAllowedOrigins(corsProperties.getAllowedOrigins());
+		config.setAllowedMethods(corsProperties.getAllowedMethods());
+		config.setAllowedHeaders(corsProperties.getAllowedHeaders());
+		config.setAllowCredentials(true);
+
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", config);
+		return source;
 	}
 
 	@Bean
@@ -62,15 +76,5 @@ public class SecurityConfig {
 			refreshTokenKey,
 			refreshTokenExpirationTime
 		);
-	}
-
-	@Bean
-	public JwtAuthenticationFilter jwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider) {
-		return new JwtAuthenticationFilter(jwtTokenProvider);
-	}
-
-	@Bean
-	public ExceptionHandlerFilter jwtExceptionFilter(ObjectMapper objectMapper) {
-		return new ExceptionHandlerFilter(objectMapper);
 	}
 }
