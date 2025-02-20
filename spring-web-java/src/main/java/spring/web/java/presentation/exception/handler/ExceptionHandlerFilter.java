@@ -19,7 +19,7 @@ import spring.web.java.infrastructure.util.ResponseWriter;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class ExceptionHandlingFilter extends OncePerRequestFilter {
+public class ExceptionHandlerFilter extends OncePerRequestFilter {
 
 	private final ResponseWriter responseWriter;
 

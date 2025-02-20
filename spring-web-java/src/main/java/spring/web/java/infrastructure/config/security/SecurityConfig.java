@@ -16,7 +16,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import lombok.SneakyThrows;
-import spring.web.java.presentation.exception.handler.ExceptionHandlingFilter;
+import spring.web.java.presentation.exception.handler.ExceptionHandlerFilter;
 import spring.web.java.presentation.exception.handler.AccessDeniedExceptionHandler;
 import spring.web.java.presentation.exception.handler.AuthenticationExceptionHandler;
 
@@ -32,7 +32,7 @@ public class SecurityConfig {
 		AuthenticationExceptionHandler authenticationExceptionHandler,
 		AccessDeniedExceptionHandler accessDeniedExceptionHandler,
 		JwtAuthenticationFilter jwtAuthenticationFilter,
-		ExceptionHandlingFilter exceptionHandlingFilter
+		ExceptionHandlerFilter exceptionHandlerFilter
 	) {
 		return httpSecurity
 			.csrf(AbstractHttpConfigurer::disable)
@@ -48,13 +48,13 @@ public class SecurityConfig {
 			.sessionManagement(httpSecuritySessionManagementConfigurer ->
 				httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.cors(httpSecurityCorsConfigurer ->
-				httpSecurityCorsConfigurer.configurationSource(generateCorsConfig(corsProperties)))
+				httpSecurityCorsConfigurer.configurationSource(createCorsConfig(corsProperties)))
 			.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-			.addFilterBefore(exceptionHandlingFilter, JwtAuthenticationFilter.class)
+			.addFilterBefore(exceptionHandlerFilter, JwtAuthenticationFilter.class)
 			.build();
 	}
 
-	private CorsConfigurationSource generateCorsConfig(CorsProperties corsProperties) {
+	private CorsConfigurationSource createCorsConfig(CorsProperties corsProperties) {
 		CorsConfiguration config = new CorsConfiguration();
 		config.setAllowedOrigins(corsProperties.getAllowedOrigins());
 		config.setAllowedMethods(corsProperties.getAllowedMethods());

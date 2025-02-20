@@ -27,6 +27,10 @@ jwt:
     key: crCWzavmz2D382GG68dymsghw+UnWo3MnmWkPzc6Gik=
     expiration-time: 60
 
+crypto:
+  secret-key: d9ANIqIyfTygI92m6jWFfAzUbEP73TNB
+  iv-parameter: F22DBBB19D308662
+
 cors:
   allowed-origins:
     - "http://localhost:3000"

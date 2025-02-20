@@ -22,13 +22,13 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import spring.web.java.presentation.exception.handler.ExceptionHandlingFilter;
+import spring.web.java.presentation.exception.handler.ExceptionHandlerFilter;
 
 @ExtendWith(MockitoExtension.class)
-class ExceptionHandlingFilterTest {
+class ExceptionHandlerFilterTest {
 
 	@InjectMocks
-	private ExceptionHandlingFilter exceptionHandlingFilter;
+	private ExceptionHandlerFilter exceptionHandlerFilter;
 
 	@Mock
 	private ObjectMapper objectMapper;
@@ -63,7 +63,7 @@ class ExceptionHandlingFilterTest {
 		Mockito.when(objectMapper.writeValueAsString(Mockito.any(ProblemDetail.class))).thenReturn(responseBody);
 
 		// When
-		exceptionHandlingFilter.doFilter(request, response, filterChain);
+		exceptionHandlerFilter.doFilter(request, response, filterChain);
 
 		// Then
 		Assertions.assertThat(response.getStatus()).isEqualTo(status.value());
@@ -88,7 +88,7 @@ class ExceptionHandlingFilterTest {
 		Mockito.when(objectMapper.writeValueAsString(Mockito.any(ProblemDetail.class))).thenReturn(responseBody);
 
 		// When
-		exceptionHandlingFilter.doFilter(request, response, filterChain);
+		exceptionHandlerFilter.doFilter(request, response, filterChain);
 
 		// Then
 		Assertions.assertThat(response.getStatus()).isEqualTo(status.value());
@@ -113,7 +113,7 @@ class ExceptionHandlingFilterTest {
 		Mockito.when(objectMapper.writeValueAsString(Mockito.any(ProblemDetail.class))).thenReturn(responseBody);
 
 		// When
-		exceptionHandlingFilter.doFilter(request, response, filterChain);
+		exceptionHandlerFilter.doFilter(request, response, filterChain);
 
 		// Then
 		Assertions.assertThat(response.getStatus()).isEqualTo(status.value());

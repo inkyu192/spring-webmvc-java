@@ -24,7 +24,7 @@ import spring.web.java.domain.repository.OrderRepository;
 import spring.web.java.presentation.dto.request.OrderSaveRequest;
 import spring.web.java.presentation.dto.response.OrderResponse;
 import spring.web.java.presentation.exception.BaseException;
-import spring.web.java.presentation.exception.ErrorResponse;
+import spring.web.java.presentation.exception.ErrorCode;
 
 @Service
 @Transactional(readOnly = true)
@@ -38,13 +38,13 @@ public class OrderService {
 	@Transactional
 	public OrderResponse saveOrder(OrderSaveRequest orderSaveRequest) {
 		Member member = memberRepository.findById(orderSaveRequest.memberId())
-			.orElseThrow(() -> new BaseException(ErrorResponse.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));
+			.orElseThrow(() -> new BaseException(ErrorCode.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));
 
 		List<OrderItem> orderItems = new ArrayList<>();
 
 		orderSaveRequest.orderItems().forEach(orderItem -> {
 			Item item = itemRepository.findById(orderItem.itemId())
-				.orElseThrow(() -> new BaseException(ErrorResponse.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));
+				.orElseThrow(() -> new BaseException(ErrorCode.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));
 
 			orderItems.add(OrderItem.create(item, item.getPrice(), orderItem.count()));
 		});
@@ -75,12 +75,12 @@ public class OrderService {
 	public OrderResponse findOrder(Long id) {
 		return orderRepository.findById(id)
 			.map(OrderResponse::new)
-			.orElseThrow(() -> new BaseException(ErrorResponse.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));
+			.orElseThrow(() -> new BaseException(ErrorCode.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));
 	}
 
 	public OrderResponse cancelOrder(Long id) {
 		Order order = orderRepository.findById(id)
-			.orElseThrow(() -> new BaseException(ErrorResponse.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));
+			.orElseThrow(() -> new BaseException(ErrorCode.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));
 
 		order.cancel();
 

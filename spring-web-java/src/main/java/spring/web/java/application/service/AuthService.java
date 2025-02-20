@@ -17,7 +17,7 @@ import spring.web.java.presentation.dto.request.MemberLoginRequest;
 import spring.web.java.presentation.dto.request.TokenRequest;
 import spring.web.java.presentation.dto.response.TokenResponse;
 import spring.web.java.presentation.exception.BaseException;
-import spring.web.java.presentation.exception.ErrorResponse;
+import spring.web.java.presentation.exception.ErrorCode;
 
 @Service
 @Transactional(readOnly = true)
@@ -32,10 +32,10 @@ public class AuthService {
 	@Transactional
 	public TokenResponse login(MemberLoginRequest memberLoginRequest) {
 		Member member = memberRepository.findByAccount(memberLoginRequest.account())
-			.orElseThrow(() -> new BaseException(ErrorResponse.AUTHENTICATION_FAILED, HttpStatus.UNAUTHORIZED));
+			.orElseThrow(() -> new BaseException(ErrorCode.AUTHENTICATION_FAILED, HttpStatus.UNAUTHORIZED));
 
 		if (!passwordEncoder.matches(memberLoginRequest.password(), member.getPassword())) {
-			throw new BaseException(ErrorResponse.AUTHENTICATION_FAILED, HttpStatus.UNAUTHORIZED);
+			throw new BaseException(ErrorCode.AUTHENTICATION_FAILED, HttpStatus.UNAUTHORIZED);
 		}
 
 		String accessToken = jwtTokenProvider.createAccessToken(member.getId(), member.getRole());
@@ -62,10 +62,10 @@ public class AuthService {
 		String refreshToken = tokenRepository.findById(memberId)
 			.map(Token::getRefreshToken)
 			.filter(token -> tokenRequest.refreshToken().equals(token))
-			.orElseThrow(() -> new BaseException(ErrorResponse.AUTHENTICATION_FAILED, HttpStatus.UNAUTHORIZED));
+			.orElseThrow(() -> new BaseException(ErrorCode.AUTHENTICATION_FAILED, HttpStatus.UNAUTHORIZED));
 
 		Member member = memberRepository.findById(memberId)
-			.orElseThrow(() -> new BaseException(ErrorResponse.AUTHENTICATION_FAILED, HttpStatus.UNAUTHORIZED));
+			.orElseThrow(() -> new BaseException(ErrorCode.AUTHENTICATION_FAILED, HttpStatus.UNAUTHORIZED));
 
 		return new TokenResponse(jwtTokenProvider.createAccessToken(member.getId(), member.getRole()), refreshToken);
 	}

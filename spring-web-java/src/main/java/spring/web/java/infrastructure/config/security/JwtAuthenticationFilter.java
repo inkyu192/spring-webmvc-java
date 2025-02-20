@@ -34,7 +34,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		String token = extractToken(request);
 
 		if (StringUtils.hasText(token)) {
-			SecurityContextHolder.getContext().setAuthentication(generateAuthentication(token));
+			SecurityContextHolder.getContext().setAuthentication(createAuthentication(token));
 		}
 
 		filterChain.doFilter(request, response);
@@ -50,7 +50,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		return null;
 	}
 
-	private Authentication generateAuthentication(String token) {
+	private Authentication createAuthentication(String token) {
 		Claims claims = jwtTokenProvider.parseAccessToken(token);
 
 		return new UsernamePasswordAuthenticationToken(
