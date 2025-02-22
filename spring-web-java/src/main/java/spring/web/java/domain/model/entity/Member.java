@@ -3,12 +3,11 @@ package spring.web.java.domain.model.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
@@ -16,7 +15,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import spring.web.java.domain.converter.CryptoAttributeConverter;
-import spring.web.java.domain.model.enums.MemberRole;
 
 @Entity
 @Getter
@@ -33,30 +31,31 @@ public class Member extends Base {
 	@Convert(converter = CryptoAttributeConverter.class)
 	private String name;
 
-	@Enumerated(EnumType.STRING)
-	private MemberRole role;
-
 	@Embedded
 	private Address address;
 
 	@OneToMany(mappedBy = "member")
 	private List<Order> orders = new ArrayList<>();
 
-	public static Member create(String account, String password, String name, MemberRole role, Address address) {
+	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+	private List<MemberRole> roles = new ArrayList<>();
+
+	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+	private List<MemberPermission> permissions = new ArrayList<>();
+
+	public static Member create(String account, String password, String name, Address address) {
 		Member member = new Member();
 
 		member.account = account;
 		member.password = password;
 		member.name = name;
-		member.role = role;
 		member.address = address;
 
 		return member;
 	}
 
-	public void update(String name, MemberRole role, Address address) {
+	public void update(String name, Address address) {
 		this.name = name;
-		this.role = role;
 		this.address = address;
 	}
 }

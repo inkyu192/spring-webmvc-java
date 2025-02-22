@@ -38,7 +38,7 @@ public class AuthService {
 			throw new BaseException(ErrorCode.AUTHENTICATION_FAILED, HttpStatus.UNAUTHORIZED);
 		}
 
-		String accessToken = jwtTokenProvider.createAccessToken(member.getId(), member.getRole());
+		String accessToken = jwtTokenProvider.createAccessToken(member.getId());
 		String refreshToken = jwtTokenProvider.createRefreshToken();
 
 		tokenRepository.save(Token.create(member.getId(), refreshToken));
@@ -67,6 +67,6 @@ public class AuthService {
 		Member member = memberRepository.findById(memberId)
 			.orElseThrow(() -> new BaseException(ErrorCode.AUTHENTICATION_FAILED, HttpStatus.UNAUTHORIZED));
 
-		return new TokenResponse(jwtTokenProvider.createAccessToken(member.getId(), member.getRole()), refreshToken);
+		return new TokenResponse(jwtTokenProvider.createAccessToken(member.getId()), refreshToken);
 	}
 }

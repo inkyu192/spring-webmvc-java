@@ -8,7 +8,6 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import spring.web.java.domain.model.enums.MemberRole;
 
 public class JwtTokenProvider {
 
@@ -29,10 +28,9 @@ public class JwtTokenProvider {
 		this.refreshTokenExpirationTime = refreshTokenExpirationTime * 60 * 1000;
 	}
 
-	public String createAccessToken(Long memberId, MemberRole role) {
+	public String createAccessToken(Long memberId) {
 		return Jwts.builder()
 			.claim("memberId", memberId)
-			.claim("role", role)
 			.issuedAt(new Date())
 			.expiration(new Date(new Date().getTime() + accessTokenExpirationTime))
 			.signWith(accessTokenKey)

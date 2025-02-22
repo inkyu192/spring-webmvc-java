@@ -39,7 +39,6 @@ public class MemberService {
 				memberSaveRequest.account(),
 				passwordEncoder.encode(memberSaveRequest.password()),
 				memberSaveRequest.name(),
-				memberSaveRequest.role(),
 				Address.create(
 					memberSaveRequest.city(),
 					memberSaveRequest.street(),
@@ -66,7 +65,6 @@ public class MemberService {
 
 		member.update(
 			memberUpdateRequest.name(),
-			memberUpdateRequest.role(),
 			Address.create(
 				memberUpdateRequest.city(),
 				memberUpdateRequest.street(),

@@ -4,7 +4,6 @@ import java.time.OffsetDateTime;
 
 import spring.web.java.infrastructure.util.DateTimeUtil;
 import spring.web.java.domain.model.entity.Member;
-import spring.web.java.domain.model.enums.MemberRole;
 
 public record MemberResponse(
 	Long id,
@@ -13,7 +12,6 @@ public record MemberResponse(
 	String city,
 	String street,
 	String zipcode,
-	MemberRole role,
 	OffsetDateTime createdAt
 ) {
 	public MemberResponse(Member member) {
@@ -24,7 +22,6 @@ public record MemberResponse(
 			member.getAddress().getCity(),
 			member.getAddress().getStreet(),
 			member.getAddress().getZipcode(),
-			member.getRole(),
 			DateTimeUtil.toOffsetDateTime(member.getCreatedAt())
 		);
 	}
