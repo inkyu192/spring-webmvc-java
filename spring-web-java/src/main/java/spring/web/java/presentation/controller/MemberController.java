@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import spring.web.java.presentation.dto.response.MemberResponse;
+import spring.web.java.application.service.MemberService;
 import spring.web.java.presentation.dto.request.MemberSaveRequest;
 import spring.web.java.presentation.dto.request.MemberUpdateRequest;
-import spring.web.java.application.service.MemberService;
+import spring.web.java.presentation.dto.response.MemberResponse;
 
 @RestController
 @RequestMapping("/members")
@@ -31,20 +31,20 @@ public class MemberController {
 		return memberService.saveMember(memberSaveRequest);
 	}
 
-	@PreAuthorize("isAuthenticated()")
 	@GetMapping
+	@PreAuthorize("isAuthenticated()")
 	public MemberResponse findMember() {
 		return memberService.findMember();
 	}
 
-	@PreAuthorize("isAuthenticated()")
 	@PatchMapping
+	@PreAuthorize("isAuthenticated()")
 	public MemberResponse updateMember(@RequestBody @Valid MemberUpdateRequest memberUpdateRequest) {
 		return memberService.updateMember(memberUpdateRequest);
 	}
 
-	@PreAuthorize("isAuthenticated()")
 	@DeleteMapping
+	@PreAuthorize("isAuthenticated()")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void deleteMember() {
 		memberService.deleteMember();

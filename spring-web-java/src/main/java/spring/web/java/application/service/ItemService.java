@@ -46,27 +46,19 @@ public class ItemService {
 
 	@Transactional
 	public ItemResponse putItem(Long id, ItemSaveRequest itemSaveRequest) {
-		Item item = itemRepository.findById(id)
-			.map(findItem -> {
-				findItem.update(
-					itemSaveRequest.name(),
-					itemSaveRequest.description(),
-					itemSaveRequest.price(),
-					itemSaveRequest.quantity(),
-					itemSaveRequest.category()
-				);
+		return itemRepository.findById(id)
+			.map(item -> updateItem(item, itemSaveRequest))
+			.orElseGet(() -> saveItem(itemSaveRequest));
+	}
 
-				return findItem;
-			})
-			.orElseGet(() -> itemRepository.save(
-				Item.create(
-					itemSaveRequest.name(),
-					itemSaveRequest.description(),
-					itemSaveRequest.price(),
-					itemSaveRequest.quantity(),
-					itemSaveRequest.category()
-				)
-			));
+	private ItemResponse updateItem(Item item, ItemSaveRequest itemSaveRequest) {
+		item.update(
+			itemSaveRequest.name(),
+			itemSaveRequest.description(),
+			itemSaveRequest.price(),
+			itemSaveRequest.quantity(),
+			itemSaveRequest.category()
+		);
 
 		return new ItemResponse(item);
 	}

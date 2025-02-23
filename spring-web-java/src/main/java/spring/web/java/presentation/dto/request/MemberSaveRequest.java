@@ -1,5 +1,7 @@
 package spring.web.java.presentation.dto.request;
 
+import java.util.List;
+
 import jakarta.validation.constraints.NotNull;
 
 public record MemberSaveRequest(
@@ -14,6 +16,8 @@ public record MemberSaveRequest(
 	@NotNull
 	String street,
 	@NotNull
-	String zipcode
+	String zipcode,
+	List<Long> roleIds,
+	List<Long> permissionIds
 ) {
 }

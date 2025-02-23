@@ -73,7 +73,7 @@ public class Order extends Base {
 
 	public void setOrderItem(OrderItem orderItem) {
 		orderItems.add(orderItem);
-		orderItem.setOrder(this);
+		orderItem.assignToOrder(this);
 	}
 
 	public void setDelivery(Delivery delivery) {

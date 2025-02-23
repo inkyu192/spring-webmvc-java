@@ -5,12 +5,12 @@ import java.util.List;
 import spring.web.java.domain.model.entity.Permission;
 import spring.web.java.domain.model.entity.Role;
 
-public record RoleDetailResponse(
+public record RoleResponse(
 	Long id,
 	String name,
-	List<PermissionResponse> roles
+	List<PermissionResponse> permissions
 ) {
-	public RoleDetailResponse(Role role, List<Permission> permissions) {
+	public RoleResponse(Role role, List<Permission> permissions) {
 		this(
 			role.getId(),
 			role.getName(),

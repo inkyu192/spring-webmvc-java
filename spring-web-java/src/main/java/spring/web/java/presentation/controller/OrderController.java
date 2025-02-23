@@ -30,16 +30,16 @@ public class OrderController {
 
 	private final OrderService orderService;
 
-	@RequestLock
-	@PreAuthorize("isAuthenticated()")
 	@PostMapping
+	@PreAuthorize("isAuthenticated()")
+	@RequestLock
 	@ResponseStatus(HttpStatus.CREATED)
 	public OrderResponse saveOrder(@RequestBody @Valid OrderSaveRequest orderSaveRequest) {
 		return orderService.saveOrder(orderSaveRequest);
 	}
 
-	@PreAuthorize("isAuthenticated()")
 	@GetMapping
+	@PreAuthorize("isAuthenticated()")
 	public Page<OrderResponse> findOrders(
 		@PageableDefault Pageable pageable,
 		@RequestParam Long memberId,
@@ -49,15 +49,15 @@ public class OrderController {
 		return orderService.findOrders(memberId, orderStatus, deliveryStatus, pageable);
 	}
 
-	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/{id}")
+	@PreAuthorize("isAuthenticated()")
 	public OrderResponse findOrder(@PathVariable Long id) {
 		return orderService.findOrder(id);
 	}
 
-	@RequestLock
-	@PreAuthorize("isAuthenticated()")
 	@PostMapping("/{id}")
+	@PreAuthorize("isAuthenticated()")
+	@RequestLock
 	public OrderResponse cancelOrder(@PathVariable Long id) {
 		return orderService.cancelOrder(id);
 	}

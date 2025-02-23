@@ -1,5 +1,8 @@
 package spring.web.java.application.service;
 
+import java.util.List;
+import java.util.stream.Stream;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -9,6 +12,9 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import spring.web.java.domain.model.entity.Member;
+import spring.web.java.domain.model.entity.MemberPermission;
+import spring.web.java.domain.model.entity.Permission;
+import spring.web.java.domain.model.entity.RolePermission;
 import spring.web.java.domain.model.entity.Token;
 import spring.web.java.domain.repository.MemberRepository;
 import spring.web.java.domain.repository.TokenRepository;
@@ -38,7 +44,7 @@ public class AuthService {
 			throw new BaseException(ErrorCode.AUTHENTICATION_FAILED, HttpStatus.UNAUTHORIZED);
 		}
 
-		String accessToken = jwtTokenProvider.createAccessToken(member.getId());
+		String accessToken = jwtTokenProvider.createAccessToken(member.getId(), getPermissions(member));
 		String refreshToken = jwtTokenProvider.createRefreshToken();
 
 		tokenRepository.save(Token.create(member.getId(), refreshToken));
@@ -67,6 +73,25 @@ public class AuthService {
 		Member member = memberRepository.findById(memberId)
 			.orElseThrow(() -> new BaseException(ErrorCode.AUTHENTICATION_FAILED, HttpStatus.UNAUTHORIZED));
 
-		return new TokenResponse(jwtTokenProvider.createAccessToken(member.getId()), refreshToken);
+		return new TokenResponse(
+			jwtTokenProvider.createAccessToken(member.getId(), getPermissions(member)),
+			refreshToken
+		);
+	}
+
+	private List<String> getPermissions(Member member) {
+		return Stream.concat(
+				member.getRoles().stream()
+					.flatMap(memberRole -> memberRole.getRole()
+						.getPermissions().stream()
+						.map(RolePermission::getPermission)
+						.map(Permission::getName)
+					),
+				member.getPermissions().stream()
+					.map(MemberPermission::getPermission)
+					.map(Permission::getName)
+			)
+			.distinct()
+			.toList();
 	}
 }

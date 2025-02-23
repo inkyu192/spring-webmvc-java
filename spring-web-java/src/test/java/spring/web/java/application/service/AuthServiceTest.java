@@ -80,7 +80,7 @@ class AuthServiceTest {
 
 		Mockito.when(memberRepository.findByAccount(request.account())).thenReturn(Optional.of(member));
 		Mockito.when(passwordEncoder.matches(request.password(), member.getPassword())).thenReturn(true);
-		Mockito.when(jwtTokenProvider.createAccessToken(member.getId(), member.getRole())).thenReturn(accessToken);
+		Mockito.when(jwtTokenProvider.createAccessToken(member.getId(), Mockito.any())).thenReturn(accessToken);
 		Mockito.when(jwtTokenProvider.createRefreshToken()).thenReturn(refreshToken);
 		Mockito.when(tokenRepository.save(Mockito.any(Token.class))).thenReturn(token);
 
@@ -152,7 +152,7 @@ class AuthServiceTest {
 		Mockito.when(claims.get("memberId")).thenReturn(memberId);
 		Mockito.when(tokenRepository.findById(memberId)).thenReturn(Optional.of(token));
 		Mockito.when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
-		Mockito.when(jwtTokenProvider.createAccessToken(member.getId(), member.getRole())).thenReturn("newAccessToken");
+		Mockito.when(jwtTokenProvider.createAccessToken(member.getId(), Mockito.any())).thenReturn("newAccessToken");
 
 		// When
 		TokenResponse response = authService.refreshToken(request);

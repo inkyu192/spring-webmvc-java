@@ -30,4 +30,16 @@ public class MemberRole extends Base {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "role_id")
 	private Role role;
+
+	public static MemberRole create(Role role) {
+		MemberRole memberRole = new MemberRole();
+
+		memberRole.role = role;
+
+		return memberRole;
+	}
+
+	public void assignToMember(Member member) {
+		this.member = member;
+	}
 }

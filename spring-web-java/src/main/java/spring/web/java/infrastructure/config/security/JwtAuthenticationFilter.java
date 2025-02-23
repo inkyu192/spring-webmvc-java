@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -53,10 +54,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	private Authentication createAuthentication(String token) {
 		Claims claims = jwtTokenProvider.parseAccessToken(token);
 
-		return new UsernamePasswordAuthenticationToken(
-			claims.get("memberId"),
-			token,
-			List.of(new SimpleGrantedAuthority(String.valueOf(claims.get("role"))))
-		);
+		Long memberId = claims.get("memberId", Long.class);
+		List<String> permissions = claims.get("permissions", List.class);
+
+		List<SimpleGrantedAuthority> authorities = permissions.stream()
+			.map(SimpleGrantedAuthority::new)
+			.toList();
+
+		return new UsernamePasswordAuthenticationToken(memberId, token, authorities);
 	}
 }

@@ -1,6 +1,6 @@
 package spring.web.java.infrastructure.persistence.adapter;
 
-import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
@@ -16,13 +16,7 @@ public class PermissionRepositoryAdapter implements PermissionRepository {
 	private final PermissionJpaRepository jpaRepository;
 
 	@Override
-	public List<Permission> findAll() {
-		return jpaRepository.findAll();
+	public Optional<Permission> findById(Long id) {
+		return jpaRepository.findById(id);
 	}
-
-	@Override
-	public List<Permission> findAllById(Iterable<Long> ids) {
-		return jpaRepository.findAllById(ids);
-	}
-
 }

@@ -1,6 +1,7 @@
 package spring.web.java.infrastructure.config.security;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.crypto.SecretKey;
 
@@ -28,9 +29,10 @@ public class JwtTokenProvider {
 		this.refreshTokenExpirationTime = refreshTokenExpirationTime * 60 * 1000;
 	}
 
-	public String createAccessToken(Long memberId) {
+	public String createAccessToken(Long memberId, List<String> permissions) {
 		return Jwts.builder()
 			.claim("memberId", memberId)
+			.claim("permissions", permissions)
 			.issuedAt(new Date())
 			.expiration(new Date(new Date().getTime() + accessTokenExpirationTime))
 			.signWith(accessTokenKey)

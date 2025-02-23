@@ -30,4 +30,16 @@ public class MemberPermission extends Base {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "permission_id")
 	private Permission permission;
+
+	public static MemberPermission create(Permission permission) {
+		MemberPermission memberPermission = new MemberPermission();
+
+		memberPermission.permission = permission;
+
+		return memberPermission;
+	}
+
+	public void setMember(Member member) {
+		this.member = member;
+	}
 }

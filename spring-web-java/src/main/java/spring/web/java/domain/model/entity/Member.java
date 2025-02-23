@@ -54,6 +54,16 @@ public class Member extends Base {
 		return member;
 	}
 
+	public void addRole(MemberRole memberRole) {
+		roles.add(memberRole);
+		memberRole.assignToMember(this);
+	}
+
+	public void addPermission(MemberPermission memberPermission) {
+		permissions.add(memberPermission);
+		memberPermission.setMember(this);
+	}
+
 	public void update(String name, Address address) {
 		this.name = name;
 		this.address = address;

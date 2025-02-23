@@ -1,6 +1,5 @@
 package spring.web.java.infrastructure.persistence.adapter;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
@@ -22,17 +21,7 @@ public class RoleRepositoryAdapter implements RoleRepository {
 	}
 
 	@Override
-	public List<Role> findAll() {
-		return jpaRepository.findAll();
-	}
-
-	@Override
 	public Optional<Role> findById(Long id) {
 		return jpaRepository.findById(id);
-	}
-
-	@Override
-	public void delete(Role role) {
-		jpaRepository.delete(role);
 	}
 }

@@ -27,12 +27,21 @@ public class Role extends Base {
 	@OneToMany(mappedBy = "role", cascade = CascadeType.ALL)
 	private List<RolePermission> permissions = new ArrayList<>();
 
-	public static Role create(String name, List<RolePermission> rolePermissions) {
+	public static Role create(String name) {
 		Role role = new Role();
 
 		role.name = name;
-		role.permissions = rolePermissions;
 
 		return role;
+	}
+
+	public void addPermission(RolePermission rolePermission) {
+		permissions.add(rolePermission);
+		rolePermission.assignToRole(this);
+	}
+
+	public void update(String name, List<RolePermission> rolePermissions) {
+		this.name = name;
+		this.permissions = rolePermissions;
 	}
 }
