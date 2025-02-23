@@ -66,13 +66,15 @@ public class MemberService {
 			});
 		}
 
-		memberSaveRequest.permissionIds().forEach(id -> {
-			Permission permission = permissionRepository.findById(id)
-				.orElseThrow(() -> new BaseException(ErrorCode.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));
+		List<Long> permissionIds = memberSaveRequest.permissionIds();
+		if (!ObjectUtils.isEmpty(permissionIds)) {
+			permissionIds.forEach(id -> {
+				Permission permission = permissionRepository.findById(id)
+					.orElseThrow(() -> new BaseException(ErrorCode.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));
 
-			member.addPermission(MemberPermission.create(permission));
-		});
-
+				member.addPermission(MemberPermission.create(permission));
+			});
+		}
 
 		memberRepository.save(member);
 

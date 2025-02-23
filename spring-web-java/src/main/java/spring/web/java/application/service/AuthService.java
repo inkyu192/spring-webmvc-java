@@ -83,14 +83,13 @@ public class AuthService {
 		return Stream.concat(
 				member.getRoles().stream()
 					.flatMap(memberRole -> memberRole.getRole()
-						.getPermissions().stream()
+						.getRolePermissions().stream()
 						.map(RolePermission::getPermission)
-						.map(Permission::getName)
 					),
-				member.getPermissions().stream()
+				member.getMemberPermissions().stream()
 					.map(MemberPermission::getPermission)
-					.map(Permission::getName)
 			)
+			.map(Permission::getName)
 			.distinct()
 			.toList();
 	}

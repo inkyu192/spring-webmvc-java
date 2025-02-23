@@ -41,7 +41,7 @@ public class Member extends Base {
 	private List<MemberRole> roles = new ArrayList<>();
 
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-	private List<MemberPermission> permissions = new ArrayList<>();
+	private List<MemberPermission> memberPermissions = new ArrayList<>();
 
 	public static Member create(String account, String password, String name, Address address) {
 		Member member = new Member();
@@ -60,7 +60,7 @@ public class Member extends Base {
 	}
 
 	public void addPermission(MemberPermission memberPermission) {
-		permissions.add(memberPermission);
+		memberPermissions.add(memberPermission);
 		memberPermission.setMember(this);
 	}
 

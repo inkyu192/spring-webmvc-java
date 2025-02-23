@@ -38,7 +38,7 @@ public class RoleService {
 
 		return new RoleResponse(
 			role,
-			role.getPermissions().stream()
+			role.getRolePermissions().stream()
 				.map(RolePermission::getPermission)
 				.toList()
 		);
