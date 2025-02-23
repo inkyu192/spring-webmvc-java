@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import lombok.RequiredArgsConstructor;
-import spring.web.java.application.event.MemberEvent;
+import spring.web.java.application.event.NotificationEvent;
 import spring.web.java.domain.model.entity.Address;
 import spring.web.java.domain.model.entity.Member;
 import spring.web.java.domain.model.entity.MemberPermission;
@@ -78,7 +78,8 @@ public class MemberService {
 
 		memberRepository.save(member);
 
-		eventPublisher.publishEvent(new MemberEvent(member.getAccount(), member.getName()));
+		NotificationEvent event = new NotificationEvent(member.getId(), "회원가입 완료", "회원가입을 환영합니다!");
+		eventPublisher.publishEvent(event);
 
 		return new MemberResponse(member);
 	}
