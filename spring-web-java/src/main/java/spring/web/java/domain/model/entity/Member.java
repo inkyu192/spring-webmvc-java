@@ -34,11 +34,8 @@ public class Member extends Base {
 	@Embedded
 	private Address address;
 
-	@OneToMany(mappedBy = "member")
-	private List<Order> orders = new ArrayList<>();
-
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-	private List<MemberRole> roles = new ArrayList<>();
+	private List<MemberRole> memberRoles = new ArrayList<>();
 
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	private List<MemberPermission> memberPermissions = new ArrayList<>();
@@ -55,7 +52,7 @@ public class Member extends Base {
 	}
 
 	public void addRole(MemberRole memberRole) {
-		roles.add(memberRole);
+		memberRoles.add(memberRole);
 		memberRole.assignToMember(this);
 	}
 

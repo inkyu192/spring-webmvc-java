@@ -81,7 +81,7 @@ public class AuthService {
 
 	private List<String> getPermissions(Member member) {
 		return Stream.concat(
-				member.getRoles().stream()
+				member.getMemberRoles().stream()
 					.flatMap(memberRole -> memberRole.getRole()
 						.getRolePermissions().stream()
 						.map(RolePermission::getPermission)

@@ -36,8 +36,7 @@ public class ItemQuerydslRepository {
 		);
 
 		List<Item> content = queryFactory
-			.select(item)
-			.from(item)
+			.selectFrom(item)
 			.where(likeName(name))
 			.limit(pageable.getPageSize())
 			.offset(pageable.getOffset())

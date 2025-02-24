@@ -26,11 +26,16 @@ public class NotificationEventListener {
 	@Transactional
 	public void handleNotificationEvent(NotificationEvent notificationEvent) {
 		try {
-			Long memberId = notificationEvent.memberId();
-			Member member = memberRepository.findById(memberId).orElseThrow(RuntimeException::new);
+			Member member = memberRepository.findById(notificationEvent.memberId()).orElseThrow(RuntimeException::new);
 
-			Notification notification = Notification.of(notificationEvent.title(), notificationEvent.message(), member);
-			notificationRepository.save(notification);
+			notificationRepository.save(
+				Notification.of(
+					member,
+					notificationEvent.title(),
+					notificationEvent.message(),
+					notificationEvent.url()
+				)
+			);
 		} catch (Exception e) {
 			log.error("알림 이벤트 처리 중 예외 발생: {}", e.getMessage(), e);
 		}

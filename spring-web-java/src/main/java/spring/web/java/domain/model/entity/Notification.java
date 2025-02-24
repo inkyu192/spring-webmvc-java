@@ -22,19 +22,21 @@ public class Notification extends Base {
 	private Long id;
 	private String title;
 	private String message;
-	private boolean isRead;
+	private String url;
+	private boolean isRead = false;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_id")
 	private Member member;
 
-	public static Notification of(String title, String message, Member member) {
+	public static Notification of(Member member, String title, String message, String url) {
 		Notification notification = new Notification();
 
+		notification.member = member;
 		notification.title = title;
 		notification.message = message;
+		notification.url = url;
 		notification.isRead = false;
-		notification.member = member;
 
 		return notification;
 	}

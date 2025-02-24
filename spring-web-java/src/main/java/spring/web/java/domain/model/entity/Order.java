@@ -57,18 +57,13 @@ public class Order extends Base {
 	public static Order create(Member member, Delivery delivery, List<OrderItem> orderItems) {
 		Order order = new Order();
 
-		order.setMember(member);
+		order.member = member;
 		order.setDelivery(delivery);
 		orderItems.forEach(order::setOrderItem);
 		order.status = OrderStatus.ORDER;
 		order.orderDate = LocalDateTime.now();
 
 		return order;
-	}
-
-	public void setMember(Member member) {
-		this.member = member;
-		member.getOrders().add(this);
 	}
 
 	public void setOrderItem(OrderItem orderItem) {

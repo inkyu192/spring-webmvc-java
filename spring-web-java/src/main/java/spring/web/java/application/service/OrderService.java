@@ -73,11 +73,13 @@ public class OrderService {
 	}
 
 	public OrderResponse findOrder(Long id) {
-		return orderRepository.findById(id)
-			.map(OrderResponse::new)
+		Order order = orderRepository.findById(id)
 			.orElseThrow(() -> new BaseException(ErrorCode.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));
+
+		return new OrderResponse(order);
 	}
 
+	@Transactional
 	public OrderResponse cancelOrder(Long id) {
 		Order order = orderRepository.findById(id)
 			.orElseThrow(() -> new BaseException(ErrorCode.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));

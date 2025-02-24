@@ -1,6 +1,5 @@
 package spring.web.java.infrastructure.config.security;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -16,9 +15,9 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import lombok.SneakyThrows;
-import spring.web.java.presentation.exception.handler.ExceptionHandlerFilter;
 import spring.web.java.presentation.exception.handler.AccessDeniedExceptionHandler;
 import spring.web.java.presentation.exception.handler.AuthenticationExceptionHandler;
+import spring.web.java.presentation.exception.handler.ExceptionHandlerFilter;
 
 @EnableMethodSecurity
 @Configuration(proxyBeanMethods = false)
@@ -69,20 +68,5 @@ public class SecurityConfig {
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
-	}
-
-	@Bean
-	public JwtTokenProvider jwtTokenProvider(
-		@Value("${jwt.access-token.key}") String accessTokenKey,
-		@Value("${jwt.access-token.expiration-time}") long accessTokenExpirationTime,
-		@Value("${jwt.refresh-token.key}") String refreshTokenKey,
-		@Value("${jwt.refresh-token.expiration-time}") long refreshTokenExpirationTime
-	) {
-		return new JwtTokenProvider(
-			accessTokenKey,
-			accessTokenExpirationTime,
-			refreshTokenKey,
-			refreshTokenExpirationTime
-		);
 	}
 }

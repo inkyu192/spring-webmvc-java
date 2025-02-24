@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import spring.web.java.application.service.ItemService;
 import spring.web.java.presentation.dto.request.ItemSaveRequest;
@@ -32,7 +32,7 @@ public class ItemController {
 	@PostMapping
 	@PreAuthorize("hasAuthority('ITEM_CREATE')")
 	@ResponseStatus(HttpStatus.CREATED)
-	public ItemResponse saveItem(@RequestBody @Valid ItemSaveRequest itemSaveRequest) {
+	public ItemResponse saveItem(@RequestBody @Validated ItemSaveRequest itemSaveRequest) {
 		return itemService.saveItem(itemSaveRequest);
 	}
 
@@ -53,7 +53,7 @@ public class ItemController {
 
 	@PutMapping("/{id}")
 	@PreAuthorize("hasAuthority('ITEM_UPDATE')")
-	public ItemResponse putItem(@PathVariable Long id, @RequestBody @Valid ItemSaveRequest itemSaveRequest) {
+	public ItemResponse putItem(@PathVariable Long id, @RequestBody @Validated ItemSaveRequest itemSaveRequest) {
 		return itemService.putItem(id, itemSaveRequest);
 	}
 

@@ -43,8 +43,7 @@ public class OrderQuerydslRepository {
 		);
 
 		List<Order> content = queryFactory
-			.select(order)
-			.from(order)
+			.selectFrom(order)
 			.join(order.member, member)
 			.fetchJoin()
 			.join(order.delivery, delivery)

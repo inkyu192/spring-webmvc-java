@@ -55,9 +55,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		Claims claims = jwtTokenProvider.parseAccessToken(token);
 
 		Long memberId = claims.get("memberId", Long.class);
-		List<String> permissions = claims.get("permissions", List.class);
+		List<?> permissions = claims.get("permissions", List.class);
 
 		List<SimpleGrantedAuthority> authorities = permissions.stream()
+			.map(String::valueOf)
 			.map(SimpleGrantedAuthority::new)
 			.toList();
 

@@ -21,12 +21,10 @@ public class MemberPermission extends Base {
 	@Column(name = "member_permission_id")
 	private Long id;
 
-	@Id
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_id")
 	private Member member;
 
-	@Id
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "permission_id")
 	private Permission permission;

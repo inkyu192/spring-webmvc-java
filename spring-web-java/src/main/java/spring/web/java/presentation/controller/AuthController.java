@@ -1,5 +1,6 @@
 package spring.web.java.presentation.controller;
 
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,12 +20,12 @@ public class AuthController {
 	private final AuthService authService;
 
 	@PostMapping("/login")
-	public TokenResponse login(@RequestBody MemberLoginRequest memberLoginRequest) {
+	public TokenResponse login(@RequestBody @Validated MemberLoginRequest memberLoginRequest) {
 		return authService.login(memberLoginRequest);
 	}
 
 	@PostMapping("/token/refresh")
-	public TokenResponse refreshToken(@RequestBody TokenRequest tokenRequest) {
+	public TokenResponse refreshToken(@RequestBody @Validated TokenRequest tokenRequest) {
 		return authService.refreshToken(tokenRequest);
 	}
 }

@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,14 +15,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import spring.web.java.application.service.OrderService;
 import spring.web.java.domain.model.enums.DeliveryStatus;
 import spring.web.java.domain.model.enums.OrderStatus;
 import spring.web.java.infrastructure.aspect.RequestLock;
-import spring.web.java.presentation.dto.response.OrderResponse;
 import spring.web.java.presentation.dto.request.OrderSaveRequest;
+import spring.web.java.presentation.dto.response.OrderResponse;
 
 @RestController
 @RequestMapping("/orders")
@@ -34,7 +34,7 @@ public class OrderController {
 	@PreAuthorize("isAuthenticated()")
 	@RequestLock
 	@ResponseStatus(HttpStatus.CREATED)
-	public OrderResponse saveOrder(@RequestBody @Valid OrderSaveRequest orderSaveRequest) {
+	public OrderResponse saveOrder(@RequestBody @Validated OrderSaveRequest orderSaveRequest) {
 		return orderService.saveOrder(orderSaveRequest);
 	}
 
@@ -42,7 +42,7 @@ public class OrderController {
 	@PreAuthorize("isAuthenticated()")
 	public Page<OrderResponse> findOrders(
 		@PageableDefault Pageable pageable,
-		@RequestParam Long memberId,
+		@RequestParam(required = false) Long memberId,
 		@RequestParam(required = false) OrderStatus orderStatus,
 		@RequestParam(required = false) DeliveryStatus deliveryStatus
 	) {

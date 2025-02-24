@@ -78,16 +78,23 @@ public class MemberService {
 
 		memberRepository.save(member);
 
-		NotificationEvent event = new NotificationEvent(member.getId(), "회원가입 완료", "회원가입을 환영합니다!");
-		eventPublisher.publishEvent(event);
+		eventPublisher.publishEvent(
+			new NotificationEvent(
+				member.getId(),
+				"회원가입 완료",
+				"회원가입을 환영합니다!",
+				"/test/123"
+			)
+		);
 
 		return new MemberResponse(member);
 	}
 
 	public MemberResponse findMember() {
-		return memberRepository.findById(SecurityContextUtil.getMemberId())
-			.map(MemberResponse::new)
+		Member member = memberRepository.findById(SecurityContextUtil.getMemberId())
 			.orElseThrow(() -> new BaseException(ErrorCode.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));
+
+		return new MemberResponse(member);
 	}
 
 	@Transactional

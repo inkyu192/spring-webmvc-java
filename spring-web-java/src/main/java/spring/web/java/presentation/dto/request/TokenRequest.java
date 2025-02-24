@@ -1,11 +1,11 @@
 package spring.web.java.presentation.dto.request;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 
 public record TokenRequest(
-        @NotNull
-        String accessToken,
-        @NotNull
-        String refreshToken
+	@NotBlank
+	String accessToken,
+	@NotBlank
+	String refreshToken
 ) {
 }

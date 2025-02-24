@@ -5,11 +5,15 @@ import java.util.List;
 
 import javax.crypto.SecretKey;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
+@Component
 public class JwtTokenProvider {
 
 	private final SecretKey accessTokenKey;
@@ -18,10 +22,10 @@ public class JwtTokenProvider {
 	private final long refreshTokenExpirationTime;
 
 	public JwtTokenProvider(
-		String accessTokenKey,
-		long accessTokenExpirationTime,
-		String refreshTokenKey,
-		long refreshTokenExpirationTime
+		@Value("${jwt.access-token.key}") String accessTokenKey,
+		@Value("${jwt.access-token.expiration-time}") long accessTokenExpirationTime,
+		@Value("${jwt.refresh-token.key}") String refreshTokenKey,
+		@Value("${jwt.refresh-token.expiration-time}") long refreshTokenExpirationTime
 	) {
 		this.accessTokenKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(accessTokenKey));
 		this.accessTokenExpirationTime = accessTokenExpirationTime * 60 * 1000;

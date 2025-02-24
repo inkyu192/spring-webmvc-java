@@ -18,8 +18,4 @@ public class Permission extends Base {
 	@Column(name = "permission_id")
 	private Long id;
 	private String name;
-
-	public Permission(String name) {
-		this.name = name;
-	}
 }

@@ -31,7 +31,9 @@ public class ItemService {
 			itemSaveRequest.category()
 		);
 
-		return new ItemResponse(itemRepository.save(item));
+		itemRepository.save(item);
+
+		return new ItemResponse(item);
 	}
 
 	public Page<ItemResponse> findItems(Pageable pageable, String name) {
@@ -39,9 +41,10 @@ public class ItemService {
 	}
 
 	public ItemResponse findItem(Long id) {
-		return itemRepository.findById(id)
-			.map(ItemResponse::new)
+		Item item = itemRepository.findById(id)
 			.orElseThrow(() -> new BaseException(ErrorCode.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));
+
+		return new ItemResponse(item);
 	}
 
 	@Transactional

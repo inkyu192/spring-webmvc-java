@@ -15,7 +15,7 @@ public enum DeliveryStatus {
 	private final String description;
 
 	@JsonCreator
-	public static DeliveryStatus of(Object name) {
+	public static DeliveryStatus of(String name) {
 		return Arrays.stream(DeliveryStatus.values())
 			.filter(status -> status.name().equals(name))
 			.findFirst()
