@@ -9,6 +9,5 @@ create table member
     name               varchar(255)                                     null,
     password           varchar(255)                                     null,
     street             varchar(255)                                     null,
-    zipcode            varchar(255)                                     null,
-    role               enum ('ROLE_ADMIN', 'ROLE_BUYER', 'ROLE_SELLER') null
+    zipcode            varchar(255)                                     null
 );
