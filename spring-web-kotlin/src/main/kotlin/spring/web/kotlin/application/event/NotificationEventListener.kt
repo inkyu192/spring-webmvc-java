@@ -1,10 +1,11 @@
 package spring.web.kotlin.application.event
 
 import org.slf4j.LoggerFactory
-import org.springframework.context.event.EventListener
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.transaction.event.TransactionalEventListener
 import spring.web.kotlin.domain.model.entity.Notification
 import spring.web.kotlin.domain.repository.MemberRepository
 import spring.web.kotlin.domain.repository.NotificationRepository
@@ -18,10 +19,12 @@ class NotificationEventListener(
     private val log = LoggerFactory.getLogger(this::class.java)
 
     @Async
-    @EventListener
-    @Transactional
+    @TransactionalEventListener
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     fun handleNotificationEvent(notificationEvent: NotificationEvent) {
         runCatching {
+            Thread.sleep(3000)
+
             val member = memberRepository.findByIdOrNull(notificationEvent.memberId) ?: throw RuntimeException()
 
             notificationRepository.save(

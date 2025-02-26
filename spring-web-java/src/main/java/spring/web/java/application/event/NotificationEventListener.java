@@ -1,9 +1,10 @@
 package spring.web.java.application.event;
 
-import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,10 +23,12 @@ public class NotificationEventListener {
 	private final NotificationRepository notificationRepository;
 
 	@Async
-	@EventListener
-	@Transactional
+	@TransactionalEventListener
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void handleNotificationEvent(NotificationEvent notificationEvent) {
 		try {
+			Thread.sleep(3000);
+
 			Member member = memberRepository.findById(notificationEvent.memberId()).orElseThrow(RuntimeException::new);
 
 			notificationRepository.save(
