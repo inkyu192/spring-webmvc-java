@@ -6,10 +6,10 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import spring.web.kotlin.domain.model.entity.Item
 import spring.web.kotlin.domain.repository.ItemRepository
-import spring.web.kotlin.presentation.dto.response.ItemResponse
 import spring.web.kotlin.presentation.dto.request.ItemSaveRequest
-import spring.web.kotlin.presentation.exception.ErrorCode
+import spring.web.kotlin.presentation.dto.response.ItemResponse
 import spring.web.kotlin.presentation.exception.BaseException
+import spring.web.kotlin.presentation.exception.ErrorCode
 
 @Service
 @Transactional(readOnly = true)
@@ -44,8 +44,8 @@ class ItemService(
     @Transactional
     fun putItem(id: Long, itemSaveRequest: ItemSaveRequest) =
         itemRepository.findByIdOrNull(id)
-            ?.let { updateItem(it, itemSaveRequest) }
-            ?: saveItem(itemSaveRequest)
+            ?.let { false to updateItem(it, itemSaveRequest) }
+            ?: (true to saveItem(itemSaveRequest))
 
     private fun updateItem(item: Item, itemSaveRequest: ItemSaveRequest): ItemResponse {
         item.update(
@@ -60,5 +60,10 @@ class ItemService(
     }
 
     @Transactional
-    fun deleteItem(id: Long) = itemRepository.deleteById(id)
+    fun deleteItem(id: Long) {
+        val item = (itemRepository.findByIdOrNull(id)
+            ?: throw BaseException(ErrorCode.DATA_NOT_FOUND, HttpStatus.NOT_FOUND))
+
+        itemRepository.delete(item)
+    }
 }

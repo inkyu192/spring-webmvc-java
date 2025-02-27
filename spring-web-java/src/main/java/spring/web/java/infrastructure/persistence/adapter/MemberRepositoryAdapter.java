@@ -31,7 +31,7 @@ public class MemberRepositoryAdapter implements MemberRepository {
 	}
 
 	@Override
-	public void deleteById(Long id) {
-		jpaRepository.deleteById(id);
+	public void delete(Member member) {
+		jpaRepository.delete(member);
 	}
 }

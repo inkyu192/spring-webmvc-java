@@ -41,7 +41,7 @@ public class ItemRepositoryAdapter implements ItemRepository {
 	}
 
 	@Override
-	public void deleteById(Long id) {
-		jpaRepository.deleteById(id);
+	public void delete(Item item) {
+		jpaRepository.delete(item);
 	}
 }

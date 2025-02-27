@@ -2,6 +2,7 @@ package spring.web.java.application.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,10 +49,10 @@ public class ItemService {
 	}
 
 	@Transactional
-	public ItemResponse putItem(Long id, ItemSaveRequest itemSaveRequest) {
+	public Pair<Boolean, ItemResponse> putItem(Long id, ItemSaveRequest itemSaveRequest) {
 		return itemRepository.findById(id)
-			.map(item -> updateItem(item, itemSaveRequest))
-			.orElseGet(() -> saveItem(itemSaveRequest));
+			.map(item -> Pair.of(false, updateItem(item, itemSaveRequest)))
+			.orElseGet(() -> Pair.of(true, saveItem(itemSaveRequest)));
 	}
 
 	private ItemResponse updateItem(Item item, ItemSaveRequest itemSaveRequest) {
@@ -68,6 +69,9 @@ public class ItemService {
 
 	@Transactional
 	public void deleteItem(Long id) {
-		itemRepository.deleteById(id);
+		Item item = itemRepository.findById(id)
+			.orElseThrow(() -> new BaseException(ErrorCode.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));
+
+		itemRepository.delete(item);
 	}
 }

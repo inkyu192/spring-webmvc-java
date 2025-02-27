@@ -16,7 +16,7 @@ class MemberRepositoryAdapter(
 
     override fun save(member: Member) = jpaRepository.save(member)
 
-    override fun deleteById(id: Long) {
-        jpaRepository.deleteById(id)
+    override fun delete(member: Member) {
+        jpaRepository.delete(member)
     }
 }

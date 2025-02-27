@@ -6,5 +6,5 @@ interface MemberRepository {
     fun findByIdOrNull(id: Long): Member?
     fun findByAccount(account: String): Member?
     fun save(member: Member): Member
-    fun deleteById(id: Long)
+    fun delete(member: Member)
 }

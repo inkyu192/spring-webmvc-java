@@ -12,5 +12,5 @@ public interface MemberRepository {
 
 	Member save(Member member);
 
-	void deleteById(Long id);
+	void delete(Member member);
 }

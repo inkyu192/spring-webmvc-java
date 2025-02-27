@@ -9,5 +9,5 @@ interface ItemRepository {
     fun findByIdOrNull(id: Long): Item?
     fun save(item: Item): Item
     fun saveAll(items: Iterable<Item>): List<Item>
-    fun deleteById(id: Long)
+    fun delete(item: Item)
 }

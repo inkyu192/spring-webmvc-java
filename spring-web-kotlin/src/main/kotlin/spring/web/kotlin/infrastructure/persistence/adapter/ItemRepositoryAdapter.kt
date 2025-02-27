@@ -22,7 +22,7 @@ class ItemRepositoryAdapter(
 
     override fun saveAll(items: Iterable<Item>): List<Item> = jpaRepository.saveAll(items)
 
-    override fun deleteById(id: Long) {
-        jpaRepository.deleteById(id)
+    override fun delete(item: Item) {
+        jpaRepository.delete(item)
     }
 }

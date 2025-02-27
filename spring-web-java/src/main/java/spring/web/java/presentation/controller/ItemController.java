@@ -2,8 +2,10 @@ package spring.web.java.presentation.controller;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.util.Pair;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -53,8 +55,16 @@ public class ItemController {
 
 	@PutMapping("/{id}")
 	@PreAuthorize("hasAuthority('ITEM_UPDATE')")
-	public ItemResponse putItem(@PathVariable Long id, @RequestBody @Validated ItemSaveRequest itemSaveRequest) {
-		return itemService.putItem(id, itemSaveRequest);
+	public ResponseEntity<ItemResponse> putItem(
+		@PathVariable Long id,
+		@RequestBody @Validated ItemSaveRequest itemSaveRequest
+	) {
+		Pair<Boolean, ItemResponse> pair = itemService.putItem(id, itemSaveRequest);
+		Boolean isNew = pair.getFirst();
+		ItemResponse itemResponse = pair.getSecond();
+		HttpStatus status = isNew ? HttpStatus.CREATED : HttpStatus.OK;
+
+		return ResponseEntity.status(status).body(itemResponse);
 	}
 
 	@DeleteMapping("/{id}")

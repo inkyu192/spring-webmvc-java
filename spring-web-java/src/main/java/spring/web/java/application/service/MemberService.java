@@ -127,6 +127,9 @@ public class MemberService {
 
 	@Transactional
 	public void deleteMember() {
-		memberRepository.deleteById(SecurityContextUtil.getMemberId());
+		Member member = memberRepository.findById(SecurityContextUtil.getMemberId())
+			.orElseThrow(() -> new BaseException(ErrorCode.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));
+
+		memberRepository.delete(member);
 	}
 }

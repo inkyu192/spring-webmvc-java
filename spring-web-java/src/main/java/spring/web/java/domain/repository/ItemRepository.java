@@ -18,5 +18,5 @@ public interface ItemRepository {
 
 	List<Item> saveAll(Iterable<Item> items);
 
-	void deleteById(Long id);
+	void delete(Item item);
 }

@@ -110,6 +110,9 @@ class MemberService(
 
     @Transactional
     fun deleteMember() {
-        memberRepository.deleteById(SecurityContextUtil.getMemberId())
+        val member = (memberRepository.findByIdOrNull(SecurityContextUtil.getMemberId())
+            ?: throw BaseException(ErrorCode.DATA_NOT_FOUND, HttpStatus.NOT_FOUND))
+
+        memberRepository.delete(member)
     }
 }
