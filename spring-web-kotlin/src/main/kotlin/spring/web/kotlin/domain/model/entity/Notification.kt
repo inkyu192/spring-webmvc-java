@@ -7,26 +7,23 @@ class Notification protected constructor(
     @Id
     @GeneratedValue
     @Column(name = "notification_id")
-    var id: Long? = null,
-    var title: String,
-    var message: String,
-    var url: String,
-    var isRead: Boolean = false,
+    val id: Long? = null,
+    val title: String,
+    val message: String,
+    val url: String,
+    val isRead: Boolean = false,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
-    var member: Member
-) {
+    val member: Member
+) : Base() {
     companion object {
-        fun of(member: Member, title: String, message: String, url: String): Notification {
-            return Notification(
-                id = null, // ID는 자동 생성
+        fun of(member: Member, title: String, message: String, url: String) =
+            Notification(
                 member = member,
                 title = title,
                 message = message,
-                url = url,
-                isRead = false
+                url = url
             )
-        }
     }
 }

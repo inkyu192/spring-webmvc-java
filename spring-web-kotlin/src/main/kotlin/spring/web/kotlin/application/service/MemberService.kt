@@ -31,32 +31,44 @@ class MemberService(
 ) {
     @Transactional
     fun saveMember(memberSaveRequest: MemberSaveRequest): MemberResponse {
-        memberRepository.findByAccount(memberSaveRequest.account)?.let {
+        val (account, password, name, city, street, zipcode, roleIds, permissionIds) = memberSaveRequest
+
+        if (roleIds.isNullOrEmpty() && permissionIds.isNullOrEmpty()) {
+            throw BaseException(ErrorCode.INVALID_INPUT_VALUE, HttpStatus.BAD_REQUEST)
+        }
+
+        memberRepository.findByAccount(account)?.let {
             throw BaseException(ErrorCode.DUPLICATE_DATA, HttpStatus.CONFLICT)
         }
 
-        val member = Member.create(
-            account = memberSaveRequest.account,
-            password = passwordEncoder.encode(memberSaveRequest.password),
-            name = memberSaveRequest.name,
-            address = Address.create(
-                city = memberSaveRequest.city,
-                street = memberSaveRequest.street,
-                zipcode = memberSaveRequest.zipcode,
-            )
+        val address = Address.create(
+            city = city,
+            street = street,
+            zipcode = zipcode,
         )
 
-        memberSaveRequest.roleIds?.forEach {
+        val memberRoles = roleIds?.map {
             val role = roleRepository.findByIdOrNull(it)
                 ?: throw BaseException(ErrorCode.DATA_NOT_FOUND, HttpStatus.NOT_FOUND)
-            member.addRole(MemberRole.create(role))
+
+            MemberRole.create(role)
         }
 
-        memberSaveRequest.permissionIds?.forEach {
+        val memberPermissions = permissionIds?.map {
             val permission = permissionRepository.findByIdOrNull(it)
                 ?: throw BaseException(ErrorCode.DATA_NOT_FOUND, HttpStatus.NOT_FOUND)
-            member.addPermission(MemberPermission.create(permission))
+
+            MemberPermission.create(permission)
         }
+
+        val member = Member.create(
+            account = account,
+            password = passwordEncoder.encode(password),
+            name = name,
+            address = address,
+            memberRoles = memberRoles,
+            memberPermissions = memberPermissions
+        )
 
         memberRepository.save(member)
 

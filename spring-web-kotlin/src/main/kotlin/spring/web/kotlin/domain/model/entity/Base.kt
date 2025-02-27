@@ -10,12 +10,12 @@ import java.time.LocalDateTime
 
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener::class)
-class Base protected constructor(
+abstract class Base protected constructor(
 
     @CreatedDate
     @Column(updatable = false, nullable = false)
-    var createdAt: LocalDateTime? = null,
+    val createdAt: LocalDateTime? = null,
 
     @LastModifiedDate
-    var updatedAt: LocalDateTime? = null,
+    val updatedAt: LocalDateTime? = null,
 )

@@ -1,5 +1,6 @@
 package spring.web.java.application.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.context.ApplicationEventPublisher;
@@ -40,41 +41,51 @@ public class MemberService {
 
 	@Transactional
 	public MemberResponse saveMember(MemberSaveRequest memberSaveRequest) {
-		memberRepository.findByAccount(memberSaveRequest.account())
-			.ifPresent(member -> {
-				throw new BaseException(ErrorCode.DUPLICATE_DATA, HttpStatus.CONFLICT);
-			});
+		List<Long> roleIds = memberSaveRequest.roleIds();
+		List<Long> permissionIds = memberSaveRequest.permissionIds();
 
-		Member member = Member.create(
-			memberSaveRequest.account(),
-			passwordEncoder.encode(memberSaveRequest.password()),
-			memberSaveRequest.name(),
-			Address.create(
-				memberSaveRequest.city(),
-				memberSaveRequest.street(),
-				memberSaveRequest.zipcode()
-			)
+		if (ObjectUtils.isEmpty(roleIds) && ObjectUtils.isEmpty(permissionIds)) {
+			throw new BaseException(ErrorCode.INVALID_INPUT_VALUE, HttpStatus.BAD_REQUEST);
+		}
+
+		memberRepository.findByAccount(memberSaveRequest.account()).ifPresent(member -> {
+			throw new BaseException(ErrorCode.DUPLICATE_DATA, HttpStatus.CONFLICT);
+		});
+
+		Address address = Address.create(
+			memberSaveRequest.city(),
+			memberSaveRequest.street(),
+			memberSaveRequest.zipcode()
 		);
 
-		List<Long> roleIds = memberSaveRequest.roleIds();
+		List<MemberRole> memberRoles = new ArrayList<>();
 		if (!ObjectUtils.isEmpty(roleIds)) {
 			roleIds.forEach(id -> {
 				Role role = roleRepository.findById(id)
 					.orElseThrow(() -> new BaseException(ErrorCode.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));
 
-				member.addRole(MemberRole.create(role));
+				memberRoles.add(MemberRole.create(role));
 			});
 		}
 
-		List<Long> permissionIds = memberSaveRequest.permissionIds();
+		List<MemberPermission> memberPermissions = new ArrayList<>();
 		if (!ObjectUtils.isEmpty(permissionIds)) {
 			permissionIds.forEach(id -> {
 				Permission permission = permissionRepository.findById(id)
 					.orElseThrow(() -> new BaseException(ErrorCode.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));
 
-				member.addPermission(MemberPermission.create(permission));
+				memberPermissions.add(MemberPermission.create(permission));
 			});
 		}
+
+		Member member = Member.create(
+			memberSaveRequest.account(),
+			passwordEncoder.encode(memberSaveRequest.password()),
+			memberSaveRequest.name(),
+			address,
+			memberRoles,
+			memberPermissions
+		);
 
 		memberRepository.save(member);
 

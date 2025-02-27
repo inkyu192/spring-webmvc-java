@@ -4,9 +4,9 @@ import jakarta.persistence.Embeddable
 
 @Embeddable
 class Address protected constructor(
-    var city: String,
-    var street: String,
-    var zipcode: String
+    val city: String,
+    val street: String,
+    val zipcode: String
 ) {
     companion object {
         fun create(city: String, street: String, zipcode: String) =

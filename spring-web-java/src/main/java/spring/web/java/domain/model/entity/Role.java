@@ -1,6 +1,7 @@
 package spring.web.java.domain.model.entity;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -27,6 +28,10 @@ public class Role extends Base {
 	@OneToMany(mappedBy = "role", cascade = CascadeType.ALL)
 	private List<RolePermission> rolePermissions = new ArrayList<>();
 
+	public List<RolePermission> getRolePermissions() {
+		return Collections.unmodifiableList(rolePermissions);
+	}
+
 	public static Role create(String name) {
 		Role role = new Role();
 
@@ -35,13 +40,8 @@ public class Role extends Base {
 		return role;
 	}
 
-	public void addPermission(RolePermission rolePermission) {
+	public void associatePermission(RolePermission rolePermission) {
 		rolePermissions.add(rolePermission);
-		rolePermission.assignToRole(this);
-	}
-
-	public void update(String name, List<RolePermission> rolePermissions) {
-		this.name = name;
-		this.rolePermissions = rolePermissions;
+		rolePermission.setRole(this);
 	}
 }

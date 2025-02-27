@@ -42,7 +42,7 @@ public class Delivery extends Base {
 		return delivery;
 	}
 
-	public void setOrder(Order order) {
+	protected void setOrder(Order order) {
 		this.order = order;
 	}
 

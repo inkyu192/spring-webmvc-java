@@ -2,6 +2,7 @@ package spring.web.java.domain.model.entity;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -54,24 +55,28 @@ public class Order extends Base {
 	@Enumerated(EnumType.STRING)
 	private OrderStatus status;
 
+	public List<OrderItem> getOrderItems() {
+		return Collections.unmodifiableList(orderItems);
+	}
+
 	public static Order create(Member member, Delivery delivery, List<OrderItem> orderItems) {
 		Order order = new Order();
 
 		order.member = member;
-		order.setDelivery(delivery);
-		orderItems.forEach(order::setOrderItem);
+		order.associateDelivery(delivery);
+		orderItems.forEach(order::associateItem);
 		order.status = OrderStatus.ORDER;
 		order.orderDate = LocalDateTime.now();
 
 		return order;
 	}
 
-	public void setOrderItem(OrderItem orderItem) {
+	public void associateItem(OrderItem orderItem) {
 		orderItems.add(orderItem);
-		orderItem.assignToOrder(this);
+		orderItem.setOrder(this);
 	}
 
-	public void setDelivery(Delivery delivery) {
+	public void associateDelivery(Delivery delivery) {
 		this.delivery = delivery;
 		delivery.setOrder(this);
 	}

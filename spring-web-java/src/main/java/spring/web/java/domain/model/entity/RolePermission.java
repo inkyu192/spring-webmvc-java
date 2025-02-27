@@ -37,7 +37,7 @@ public class RolePermission extends Base {
 		return rolePermission;
 	}
 
-	public void assignToRole(Role role) {
+	protected void setRole(Role role) {
 		this.role = role;
 	}
 }

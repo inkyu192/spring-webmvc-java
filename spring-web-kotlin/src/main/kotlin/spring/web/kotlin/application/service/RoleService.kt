@@ -26,7 +26,7 @@ class RoleService(
             val permission = permissionRepository.findByIdOrNull(it)
                 ?: throw BaseException(ErrorCode.DATA_NOT_FOUND, HttpStatus.NOT_FOUND)
 
-            role.addPermission(RolePermission.create(permission))
+            role.associatePermission(RolePermission.create(permission))
         }
 
         roleRepository.save(role)

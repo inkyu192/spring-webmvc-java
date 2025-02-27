@@ -31,7 +31,7 @@ public class RoleService {
 			Permission permission = permissionRepository.findById(id)
 				.orElseThrow(() -> new BaseException(ErrorCode.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));
 
-			role.addPermission(RolePermission.create(permission));
+			role.associatePermission(RolePermission.create(permission));
 		});
 
 		roleRepository.save(role);

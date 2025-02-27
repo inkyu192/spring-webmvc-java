@@ -7,7 +7,7 @@ class MemberRole protected constructor(
     @Id
     @GeneratedValue
     @Column(name = "member_role_id")
-    var id: Long? = null,
+    val id: Long? = null,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
@@ -15,13 +15,9 @@ class MemberRole protected constructor(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id")
-    var role: Role
+    val role: Role
 ) : Base() {
     companion object {
         fun create(role: Role): MemberRole = MemberRole(role = role)
-    }
-
-    fun assignToMember(member: Member) {
-        this.member = member
     }
 }

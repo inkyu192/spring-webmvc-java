@@ -7,7 +7,7 @@ class MemberPermission protected constructor(
     @Id
     @GeneratedValue
     @Column(name = "member_permission_id")
-    var id: Long? = null,
+    val id: Long? = null,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
@@ -15,7 +15,7 @@ class MemberPermission protected constructor(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "permission_id")
-    var permission: Permission
+    val permission: Permission
 ){
     companion object {
         fun create(permission: Permission) = MemberPermission(permission = permission)

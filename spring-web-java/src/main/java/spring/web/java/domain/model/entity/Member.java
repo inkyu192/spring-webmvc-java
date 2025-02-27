@@ -1,6 +1,7 @@
 package spring.web.java.domain.model.entity;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -40,7 +41,22 @@ public class Member extends Base {
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	private List<MemberPermission> memberPermissions = new ArrayList<>();
 
-	public static Member create(String account, String password, String name, Address address) {
+	public List<MemberRole> getMemberRoles() {
+		return Collections.unmodifiableList(memberRoles);
+	}
+
+	public List<MemberPermission> getMemberPermissions() {
+		return Collections.unmodifiableList(memberPermissions);
+	}
+
+	public static Member create(
+		String account,
+		String password,
+		String name,
+		Address address,
+		List<MemberRole> memberRoles,
+		List<MemberPermission> memberPermissions
+	) {
 		Member member = new Member();
 
 		member.account = account;
@@ -48,15 +64,18 @@ public class Member extends Base {
 		member.name = name;
 		member.address = address;
 
+		memberRoles.forEach(member::associateRole);
+		memberPermissions.forEach(member::associatePermission);
+
 		return member;
 	}
 
-	public void addRole(MemberRole memberRole) {
+	public void associateRole(MemberRole memberRole) {
 		memberRoles.add(memberRole);
-		memberRole.assignToMember(this);
+		memberRole.setMember(this);
 	}
 
-	public void addPermission(MemberPermission memberPermission) {
+	public void associatePermission(MemberPermission memberPermission) {
 		memberPermissions.add(memberPermission);
 		memberPermission.setMember(this);
 	}

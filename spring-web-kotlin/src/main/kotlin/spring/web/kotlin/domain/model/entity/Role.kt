@@ -7,23 +7,22 @@ class Role protected constructor(
     @Id
     @GeneratedValue
     @Column(name = "role_id")
-    var id: Long? = null,
-    var name: String,
+    val id: Long? = null,
+    val name: String,
 
     @OneToMany(mappedBy = "role", cascade = [(CascadeType.ALL)])
-    var rolePermissions: MutableList<RolePermission> = mutableListOf(),
+    private val _rolePermissions: MutableList<RolePermission> = mutableListOf(),
 ): Base() {
+    @get:Transient
+    val rolePermissions: List<RolePermission>
+        get() = _rolePermissions.toList()
+
     companion object {
         fun create(name: String): Role = Role(name = name)
     }
 
-    fun addPermission(rolePermission: RolePermission) {
-        rolePermissions.add(rolePermission)
-        rolePermission.assignToRole(this)
-    }
-
-    fun update(name: String, rolePermissions: List<RolePermission>) {
-        this.name = name
-        this.rolePermissions = rolePermissions.toMutableList()
+    fun associatePermission(rolePermission: RolePermission) {
+        _rolePermissions.add(rolePermission)
+        rolePermission.role = this
     }
 }

@@ -10,7 +10,7 @@ class Permission protected constructor(
     @Id
     @GeneratedValue
     @Column(name = "permission_id")
-    var id: Long? = null,
-    var name: String,
+    val id: Long? = null,
+    val name: String,
 ): Base() {
 }

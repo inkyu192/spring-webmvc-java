@@ -37,7 +37,7 @@ public class MemberPermission extends Base {
 		return memberPermission;
 	}
 
-	public void setMember(Member member) {
+	protected void setMember(Member member) {
 		this.member = member;
 	}
 }

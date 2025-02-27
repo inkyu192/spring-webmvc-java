@@ -7,7 +7,7 @@ class RolePermission protected constructor(
     @Id
     @GeneratedValue
     @Column(name = "role_permission_id")
-    var id: Long? = null,
+    val id: Long? = null,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id")
@@ -21,9 +21,5 @@ class RolePermission protected constructor(
         fun create(permission: Permission): RolePermission {
             return RolePermission(permission = permission)
         }
-    }
-
-    fun assignToRole(role: Role) {
-        this.role = role
     }
 }
