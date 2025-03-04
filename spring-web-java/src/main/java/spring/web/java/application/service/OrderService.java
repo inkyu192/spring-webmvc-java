@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,8 +22,7 @@ import spring.web.java.domain.repository.MemberRepository;
 import spring.web.java.domain.repository.OrderRepository;
 import spring.web.java.presentation.dto.request.OrderSaveRequest;
 import spring.web.java.presentation.dto.response.OrderResponse;
-import spring.web.java.presentation.exception.BaseException;
-import spring.web.java.presentation.exception.ErrorCode;
+import spring.web.java.presentation.exception.EntityNotFoundException;
 
 @Service
 @Transactional(readOnly = true)
@@ -37,14 +35,16 @@ public class OrderService {
 
 	@Transactional
 	public OrderResponse saveOrder(OrderSaveRequest orderSaveRequest) {
-		Member member = memberRepository.findById(orderSaveRequest.memberId())
-			.orElseThrow(() -> new BaseException(ErrorCode.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));
+		Long memberId = orderSaveRequest.memberId();
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> new EntityNotFoundException(Member.class, memberId));
 
 		List<OrderItem> orderItems = new ArrayList<>();
 
 		orderSaveRequest.orderItems().forEach(orderItem -> {
-			Item item = itemRepository.findById(orderItem.itemId())
-				.orElseThrow(() -> new BaseException(ErrorCode.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));
+			Long itemId = orderItem.itemId();
+			Item item = itemRepository.findById(itemId)
+				.orElseThrow(() -> new EntityNotFoundException(Item.class, itemId));
 
 			orderItems.add(OrderItem.create(item, item.getPrice(), orderItem.count()));
 		});
@@ -74,7 +74,7 @@ public class OrderService {
 
 	public OrderResponse findOrder(Long id) {
 		Order order = orderRepository.findById(id)
-			.orElseThrow(() -> new BaseException(ErrorCode.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));
+			.orElseThrow(() -> new EntityNotFoundException(Order.class, id));
 
 		return new OrderResponse(order);
 	}
@@ -82,7 +82,7 @@ public class OrderService {
 	@Transactional
 	public OrderResponse cancelOrder(Long id) {
 		Order order = orderRepository.findById(id)
-			.orElseThrow(() -> new BaseException(ErrorCode.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));
+			.orElseThrow(() -> new EntityNotFoundException(Order.class, id));
 
 		order.cancel();
 

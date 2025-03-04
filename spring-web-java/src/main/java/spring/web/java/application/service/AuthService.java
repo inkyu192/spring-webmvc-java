@@ -3,7 +3,7 @@ package spring.web.java.application.service;
 import java.util.List;
 import java.util.stream.Stream;
 
-import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,8 +22,7 @@ import spring.web.java.infrastructure.config.security.JwtTokenProvider;
 import spring.web.java.presentation.dto.request.MemberLoginRequest;
 import spring.web.java.presentation.dto.request.TokenRequest;
 import spring.web.java.presentation.dto.response.TokenResponse;
-import spring.web.java.presentation.exception.BaseException;
-import spring.web.java.presentation.exception.ErrorCode;
+import spring.web.java.presentation.exception.EntityNotFoundException;
 
 @Service
 @Transactional(readOnly = true)
@@ -38,11 +37,8 @@ public class AuthService {
 	@Transactional
 	public TokenResponse login(MemberLoginRequest memberLoginRequest) {
 		Member member = memberRepository.findByAccount(memberLoginRequest.account())
-			.orElseThrow(() -> new BaseException(ErrorCode.AUTHENTICATION_FAILED, HttpStatus.UNAUTHORIZED));
-
-		if (!passwordEncoder.matches(memberLoginRequest.password(), member.getPassword())) {
-			throw new BaseException(ErrorCode.AUTHENTICATION_FAILED, HttpStatus.UNAUTHORIZED);
-		}
+			.filter(it -> passwordEncoder.matches(memberLoginRequest.password(), it.getPassword()))
+			.orElseThrow(() -> new BadCredentialsException("잘못된 아이디 또는 비밀번호입니다."));
 
 		String accessToken = jwtTokenProvider.createAccessToken(member.getId(), getPermissions(member));
 		String refreshToken = jwtTokenProvider.createRefreshToken();
@@ -53,30 +49,36 @@ public class AuthService {
 	}
 
 	public TokenResponse refreshToken(TokenRequest tokenRequest) {
+		Long memberId = extractMemberId(tokenRequest.accessToken());
+		jwtTokenProvider.validateRefreshToken(tokenRequest.refreshToken());
+
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> new EntityNotFoundException(Member.class, memberId));
+
+		String refreshToken = tokenRepository.findById(memberId)
+			.map(Token::getRefreshToken)
+			.filter(it -> tokenRequest.refreshToken().equals(it))
+			.orElseThrow(() -> new BadCredentialsException("유효하지 않은 인증 정보입니다. 다시 로그인해 주세요."));
+
+		return new TokenResponse(
+			jwtTokenProvider.createAccessToken(
+				member.getId(),
+				getPermissions(member)
+			),
+			refreshToken
+		);
+	}
+
+	private Long extractMemberId(String accessToken) {
 		Claims claims;
 
 		try {
-			claims = jwtTokenProvider.parseAccessToken(tokenRequest.accessToken());
+			claims = jwtTokenProvider.parseAccessToken(accessToken);
 		} catch (ExpiredJwtException e) {
 			claims = e.getClaims();
 		}
 
-		jwtTokenProvider.parseRefreshToken(tokenRequest.refreshToken());
-
-		Long memberId = Long.valueOf(String.valueOf(claims.get("memberId")));
-
-		String refreshToken = tokenRepository.findById(memberId)
-			.map(Token::getRefreshToken)
-			.filter(token -> tokenRequest.refreshToken().equals(token))
-			.orElseThrow(() -> new BaseException(ErrorCode.AUTHENTICATION_FAILED, HttpStatus.UNAUTHORIZED));
-
-		Member member = memberRepository.findById(memberId)
-			.orElseThrow(() -> new BaseException(ErrorCode.AUTHENTICATION_FAILED, HttpStatus.UNAUTHORIZED));
-
-		return new TokenResponse(
-			jwtTokenProvider.createAccessToken(member.getId(), getPermissions(member)),
-			refreshToken
-		);
+		return Long.valueOf(String.valueOf(claims.get("memberId")));
 	}
 
 	private List<String> getPermissions(Member member) {

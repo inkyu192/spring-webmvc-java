@@ -40,9 +40,6 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
 	}
 
 	private void handleException(HttpStatus status, String message) throws IOException {
-		ProblemDetail problemDetail = ProblemDetail.forStatus(status);
-		problemDetail.setDetail(message);
-
-		responseWriter.writeResponse(problemDetail);
+		responseWriter.writeResponse(ProblemDetail.forStatusAndDetail(status, message));
 	}
 }

@@ -1,12 +1,10 @@
 package spring.web.java.application.service;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import spring.web.java.domain.repository.RequestLockRepository;
-import spring.web.java.presentation.exception.BaseException;
-import spring.web.java.presentation.exception.ErrorCode;
+import spring.web.java.presentation.exception.DuplicateRequestException;
 
 @Service
 @RequiredArgsConstructor
@@ -16,7 +14,7 @@ public class RequestLockService {
 
 	public void validate(Long memberId, String method, String uri) {
 		if (!requestLockRepository.setIfAbsent(memberId, method, uri)) {
-			throw new BaseException(ErrorCode.DUPLICATE_REQUEST, HttpStatus.TOO_MANY_REQUESTS);
+			throw new DuplicateRequestException(memberId, method, uri);
 		}
 	}
 }

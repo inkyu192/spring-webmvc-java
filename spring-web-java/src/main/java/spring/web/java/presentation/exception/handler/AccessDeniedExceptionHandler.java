@@ -25,9 +25,11 @@ public class AccessDeniedExceptionHandler implements AccessDeniedHandler {
 		HttpServletResponse response,
 		AccessDeniedException accessDeniedException
 	) throws IOException {
-		ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.FORBIDDEN);
-		problemDetail.setDetail(accessDeniedException.getMessage());
-
-		responseWriter.writeResponse(problemDetail);
+		responseWriter.writeResponse(
+			ProblemDetail.forStatusAndDetail(
+				HttpStatus.FORBIDDEN,
+				accessDeniedException.getMessage()
+			)
+		);
 	}
 }

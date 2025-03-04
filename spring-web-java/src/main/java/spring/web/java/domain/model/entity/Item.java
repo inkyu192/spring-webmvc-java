@@ -1,7 +1,5 @@
 package spring.web.java.domain.model.entity;
 
-import org.springframework.http.HttpStatus;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -12,8 +10,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import spring.web.java.domain.model.enums.Category;
-import spring.web.java.presentation.exception.BaseException;
-import spring.web.java.presentation.exception.ErrorCode;
+import spring.web.java.presentation.exception.InsufficientQuantityException;
 
 @Entity
 @Getter
@@ -56,7 +53,8 @@ public class Item extends Base {
 		int differenceQuantity = this.quantity - quantity;
 
 		if (differenceQuantity < 0) {
-			throw new BaseException(ErrorCode.INSUFFICIENT_QUANTITY, HttpStatus.CONFLICT);
+			throw new InsufficientQuantityException(name, quantity, this.quantity);
+			// throw new BaseException(ErrorCode.INSUFFICIENT_QUANTITY, HttpStatus.CONFLICT);
 		}
 
 		this.quantity = differenceQuantity;

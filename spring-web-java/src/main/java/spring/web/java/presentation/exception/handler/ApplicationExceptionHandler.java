@@ -17,14 +17,22 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
-import spring.web.java.presentation.exception.BaseException;
+import spring.web.java.presentation.exception.AtLeastOneRequiredException;
+import spring.web.java.presentation.exception.BusinessException;
+import spring.web.java.presentation.exception.ValidationFailedException;
 
 @RestControllerAdvice
 public class ApplicationExceptionHandler {
 
-	@ExceptionHandler(BaseException.class)
-	public ProblemDetail handleBaseException(BaseException exception) {
-		return exception.getBody();
+	@ExceptionHandler(BusinessException.class)
+	public ProblemDetail handleBusinessException(BusinessException e) {
+		ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(e.getHttpStatus(), e.getMessage());
+
+		if (e instanceof AtLeastOneRequiredException atLeastOneRequiredException) {
+			problemDetail.setProperty("fields", atLeastOneRequiredException.getFields());
+		}
+
+		return problemDetail;
 	}
 
 	@ExceptionHandler({NoResourceFoundException.class, HttpRequestMethodNotSupportedException.class})
@@ -32,18 +40,19 @@ public class ApplicationExceptionHandler {
 		return errorResponse.getBody();
 	}
 
-	@ExceptionHandler({HttpMessageNotReadableException.class, MethodArgumentTypeMismatchException.class})
+	@ExceptionHandler({
+		HttpMessageNotReadableException.class,
+		MethodArgumentTypeMismatchException.class,
+		ValidationFailedException.class
+	})
 	public ProblemDetail handleInvalidRequestBody(Exception exception) {
-		ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
-		problemDetail.setDetail(exception.getMessage());
-
-		return problemDetail;
+		return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, exception.getMessage());
 	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ProblemDetail handleValidationException(MethodArgumentNotValidException exception) {
 		ProblemDetail problemDetail = exception.getBody();
-		problemDetail.setProperties(Map.of("fieldErrors", exception.getBindingResult().getFieldErrors().stream()
+		problemDetail.setProperties(Map.of("fields", exception.getBindingResult().getFieldErrors().stream()
 			.collect(Collectors.toMap(FieldError::getField, DefaultMessageSourceResolvable::getDefaultMessage))));
 
 		return problemDetail;

@@ -3,7 +3,6 @@ package spring.web.java.application.service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.util.Pair;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,8 +11,7 @@ import spring.web.java.domain.model.entity.Item;
 import spring.web.java.domain.repository.ItemRepository;
 import spring.web.java.presentation.dto.request.ItemSaveRequest;
 import spring.web.java.presentation.dto.response.ItemResponse;
-import spring.web.java.presentation.exception.BaseException;
-import spring.web.java.presentation.exception.ErrorCode;
+import spring.web.java.presentation.exception.EntityNotFoundException;
 
 @Service
 @Transactional(readOnly = true)
@@ -43,7 +41,7 @@ public class ItemService {
 
 	public ItemResponse findItem(Long id) {
 		Item item = itemRepository.findById(id)
-			.orElseThrow(() -> new BaseException(ErrorCode.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));
+			.orElseThrow(() -> new EntityNotFoundException(Item.class, id));
 
 		return new ItemResponse(item);
 	}
@@ -70,7 +68,7 @@ public class ItemService {
 	@Transactional
 	public void deleteItem(Long id) {
 		Item item = itemRepository.findById(id)
-			.orElseThrow(() -> new BaseException(ErrorCode.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));
+			.orElseThrow(() -> new EntityNotFoundException(Item.class, id));
 
 		itemRepository.delete(item);
 	}

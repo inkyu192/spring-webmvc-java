@@ -25,9 +25,11 @@ public class AuthenticationExceptionHandler implements AuthenticationEntryPoint 
 		HttpServletResponse response,
 		AuthenticationException authException
 	) throws IOException {
-		ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
-		problemDetail.setDetail(authException.getMessage());
-
-		responseWriter.writeResponse(problemDetail);
+		responseWriter.writeResponse(
+			ProblemDetail.forStatusAndDetail(
+				HttpStatus.UNAUTHORIZED,
+				authException.getMessage()
+			)
+		);
 	}
 }

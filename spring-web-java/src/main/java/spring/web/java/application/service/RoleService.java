@@ -1,6 +1,5 @@
 package spring.web.java.application.service;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,8 +11,7 @@ import spring.web.java.domain.repository.PermissionRepository;
 import spring.web.java.domain.repository.RoleRepository;
 import spring.web.java.presentation.dto.request.RoleSaveRequest;
 import spring.web.java.presentation.dto.response.RoleResponse;
-import spring.web.java.presentation.exception.BaseException;
-import spring.web.java.presentation.exception.ErrorCode;
+import spring.web.java.presentation.exception.EntityNotFoundException;
 
 @Service
 @Transactional(readOnly = true)
@@ -29,7 +27,7 @@ public class RoleService {
 
 		roleSaveRequest.permissionIds().forEach(id -> {
 			Permission permission = permissionRepository.findById(id)
-				.orElseThrow(() -> new BaseException(ErrorCode.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));
+				.orElseThrow(() -> new EntityNotFoundException(Permission.class, id));
 
 			role.associatePermission(RolePermission.create(permission));
 		});

@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.springframework.http.HttpStatus;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -25,8 +23,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import spring.web.java.domain.model.enums.DeliveryStatus;
 import spring.web.java.domain.model.enums.OrderStatus;
-import spring.web.java.presentation.exception.BaseException;
-import spring.web.java.presentation.exception.ErrorCode;
+import spring.web.java.presentation.exception.OrderCancelNotAllowedException;
 
 @Entity
 @Getter
@@ -83,7 +80,7 @@ public class Order extends Base {
 
 	public void cancel() {
 		if (delivery.getStatus() == DeliveryStatus.COMP) {
-			throw new BaseException(ErrorCode.ORDER_CANCEL_NOT_ALLOWED, HttpStatus.UNPROCESSABLE_ENTITY);
+			throw new OrderCancelNotAllowedException(this.id);
 		}
 
 		status = OrderStatus.CANCEL;

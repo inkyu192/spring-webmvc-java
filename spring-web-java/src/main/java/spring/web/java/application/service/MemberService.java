@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,8 +24,9 @@ import spring.web.java.infrastructure.util.SecurityContextUtil;
 import spring.web.java.presentation.dto.request.MemberSaveRequest;
 import spring.web.java.presentation.dto.request.MemberUpdateRequest;
 import spring.web.java.presentation.dto.response.MemberResponse;
-import spring.web.java.presentation.exception.BaseException;
-import spring.web.java.presentation.exception.ErrorCode;
+import spring.web.java.presentation.exception.AtLeastOneRequiredException;
+import spring.web.java.presentation.exception.DuplicateEntityException;
+import spring.web.java.presentation.exception.EntityNotFoundException;
 
 @Service
 @Transactional(readOnly = true)
@@ -45,11 +45,11 @@ public class MemberService {
 		List<Long> permissionIds = memberSaveRequest.permissionIds();
 
 		if (ObjectUtils.isEmpty(roleIds) && ObjectUtils.isEmpty(permissionIds)) {
-			throw new BaseException(ErrorCode.INVALID_INPUT_VALUE, HttpStatus.BAD_REQUEST);
+			throw new AtLeastOneRequiredException("roleIds", "permissionIds");
 		}
 
 		memberRepository.findByAccount(memberSaveRequest.account()).ifPresent(member -> {
-			throw new BaseException(ErrorCode.DUPLICATE_DATA, HttpStatus.CONFLICT);
+			throw new DuplicateEntityException(Member.class, memberSaveRequest.account());
 		});
 
 		Address address = Address.create(
@@ -62,7 +62,7 @@ public class MemberService {
 		if (!ObjectUtils.isEmpty(roleIds)) {
 			roleIds.forEach(id -> {
 				Role role = roleRepository.findById(id)
-					.orElseThrow(() -> new BaseException(ErrorCode.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));
+					.orElseThrow(() -> new EntityNotFoundException(Role.class, id));
 
 				memberRoles.add(MemberRole.create(role));
 			});
@@ -72,7 +72,7 @@ public class MemberService {
 		if (!ObjectUtils.isEmpty(permissionIds)) {
 			permissionIds.forEach(id -> {
 				Permission permission = permissionRepository.findById(id)
-					.orElseThrow(() -> new BaseException(ErrorCode.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));
+					.orElseThrow(() -> new EntityNotFoundException(Permission.class, id));
 
 				memberPermissions.add(MemberPermission.create(permission));
 			});
@@ -102,16 +102,18 @@ public class MemberService {
 	}
 
 	public MemberResponse findMember() {
-		Member member = memberRepository.findById(SecurityContextUtil.getMemberId())
-			.orElseThrow(() -> new BaseException(ErrorCode.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));
+		Long memberId = SecurityContextUtil.getMemberId();
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> new EntityNotFoundException(Member.class, memberId));
 
 		return new MemberResponse(member);
 	}
 
 	@Transactional
 	public MemberResponse updateMember(MemberUpdateRequest memberUpdateRequest) {
-		Member member = memberRepository.findById(SecurityContextUtil.getMemberId())
-			.orElseThrow(() -> new BaseException(ErrorCode.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));
+		Long memberId = SecurityContextUtil.getMemberId();
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> new EntityNotFoundException(Member.class, memberId));
 
 		member.update(
 			memberUpdateRequest.name(),
@@ -127,8 +129,9 @@ public class MemberService {
 
 	@Transactional
 	public void deleteMember() {
-		Member member = memberRepository.findById(SecurityContextUtil.getMemberId())
-			.orElseThrow(() -> new BaseException(ErrorCode.DATA_NOT_FOUND, HttpStatus.NOT_FOUND));
+		Long memberId = SecurityContextUtil.getMemberId();
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> new EntityNotFoundException(Member.class, memberId));
 
 		memberRepository.delete(member);
 	}

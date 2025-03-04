@@ -59,11 +59,10 @@ public class JwtTokenProvider {
 			.getPayload();
 	}
 
-	public Claims parseRefreshToken(String token) {
-		return Jwts.parser()
+	public void validateRefreshToken(String token) {
+		Jwts.parser()
 			.verifyWith(refreshTokenKey)
 			.build()
-			.parseSignedClaims(token)
-			.getPayload();
+			.parseSignedClaims(token);
 	}
 }
