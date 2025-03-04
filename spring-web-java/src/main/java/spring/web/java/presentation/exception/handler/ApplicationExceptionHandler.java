@@ -19,7 +19,6 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import spring.web.java.presentation.exception.AtLeastOneRequiredException;
 import spring.web.java.presentation.exception.BusinessException;
-import spring.web.java.presentation.exception.ValidationFailedException;
 
 @RestControllerAdvice
 public class ApplicationExceptionHandler {
@@ -40,11 +39,7 @@ public class ApplicationExceptionHandler {
 		return errorResponse.getBody();
 	}
 
-	@ExceptionHandler({
-		HttpMessageNotReadableException.class,
-		MethodArgumentTypeMismatchException.class,
-		ValidationFailedException.class
-	})
+	@ExceptionHandler({HttpMessageNotReadableException.class, MethodArgumentTypeMismatchException.class})
 	public ProblemDetail handleInvalidRequestBody(Exception exception) {
 		return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, exception.getMessage());
 	}

@@ -54,7 +54,6 @@ public class Item extends Base {
 
 		if (differenceQuantity < 0) {
 			throw new InsufficientQuantityException(name, quantity, this.quantity);
-			// throw new BaseException(ErrorCode.INSUFFICIENT_QUANTITY, HttpStatus.CONFLICT);
 		}
 
 		this.quantity = differenceQuantity;
