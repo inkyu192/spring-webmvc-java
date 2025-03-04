@@ -59,7 +59,9 @@ public class OrderService {
 
 		Order order = Order.create(member, delivery, orderItems);
 
-		return new OrderResponse(orderRepository.save(order));
+		orderRepository.save(order);
+
+		return new OrderResponse(order);
 	}
 
 	public Page<OrderResponse> findOrders(

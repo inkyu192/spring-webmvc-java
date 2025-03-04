@@ -18,9 +18,11 @@ class AccessDeniedExceptionHandler(
         response: HttpServletResponse?,
         accessDeniedException: AccessDeniedException?
     ) {
-        val problemDetail = ProblemDetail.forStatus(HttpStatus.FORBIDDEN)
-            .apply { detail = accessDeniedException?.message }
-
-        responseWriter.writeResponse(problemDetail)
+        responseWriter.writeResponse(
+            ProblemDetail.forStatusAndDetail(
+                HttpStatus.FORBIDDEN,
+                accessDeniedException?.message
+            )
+        )
     }
 }

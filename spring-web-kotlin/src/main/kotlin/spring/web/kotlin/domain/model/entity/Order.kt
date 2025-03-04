@@ -1,11 +1,9 @@
 package spring.web.kotlin.domain.model.entity
 
 import jakarta.persistence.*
-import org.springframework.http.HttpStatus
 import spring.web.kotlin.domain.model.enums.DeliveryStatus
 import spring.web.kotlin.domain.model.enums.OrderStatus
-import spring.web.kotlin.presentation.exception.BaseException
-import spring.web.kotlin.presentation.exception.ErrorCode
+import spring.web.kotlin.presentation.exception.OrderCancelNotAllowedException
 import java.time.LocalDateTime
 
 @Entity
@@ -22,11 +20,11 @@ class Order protected constructor(
     var status: OrderStatus,
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "member_id", foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT))
     val member: Member,
 
     @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
-    @JoinColumn(name = "delivery_id")
+    @JoinColumn(name = "delivery_id", foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT))
     var delivery: Delivery? = null,
 
     @OneToMany(mappedBy = "order", cascade = [CascadeType.ALL])
@@ -60,7 +58,7 @@ class Order protected constructor(
 
     fun cancel() {
         if (delivery?.status == DeliveryStatus.COMP) {
-            throw BaseException(ErrorCode.ORDER_CANCEL_NOT_ALLOWED, HttpStatus.UNPROCESSABLE_ENTITY)
+            throw OrderCancelNotAllowedException(this.id!!)
         }
 
         status = OrderStatus.CANCEL

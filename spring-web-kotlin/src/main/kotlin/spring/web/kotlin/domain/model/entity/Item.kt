@@ -1,10 +1,8 @@
 package spring.web.kotlin.domain.model.entity
 
 import jakarta.persistence.*
-import org.springframework.http.HttpStatus
 import spring.web.kotlin.domain.model.enums.Category
-import spring.web.kotlin.presentation.exception.BaseException
-import spring.web.kotlin.presentation.exception.ErrorCode
+import spring.web.kotlin.presentation.exception.InsufficientQuantityException
 
 @Entity
 class Item protected constructor(
@@ -43,7 +41,7 @@ class Item protected constructor(
         val differenceQuantity = this.quantity - quantity
 
         if (differenceQuantity < 0) {
-            throw BaseException(ErrorCode.INSUFFICIENT_QUANTITY, HttpStatus.CONFLICT)
+            throw InsufficientQuantityException(name, quantity, this.quantity)
         }
 
         this.quantity = differenceQuantity

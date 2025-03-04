@@ -10,11 +10,11 @@ class RolePermission protected constructor(
     val id: Long? = null,
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "role_id")
+    @JoinColumn(name = "role_id", foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT))
     var role: Role? = null,
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "permission_id")
+    @JoinColumn(name = "permission_id", foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT))
     var permission: Permission
 ): Base() {
     companion object {

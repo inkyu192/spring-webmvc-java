@@ -2,13 +2,9 @@ package spring.web.kotlin.application.service
 
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
-import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import spring.web.kotlin.domain.model.entity.Address
-import spring.web.kotlin.domain.model.entity.Delivery
-import spring.web.kotlin.domain.model.entity.Order
-import spring.web.kotlin.domain.model.entity.OrderItem
+import spring.web.kotlin.domain.model.entity.*
 import spring.web.kotlin.domain.model.enums.DeliveryStatus
 import spring.web.kotlin.domain.model.enums.OrderStatus
 import spring.web.kotlin.domain.repository.ItemRepository
@@ -16,8 +12,7 @@ import spring.web.kotlin.domain.repository.MemberRepository
 import spring.web.kotlin.domain.repository.OrderRepository
 import spring.web.kotlin.presentation.dto.request.OrderSaveRequest
 import spring.web.kotlin.presentation.dto.response.OrderResponse
-import spring.web.kotlin.presentation.exception.BaseException
-import spring.web.kotlin.presentation.exception.ErrorCode
+import spring.web.kotlin.presentation.exception.EntityNotFoundException
 
 @Service
 @Transactional(readOnly = true)
@@ -28,26 +23,24 @@ class OrderService(
 ) {
     @Transactional
     fun saveOrder(orderSaveRequest: OrderSaveRequest): OrderResponse {
-        val member = memberRepository.findByIdOrNull(orderSaveRequest.memberId)
-            ?: throw BaseException(ErrorCode.DATA_NOT_FOUND, HttpStatus.NOT_FOUND)
+        val (memberId, city, street, zipcode, requestOrderItems) = orderSaveRequest
 
-        val orderItems = orderSaveRequest.orderItems.map { orderItem ->
+        val member = memberRepository.findByIdOrNull(memberId)
+            ?: throw EntityNotFoundException(Member::class.java, memberId)
+
+        val orderItems = requestOrderItems.map { orderItem ->
             val item = itemRepository.findByIdOrNull(orderItem.itemId)
-                ?: throw BaseException(ErrorCode.DATA_NOT_FOUND, HttpStatus.NOT_FOUND)
+                ?: throw EntityNotFoundException(OrderItem::class.java, orderItem.itemId)
+
             OrderItem.create(item, item.price, orderItem.count)
         }
 
-        val delivery = Delivery.create(
-            Address.create(
-                orderSaveRequest.city,
-                orderSaveRequest.street,
-                orderSaveRequest.zipcode
-            )
-        )
-
+        val delivery = Delivery.create(Address.create(city, street, zipcode))
         val order = Order.create(member, delivery, orderItems)
 
-        return OrderResponse(orderRepository.save(order))
+        orderRepository.save(order)
+
+        return OrderResponse(order)
     }
 
     fun findOrders(
@@ -61,8 +54,8 @@ class OrderService(
     }
 
     fun findOrder(id: Long): OrderResponse {
-        val order = (orderRepository.findByIdOrNull(id)
-            ?: throw BaseException(ErrorCode.DATA_NOT_FOUND, HttpStatus.NOT_FOUND))
+        val order = orderRepository.findByIdOrNull(id)
+            ?: throw EntityNotFoundException(Order::class.java, id)
 
         return OrderResponse(order)
     }
@@ -70,7 +63,7 @@ class OrderService(
     @Transactional
     fun cancelOrder(id: Long): OrderResponse {
         val order = orderRepository.findByIdOrNull(id)
-            ?: throw BaseException(ErrorCode.DATA_NOT_FOUND, HttpStatus.NOT_FOUND)
+            ?: throw EntityNotFoundException(Order::class.java, id)
 
         order.cancel()
 

@@ -30,7 +30,6 @@ class ExceptionHandlerFilter(
     }
 
     private fun handleException(status: HttpStatus, message: String?) {
-        val problemDetail = ProblemDetail.forStatus(status).apply { detail = message }
-        responseWriter.writeResponse(problemDetail)
+        responseWriter.writeResponse(ProblemDetail.forStatusAndDetail(status, message))
     }
 }

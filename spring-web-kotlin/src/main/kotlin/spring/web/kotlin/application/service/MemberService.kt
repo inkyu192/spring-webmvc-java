@@ -1,24 +1,21 @@
 package spring.web.kotlin.application.service
 
 import org.springframework.context.ApplicationEventPublisher
-import org.springframework.http.HttpStatus
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import spring.web.kotlin.application.event.NotificationEvent
-import spring.web.kotlin.domain.model.entity.Address
-import spring.web.kotlin.domain.model.entity.Member
-import spring.web.kotlin.domain.model.entity.MemberPermission
-import spring.web.kotlin.domain.model.entity.MemberRole
+import spring.web.kotlin.domain.model.entity.*
 import spring.web.kotlin.domain.repository.MemberRepository
 import spring.web.kotlin.domain.repository.PermissionRepository
 import spring.web.kotlin.domain.repository.RoleRepository
-import spring.web.kotlin.presentation.exception.ErrorCode
 import spring.web.kotlin.infrastructure.util.SecurityContextUtil
-import spring.web.kotlin.presentation.exception.BaseException
 import spring.web.kotlin.presentation.dto.request.MemberSaveRequest
 import spring.web.kotlin.presentation.dto.request.MemberUpdateRequest
 import spring.web.kotlin.presentation.dto.response.MemberResponse
+import spring.web.kotlin.presentation.exception.AtLeastOneRequiredException
+import spring.web.kotlin.presentation.exception.DuplicateEntityException
+import spring.web.kotlin.presentation.exception.EntityNotFoundException
 
 @Service
 @Transactional(readOnly = true)
@@ -34,11 +31,11 @@ class MemberService(
         val (account, password, name, city, street, zipcode, roleIds, permissionIds) = memberSaveRequest
 
         if (roleIds.isNullOrEmpty() && permissionIds.isNullOrEmpty()) {
-            throw BaseException(ErrorCode.INVALID_INPUT_VALUE, HttpStatus.BAD_REQUEST)
+            throw AtLeastOneRequiredException("roleIds", "permissionIds")
         }
 
         memberRepository.findByAccount(account)?.let {
-            throw BaseException(ErrorCode.DUPLICATE_DATA, HttpStatus.CONFLICT)
+            throw DuplicateEntityException(Member::class.java, account)
         }
 
         val address = Address.create(
@@ -49,14 +46,14 @@ class MemberService(
 
         val memberRoles = roleIds?.map {
             val role = roleRepository.findByIdOrNull(it)
-                ?: throw BaseException(ErrorCode.DATA_NOT_FOUND, HttpStatus.NOT_FOUND)
+                ?: throw EntityNotFoundException(Role::class.java, it)
 
             MemberRole.create(role)
         }
 
         val memberPermissions = permissionIds?.map {
             val permission = permissionRepository.findByIdOrNull(it)
-                ?: throw BaseException(ErrorCode.DATA_NOT_FOUND, HttpStatus.NOT_FOUND)
+                ?: throw EntityNotFoundException(Permission::class.java, it)
 
             MemberPermission.create(permission)
         }
@@ -85,16 +82,18 @@ class MemberService(
     }
 
     fun findMember(): MemberResponse {
-        val member = memberRepository.findByIdOrNull(SecurityContextUtil.getMemberId())
-            ?: throw BaseException(ErrorCode.DATA_NOT_FOUND, HttpStatus.NOT_FOUND)
+        val memberId = SecurityContextUtil.getMemberId()
+        val member = memberRepository.findByIdOrNull(memberId)
+            ?: throw EntityNotFoundException(Member::class.java, memberId)
 
         return MemberResponse(member)
     }
 
     @Transactional
     fun updateMember(memberUpdateRequest: MemberUpdateRequest): MemberResponse {
-        val member = memberRepository.findByIdOrNull(SecurityContextUtil.getMemberId())
-            ?: throw BaseException(ErrorCode.DATA_NOT_FOUND, HttpStatus.NOT_FOUND)
+        val memberId = SecurityContextUtil.getMemberId()
+        val member = memberRepository.findByIdOrNull(memberId)
+            ?: throw EntityNotFoundException(Member::class.java, memberId)
 
         member.update(
             name = memberUpdateRequest.name,
@@ -110,8 +109,9 @@ class MemberService(
 
     @Transactional
     fun deleteMember() {
-        val member = (memberRepository.findByIdOrNull(SecurityContextUtil.getMemberId())
-            ?: throw BaseException(ErrorCode.DATA_NOT_FOUND, HttpStatus.NOT_FOUND))
+        val memberId = SecurityContextUtil.getMemberId()
+        val member = memberRepository.findByIdOrNull(memberId)
+            ?: throw EntityNotFoundException(Member::class.java, memberId)
 
         memberRepository.delete(member)
     }

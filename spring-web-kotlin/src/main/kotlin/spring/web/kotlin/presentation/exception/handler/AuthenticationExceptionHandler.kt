@@ -12,15 +12,17 @@ import spring.web.kotlin.infrastructure.util.ResponseWriter
 @Component
 class AuthenticationExceptionHandler(
     private val responseWriter: ResponseWriter
-): AuthenticationEntryPoint {
+) : AuthenticationEntryPoint {
     override fun commence(
         request: HttpServletRequest?,
         response: HttpServletResponse?,
         authException: AuthenticationException?
     ) {
-        val problemDetail = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED)
-            .apply { detail = authException?.message }
-
-        responseWriter.writeResponse(problemDetail)
+        responseWriter.writeResponse(
+            ProblemDetail.forStatusAndDetail(
+                HttpStatus.UNAUTHORIZED,
+                authException?.message
+            )
+        )
     }
 }
