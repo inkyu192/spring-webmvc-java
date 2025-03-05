@@ -1,6 +1,7 @@
-package spring.web.java.infrastructure.security;
+package spring.web.java.infrastructure.config.security;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,8 +21,6 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import spring.web.java.infrastructure.config.security.JwtAuthenticationFilter;
-import spring.web.java.infrastructure.config.security.JwtTokenProvider;
 
 @ExtendWith(MockitoExtension.class)
 class JwtAuthenticationFilterTest {
@@ -46,7 +45,7 @@ class JwtAuthenticationFilterTest {
 	}
 
 	@Test
-	@DisplayName("JwtAuthenticationFilter는 토큰이 null 일 경우 authentication을 생성하지 않는다")
+	@DisplayName("JwtAuthenticationFilter 는 토큰이 null 일 경우 authentication 을 생성하지 않는다")
 	void case1() throws ServletException, IOException {
 		// Given
 
@@ -58,7 +57,7 @@ class JwtAuthenticationFilterTest {
 	}
 
 	@Test
-	@DisplayName("JwtAuthenticationFilter는 토큰이 비어있을 경우 authentication을 생성하지 않는다")
+	@DisplayName("JwtAuthenticationFilter 는 토큰이 비어있을 경우 authentication 을 생성하지 않는다")
 	void case2() throws ServletException, IOException {
 		// Given
 		request.addHeader(HttpHeaders.AUTHORIZATION, "");
@@ -71,12 +70,12 @@ class JwtAuthenticationFilterTest {
 	}
 
 	@Test
-	@DisplayName("JwtAuthenticationFilter는 잘못된 토큰일 경우 JwtException 발생한다")
+	@DisplayName("JwtAuthenticationFilter 는 잘못된 토큰일 경우 JwtException 발생한다")
 	void case3() {
 		// Given
 		String token = "invalid.jwt.token";
 
-		Mockito.when(jwtTokenProvider.parseAccessToken(Mockito.any())).thenThrow(new JwtException("invalidToken"));
+		Mockito.when(jwtTokenProvider.parseAccessToken(token)).thenThrow(new JwtException("invalidToken"));
 
 		request.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token);
 
@@ -86,13 +85,17 @@ class JwtAuthenticationFilterTest {
 	}
 
 	@Test
-	@DisplayName("JwtAuthenticationFilter는 유효한 토큰일 경우 authentication을 생성 한다")
+	@DisplayName("JwtAuthenticationFilter 는 유효한 토큰일 경우 authentication 을 생성 한다")
 	void case4() throws ServletException, IOException {
 		// Given
 		String token = "valid.jwt.token";
 		Claims claims = Mockito.mock(Claims.class);
+		Long memberId = 1L;
+		List<String> permissions = List.of("ITEM_READ");
 
-		Mockito.when(jwtTokenProvider.parseAccessToken(Mockito.any())).thenReturn(claims);
+		Mockito.when(jwtTokenProvider.parseAccessToken(token)).thenReturn(claims);
+		Mockito.when(claims.get("memberId", Long.class)).thenReturn(memberId);
+		Mockito.when(claims.get("permissions", List.class)).thenReturn(permissions);
 
 		request.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token);
 

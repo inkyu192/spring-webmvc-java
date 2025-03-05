@@ -10,7 +10,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import spring.web.java.domain.repository.RequestLockRepository;
-import spring.web.java.presentation.exception.BaseException;
+import spring.web.java.presentation.exception.DuplicateRequestException;
 
 @ExtendWith(MockitoExtension.class)
 class RequestLockServiceTest {
@@ -51,7 +51,7 @@ class RequestLockServiceTest {
 
 		// When & Then
 		Assertions.assertThatThrownBy(() -> requestLockService.validate(memberId, method, uri))
-			.isInstanceOf(BaseException.class);
+			.isInstanceOf(DuplicateRequestException.class);
 
 		Mockito.verify(requestLockRepository, Mockito.times(1))
 			.setIfAbsent(memberId, method, uri);

@@ -10,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import io.jsonwebtoken.Claims;
@@ -22,7 +23,6 @@ import spring.web.java.infrastructure.config.security.JwtTokenProvider;
 import spring.web.java.presentation.dto.request.MemberLoginRequest;
 import spring.web.java.presentation.dto.request.TokenRequest;
 import spring.web.java.presentation.dto.response.TokenResponse;
-import spring.web.java.presentation.exception.BaseException;
 
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
@@ -43,7 +43,7 @@ class AuthServiceTest {
 	private PasswordEncoder passwordEncoder;
 
 	@Test
-	@DisplayName("로그인 기능은 계정이 존재하지 않을 경우 BaseException을 던진다")
+	@DisplayName("login 은 계정이 존재하지 않을 경우 BadCredentialsException 던진다")
 	void login_case1() {
 		// Given
 		MemberLoginRequest request = Mockito.mock(MemberLoginRequest.class);
@@ -51,11 +51,11 @@ class AuthServiceTest {
 		Mockito.when(memberRepository.findByAccount(request.account())).thenReturn(Optional.empty());
 
 		// When & Then
-		Assertions.assertThatThrownBy(() -> authService.login(request)).isInstanceOf(BaseException.class);
+		Assertions.assertThatThrownBy(() -> authService.login(request)).isInstanceOf(BadCredentialsException.class);
 	}
 
 	@Test
-	@DisplayName("로그인 기능은 비밀번호가 일치하지 않을 경우 BaseException을 던진다")
+	@DisplayName("login 은 비밀번호가 일치하지 않을 경우 BadCredentialsException 던진다")
 	void login_case2() {
 		// Given
 		MemberLoginRequest request = Mockito.mock(MemberLoginRequest.class);
@@ -65,24 +65,25 @@ class AuthServiceTest {
 		Mockito.when(passwordEncoder.matches(request.password(), member.getPassword())).thenReturn(false);
 
 		// When & Then
-		Assertions.assertThatThrownBy(() -> authService.login(request)).isInstanceOf(BaseException.class);
+		Assertions.assertThatThrownBy(() -> authService.login(request)).isInstanceOf(BadCredentialsException.class);
 	}
 
 	@Test
-	@DisplayName("로그인 기능은 비밀번호가 일치할 경우 토큰을 발급한다")
+	@DisplayName("login 은 비밀번호가 일치할 경우 토큰을 발급한다")
 	void login_case3() {
 		// Given
-		MemberLoginRequest request = Mockito.mock(MemberLoginRequest.class);
-		Member member = Mockito.mock(Member.class);
-		Token token = Mockito.mock(Token.class);
 		String accessToken = "accessToken";
 		String refreshToken = "refreshToken";
 
-		Mockito.when(memberRepository.findByAccount(request.account())).thenReturn(Optional.of(member));
-		Mockito.when(passwordEncoder.matches(request.password(), member.getPassword())).thenReturn(true);
-		Mockito.when(jwtTokenProvider.createAccessToken(member.getId(), Mockito.any())).thenReturn(accessToken);
+		MemberLoginRequest request = Mockito.mock(MemberLoginRequest.class);
+		Member member = Mockito.mock(Member.class);
+		Token token = Mockito.mock(Token.class);
+
+		Mockito.when(memberRepository.findByAccount(Mockito.any())).thenReturn(Optional.of(member));
+		Mockito.when(passwordEncoder.matches(Mockito.any(), Mockito.any())).thenReturn(true);
+		Mockito.when(jwtTokenProvider.createAccessToken(Mockito.any(), Mockito.any())).thenReturn(accessToken);
 		Mockito.when(jwtTokenProvider.createRefreshToken()).thenReturn(refreshToken);
-		Mockito.when(tokenRepository.save(Mockito.any(Token.class))).thenReturn(token);
+		Mockito.when(tokenRepository.save(Mockito.any())).thenReturn(token);
 
 		// When
 		TokenResponse response = authService.login(request);
@@ -94,7 +95,7 @@ class AuthServiceTest {
 	}
 
 	@Test
-	@DisplayName("갱신 기능은 Access 토큰이 유효하지 않을 경우 JwtException을 던진다")
+	@DisplayName("refreshToken 은 Access 토큰이 유효하지 않을 경우 JwtException 던진다")
 	void refreshToken_case1() {
 		// Given
 		TokenRequest request = Mockito.mock(TokenRequest.class);
@@ -106,21 +107,23 @@ class AuthServiceTest {
 	}
 
 	@Test
-	@DisplayName("갱신 기능은 Refresh 토큰이 유효하지 않을 경우 JwtException을 던진다")
+	@DisplayName("refreshToken 은 Refresh 토큰이 유효하지 않을 경우 JwtException 던진다")
 	void refreshToken_case2() {
 		// Given
-		TokenRequest request = Mockito.mock(TokenRequest.class);
+		Long memberId = 1L;
+		TokenRequest request = new TokenRequest("accessToken", "fakeRefreshToken");
 		Claims claims = Mockito.mock(Claims.class);
 
 		Mockito.when(jwtTokenProvider.parseAccessToken(request.accessToken())).thenReturn(claims);
-		Mockito.when(jwtTokenProvider.parseRefreshToken(request.refreshToken())).thenThrow(JwtException.class);
+		Mockito.doThrow(JwtException.class).when(jwtTokenProvider).validateRefreshToken(Mockito.any());
+		Mockito.when(claims.get("memberId")).thenReturn(memberId);
 
 		// When & Then
 		Assertions.assertThatThrownBy(() -> authService.refreshToken(request)).isInstanceOf(JwtException.class);
 	}
 
 	@Test
-	@DisplayName("갱신 기능은 Refresh 토큰이 일치하지 않을 경우 BaseException을 던진다")
+	@DisplayName("refreshToken 은 Refresh 토큰이 일치하지 않을 경우 BadCredentialsException 던진다")
 	void refreshToken_case3() {
 		// Given
 		Long memberId = 1L;
@@ -129,30 +132,32 @@ class AuthServiceTest {
 		Token token = Token.create(memberId, "refreshToken");
 
 		Mockito.when(jwtTokenProvider.parseAccessToken(request.accessToken())).thenReturn(claims);
-		Mockito.when(jwtTokenProvider.parseRefreshToken(request.refreshToken())).thenReturn(Mockito.mock());
+		Mockito.when(memberRepository.findById(memberId)).thenReturn(Mockito.mock());
 		Mockito.when(claims.get("memberId")).thenReturn(memberId);
 		Mockito.when(tokenRepository.findById(memberId)).thenReturn(Optional.of(token));
 
 		// When & Then
-		Assertions.assertThatThrownBy(() -> authService.refreshToken(request)).isInstanceOf(BaseException.class);
+		Assertions.assertThatThrownBy(() -> authService.refreshToken(request))
+			.isInstanceOf(BadCredentialsException.class);
 	}
 
 	@Test
-	@DisplayName("갱신 기능은 토큰이 유효할 경우 Access 토큰이 갱신된다")
+	@DisplayName("refreshToken 은 토큰이 유효할 경우 Access 토큰이 갱신된다")
 	void refreshToken_case4() {
 		// Given
 		Long memberId = 1L;
 		TokenRequest request = new TokenRequest("accessToken", "refreshToken");
-		Claims claims = Mockito.mock(Claims.class);
 		Token token = Token.create(memberId, "refreshToken");
+
+		Claims claims = Mockito.mock(Claims.class);
 		Member member = Mockito.mock(Member.class);
 
 		Mockito.when(jwtTokenProvider.parseAccessToken(request.accessToken())).thenReturn(claims);
-		Mockito.when(jwtTokenProvider.parseRefreshToken(request.refreshToken())).thenReturn(Mockito.mock());
+		Mockito.when(memberRepository.findById(memberId)).thenReturn(Mockito.mock());
 		Mockito.when(claims.get("memberId")).thenReturn(memberId);
 		Mockito.when(tokenRepository.findById(memberId)).thenReturn(Optional.of(token));
 		Mockito.when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
-		Mockito.when(jwtTokenProvider.createAccessToken(member.getId(), Mockito.any())).thenReturn("newAccessToken");
+		Mockito.when(jwtTokenProvider.createAccessToken(Mockito.any(), Mockito.any())).thenReturn("newAccessToken");
 
 		// When
 		TokenResponse response = authService.refreshToken(request);

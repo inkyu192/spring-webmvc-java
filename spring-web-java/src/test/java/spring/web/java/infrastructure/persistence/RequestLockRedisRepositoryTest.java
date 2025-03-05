@@ -9,8 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.redis.DataRedisTest;
 import org.springframework.data.redis.core.RedisTemplate;
 
-import spring.web.java.infrastructure.persistence.RequestLockRedisRepository;
-
 @DataRedisTest
 class RequestLockRedisRepositoryTest {
 
@@ -22,7 +20,7 @@ class RequestLockRedisRepositoryTest {
 	}
 
 	@Test
-	@DisplayName("setIfAbsent는 기존 데이터가 있을 경우 저장하지 않는다")
+	@DisplayName("setIfAbsent 는 기존 데이터가 있을 경우 저장하지 않는다")
 	void case1() {
 		// Given
 		Long memberId = 1L;
@@ -39,7 +37,7 @@ class RequestLockRedisRepositoryTest {
 	}
 
 	@Test
-	@DisplayName("setIfAbsent는 기존 데이터가 없을 경우 저장한다")
+	@DisplayName("setIfAbsent 는 기존 데이터가 없을 경우 저장한다")
 	void case2() throws InterruptedException {
 		// Given
 		Long memberId = 1L;

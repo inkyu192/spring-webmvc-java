@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 public class Base {
 
 	@CreatedDate
-	@Column(updatable = false, nullable = false)
+	@Column(updatable = false)
 	private LocalDateTime createdAt;
 
 	@LastModifiedDate

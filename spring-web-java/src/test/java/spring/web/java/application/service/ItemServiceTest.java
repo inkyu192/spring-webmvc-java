@@ -15,13 +15,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.util.Pair;
 
 import spring.web.java.domain.model.entity.Item;
 import spring.web.java.domain.model.enums.Category;
 import spring.web.java.domain.repository.ItemRepository;
 import spring.web.java.presentation.dto.request.ItemSaveRequest;
 import spring.web.java.presentation.dto.response.ItemResponse;
-import spring.web.java.presentation.exception.BaseException;
+import spring.web.java.presentation.exception.EntityNotFoundException;
 
 @ExtendWith(MockitoExtension.class)
 class ItemServiceTest {
@@ -33,8 +34,8 @@ class ItemServiceTest {
 	private ItemRepository itemRepository;
 
 	@Test
-	@DisplayName("saveItem은 한개를 저장한다")
-	void saveItem() {
+	@DisplayName("saveItem 은 한개를 저장한다")
+	void saveItem_case1() {
 		// Given
 		ItemSaveRequest request = new ItemSaveRequest("item", "description", 1000, 10, Category.ROLE_BOOK);
 		Item item = Item.create("item", "description", 1000, 10, Category.ROLE_BOOK);
@@ -52,8 +53,8 @@ class ItemServiceTest {
 	}
 
 	@Test
-	@DisplayName("findItems는 여러개를 조회한다")
-	void findItems() {
+	@DisplayName("findItems 은 여러개를 조회한다")
+	void findItems_case1() {
 		// Given
 		Pageable pageable = PageRequest.of(0, 10);
 		String name = "Item";
@@ -74,8 +75,8 @@ class ItemServiceTest {
 	}
 
 	@Test
-	@DisplayName("findItem은 데이터가 있을경우 조회한다")
-	void findItem_exist_shouldFind() {
+	@DisplayName("findItem 은 데이터가 있을경우 조회한다")
+	void findItem_case1() {
 		// Given
 		Long itemId = 1L;
 		Item item = Item.create("item", "description", 1000, 10, Category.ROLE_BOOK);
@@ -94,42 +95,20 @@ class ItemServiceTest {
 	}
 
 	@Test
-	@DisplayName("findItem은 데이터가 없을경우 BaseException을 던진다")
-	void findItem_notExist_shouldThrowBaseException() {
+	@DisplayName("findItem 은 데이터가 없을경우 EntityNotFoundException 던진다")
+	void findItem_case2() {
 		// Given
 		Long itemId = 1L;
 
 		Mockito.when(itemRepository.findById(itemId)).thenReturn(Optional.empty());
 
 		// When & Then
-		Assertions.assertThatThrownBy(() -> itemService.findItem(itemId)).isInstanceOf(BaseException.class);
+		Assertions.assertThatThrownBy(() -> itemService.findItem(itemId)).isInstanceOf(EntityNotFoundException.class);
 	}
 
 	@Test
-	@DisplayName("putItem은 데이터가 있을 경우 수정된다")
-	void putItem_exist_shouldUpdate() {
-		// Given
-		Long itemId = 1L;
-		Item oldItem = Item.create("oldItem", "description", 1000, 10, Category.ROLE_BOOK);
-		ItemSaveRequest request = new ItemSaveRequest("newItem", "description", 2000, 20, Category.ROLE_BOOK);
-
-		Mockito.when(itemRepository.findById(itemId)).thenReturn(Optional.of(oldItem));
-
-		// When
-		ItemResponse response = itemService.putItem(itemId, request);
-
-		// Then
-		Assertions.assertThat(request.name()).isEqualTo(response.name());
-		Assertions.assertThat(request.description()).isEqualTo(response.description());
-		Assertions.assertThat(request.price()).isEqualTo(response.price());
-		Assertions.assertThat(request.quantity()).isEqualTo(response.quantity());
-
-		Mockito.verify(itemRepository, Mockito.never()).save(Mockito.any());
-	}
-
-	@Test
-	@DisplayName("putItem은 데이터가 없을 경우 저장한다")
-	void putItem_notExist_shouldCreate() {
+	@DisplayName("putItem 은 데이터가 없을 경우 생성한다")
+	void putItem_case1() {
 		// Given
 		Long itemId = 1L;
 		ItemSaveRequest request = new ItemSaveRequest("NewItem", "description", 2000, 20, Category.ROLE_BOOK);
@@ -145,9 +124,12 @@ class ItemServiceTest {
 		Mockito.when(itemRepository.save(Mockito.any(Item.class))).thenReturn(newItem);
 
 		// When
-		ItemResponse response = itemService.putItem(itemId, request);
+		Pair<Boolean, ItemResponse> pair = itemService.putItem(itemId, request);
+		Boolean isNew = pair.getFirst();
+		ItemResponse response = pair.getSecond();
 
 		// Then
+		Assertions.assertThat(isNew).isTrue();
 		Assertions.assertThat(request.name()).isEqualTo(response.name());
 		Assertions.assertThat(request.description()).isEqualTo(response.description());
 		Assertions.assertThat(request.price()).isEqualTo(response.price());
@@ -157,17 +139,55 @@ class ItemServiceTest {
 	}
 
 	@Test
-	@DisplayName("deleteItem은 데이터를 삭제한다")
-	void deleteItem() {
+	@DisplayName("putItem 은 데이터가 있을 경우 수정한다")
+	void putItem_case2() {
+		// Given
+		Long itemId = 1L;
+		Item oldItem = Item.create("oldItem", "description", 1000, 10, Category.ROLE_BOOK);
+		ItemSaveRequest request = new ItemSaveRequest("newItem", "description", 2000, 20, Category.ROLE_BOOK);
+
+		Mockito.when(itemRepository.findById(itemId)).thenReturn(Optional.of(oldItem));
+
+		// When
+		Pair<Boolean, ItemResponse> pair = itemService.putItem(itemId, request);
+		Boolean isNew = pair.getFirst();
+		ItemResponse response = pair.getSecond();
+
+		// Then
+		Assertions.assertThat(isNew).isFalse();
+		Assertions.assertThat(request.name()).isEqualTo(response.name());
+		Assertions.assertThat(request.description()).isEqualTo(response.description());
+		Assertions.assertThat(request.price()).isEqualTo(response.price());
+		Assertions.assertThat(request.quantity()).isEqualTo(response.quantity());
+
+		Mockito.verify(itemRepository, Mockito.never()).save(Mockito.any());
+	}
+
+	@Test
+	@DisplayName("deleteItem 은 데이터가 없을 경우 EntityNotFoundException 던진다")
+	void delete_Item_case1() {
 		// Given
 		Long itemId = 1L;
 
-		Mockito.doNothing().when(itemRepository).deleteById(itemId);
+		Mockito.when(itemRepository.findById(itemId)).thenReturn(Optional.empty());
+
+		// When & Then
+		Assertions.assertThatThrownBy(() -> itemService.deleteItem(itemId)).isInstanceOf(EntityNotFoundException.class);
+	}
+
+	@Test
+	@DisplayName("deleteItem 은 데이터가 있을 경우 삭제한다")
+	void delete_Item_case2() {
+		// Given
+		Long itemId = 1L;
+		Item item = Item.create("item", "description", 1000, 10, Category.ROLE_BOOK);
+
+		Mockito.when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
 
 		// When
 		itemService.deleteItem(itemId);
 
 		// Then
-		Mockito.verify(itemRepository, Mockito.times(1)).deleteById(itemId);
+		Mockito.verify(itemRepository, Mockito.times(1)).delete(item);
 	}
 }

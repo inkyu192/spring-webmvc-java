@@ -10,3 +10,15 @@ logging:
   level:
     org.springframework.orm.jpa: DEBUG
     org.springframework.transaction: DEBUG
+
+jwt:
+  access-token:
+    key: PQ8nDTkS2Rp17clN87/L02OgVe77EOwMnDY0Irq7w04=
+    expiration-time: 10
+  refresh-token:
+    key: crCWzavmz2D382GG68dymsghw+UnWo3MnmWkPzc6Gik=
+    expiration-time: 60
+
+crypto:
+  secret-key: d9ANIqIyfTygI92m6jWFfAzUbEP73TNB
+  iv-parameter: F22DBBB19D308662
