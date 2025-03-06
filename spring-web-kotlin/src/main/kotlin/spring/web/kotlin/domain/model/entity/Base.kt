@@ -13,9 +13,9 @@ import java.time.LocalDateTime
 class Base protected constructor(
 
     @CreatedDate
-    @Column(updatable = false, nullable = false)
-    val createdAt: LocalDateTime? = null,
+    @Column(updatable = false)
+    var createdAt: LocalDateTime? = null,
 
     @LastModifiedDate
-    val updatedAt: LocalDateTime? = null,
+    var updatedAt: LocalDateTime? = null,
 )

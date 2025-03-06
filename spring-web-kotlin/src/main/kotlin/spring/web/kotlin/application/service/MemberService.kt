@@ -34,9 +34,7 @@ class MemberService(
             throw AtLeastOneRequiredException("roleIds", "permissionIds")
         }
 
-        memberRepository.findByAccount(account)?.let {
-            throw DuplicateEntityException(Member::class.java, account)
-        }
+        memberRepository.findByAccount(account)?.let { throw DuplicateEntityException(Member::class.java, account) }
 
         val address = Address.create(
             city = city,
@@ -58,16 +56,16 @@ class MemberService(
             MemberPermission.create(permission)
         }
 
-        val member = Member.create(
-            account = account,
-            password = passwordEncoder.encode(password),
-            name = name,
-            address = address,
-            memberRoles = memberRoles,
-            memberPermissions = memberPermissions
+        val member = memberRepository.save(
+            Member.create(
+                account = account,
+                password = passwordEncoder.encode(password),
+                name = name,
+                address = address,
+                memberRoles = memberRoles,
+                memberPermissions = memberPermissions
+            )
         )
-
-        memberRepository.save(member)
 
         eventPublisher.publishEvent(
             NotificationEvent(

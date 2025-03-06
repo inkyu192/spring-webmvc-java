@@ -78,16 +78,16 @@ public class MemberService {
 			});
 		}
 
-		Member member = Member.create(
-			memberSaveRequest.account(),
-			passwordEncoder.encode(memberSaveRequest.password()),
-			memberSaveRequest.name(),
-			address,
-			memberRoles,
-			memberPermissions
+		Member member = memberRepository.save(
+			Member.create(
+				memberSaveRequest.account(),
+				passwordEncoder.encode(memberSaveRequest.password()),
+				memberSaveRequest.name(),
+				address,
+				memberRoles,
+				memberPermissions
+			)
 		);
-
-		memberRepository.save(member);
 
 		eventPublisher.publishEvent(
 			new NotificationEvent(

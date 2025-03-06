@@ -1,5 +1,8 @@
 package spring.web.java.application.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,16 +26,15 @@ public class RoleService {
 
 	@Transactional
 	public RoleResponse saveRole(RoleSaveRequest roleSaveRequest) {
-		Role role = Role.create(roleSaveRequest.name());
-
+		List<RolePermission> rolePermissions = new ArrayList<>();
 		roleSaveRequest.permissionIds().forEach(id -> {
 			Permission permission = permissionRepository.findById(id)
 				.orElseThrow(() -> new EntityNotFoundException(Permission.class, id));
 
-			role.associatePermission(RolePermission.create(permission));
+			rolePermissions.add(RolePermission.create(permission));
 		});
 
-		roleRepository.save(role);
+		Role role = roleRepository.save(Role.create(roleSaveRequest.name(), rolePermissions));
 
 		return new RoleResponse(
 			role,

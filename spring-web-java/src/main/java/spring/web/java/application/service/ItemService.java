@@ -22,15 +22,15 @@ public class ItemService {
 
 	@Transactional
 	public ItemResponse saveItem(ItemSaveRequest itemSaveRequest) {
-		Item item = Item.create(
-			itemSaveRequest.name(),
-			itemSaveRequest.description(),
-			itemSaveRequest.price(),
-			itemSaveRequest.quantity(),
-			itemSaveRequest.category()
+		Item item = itemRepository.save(
+			Item.create(
+				itemSaveRequest.name(),
+				itemSaveRequest.description(),
+				itemSaveRequest.price(),
+				itemSaveRequest.quantity(),
+				itemSaveRequest.category()
+			)
 		);
-
-		itemRepository.save(item);
 
 		return new ItemResponse(item);
 	}

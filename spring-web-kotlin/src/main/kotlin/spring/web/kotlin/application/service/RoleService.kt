@@ -2,6 +2,7 @@ package spring.web.kotlin.application.service
 
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import spring.web.kotlin.domain.model.entity.Permission
 import spring.web.kotlin.domain.model.entity.Role
 import spring.web.kotlin.domain.model.entity.RolePermission
 import spring.web.kotlin.domain.repository.PermissionRepository
@@ -18,16 +19,14 @@ class RoleService(
 ) {
     @Transactional
     fun saveRole(roleSaveRequest: RoleSaveRequest): RoleResponse {
-        val role = Role.create(roleSaveRequest.name)
-
-        roleSaveRequest.permissionIds.forEach {
+        val rolePermissions = roleSaveRequest.permissionIds.map {
             val permission = permissionRepository.findByIdOrNull(it)
-                ?: throw EntityNotFoundException(RolePermission::class.java, it)
+                ?: throw EntityNotFoundException(Permission::class.java, it)
 
-            role.associatePermission(RolePermission.create(permission))
+            RolePermission.create(permission)
         }
 
-        roleRepository.save(role)
+        val role = roleRepository.save(Role.create(roleSaveRequest.name, rolePermissions))
 
         return RoleResponse(role, role.rolePermissions.map { it.permission })
     }

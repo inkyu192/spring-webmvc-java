@@ -32,10 +32,11 @@ public class Role extends Base {
 		return Collections.unmodifiableList(rolePermissions);
 	}
 
-	public static Role create(String name) {
+	public static Role create(String name, List<RolePermission> rolePermissions) {
 		Role role = new Role();
 
 		role.name = name;
+		rolePermissions.forEach(role::associatePermission);
 
 		return role;
 	}

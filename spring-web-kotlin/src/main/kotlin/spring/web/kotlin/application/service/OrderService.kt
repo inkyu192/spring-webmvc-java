@@ -36,9 +36,7 @@ class OrderService(
         }
 
         val delivery = Delivery.create(Address.create(city, street, zipcode))
-        val order = Order.create(member, delivery, orderItems)
-
-        orderRepository.save(order)
+        val order = orderRepository.save(Order.create(member, delivery, orderItems))
 
         return OrderResponse(order)
     }

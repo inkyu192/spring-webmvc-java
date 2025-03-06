@@ -57,9 +57,7 @@ public class OrderService {
 			)
 		);
 
-		Order order = Order.create(member, delivery, orderItems);
-
-		orderRepository.save(order);
+		Order order = orderRepository.save(Order.create(member, delivery, orderItems));
 
 		return new OrderResponse(order);
 	}

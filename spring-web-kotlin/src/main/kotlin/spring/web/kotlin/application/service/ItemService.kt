@@ -16,15 +16,15 @@ class ItemService(
 ) {
     @Transactional
     fun saveItem(itemSaveRequest: ItemSaveRequest): ItemResponse {
-        val item = Item.create(
-            itemSaveRequest.name,
-            itemSaveRequest.description,
-            itemSaveRequest.price,
-            itemSaveRequest.quantity,
-            itemSaveRequest.category,
+        val item = itemRepository.save(
+            Item.create(
+                itemSaveRequest.name,
+                itemSaveRequest.description,
+                itemSaveRequest.price,
+                itemSaveRequest.quantity,
+                itemSaveRequest.category,
+            )
         )
-
-        itemRepository.save(item)
 
         return ItemResponse(item)
     }

@@ -12,13 +12,14 @@ class Role protected constructor(
 
     @OneToMany(mappedBy = "role", cascade = [(CascadeType.ALL)])
     private val _rolePermissions: MutableList<RolePermission> = mutableListOf(),
-): Base() {
+) : Base() {
     @get:Transient
     val rolePermissions: List<RolePermission>
         get() = _rolePermissions.toList()
 
     companion object {
-        fun create(name: String): Role = Role(name = name)
+        fun create(name: String, rolePermission: List<RolePermission>) =
+            Role(name = name).apply { rolePermission.forEach { associatePermission(it) } }
     }
 
     fun associatePermission(rolePermission: RolePermission) {
