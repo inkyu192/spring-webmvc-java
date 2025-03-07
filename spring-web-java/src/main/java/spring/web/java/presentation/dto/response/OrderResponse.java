@@ -1,6 +1,6 @@
 package spring.web.java.presentation.dto.response;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 
 import spring.web.java.domain.model.entity.Address;
@@ -10,7 +10,7 @@ import spring.web.java.domain.model.enums.OrderStatus;
 public record OrderResponse(
 	Long id,
 	String name,
-	LocalDateTime orderDate,
+	Instant orderedAt,
 	OrderStatus status,
 	Address address,
 	List<OrderItemResponse> orderItems
@@ -19,7 +19,7 @@ public record OrderResponse(
 		this(
 			order.getId(),
 			order.getMember().getName(),
-			order.getOrderDate(),
+			order.getOrderedAt(),
 			order.getStatus(),
 			order.getMember().getAddress(),
 			order.getOrderItems().stream()

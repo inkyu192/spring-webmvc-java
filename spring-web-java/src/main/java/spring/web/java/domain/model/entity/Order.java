@@ -1,6 +1,6 @@
 package spring.web.java.domain.model.entity;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -49,7 +49,7 @@ public class Order extends Base {
 	@JoinColumn(name = "delivery_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
 	private Delivery delivery;
 
-	private LocalDateTime orderDate;
+	private Instant orderedAt;
 
 	@Enumerated(EnumType.STRING)
 	private OrderStatus status;
@@ -65,7 +65,7 @@ public class Order extends Base {
 		order.associateDelivery(delivery);
 		orderItems.forEach(order::associateItem);
 		order.status = OrderStatus.ORDER;
-		order.orderDate = LocalDateTime.now();
+		order.orderedAt = Instant.now();
 
 		return order;
 	}

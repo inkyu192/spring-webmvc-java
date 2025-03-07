@@ -1,6 +1,6 @@
 package spring.web.java.domain.model.entity;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -21,8 +21,8 @@ public class Base {
 
 	@CreatedDate
 	@Column(updatable = false)
-	private LocalDateTime createdAt;
+	private Instant createdAt;
 
 	@LastModifiedDate
-	private LocalDateTime updatedAt;
+	private Instant updatedAt;
 }

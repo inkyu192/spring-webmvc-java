@@ -4,7 +4,7 @@ import jakarta.persistence.*
 import spring.web.kotlin.domain.model.enums.DeliveryStatus
 import spring.web.kotlin.domain.model.enums.OrderStatus
 import spring.web.kotlin.presentation.exception.OrderCancelNotAllowedException
-import java.time.LocalDateTime
+import java.time.Instant
 
 @Entity
 @Table(name = "orders")
@@ -14,7 +14,7 @@ class Order protected constructor(
     @Column(name = "order_id")
     val id: Long? = null,
 
-    val orderDate: LocalDateTime,
+    val orderedAt: Instant,
 
     @Enumerated(EnumType.STRING)
     var status: OrderStatus,
@@ -39,7 +39,7 @@ class Order protected constructor(
             Order(
                 member = member,
                 status = OrderStatus.ORDER,
-                orderDate = LocalDateTime.now()
+                orderedAt = Instant.now()
             ).apply {
                 associateDelivery(delivery)
                 orderItems.forEach { associateItem(it) }

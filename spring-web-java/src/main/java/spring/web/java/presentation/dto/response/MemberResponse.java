@@ -1,8 +1,7 @@
 package spring.web.java.presentation.dto.response;
 
-import java.time.OffsetDateTime;
+import java.time.Instant;
 
-import spring.web.java.infrastructure.util.DateTimeUtil;
 import spring.web.java.domain.model.entity.Member;
 
 public record MemberResponse(
@@ -12,7 +11,7 @@ public record MemberResponse(
 	String city,
 	String street,
 	String zipcode,
-	OffsetDateTime createdAt
+	Instant createdAt
 ) {
 	public MemberResponse(Member member) {
 		this(
@@ -22,7 +21,7 @@ public record MemberResponse(
 			member.getAddress().getCity(),
 			member.getAddress().getStreet(),
 			member.getAddress().getZipcode(),
-			DateTimeUtil.toOffsetDateTime(member.getCreatedAt())
+			member.getCreatedAt()
 		);
 	}
 }
