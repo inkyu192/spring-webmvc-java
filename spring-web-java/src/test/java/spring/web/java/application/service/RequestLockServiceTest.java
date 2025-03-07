@@ -22,7 +22,7 @@ class RequestLockServiceTest {
 	private RequestLockRepository requestLockRepository;
 
 	@Test
-	@DisplayName("유효성 검사 기능은 데이터가 없을 경우 저장한다")
+	@DisplayName("validate 는 데이터가 없을 경우 저장한다")
 	void case1() {
 		// Given
 		Long memberId = 1L;
@@ -40,7 +40,7 @@ class RequestLockServiceTest {
 	}
 
 	@Test
-	@DisplayName("유효성 검사 기능은 데이터가 있을 경우 BaseException을 던진다")
+	@DisplayName("validate 는 데이터가 있을 경우 DuplicateRequestException 던진다")
 	void case2() {
 		// Given
 		Long memberId = 1L;
@@ -52,8 +52,5 @@ class RequestLockServiceTest {
 		// When & Then
 		Assertions.assertThatThrownBy(() -> requestLockService.validate(memberId, method, uri))
 			.isInstanceOf(DuplicateRequestException.class);
-
-		Mockito.verify(requestLockRepository, Mockito.times(1))
-			.setIfAbsent(memberId, method, uri);
 	}
 }

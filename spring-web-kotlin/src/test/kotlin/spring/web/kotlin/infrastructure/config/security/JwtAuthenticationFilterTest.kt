@@ -1,4 +1,4 @@
-package spring.web.kotlin.infrastructure.security
+package spring.web.kotlin.infrastructure.config.security
 
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.JwtException
@@ -28,9 +28,9 @@ class JwtAuthenticationFilterTest : DescribeSpec({
         response = MockHttpServletResponse()
     }
 
-    describe("JwtAuthenticationFilter는") {
+    describe("JwtAuthenticationFilter 는") {
         context("토큰이 null 일 경우") {
-            it("authentication을 생성하지 않는다") {
+            it("authentication 을 생성하지 않는다") {
                 jwtAuthenticationFilter.doFilter(request, response, filterChain)
 
                 SecurityContextHolder.getContext().authentication shouldBe null
@@ -38,8 +38,9 @@ class JwtAuthenticationFilterTest : DescribeSpec({
         }
 
         context("토큰이 비어있을 경우") {
-            it("authentication을 생성하지 않는다") {
+            it("authentication 을 생성하지 않는다") {
                 request.addHeader("Authorization", "")
+
                 jwtAuthenticationFilter.doFilter(request, response, filterChain)
 
                 SecurityContextHolder.getContext().authentication shouldBe null
@@ -57,13 +58,18 @@ class JwtAuthenticationFilterTest : DescribeSpec({
         }
 
         context("유효한 토큰일 경우") {
-            it("authentication을 생성 한다") {
+            it("authentication 을 생성 한다") {
                 val token = "valid.jwt.token"
                 val claims = mockk<Claims>(relaxed = true)
+                val memberId = 1L
+                val permissions = listOf("ITEM_READ")
 
                 every { jwtTokenProvider.parseAccessToken(any()) } returns claims
+                every { claims["memberId"] } returns memberId
+                every { claims["permissions"] } returns permissions
 
                 request.addHeader("Authorization", "Bearer $token")
+
                 jwtAuthenticationFilter.doFilter(request, response, filterChain)
 
                 SecurityContextHolder.getContext().authentication shouldNotBe null
