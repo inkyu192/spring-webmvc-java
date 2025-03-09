@@ -41,13 +41,6 @@ public class MemberService {
 
 	@Transactional
 	public MemberResponse saveMember(MemberSaveRequest memberSaveRequest) {
-		List<Long> roleIds = memberSaveRequest.roleIds();
-		List<Long> permissionIds = memberSaveRequest.permissionIds();
-
-		if (ObjectUtils.isEmpty(roleIds) && ObjectUtils.isEmpty(permissionIds)) {
-			throw new AtLeastOneRequiredException("roleIds", "permissionIds");
-		}
-
 		memberRepository.findByAccount(memberSaveRequest.account()).ifPresent(member -> {
 			throw new DuplicateEntityException(Member.class, memberSaveRequest.account());
 		});
@@ -59,6 +52,7 @@ public class MemberService {
 		);
 
 		List<MemberRole> memberRoles = new ArrayList<>();
+		List<Long> roleIds = memberSaveRequest.roleIds();
 		if (!ObjectUtils.isEmpty(roleIds)) {
 			roleIds.forEach(id -> {
 				Role role = roleRepository.findById(id)
@@ -69,6 +63,7 @@ public class MemberService {
 		}
 
 		List<MemberPermission> memberPermissions = new ArrayList<>();
+		List<Long> permissionIds = memberSaveRequest.permissionIds();
 		if (!ObjectUtils.isEmpty(permissionIds)) {
 			permissionIds.forEach(id -> {
 				Permission permission = permissionRepository.findById(id)

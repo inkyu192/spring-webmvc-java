@@ -1,7 +1,10 @@
 package spring.web.java.presentation.controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.ObjectUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +20,7 @@ import spring.web.java.application.service.MemberService;
 import spring.web.java.presentation.dto.request.MemberSaveRequest;
 import spring.web.java.presentation.dto.request.MemberUpdateRequest;
 import spring.web.java.presentation.dto.response.MemberResponse;
+import spring.web.java.presentation.exception.AtLeastOneRequiredException;
 
 @RestController
 @RequestMapping("/members")
@@ -28,6 +32,13 @@ public class MemberController {
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public MemberResponse saveMember(@RequestBody @Validated MemberSaveRequest memberSaveRequest) {
+		List<Long> roleIds = memberSaveRequest.roleIds();
+		List<Long> permissionIds = memberSaveRequest.permissionIds();
+
+		if (ObjectUtils.isEmpty(roleIds) && ObjectUtils.isEmpty(permissionIds)) {
+			throw new AtLeastOneRequiredException("roleIds", "permissionIds");
+		}
+
 		return memberService.saveMember(memberSaveRequest);
 	}
 
