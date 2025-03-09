@@ -1,6 +1,5 @@
 package spring.web.java.application.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -39,15 +38,15 @@ public class OrderService {
 		Member member = memberRepository.findById(memberId)
 			.orElseThrow(() -> new EntityNotFoundException(Member.class, memberId));
 
-		List<OrderItem> orderItems = new ArrayList<>();
+		List<OrderItem> orderItems = orderSaveRequest.orderItems().stream()
+			.map(orderItem -> {
+				Long itemId = orderItem.itemId();
+				Item item = itemRepository.findById(itemId)
+					.orElseThrow(() -> new EntityNotFoundException(Item.class, itemId));
 
-		orderSaveRequest.orderItems().forEach(orderItem -> {
-			Long itemId = orderItem.itemId();
-			Item item = itemRepository.findById(itemId)
-				.orElseThrow(() -> new EntityNotFoundException(Item.class, itemId));
-
-			orderItems.add(OrderItem.create(item, item.getPrice(), orderItem.count()));
-		});
+				return OrderItem.create(item, item.getPrice(), orderItem.count());
+			})
+			.toList();
 
 		Delivery delivery = Delivery.create(
 			Address.create(
