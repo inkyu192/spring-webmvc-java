@@ -69,70 +69,67 @@ class AuthServiceTest : DescribeSpec({
                 response.refreshToken shouldBe refreshToken
             }
         }
+    }
 
-        describe("refreshToken 은") {
-            context("Access 토큰이 유효하지 않을 경우") {
-                it("JwtException 던진다") {
-                    val request = mockk<TokenRequest>(relaxed = true)
+    describe("refreshToken 은") {
+        val request = TokenRequest("oldAccessToken", "refreshToken")
 
-                    every { jwtTokenProvider.parseAccessToken(request.accessToken) } throws JwtException("invalid access token")
+        context("Access 토큰이 유효하지 않을 경우") {
+            it("JwtException 던진다") {
+                every { jwtTokenProvider.parseAccessToken(request.accessToken) } throws JwtException("invalid access token")
 
-                    shouldThrow<JwtException> { authService.refreshToken(request) }
-                }
+                shouldThrow<JwtException> { authService.refreshToken(request) }
             }
+        }
 
-            context("Refresh 토큰이 유효하지 않을 경우") {
-                it("JwtException 던진다") {
-                    val memberId = 1L
-                    val request = mockk<TokenRequest>(relaxed = true)
-                    val claims = mockk<Claims>()
+        context("Refresh 토큰이 유효하지 않을 경우") {
+            it("JwtException 던진다") {
+                val memberId = 1L
+                val claims = mockk<Claims>()
 
-                    every { jwtTokenProvider.parseAccessToken(request.accessToken) } returns claims
-                    every { jwtTokenProvider.parseRefreshToken(request.refreshToken) } throws JwtException("invalid refresh token")
-                    every { claims["memberId"] } returns memberId
+                every { jwtTokenProvider.parseAccessToken(request.accessToken) } returns claims
+                every { jwtTokenProvider.parseRefreshToken(request.refreshToken) } throws JwtException("invalid refresh token")
+                every { claims["memberId"] } returns memberId
 
-                    shouldThrow<JwtException> { authService.refreshToken(request) }
-                }
+                shouldThrow<JwtException> { authService.refreshToken(request) }
             }
+        }
 
-            context("Refresh 토큰이 일치하지 않을 경우") {
-                it("BadCredentialsException 던진다") {
-                    val memberId = 1L
-                    val request = TokenRequest("accessToken", "fakeRefreshToken")
-                    val claims = mockk<Claims>()
-                    val token = Token.create(memberId, "refreshToken")
-                    val member = mockk<Member>()
+        context("Refresh 토큰이 일치하지 않을 경우") {
+            it("BadCredentialsException 던진다") {
+                val memberId = 1L
+                val claims = mockk<Claims>()
+                val token = Token.create(memberId, "realRefreshToken")
+                val member = mockk<Member>()
 
-                    every { jwtTokenProvider.parseAccessToken(request.accessToken) } returns claims
-                    every { jwtTokenProvider.parseRefreshToken(request.refreshToken) } returns mockk()
-                    every { claims["memberId"] } returns memberId
-                    every { tokenRepository.findByIdOrNull(memberId) } returns token
-                    every { memberRepository.findByIdOrNull(memberId) } returns member
+                every { jwtTokenProvider.parseAccessToken(request.accessToken) } returns claims
+                every { jwtTokenProvider.parseRefreshToken(request.refreshToken) } returns mockk()
+                every { claims["memberId"] } returns memberId
+                every { tokenRepository.findByIdOrNull(memberId) } returns token
+                every { memberRepository.findByIdOrNull(memberId) } returns member
 
-                    shouldThrow<BadCredentialsException> { authService.refreshToken(request) }
-                }
+                shouldThrow<BadCredentialsException> { authService.refreshToken(request) }
             }
+        }
 
-            context("토큰이 유효할 경우") {
-                it("Access 토큰이 갱신된다") {
-                    val memberId = 1L
-                    val request = TokenRequest("oldAccessToken", "refreshToken")
-                    val claims = mockk<Claims>()
-                    val token = Token.create(memberId, "refreshToken")
-                    val member = mockk<Member>(relaxed = true)
+        context("토큰이 유효할 경우") {
+            it("Access 토큰이 갱신된다") {
+                val memberId = 1L
+                val claims = mockk<Claims>()
+                val token = Token.create(memberId, "refreshToken")
+                val member = mockk<Member>(relaxed = true)
 
-                    every { jwtTokenProvider.parseAccessToken(request.accessToken) } returns claims
-                    every { jwtTokenProvider.parseRefreshToken(request.refreshToken) } returns mockk()
-                    every { claims["memberId"] } returns memberId
-                    every { tokenRepository.findByIdOrNull(memberId) } returns token
-                    every { memberRepository.findByIdOrNull(memberId) } returns member
-                    every { jwtTokenProvider.createAccessToken(any(), any()) } returns "newAccessToken"
+                every { jwtTokenProvider.parseAccessToken(request.accessToken) } returns claims
+                every { jwtTokenProvider.parseRefreshToken(request.refreshToken) } returns mockk()
+                every { claims["memberId"] } returns memberId
+                every { tokenRepository.findByIdOrNull(memberId) } returns token
+                every { memberRepository.findByIdOrNull(memberId) } returns member
+                every { jwtTokenProvider.createAccessToken(any(), any()) } returns "newAccessToken"
 
-                    val response = authService.refreshToken(request)
+                val response = authService.refreshToken(request)
 
-                    response.accessToken shouldNotBe request.accessToken
-                    response.refreshToken shouldBe request.refreshToken
-                }
+                response.accessToken shouldNotBe request.accessToken
+                response.refreshToken shouldBe request.refreshToken
             }
         }
     }
