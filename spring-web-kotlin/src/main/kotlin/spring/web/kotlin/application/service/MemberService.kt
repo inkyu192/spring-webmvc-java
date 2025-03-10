@@ -28,28 +28,23 @@ class MemberService(
 ) {
     @Transactional
     fun saveMember(memberSaveRequest: MemberSaveRequest): MemberResponse {
-        val (account, password, name, city, street, zipcode, roleIds, permissionIds) = memberSaveRequest
-
-        if (roleIds.isNullOrEmpty() && permissionIds.isNullOrEmpty()) {
-            throw AtLeastOneRequiredException("roleIds", "permissionIds")
-        }
-
-        memberRepository.findByAccount(account)?.let { throw DuplicateEntityException(Member::class.java, account) }
+        memberRepository.findByAccount(memberSaveRequest.account)
+            ?.let { throw DuplicateEntityException(Member::class.java, memberSaveRequest.account) }
 
         val address = Address.create(
-            city = city,
-            street = street,
-            zipcode = zipcode,
+            city = memberSaveRequest.city,
+            street = memberSaveRequest.street,
+            zipcode = memberSaveRequest.zipcode,
         )
 
-        val memberRoles = roleIds?.map {
+        val memberRoles = memberSaveRequest.roleIds?.map {
             val role = roleRepository.findByIdOrNull(it)
                 ?: throw EntityNotFoundException(Role::class.java, it)
 
             MemberRole.create(role)
         }
 
-        val memberPermissions = permissionIds?.map {
+        val memberPermissions = memberSaveRequest.permissionIds?.map {
             val permission = permissionRepository.findByIdOrNull(it)
                 ?: throw EntityNotFoundException(Permission::class.java, it)
 
@@ -58,9 +53,9 @@ class MemberService(
 
         val member = memberRepository.save(
             Member.create(
-                account = account,
-                password = passwordEncoder.encode(password),
-                name = name,
+                account = memberSaveRequest.account,
+                password = passwordEncoder.encode(memberSaveRequest.password),
+                name = memberSaveRequest.name,
                 address = address,
                 memberRoles = memberRoles,
                 memberPermissions = memberPermissions

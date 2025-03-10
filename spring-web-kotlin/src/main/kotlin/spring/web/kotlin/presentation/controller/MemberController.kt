@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.*
 import spring.web.kotlin.presentation.dto.request.MemberSaveRequest
 import spring.web.kotlin.presentation.dto.request.MemberUpdateRequest
 import spring.web.kotlin.application.service.MemberService
+import spring.web.kotlin.presentation.dto.response.MemberResponse
+import spring.web.kotlin.presentation.exception.AtLeastOneRequiredException
 
 @RestController
 @RequestMapping("members")
@@ -15,8 +17,13 @@ class MemberController(
 ) {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    fun saveMember(@RequestBody @Validated memberSaveRequest: MemberSaveRequest) =
-        memberService.saveMember(memberSaveRequest)
+    fun saveMember(@RequestBody @Validated memberSaveRequest: MemberSaveRequest): MemberResponse {
+        if (memberSaveRequest.roleIds.isNullOrEmpty() && memberSaveRequest.permissionIds.isNullOrEmpty()) {
+            throw AtLeastOneRequiredException("roleIds", "permissionIds")
+        }
+
+        return memberService.saveMember(memberSaveRequest)
+    }
 
     @GetMapping
     @PreAuthorize("isAuthenticated()")
