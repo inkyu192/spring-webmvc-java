@@ -26,6 +26,11 @@ public class MemberRepositoryAdapter implements MemberRepository {
 	}
 
 	@Override
+	public boolean existsByAccount(String account) {
+		return jpaRepository.existsByAccount(account);
+	}
+
+	@Override
 	public Member save(Member member) {
 		return jpaRepository.save(member);
 	}

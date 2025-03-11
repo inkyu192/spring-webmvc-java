@@ -2,20 +2,17 @@ package spring.web.java.presentation.dto.request;
 
 import java.util.List;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 
 public record MemberSaveRequest(
-	@NotNull
+	@NotBlank
 	String account,
-	@NotNull
+	@NotBlank
 	String password,
-	@NotNull
+	@NotBlank
 	String name,
-	@NotNull
 	String city,
-	@NotNull
 	String street,
-	@NotNull
 	String zipcode,
 	List<Long> roleIds,
 	List<Long> permissionIds

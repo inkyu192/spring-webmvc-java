@@ -1,11 +1,13 @@
 package spring.web.java.application.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 
 import lombok.RequiredArgsConstructor;
 import spring.web.java.application.event.NotificationEvent;
@@ -38,9 +40,9 @@ public class MemberService {
 
 	@Transactional
 	public MemberResponse saveMember(MemberSaveRequest memberSaveRequest) {
-		memberRepository.findByAccount(memberSaveRequest.account()).ifPresent(member -> {
+		if (memberRepository.existsByAccount(memberSaveRequest.account())) {
 			throw new DuplicateEntityException(Member.class, memberSaveRequest.account());
-		});
+		}
 
 		Address address = Address.create(
 			memberSaveRequest.city(),
@@ -48,23 +50,25 @@ public class MemberService {
 			memberSaveRequest.zipcode()
 		);
 
-		List<MemberRole> memberRoles = memberSaveRequest.roleIds().stream()
-			.map(id -> {
+		List<MemberRole> memberRoles = new ArrayList<>();
+		if (!ObjectUtils.isEmpty(memberSaveRequest.roleIds())) {
+			for (Long id : memberSaveRequest.roleIds()) {
 				Role role = roleRepository.findById(id)
 					.orElseThrow(() -> new EntityNotFoundException(Role.class, id));
 
-				return MemberRole.create(role);
-			})
-			.toList();
+				memberRoles.add(MemberRole.create(role));
+			}
+		}
 
-		List<MemberPermission> memberPermissions = memberSaveRequest.permissionIds().stream()
-			.map(id -> {
+		List<MemberPermission> memberPermissions = new ArrayList<>();
+		if (!ObjectUtils.isEmpty(memberSaveRequest.permissionIds())) {
+			for (Long id : memberSaveRequest.permissionIds()) {
 				Permission permission = permissionRepository.findById(id)
 					.orElseThrow(() -> new EntityNotFoundException(Permission.class, id));
 
-				return MemberPermission.create(permission);
-			})
-			.toList();
+				memberPermissions.add(MemberPermission.create(permission));
+			}
+		}
 
 		Member member = memberRepository.save(
 			Member.create(

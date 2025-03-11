@@ -27,11 +27,11 @@ public class OrderItem extends Base {
     private int orderPrice;
     private int count;
 
-    public static OrderItem create(Item item, int orderPrice, int count) {
+    public static OrderItem create(Item item, int count) {
         OrderItem orderItem = new OrderItem();
 
         orderItem.item = item;
-        orderItem.orderPrice = orderPrice;
+        orderItem.orderPrice = item.getPrice();
         orderItem.count = count;
 
         item.removeQuantity(count);

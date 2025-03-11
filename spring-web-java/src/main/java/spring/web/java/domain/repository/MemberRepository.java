@@ -10,6 +10,8 @@ public interface MemberRepository {
 
 	Optional<Member> findByAccount(String account);
 
+	boolean existsByAccount(String account);
+
 	Member save(Member member);
 
 	void delete(Member member);
