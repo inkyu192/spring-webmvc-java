@@ -7,13 +7,13 @@ import org.springframework.data.redis.core.RedisHash
 class Token private constructor(
     @Id
     val memberId: Long,
-    val refreshToken: String
+    val refreshToken: String,
 ) {
     companion object {
         fun create(memberId: Long, refreshToken: String) =
             Token(
                 memberId = memberId,
-                refreshToken = refreshToken
+                refreshToken = refreshToken,
             )
     }
 }

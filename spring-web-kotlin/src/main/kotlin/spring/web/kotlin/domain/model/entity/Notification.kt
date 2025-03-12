@@ -4,26 +4,32 @@ import jakarta.persistence.*
 
 @Entity
 class Notification protected constructor(
-    @Id
-    @GeneratedValue
-    @Column(name = "notification_id")
-    val id: Long? = null,
     val title: String,
     val message: String,
     val url: String,
-    val isRead: Boolean = false,
+    isRead: Boolean,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    val member: Member
+    var member: Member,
 ) : Base() {
+    @Id
+    @GeneratedValue
+    @Column(name = "notification_id")
+    var id: Long? = null
+        protected set
+
+    var isRead: Boolean = isRead
+        protected set
+
     companion object {
         fun of(member: Member, title: String, message: String, url: String) =
             Notification(
-                member = member,
                 title = title,
                 message = message,
-                url = url
+                url = url,
+                isRead = false,
+                member = member
             )
     }
 }

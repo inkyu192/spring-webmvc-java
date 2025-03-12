@@ -69,11 +69,11 @@ class AuthService(
 
     private fun getPermissions(member: Member): List<String> {
         val rolePermissions = member.memberRoles
-            .flatMap { it.role.rolePermissions }
-            .map { it.permission.name }
+            .flatMap { it.role?.rolePermissions ?: emptyList() }
+            .mapNotNull { it.permission?.name }
 
         val directPermissions = member.memberPermissions
-            .map { it.permission.name }
+            .mapNotNull { it.permission?.name }
 
         return (rolePermissions + directPermissions).distinct()
     }

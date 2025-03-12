@@ -7,10 +7,11 @@ import jakarta.persistence.Id
 
 @Entity
 class Permission protected constructor(
+    val name: String,
+) : Base() {
     @Id
     @GeneratedValue
     @Column(name = "permission_id")
-    val id: Long? = null,
-    val name: String,
-): Base() {
+    var id: Long? = null
+        protected set
 }

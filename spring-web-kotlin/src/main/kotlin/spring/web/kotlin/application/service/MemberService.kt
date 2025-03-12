@@ -13,7 +13,6 @@ import spring.web.kotlin.infrastructure.util.SecurityContextUtil
 import spring.web.kotlin.presentation.dto.request.MemberSaveRequest
 import spring.web.kotlin.presentation.dto.request.MemberUpdateRequest
 import spring.web.kotlin.presentation.dto.response.MemberResponse
-import spring.web.kotlin.presentation.exception.AtLeastOneRequiredException
 import spring.web.kotlin.presentation.exception.DuplicateEntityException
 import spring.web.kotlin.presentation.exception.EntityNotFoundException
 
@@ -28,23 +27,18 @@ class MemberService(
 ) {
     @Transactional
     fun saveMember(memberSaveRequest: MemberSaveRequest): MemberResponse {
-        memberRepository.findByAccount(memberSaveRequest.account)
-            ?.let { throw DuplicateEntityException(Member::class.java, memberSaveRequest.account) }
+        if (memberRepository.existsByAccount(memberSaveRequest.account)) {
+            throw DuplicateEntityException(Member::class.java, memberSaveRequest.account)
+        }
 
-        val address = Address.create(
-            city = memberSaveRequest.city,
-            street = memberSaveRequest.street,
-            zipcode = memberSaveRequest.zipcode,
-        )
-
-        val memberRoles = memberSaveRequest.roleIds?.map {
+        val memberRoles = memberSaveRequest.roleIds.map {
             val role = roleRepository.findByIdOrNull(it)
                 ?: throw EntityNotFoundException(Role::class.java, it)
 
             MemberRole.create(role)
         }
 
-        val memberPermissions = memberSaveRequest.permissionIds?.map {
+        val memberPermissions = memberSaveRequest.permissionIds.map {
             val permission = permissionRepository.findByIdOrNull(it)
                 ?: throw EntityNotFoundException(Permission::class.java, it)
 
@@ -56,7 +50,8 @@ class MemberService(
                 account = memberSaveRequest.account,
                 password = passwordEncoder.encode(memberSaveRequest.password),
                 name = memberSaveRequest.name,
-                address = address,
+                phone = memberSaveRequest.phone,
+                birthDate = memberSaveRequest.birthdate,
                 memberRoles = memberRoles,
                 memberPermissions = memberPermissions
             )
@@ -64,7 +59,7 @@ class MemberService(
 
         eventPublisher.publishEvent(
             NotificationEvent(
-                member.id!!,
+                requireNotNull(member.id),
                 "회원가입 완료",
                 "회원가입을 환영합니다!",
                 "/test/123"
@@ -89,12 +84,10 @@ class MemberService(
             ?: throw EntityNotFoundException(Member::class.java, memberId)
 
         member.update(
+            password = passwordEncoder.encode(memberUpdateRequest.password),
             name = memberUpdateRequest.name,
-            address = Address.create(
-                city = memberUpdateRequest.city,
-                street = memberUpdateRequest.street,
-                zipcode = memberUpdateRequest.zipcode,
-            ),
+            phone = memberUpdateRequest.phone,
+            birthDate = memberUpdateRequest.birthdate,
         )
 
         return MemberResponse(member)

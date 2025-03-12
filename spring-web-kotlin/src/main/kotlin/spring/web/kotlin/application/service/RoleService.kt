@@ -28,6 +28,6 @@ class RoleService(
 
         val role = roleRepository.save(Role.create(roleSaveRequest.name, rolePermissions))
 
-        return RoleResponse(role, role.rolePermissions.map { it.permission })
+        return RoleResponse(role, role.rolePermissions.mapNotNull { it.permission })
     }
 }

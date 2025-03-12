@@ -4,7 +4,9 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import spring.web.kotlin.domain.model.entity.*
+import spring.web.kotlin.domain.model.entity.Member
+import spring.web.kotlin.domain.model.entity.Order
+import spring.web.kotlin.domain.model.entity.OrderItem
 import spring.web.kotlin.domain.model.enums.DeliveryStatus
 import spring.web.kotlin.domain.model.enums.OrderStatus
 import spring.web.kotlin.domain.repository.ItemRepository
@@ -32,11 +34,10 @@ class OrderService(
             val item = itemRepository.findByIdOrNull(orderItem.itemId)
                 ?: throw EntityNotFoundException(OrderItem::class.java, orderItem.itemId)
 
-            OrderItem.create(item, item.price, orderItem.count)
+            OrderItem.create(item, orderItem.count)
         }
 
-        val delivery = Delivery.create(Address.create(city, street, zipcode))
-        val order = orderRepository.save(Order.create(member, delivery, orderItems))
+        val order = orderRepository.save(Order.create(member, orderItems))
 
         return OrderResponse(order)
     }

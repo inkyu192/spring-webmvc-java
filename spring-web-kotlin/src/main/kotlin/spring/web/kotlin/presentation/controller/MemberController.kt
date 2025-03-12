@@ -18,7 +18,7 @@ class MemberController(
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     fun saveMember(@RequestBody @Validated memberSaveRequest: MemberSaveRequest): MemberResponse {
-        if (memberSaveRequest.roleIds.isNullOrEmpty() && memberSaveRequest.permissionIds.isNullOrEmpty()) {
+        if (memberSaveRequest.roleIds.isEmpty() && memberSaveRequest.permissionIds.isEmpty()) {
             throw AtLeastOneRequiredException("roleIds", "permissionIds")
         }
 

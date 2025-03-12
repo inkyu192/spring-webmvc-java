@@ -6,6 +6,7 @@ enum class OrderStatus(
     val description: String
 ) {
     ORDER("주문"),
+    CONFIRM("확정"),
     CANCEL("취소");
 
     companion object {

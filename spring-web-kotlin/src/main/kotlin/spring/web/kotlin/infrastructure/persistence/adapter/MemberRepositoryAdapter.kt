@@ -14,6 +14,8 @@ class MemberRepositoryAdapter(
 
     override fun findByAccount(account: String) = jpaRepository.findByAccount(account)
 
+    override fun existsByAccount(account: String) = jpaRepository.existsByAccount(account)
+
     override fun save(member: Member) = jpaRepository.save(member)
 
     override fun delete(member: Member) {

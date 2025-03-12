@@ -8,5 +8,5 @@ data class ItemSaveRequest(
     val description: String,
     val price: Int,
     val quantity: Int,
-    val category: Category
+    val category: Category,
 )

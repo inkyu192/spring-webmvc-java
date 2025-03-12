@@ -9,7 +9,7 @@ data class RoleResponse(
     val permissions: List<PermissionResponse>
 ) {
     constructor(role: Role, permissions: List<Permission>) : this(
-        id = role.id!!,
+        id = requireNotNull(role.id),
         name = role.name,
         permissions = permissions.map { PermissionResponse(it) }
     )

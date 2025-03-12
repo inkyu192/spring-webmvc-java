@@ -4,15 +4,20 @@ import jakarta.persistence.*
 
 @Entity
 class Role protected constructor(
+    name: String,
+) : Base() {
     @Id
     @GeneratedValue
     @Column(name = "role_id")
-    val id: Long? = null,
-    val name: String,
+    var id: Long? = null
+        protected set
+
+    var name: String = name
+        protected set
 
     @OneToMany(mappedBy = "role", cascade = [(CascadeType.ALL)])
-    private val _rolePermissions: MutableList<RolePermission> = mutableListOf(),
-) : Base() {
+    private val _rolePermissions: MutableList<RolePermission> = mutableListOf()
+
     @get:Transient
     val rolePermissions: List<RolePermission>
         get() = _rolePermissions.toList()
@@ -24,6 +29,6 @@ class Role protected constructor(
 
     fun associatePermission(rolePermission: RolePermission) {
         _rolePermissions.add(rolePermission)
-        rolePermission.role = this
+        rolePermission.associateRole(this)
     }
 }

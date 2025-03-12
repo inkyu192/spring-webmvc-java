@@ -5,29 +5,35 @@ import jakarta.persistence.*
 @Entity
 @Table(name = "order_item")
 class OrderItem protected constructor(
-    @Id
-    @GeneratedValue
-    @Column(name = "order_item_id")
-    val id: Long? = null,
+    val orderPrice: Int,
+    val count: Int,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id", foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    val item: Item,
+    var item: Item,
+) {
+    @Id
+    @GeneratedValue
+    @Column(name = "order_item_id")
+    var id: Long? = null
+        protected set
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id", foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    var order: Order? = null,
+    var order: Order? = null
+        protected set
 
-    val orderPrice: Int,
-    val count: Int
-) : Base() {
     companion object {
-        fun create(item: Item, orderPrice: Int, count: Int) =
+        fun create(item: Item, count: Int) =
             OrderItem(
-                item = item,
-                orderPrice = orderPrice,
-                count = count
+                orderPrice = item.price,
+                count = count,
+                item = item
             ).apply { item.removeQuantity(count) }
+    }
+
+    fun associateOrder(order: Order) {
+        this.order = order
     }
 
     fun cancel() {

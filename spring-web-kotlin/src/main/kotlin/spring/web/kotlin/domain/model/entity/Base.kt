@@ -10,12 +10,13 @@ import java.time.Instant
 
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener::class)
-class Base protected constructor(
-
+class Base protected constructor() {
     @CreatedDate
     @Column(updatable = false)
-    var createdAt: Instant? = null,
+    var createdAt: Instant = Instant.now()
+        protected set
 
     @LastModifiedDate
-    var updatedAt: Instant? = null,
-)
+    var updatedAt: Instant = Instant.now()
+        protected set
+}

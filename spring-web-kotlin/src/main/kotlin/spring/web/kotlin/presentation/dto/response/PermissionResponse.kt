@@ -7,7 +7,7 @@ data class PermissionResponse(
     val name: String
 ) {
     constructor(permission: Permission) : this(
-        id = permission.id!!,
+        id = requireNotNull(permission.id),
         name = permission.name
     )
 }

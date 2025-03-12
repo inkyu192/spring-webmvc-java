@@ -6,18 +6,34 @@ import spring.web.kotlin.presentation.exception.InsufficientQuantityException
 
 @Entity
 class Item protected constructor(
+    name: String,
+    description: String,
+    price: Int,
+    quantity: Int,
+    category: Category,
+) : Base() {
     @Id
     @GeneratedValue
     @Column(name = "item_id")
-    val id: Long? = null,
-    var name: String,
-    var description: String,
-    var price: Int,
-    var quantity: Int,
+    var id: Long? = null
+        protected set
+
+    var name: String = name
+        protected set
+
+    var description: String = description
+        protected set
+
+    var price: Int = price
+        protected set
+
+    var quantity: Int = quantity
+        protected set
 
     @Enumerated(EnumType.STRING)
-    var category: Category
-) : Base() {
+    var category: Category = category
+        protected set
+
     companion object {
         fun create(name: String, description: String, price: Int, quantity: Int, category: Category) =
             Item(
@@ -25,7 +41,7 @@ class Item protected constructor(
                 description = description,
                 price = price,
                 quantity = quantity,
-                category = category
+                category = category,
             )
     }
 
@@ -38,6 +54,7 @@ class Item protected constructor(
     }
 
     fun removeQuantity(quantity: Int) {
+
         val differenceQuantity = this.quantity - quantity
 
         if (differenceQuantity < 0) {

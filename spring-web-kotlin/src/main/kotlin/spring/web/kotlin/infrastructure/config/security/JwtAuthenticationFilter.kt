@@ -37,8 +37,8 @@ class JwtAuthenticationFilter(
     private fun createAuthentication(token: String): Authentication {
         val claims = jwtTokenProvider.parseAccessToken(token)
 
-        val memberId = claims["memberId"] as Long
-        val permissions = claims["permissions"] as List<*>
+        val memberId = claims["memberId"].toString().toLong()
+        val permissions = claims["permissions", List::class.java]
 
         val authorities = permissions.map { SimpleGrantedAuthority(it as String) }
 
