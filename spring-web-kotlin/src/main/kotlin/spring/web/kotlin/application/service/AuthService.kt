@@ -29,29 +29,45 @@ class AuthService(
             ?.takeIf { passwordEncoder.matches(memberLoginRequest.password, it.password) }
             ?: throw BadCredentialsException("잘못된 아이디 또는 비밀번호입니다.")
 
-        val accessToken = jwtTokenProvider.createAccessToken(member.id!!, getPermissions(member))
+        val memberId = requireNotNull(member.id)
+
+        val accessToken = jwtTokenProvider.createAccessToken(
+            memberId = memberId,
+            permissions = getPermissions(member)
+        )
         val refreshToken = jwtTokenProvider.createRefreshToken()
 
-        tokenRepository.save(Token.create(member.id!!, refreshToken))
+        tokenRepository.save(
+            Token.create(
+                memberId = memberId,
+                refreshToken = refreshToken,
+            )
+        )
 
-        return TokenResponse(accessToken, refreshToken)
+        return TokenResponse(
+            accessToken = accessToken,
+            refreshToken = refreshToken,
+        )
     }
 
     fun refreshToken(tokenRequest: TokenRequest): TokenResponse {
-        val memberId = extractMemberId(tokenRequest.accessToken)
+        val requestMemberId = extractMemberId(tokenRequest.accessToken)
         jwtTokenProvider.parseRefreshToken(tokenRequest.refreshToken)
 
-        val member = memberRepository.findByIdOrNull(memberId)
-            ?: throw EntityNotFoundException(Member::class.java, memberId)
+        val member = memberRepository.findByIdOrNull(requestMemberId)
+            ?: throw EntityNotFoundException(Member::class.java, requestMemberId)
 
-        val refreshToken = tokenRepository.findByIdOrNull(memberId)
+        val refreshToken = tokenRepository.findByIdOrNull(requestMemberId)
             ?.refreshToken
             ?.takeIf { tokenRequest.refreshToken == it }
             ?: throw BadCredentialsException("유효하지 않은 인증 정보입니다. 다시 로그인해 주세요.")
 
         return TokenResponse(
-            jwtTokenProvider.createAccessToken(member.id!!, getPermissions(member)),
-            refreshToken
+            accessToken = jwtTokenProvider.createAccessToken(
+                memberId = requireNotNull(member.id),
+                permissions = getPermissions(member),
+            ),
+            refreshToken = refreshToken,
         )
     }
 
@@ -69,11 +85,11 @@ class AuthService(
 
     private fun getPermissions(member: Member): List<String> {
         val rolePermissions = member.memberRoles
-            .flatMap { it.role?.rolePermissions ?: emptyList() }
-            .mapNotNull { it.permission?.name }
+            .flatMap { it.role.rolePermissions }
+            .map { it.permission.name }
 
         val directPermissions = member.memberPermissions
-            .mapNotNull { it.permission?.name }
+            .map { it.permission.name }
 
         return (rolePermissions + directPermissions).distinct()
     }
