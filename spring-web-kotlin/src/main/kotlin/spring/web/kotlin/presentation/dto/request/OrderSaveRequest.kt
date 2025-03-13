@@ -7,6 +7,6 @@ data class OrderSaveRequest(
     val city: String,
     val street: String,
     val zipcode: String,
-    @Size(min = 1)
+    @field:Size(min = 1)
     val orderItems: List<OrderItemSaveRequest> = emptyList(),
 )

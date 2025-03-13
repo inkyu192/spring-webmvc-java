@@ -1,13 +1,15 @@
 package spring.web.java.domain.model.entity;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.springframework.util.StringUtils;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
-import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -32,8 +34,10 @@ public class Member extends Base {
 	@Convert(converter = CryptoAttributeConverter.class)
 	private String name;
 
-	@Embedded
-	private Address address;
+	@Convert(converter = CryptoAttributeConverter.class)
+	private String phone;
+
+	private LocalDate birthDate;
 
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	private List<MemberRole> memberRoles = new ArrayList<>();
@@ -53,7 +57,6 @@ public class Member extends Base {
 		String account,
 		String password,
 		String name,
-		Address address,
 		List<MemberRole> memberRoles,
 		List<MemberPermission> memberPermissions
 	) {
@@ -62,7 +65,6 @@ public class Member extends Base {
 		member.account = account;
 		member.password = password;
 		member.name = name;
-		member.address = address;
 
 		memberRoles.forEach(member::associateRole);
 		memberPermissions.forEach(member::associatePermission);
@@ -72,16 +74,29 @@ public class Member extends Base {
 
 	public void associateRole(MemberRole memberRole) {
 		memberRoles.add(memberRole);
-		memberRole.setMember(this);
+		memberRole.associateMember(this);
 	}
 
 	public void associatePermission(MemberPermission memberPermission) {
 		memberPermissions.add(memberPermission);
-		memberPermission.setMember(this);
+		memberPermission.associateMember(this);
 	}
 
-	public void update(String name, Address address) {
-		this.name = name;
-		this.address = address;
+	public void update(String password, String name, String phone, LocalDate birthDate) {
+		if (StringUtils.hasText(password)) {
+			this.password = password;
+		}
+
+		if (StringUtils.hasText(name)) {
+			this.name = name;
+		}
+
+		if (StringUtils.hasText(phone)) {
+			this.phone = phone;
+		}
+
+		if (birthDate != null) {
+			this.birthDate = birthDate;
+		}
 	}
 }

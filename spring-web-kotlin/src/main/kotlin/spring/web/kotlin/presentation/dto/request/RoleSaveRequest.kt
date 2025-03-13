@@ -4,6 +4,6 @@ import jakarta.validation.constraints.Size
 
 data class RoleSaveRequest(
     val name: String,
-    @Size(min = 1)
+    @field:Size(min = 1)
     val permissionIds: List<Long> = emptyList(),
 )

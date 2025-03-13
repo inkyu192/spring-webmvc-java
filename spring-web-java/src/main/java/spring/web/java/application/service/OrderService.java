@@ -10,13 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import lombok.RequiredArgsConstructor;
-import spring.web.java.domain.model.entity.Address;
-import spring.web.java.domain.model.entity.Delivery;
 import spring.web.java.domain.model.entity.Item;
 import spring.web.java.domain.model.entity.Member;
 import spring.web.java.domain.model.entity.Order;
 import spring.web.java.domain.model.entity.OrderItem;
-import spring.web.java.domain.model.enums.DeliveryStatus;
 import spring.web.java.domain.model.enums.OrderStatus;
 import spring.web.java.domain.repository.ItemRepository;
 import spring.web.java.domain.repository.MemberRepository;
@@ -52,15 +49,9 @@ public class OrderService {
 			}
 		}
 
-		Delivery delivery = Delivery.create(
-			Address.create(
-				orderSaveRequest.city(),
-				orderSaveRequest.street(),
-				orderSaveRequest.zipcode()
-			)
+		Order order = orderRepository.save(
+			Order.create(member, orderItems)
 		);
-
-		Order order = orderRepository.save(Order.create(member, delivery, orderItems));
 
 		return new OrderResponse(order);
 	}
@@ -68,10 +59,9 @@ public class OrderService {
 	public Page<OrderResponse> findOrders(
 		Long memberId,
 		OrderStatus orderStatus,
-		DeliveryStatus deliveryStatus,
 		Pageable pageable
 	) {
-		return orderRepository.findAll(pageable, memberId, orderStatus, deliveryStatus)
+		return orderRepository.findAll(pageable, memberId, orderStatus)
 			.map(OrderResponse::new);
 	}
 

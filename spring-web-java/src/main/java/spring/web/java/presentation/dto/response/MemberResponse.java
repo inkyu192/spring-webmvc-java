@@ -1,6 +1,7 @@
 package spring.web.java.presentation.dto.response;
 
 import java.time.Instant;
+import java.time.LocalDate;
 
 import spring.web.java.domain.model.entity.Member;
 
@@ -8,9 +9,8 @@ public record MemberResponse(
 	Long id,
 	String account,
 	String name,
-	String city,
-	String street,
-	String zipcode,
+	String phone,
+	LocalDate birthDate,
 	Instant createdAt
 ) {
 	public MemberResponse(Member member) {
@@ -18,9 +18,8 @@ public record MemberResponse(
 			member.getId(),
 			member.getAccount(),
 			member.getName(),
-			member.getAddress().getCity(),
-			member.getAddress().getStreet(),
-			member.getAddress().getZipcode(),
+			member.getPhone(),
+			member.getBirthDate(),
 			member.getCreatedAt()
 		);
 	}

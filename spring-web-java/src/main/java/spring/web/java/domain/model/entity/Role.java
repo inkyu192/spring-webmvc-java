@@ -43,6 +43,6 @@ public class Role extends Base {
 
 	public void associatePermission(RolePermission rolePermission) {
 		rolePermissions.add(rolePermission);
-		rolePermission.setRole(this);
+		rolePermission.associateRole(this);
 	}
 }

@@ -12,7 +12,7 @@ data class MemberSaveRequest(
     val name: String,
     @field:Pattern(regexp = "^010-\\d{3,4}-\\d{4}$")
     val phone: String,
-    val birthdate: LocalDate,
+    val birthDate: LocalDate,
     val roleIds: List<Long> = emptyList(),
     val permissionIds: List<Long> = emptyList(),
 )

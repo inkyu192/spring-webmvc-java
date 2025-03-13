@@ -39,7 +39,7 @@ public class RolePermission extends Base {
 		return rolePermission;
 	}
 
-	protected void setRole(Role role) {
+	public void associateRole(Role role) {
 		this.role = role;
 	}
 }

@@ -1,5 +1,7 @@
 package spring.web.java.presentation.dto.response;
 
+import java.time.Instant;
+
 import spring.web.java.domain.model.entity.Item;
 
 public record ItemResponse(
@@ -7,7 +9,8 @@ public record ItemResponse(
 	String name,
 	String description,
 	int price,
-	int quantity
+	int quantity,
+	Instant createdAt
 ) {
 	public ItemResponse(Item item) {
 		this(
@@ -15,7 +18,8 @@ public record ItemResponse(
 			item.getName(),
 			item.getDescription(),
 			item.getPrice(),
-			item.getQuantity()
+			item.getQuantity(),
+			item.getCreatedAt()
 		);
 	}
 }

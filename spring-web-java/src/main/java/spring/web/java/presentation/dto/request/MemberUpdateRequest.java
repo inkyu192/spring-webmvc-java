@@ -1,15 +1,14 @@
 package spring.web.java.presentation.dto.request;
 
-import jakarta.validation.constraints.NotNull;
+import java.time.LocalDate;
+
+import jakarta.validation.constraints.Pattern;
 
 public record MemberUpdateRequest(
-	@NotNull
+	String password,
 	String name,
-	@NotNull
-	String city,
-	@NotNull
-	String street,
-	@NotNull
-	String zipcode
+	@Pattern(regexp = "^010-\\d{3,4}-\\d{4}$")
+	String phone,
+	LocalDate birthDate
 ) {
 }

@@ -29,10 +29,6 @@ class Delivery protected constructor(
     var status: DeliveryStatus = status
         protected set
 
-    @OneToOne(mappedBy = "delivery", fetch = FetchType.LAZY)
-    var order: Order? = null
-        protected set
-
     companion object {
         fun create(city: String, street: String, zipcode: String) =
             Delivery(
@@ -41,13 +37,5 @@ class Delivery protected constructor(
                 zipcode = zipcode,
                 status = DeliveryStatus.READY,
             )
-    }
-
-    fun associateOrder(order: Order) {
-        this.order = order
-    }
-
-    fun cancel() {
-        this.status = DeliveryStatus.CANCEL
     }
 }

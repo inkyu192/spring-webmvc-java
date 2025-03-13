@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional
 import spring.web.kotlin.domain.model.entity.Member
 import spring.web.kotlin.domain.model.entity.Order
 import spring.web.kotlin.domain.model.entity.OrderItem
-import spring.web.kotlin.domain.model.enums.DeliveryStatus
 import spring.web.kotlin.domain.model.enums.OrderStatus
 import spring.web.kotlin.domain.repository.ItemRepository
 import spring.web.kotlin.domain.repository.MemberRepository
@@ -37,7 +36,12 @@ class OrderService(
             OrderItem.create(item, orderItem.count)
         }
 
-        val order = orderRepository.save(Order.create(member, orderItems))
+        val order = orderRepository.save(
+            Order.create(
+                member = member,
+                orderItems = orderItems,
+            )
+        )
 
         return OrderResponse(order)
     }
@@ -45,10 +49,9 @@ class OrderService(
     fun findOrders(
         memberId: Long?,
         orderStatus: OrderStatus?,
-        deliveryStatus: DeliveryStatus?,
         pageable: Pageable
     ): Page<OrderResponse> {
-        return orderRepository.findAll(pageable, memberId, orderStatus, deliveryStatus)
+        return orderRepository.findAll(pageable, memberId, orderStatus)
             .map(::OrderResponse)
     }
 

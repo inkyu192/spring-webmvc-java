@@ -6,12 +6,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import spring.web.java.domain.model.entity.Order;
-import spring.web.java.domain.model.enums.DeliveryStatus;
 import spring.web.java.domain.model.enums.OrderStatus;
 
 public interface OrderRepository {
 
-	Page<Order> findAll(Pageable pageable, Long memberId, OrderStatus orderStatus, DeliveryStatus deliveryStatus);
+	Page<Order> findAll(Pageable pageable, Long memberId, OrderStatus orderStatus);
 
 	Optional<Order> findById(Long id);
 

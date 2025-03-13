@@ -34,7 +34,9 @@ public class RoleService {
 			rolePermissions.add(RolePermission.create(permission));
 		}
 
-		Role role = roleRepository.save(Role.create(roleSaveRequest.name(), rolePermissions));
+		Role role = roleRepository.save(
+			Role.create(roleSaveRequest.name(), rolePermissions)
+		);
 
 		return new RoleResponse(
 			role,

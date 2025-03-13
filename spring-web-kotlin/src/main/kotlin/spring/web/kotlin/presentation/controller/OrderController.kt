@@ -7,7 +7,6 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import spring.web.kotlin.application.service.OrderService
-import spring.web.kotlin.domain.model.enums.DeliveryStatus
 import spring.web.kotlin.domain.model.enums.OrderStatus
 import spring.web.kotlin.infrastructure.aspect.RequestLock
 import spring.web.kotlin.presentation.dto.request.OrderSaveRequest
@@ -29,8 +28,7 @@ class OrderController(
         @PageableDefault pageable: Pageable,
         @RequestParam(required = false) memberId: Long?,
         @RequestParam(required = false) orderStatus: OrderStatus?,
-        @RequestParam(required = false) deliveryStatus: DeliveryStatus?,
-    ) = orderService.findOrders(memberId, orderStatus, deliveryStatus, pageable)
+    ) = orderService.findOrders(memberId, orderStatus, pageable)
 
     @GetMapping("/{id}")
     @PreAuthorize("isAuthenticated()")

@@ -39,7 +39,7 @@ public class OrderItem extends Base {
         return orderItem;
     }
 
-    protected void setOrder(Order order) {
+    public void associateOrder(Order order) {
         this.order = order;
     }
 

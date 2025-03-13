@@ -11,7 +11,6 @@ import org.springframework.util.ObjectUtils;
 
 import lombok.RequiredArgsConstructor;
 import spring.web.java.application.event.NotificationEvent;
-import spring.web.java.domain.model.entity.Address;
 import spring.web.java.domain.model.entity.Member;
 import spring.web.java.domain.model.entity.MemberPermission;
 import spring.web.java.domain.model.entity.MemberRole;
@@ -44,12 +43,6 @@ public class MemberService {
 			throw new DuplicateEntityException(Member.class, memberSaveRequest.account());
 		}
 
-		Address address = Address.create(
-			memberSaveRequest.city(),
-			memberSaveRequest.street(),
-			memberSaveRequest.zipcode()
-		);
-
 		List<MemberRole> memberRoles = new ArrayList<>();
 		if (!ObjectUtils.isEmpty(memberSaveRequest.roleIds())) {
 			for (Long id : memberSaveRequest.roleIds()) {
@@ -75,7 +68,6 @@ public class MemberService {
 				memberSaveRequest.account(),
 				passwordEncoder.encode(memberSaveRequest.password()),
 				memberSaveRequest.name(),
-				address,
 				memberRoles,
 				memberPermissions
 			)
@@ -108,12 +100,10 @@ public class MemberService {
 			.orElseThrow(() -> new EntityNotFoundException(Member.class, memberId));
 
 		member.update(
+			memberUpdateRequest.password(),
 			memberUpdateRequest.name(),
-			Address.create(
-				memberUpdateRequest.city(),
-				memberUpdateRequest.street(),
-				memberUpdateRequest.zipcode()
-			)
+			memberUpdateRequest.phone(),
+			memberUpdateRequest.birthDate()
 		);
 
 		return new MemberResponse(member);

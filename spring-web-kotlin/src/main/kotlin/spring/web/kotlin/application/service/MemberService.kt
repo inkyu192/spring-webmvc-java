@@ -51,7 +51,7 @@ class MemberService(
                 password = passwordEncoder.encode(memberSaveRequest.password),
                 name = memberSaveRequest.name,
                 phone = memberSaveRequest.phone,
-                birthDate = memberSaveRequest.birthdate,
+                birthDate = memberSaveRequest.birthDate,
                 memberRoles = memberRoles,
                 memberPermissions = memberPermissions
             )
@@ -87,7 +87,7 @@ class MemberService(
             password = passwordEncoder.encode(memberUpdateRequest.password),
             name = memberUpdateRequest.name,
             phone = memberUpdateRequest.phone,
-            birthDate = memberUpdateRequest.birthdate,
+            birthDate = memberUpdateRequest.birthDate,
         )
 
         return MemberResponse(member)

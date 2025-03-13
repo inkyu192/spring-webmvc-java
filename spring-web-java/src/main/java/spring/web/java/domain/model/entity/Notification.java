@@ -25,7 +25,7 @@ public class Notification extends Base {
 	private String title;
 	private String message;
 	private String url;
-	private boolean isRead = false;
+	private boolean isRead;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))

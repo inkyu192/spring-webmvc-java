@@ -9,5 +9,5 @@ data class MemberUpdateRequest(
     val name: String?,
     @field:Pattern(regexp = "^010-\\d{3,4}-\\d{4}$")
     val phone: String?,
-    val birthdate: LocalDate?,
+    val birthDate: LocalDate?,
 )

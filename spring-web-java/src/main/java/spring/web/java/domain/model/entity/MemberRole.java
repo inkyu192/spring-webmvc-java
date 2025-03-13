@@ -39,7 +39,7 @@ public class MemberRole extends Base {
 		return memberRole;
 	}
 
-	protected void setMember(Member member) {
+	public void associateMember(Member member) {
 		this.member = member;
 	}
 }

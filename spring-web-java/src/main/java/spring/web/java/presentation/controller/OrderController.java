@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import spring.web.java.application.service.OrderService;
-import spring.web.java.domain.model.enums.DeliveryStatus;
 import spring.web.java.domain.model.enums.OrderStatus;
 import spring.web.java.infrastructure.aspect.RequestLock;
 import spring.web.java.presentation.dto.request.OrderSaveRequest;
@@ -43,10 +42,9 @@ public class OrderController {
 	public Page<OrderResponse> findOrders(
 		@PageableDefault Pageable pageable,
 		@RequestParam(required = false) Long memberId,
-		@RequestParam(required = false) OrderStatus orderStatus,
-		@RequestParam(required = false) DeliveryStatus deliveryStatus
+		@RequestParam(required = false) OrderStatus orderStatus
 	) {
-		return orderService.findOrders(memberId, orderStatus, deliveryStatus, pageable);
+		return orderService.findOrders(memberId, orderStatus, pageable);
 	}
 
 	@GetMapping("/{id}")

@@ -18,12 +18,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import spring.web.java.domain.model.enums.DeliveryStatus;
 import spring.web.java.domain.model.enums.OrderStatus;
 import spring.web.java.presentation.exception.OrderCancelNotAllowedException;
 
@@ -45,10 +43,6 @@ public class Order extends Base {
 	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
 	private List<OrderItem> orderItems = new ArrayList<>();
 
-	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "delivery_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-	private Delivery delivery;
-
 	private Instant orderedAt;
 
 	@Enumerated(EnumType.STRING)
@@ -58,35 +52,28 @@ public class Order extends Base {
 		return Collections.unmodifiableList(orderItems);
 	}
 
-	public static Order create(Member member, Delivery delivery, List<OrderItem> orderItems) {
+	public static Order create(Member member, List<OrderItem> orderItems) {
 		Order order = new Order();
 
-		order.member = member;
-		order.associateDelivery(delivery);
-		orderItems.forEach(order::associateItem);
-		order.status = OrderStatus.ORDER;
 		order.orderedAt = Instant.now();
+		order.status = OrderStatus.ORDER;
+		order.member = member;
+		orderItems.forEach(order::associateItem);
 
 		return order;
 	}
 
 	public void associateItem(OrderItem orderItem) {
 		orderItems.add(orderItem);
-		orderItem.setOrder(this);
-	}
-
-	public void associateDelivery(Delivery delivery) {
-		this.delivery = delivery;
-		delivery.setOrder(this);
+		orderItem.associateOrder(this);
 	}
 
 	public void cancel() {
-		if (delivery.getStatus() == DeliveryStatus.COMP) {
-			throw new OrderCancelNotAllowedException(this.id);
+		if (status == OrderStatus.CONFIRM) {
+			throw new OrderCancelNotAllowedException(id);
 		}
 
 		status = OrderStatus.CANCEL;
 		orderItems.forEach(OrderItem::cancel);
-		delivery.cancel();
 	}
 }

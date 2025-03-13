@@ -51,7 +51,7 @@ class Order protected constructor(
     fun cancel() {
         val id = requireNotNull(this.id)
 
-        if (this.status == OrderStatus.CONFIRM) {
+        if (status == OrderStatus.CONFIRM) {
             throw OrderCancelNotAllowedException(id)
         }
 

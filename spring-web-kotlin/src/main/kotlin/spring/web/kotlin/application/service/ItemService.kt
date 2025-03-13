@@ -18,11 +18,11 @@ class ItemService(
     fun saveItem(itemSaveRequest: ItemSaveRequest): ItemResponse {
         val item = itemRepository.save(
             Item.create(
-                itemSaveRequest.name,
-                itemSaveRequest.description,
-                itemSaveRequest.price,
-                itemSaveRequest.quantity,
-                itemSaveRequest.category,
+                name = itemSaveRequest.name,
+                description = itemSaveRequest.description,
+                price = itemSaveRequest.price,
+                quantity = itemSaveRequest.quantity,
+                category = itemSaveRequest.category,
             )
         )
 
@@ -46,11 +46,11 @@ class ItemService(
 
     private fun updateItem(item: Item, itemSaveRequest: ItemSaveRequest): ItemResponse {
         item.update(
-            itemSaveRequest.name,
-            itemSaveRequest.description,
-            itemSaveRequest.price,
-            itemSaveRequest.quantity,
-            itemSaveRequest.category,
+            name = itemSaveRequest.name,
+            description = itemSaveRequest.description,
+            price = itemSaveRequest.price,
+            quantity = itemSaveRequest.quantity,
+            category = itemSaveRequest.category,
         )
 
         return ItemResponse(item)
