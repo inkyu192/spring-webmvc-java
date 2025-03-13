@@ -29,7 +29,7 @@ class AuthService(
             ?.takeIf { passwordEncoder.matches(memberLoginRequest.password, it.password) }
             ?: throw BadCredentialsException("잘못된 아이디 또는 비밀번호입니다.")
 
-        val memberId = requireNotNull(member.id)
+        val memberId = checkNotNull(member.id)
 
         val accessToken = jwtTokenProvider.createAccessToken(
             memberId = memberId,
@@ -64,7 +64,7 @@ class AuthService(
 
         return TokenResponse(
             accessToken = jwtTokenProvider.createAccessToken(
-                memberId = requireNotNull(member.id),
+                memberId = checkNotNull(member.id),
                 permissions = getPermissions(member),
             ),
             refreshToken = refreshToken,

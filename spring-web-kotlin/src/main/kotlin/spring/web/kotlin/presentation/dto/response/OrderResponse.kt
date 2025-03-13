@@ -12,7 +12,7 @@ data class OrderResponse(
     val orderItems: List<OrderItemResponse>
 ) {
     constructor(order: Order) : this(
-        id = requireNotNull(order.id),
+        id = checkNotNull(order.id),
         name = order.member.name,
         orderedAt = order.orderedAt,
         status = order.status,

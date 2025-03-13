@@ -59,7 +59,7 @@ class MemberService(
 
         eventPublisher.publishEvent(
             NotificationEvent(
-                requireNotNull(member.id),
+                checkNotNull(member.id),
                 "회원가입 완료",
                 "회원가입을 환영합니다!",
                 "/test/123"

@@ -12,7 +12,7 @@ data class ItemResponse(
     val createdAt: Instant,
 ) {
     constructor(item: Item) : this(
-        id = requireNotNull(item.id),
+        id = checkNotNull(item.id),
         name = item.name,
         description = item.description,
         price = item.price,

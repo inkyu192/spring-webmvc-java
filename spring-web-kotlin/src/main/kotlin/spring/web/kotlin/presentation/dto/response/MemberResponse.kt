@@ -13,7 +13,7 @@ data class MemberResponse(
     val createdAt: Instant,
 ) {
     constructor(member: Member) : this(
-        id = requireNotNull(member.id),
+        id = checkNotNull(member.id),
         account = member.account,
         name = member.name,
         phone = member.phone,
