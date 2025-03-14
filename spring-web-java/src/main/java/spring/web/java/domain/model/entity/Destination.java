@@ -4,28 +4,25 @@ import jakarta.persistence.Column;
 import jakarta.persistence.ConstraintMode;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import spring.web.java.domain.converter.CryptoAttributeConverter;
-import spring.web.java.domain.model.enums.DeliveryStatus;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Delivery extends Base {
+public class Destination extends Base {
 
 	@Id
 	@GeneratedValue
-	@Column(name = "delivery_id")
+	@Column(name = "address_id")
 	private Long id;
 
 	@Convert(converter = CryptoAttributeConverter.class)
@@ -37,24 +34,29 @@ public class Delivery extends Base {
 
 	@Convert(converter = CryptoAttributeConverter.class)
 	private String address;
+	private boolean isDefault;
 
-	@Enumerated(EnumType.STRING)
-	private DeliveryStatus status;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "member_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+	private Member member;
 
-	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "order_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-	private Order order;
+	public static Destination create(
+		Member member,
+		String recipient,
+		String phone,
+		String zipcode,
+		String address,
+		boolean isDefault
+	) {
+		Destination destination = new Destination();
 
-	public static Delivery create(Order order, Destination destination) {
-		Delivery delivery = new Delivery();
+		destination.member = member;
+		destination.recipient = recipient;
+		destination.phone = phone;
+		destination.zipcode = zipcode;
+		destination.address = address;
+		destination.isDefault = isDefault;
 
-		delivery.order = order;
-		delivery.status = DeliveryStatus.READY;
-		delivery.recipient = destination.getRecipient();
-		delivery.phone = destination.getPhone();
-		delivery.address = destination.getAddress();
-		delivery.zipcode = destination.getZipcode();
-
-		return delivery;
+		return destination;
 	}
 }

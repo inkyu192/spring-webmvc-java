@@ -2,16 +2,15 @@ package spring.web.kotlin.domain.model.entity
 
 import jakarta.persistence.*
 import spring.web.kotlin.domain.converter.CryptoAttributeConverter
-import spring.web.kotlin.domain.model.enums.DeliveryStatus
 
 @Entity
-class Delivery protected constructor(
+class Destination protected constructor(
     recipient: String,
     phone: String,
     zipcode: String,
     address: String,
-    status: DeliveryStatus,
-    order: Order,
+    isDefault: Boolean,
+    member: Member,
 ) : Base() {
     @Id
     @GeneratedValue
@@ -34,24 +33,29 @@ class Delivery protected constructor(
     var address: String = address
         protected set
 
-    @Enumerated(EnumType.STRING)
-    var status: DeliveryStatus = status
+    var isDefault: Boolean = isDefault
         protected set
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id", foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    var order: Order = order
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    var member: Member = member
         protected set
 
     companion object {
-        fun create(order: Order, destination: Destination) =
-            Delivery(
-                order = order,
-                recipient = destination.recipient,
-                phone = destination.phone,
-                zipcode = destination.zipcode,
-                address = destination.address,
-                status = DeliveryStatus.READY,
-            )
+        fun create(
+            member: Member,
+            recipient: String,
+            phone: String,
+            zipcode: String,
+            address: String,
+            isDefault: Boolean
+        ) = Destination(
+            recipient = recipient,
+            phone = phone,
+            zipcode = zipcode,
+            address = address,
+            isDefault = isDefault,
+            member = member
+        )
     }
 }
