@@ -3,7 +3,7 @@ services:
     image: mysql:latest
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: shop
+      MYSQL_DATABASE: my_db
       MYSQL_USER: my_user
       MYSQL_PASSWORD: my_password
     ports:
@@ -12,7 +12,7 @@ services:
   postgres:
     image: postgres:latest
     environment:
-      POSTGRES_DB: shop
+      POSTGRES_DB: my_db
       POSTGRES_USER: my_user
       POSTGRES_PASSWORD: my_password
     ports:
