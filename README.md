@@ -1,7 +1,8 @@
-## 기술 스택
-- **Language & Framework:** Java, Kotlin, Spring Boot, JPA, QueryDSL
+## 개발 환경
+- **Language & Framework:** Java, Kotlin, Spring Web, Spring Data JPA, QueryDSL
 - **Database:** MySQL, PostgreSQL, Redis
-- **Etc:** Docker, Docker Compose, IntelliJ, Gradle
+- **Test:** JUnit5, Kotest, Mockito
+- **Etc:** Docker, Docker Compose, Gradle
 
 ---
 
