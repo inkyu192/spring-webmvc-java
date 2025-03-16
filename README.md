@@ -1,5 +1,5 @@
 ## 개발 환경
-- **Language & Framework:** Java, Kotlin, Spring Boot, JPA, QueryDSL
+- **Language & Framework:** Java, Kotlin, Spring Web, Spring Data JPA, QueryDSL
 - **Database:** MySQL, PostgreSQL, Redis
 - **Test:** JUnit5, Kotest, Mockito
 - **Etc:** Docker, Docker Compose, Gradle
