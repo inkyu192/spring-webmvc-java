@@ -2,14 +2,14 @@ package spring.web.java.infrastructure.persistence.adapter;
 
 import java.util.Optional;
 
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
 import spring.web.java.domain.model.entity.Role;
 import spring.web.java.domain.repository.RoleRepository;
 import spring.web.java.infrastructure.persistence.RoleJpaRepository;
 
-@Repository
+@Component
 @RequiredArgsConstructor
 public class RoleRepositoryAdapter implements RoleRepository {
 

@@ -9,7 +9,7 @@ import java.util.Objects;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
 import com.querydsl.core.types.Order;
@@ -21,7 +21,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import spring.web.java.domain.model.entity.Item;
 
-@Component
+@Repository
 public class ItemQuerydslRepository {
 
 	private final JPAQueryFactory queryFactory;

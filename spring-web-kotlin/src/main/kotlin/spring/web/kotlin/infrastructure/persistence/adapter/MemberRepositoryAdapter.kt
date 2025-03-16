@@ -1,12 +1,12 @@
 package spring.web.kotlin.infrastructure.persistence.adapter
 
 import org.springframework.data.repository.findByIdOrNull
-import org.springframework.stereotype.Repository
+import org.springframework.stereotype.Component
 import spring.web.kotlin.domain.model.entity.Member
 import spring.web.kotlin.domain.repository.MemberRepository
 import spring.web.kotlin.infrastructure.persistence.MemberJpaRepository
 
-@Repository
+@Component
 class MemberRepositoryAdapter(
     private val jpaRepository: MemberJpaRepository
 ) : MemberRepository {

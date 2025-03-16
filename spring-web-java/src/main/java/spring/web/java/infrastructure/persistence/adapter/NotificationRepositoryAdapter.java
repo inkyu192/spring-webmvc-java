@@ -1,13 +1,13 @@
 package spring.web.java.infrastructure.persistence.adapter;
 
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
 import spring.web.java.domain.model.entity.Notification;
 import spring.web.java.domain.repository.NotificationRepository;
 import spring.web.java.infrastructure.persistence.NotificationJpaRepository;
 
-@Repository
+@Component
 @RequiredArgsConstructor
 public class NotificationRepositoryAdapter implements NotificationRepository {
 

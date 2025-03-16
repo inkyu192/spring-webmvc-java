@@ -2,13 +2,13 @@ package spring.web.kotlin.infrastructure.persistence.adapter
 
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
-import org.springframework.stereotype.Repository
+import org.springframework.stereotype.Component
 import spring.web.kotlin.domain.model.entity.Item
 import spring.web.kotlin.domain.repository.ItemRepository
 import spring.web.kotlin.infrastructure.persistence.ItemJpaRepository
 import spring.web.kotlin.infrastructure.persistence.ItemQuerydslRepository
 
-@Repository
+@Component
 class ItemRepositoryAdapter(
     private val jpaRepository: ItemJpaRepository,
     private val querydslRepository: ItemQuerydslRepository,

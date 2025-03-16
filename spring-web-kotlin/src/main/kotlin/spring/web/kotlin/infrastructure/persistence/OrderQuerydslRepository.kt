@@ -5,13 +5,13 @@ import jakarta.persistence.EntityManager
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
-import org.springframework.stereotype.Component
+import org.springframework.stereotype.Repository
 import spring.web.kotlin.domain.model.entity.Order
 import spring.web.kotlin.domain.model.entity.QMember.member
 import spring.web.kotlin.domain.model.entity.QOrder.order
 import spring.web.kotlin.domain.model.enums.OrderStatus
 
-@Component
+@Repository
 class OrderQuerydslRepository(
     entityManager: EntityManager
 ) {

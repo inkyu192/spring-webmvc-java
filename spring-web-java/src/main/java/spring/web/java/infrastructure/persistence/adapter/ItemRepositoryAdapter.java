@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
 import spring.web.java.domain.model.entity.Item;
@@ -13,7 +13,7 @@ import spring.web.java.domain.repository.ItemRepository;
 import spring.web.java.infrastructure.persistence.ItemJpaRepository;
 import spring.web.java.infrastructure.persistence.ItemQuerydslRepository;
 
-@Repository
+@Component
 @RequiredArgsConstructor
 public class ItemRepositoryAdapter implements ItemRepository {
 

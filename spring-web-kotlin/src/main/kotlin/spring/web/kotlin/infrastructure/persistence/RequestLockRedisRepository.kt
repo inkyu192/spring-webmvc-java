@@ -1,10 +1,10 @@
 package spring.web.kotlin.infrastructure.persistence
 
 import org.springframework.data.redis.core.RedisTemplate
-import org.springframework.stereotype.Component
+import org.springframework.stereotype.Repository
 import java.time.Duration
 
-@Component
+@Repository
 class RequestLockRedisRepository(
     private val redisTemplate: RedisTemplate<String, String>
 ) {

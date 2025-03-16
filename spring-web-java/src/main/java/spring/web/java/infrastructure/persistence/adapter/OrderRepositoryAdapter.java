@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
 import spring.web.java.domain.model.entity.Order;
@@ -13,7 +13,7 @@ import spring.web.java.domain.repository.OrderRepository;
 import spring.web.java.infrastructure.persistence.OrderJpaRepository;
 import spring.web.java.infrastructure.persistence.OrderQuerydslRepository;
 
-@Repository
+@Component
 @RequiredArgsConstructor
 public class OrderRepositoryAdapter implements OrderRepository {
 

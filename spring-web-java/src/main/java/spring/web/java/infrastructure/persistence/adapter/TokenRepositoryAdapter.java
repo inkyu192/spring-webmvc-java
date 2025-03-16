@@ -2,14 +2,14 @@ package spring.web.java.infrastructure.persistence.adapter;
 
 import java.util.Optional;
 
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
 import spring.web.java.domain.model.entity.Token;
 import spring.web.java.domain.repository.TokenRepository;
 import spring.web.java.infrastructure.persistence.TokenRedisRepository;
 
-@Repository
+@Component
 @RequiredArgsConstructor
 public class TokenRepositoryAdapter implements TokenRepository {
 

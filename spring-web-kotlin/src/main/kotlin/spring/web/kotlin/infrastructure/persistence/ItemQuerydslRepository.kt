@@ -8,12 +8,12 @@ import jakarta.persistence.EntityManager
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
-import org.springframework.stereotype.Component
+import org.springframework.stereotype.Repository
 import spring.web.kotlin.domain.model.entity.Item
 import spring.web.kotlin.domain.model.entity.QItem.item
 import spring.web.kotlin.domain.model.entity.QOrderItem.orderItem
 
-@Component
+@Repository
 class ItemQuerydslRepository(
     entityManager: EntityManager
 ) {
