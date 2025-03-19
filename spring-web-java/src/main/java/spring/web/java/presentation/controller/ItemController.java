@@ -32,14 +32,14 @@ public class ItemController {
 	private final ItemService itemService;
 
 	@PostMapping
-	@PreAuthorize("hasAuthority('ITEM_CREATE')")
+	@PreAuthorize("hasAuthority('ITEM_WRITER')")
 	@ResponseStatus(HttpStatus.CREATED)
 	public ItemResponse saveItem(@RequestBody @Validated ItemSaveRequest itemSaveRequest) {
 		return itemService.saveItem(itemSaveRequest);
 	}
 
 	@GetMapping
-	@PreAuthorize("hasAuthority('ITEM_READ')")
+	@PreAuthorize("hasAuthority('ITEM_READER')")
 	public Page<ItemResponse> findItems(
 		@PageableDefault Pageable pageable,
 		@RequestParam(required = false) String name
@@ -48,13 +48,13 @@ public class ItemController {
 	}
 
 	@GetMapping("/{id}")
-	@PreAuthorize("hasAuthority('ITEM_READ')")
+	@PreAuthorize("hasAuthority('ITEM_READER')")
 	public ItemResponse findItem(@PathVariable Long id) {
 		return itemService.findItem(id);
 	}
 
 	@PutMapping("/{id}")
-	@PreAuthorize("hasAuthority('ITEM_UPDATE')")
+	@PreAuthorize("hasAuthority('ITEM_WRITER')")
 	public ResponseEntity<ItemResponse> putItem(
 		@PathVariable Long id,
 		@RequestBody @Validated ItemSaveRequest itemSaveRequest
@@ -68,7 +68,7 @@ public class ItemController {
 	}
 
 	@DeleteMapping("/{id}")
-	@PreAuthorize("hasAuthority('ITEM_DELETE')")
+	@PreAuthorize("hasAuthority('ITEM_WRITER')")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void deleteItem(@PathVariable Long id) {
 		itemService.deleteItem(id);

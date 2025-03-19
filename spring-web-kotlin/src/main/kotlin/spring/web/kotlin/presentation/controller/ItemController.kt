@@ -17,21 +17,21 @@ class ItemController(
     private val itemService: ItemService
 ) {
     @PostMapping
-    @PreAuthorize("hasAuthority('ITEM_CREATE')")
+    @PreAuthorize("hasAuthority('ITEM_WRITER')")
     @ResponseStatus(HttpStatus.CREATED)
     fun saveItem(@RequestBody @Validated itemSaveRequest: ItemSaveRequest) = itemService.saveItem(itemSaveRequest)
 
     @GetMapping
-    @PreAuthorize("hasAuthority('ITEM_READ')")
+    @PreAuthorize("hasAuthority('ITEM_READER')")
     fun findItems(@PageableDefault pageable: Pageable, @RequestParam(required = false) name: String?) =
         itemService.findItems(pageable, name)
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('ITEM_READ')")
+    @PreAuthorize("hasAuthority('ITEM_READER')")
     fun findItem(@PathVariable id: Long) = itemService.findItem(id)
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('ITEM_UPDATE')")
+    @PreAuthorize("hasAuthority('ITEM_WRITER')")
     fun putItem(
         @PathVariable id: Long,
         @RequestBody @Validated itemSaveRequest: ItemSaveRequest
@@ -43,7 +43,7 @@ class ItemController(
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('ITEM_DELETE')")
+    @PreAuthorize("hasAuthority('ITEM_WRITER')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun deleteItem(@PathVariable id: Long) {
         itemService.deleteItem(id)
