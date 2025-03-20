@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MemberPermission extends Base {
+public class MemberPermission {
 
 	@Id
 	@GeneratedValue
