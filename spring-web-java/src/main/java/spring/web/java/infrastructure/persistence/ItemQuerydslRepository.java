@@ -18,28 +18,25 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
-import jakarta.persistence.EntityManager;
+import lombok.RequiredArgsConstructor;
 import spring.web.java.domain.model.entity.Item;
 
 @Repository
+@RequiredArgsConstructor
 public class ItemQuerydslRepository {
 
-	private final JPAQueryFactory queryFactory;
-
-	public ItemQuerydslRepository(EntityManager entityManager) {
-		this.queryFactory = new JPAQueryFactory(entityManager);
-	}
+	private final JPAQueryFactory jpaQueryFactory;
 
 	public Page<Item> findAll(Pageable pageable, String name) {
 		long count = Objects.requireNonNullElse(
-			queryFactory
+			jpaQueryFactory
 				.select(item.count())
 				.from(item)
 				.where(likeName(name))
 				.fetchOne(), 0L
 		);
 
-		List<Item> content = queryFactory
+		List<Item> content = jpaQueryFactory
 			.selectFrom(item)
 			.where(likeName(name))
 			.orderBy(createOrderSpecifier())

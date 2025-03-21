@@ -14,22 +14,19 @@ import org.springframework.stereotype.Repository;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
-import jakarta.persistence.EntityManager;
+import lombok.RequiredArgsConstructor;
 import spring.web.java.domain.model.entity.Order;
 import spring.web.java.domain.model.enums.OrderStatus;
 
 @Repository
+@RequiredArgsConstructor
 public class OrderQuerydslRepository {
 
-	private final JPAQueryFactory queryFactory;
-
-	public OrderQuerydslRepository(EntityManager entityManager) {
-		this.queryFactory = new JPAQueryFactory(entityManager);
-	}
+	private final JPAQueryFactory jpaQueryFactory;
 
 	public Page<Order> findAll(Pageable pageable, Long memberId, OrderStatus orderStatus) {
 		long count = Objects.requireNonNullElse(
-			queryFactory
+			jpaQueryFactory
 				.select(order.count())
 				.from(order)
 				.join(order.member, member)
@@ -37,7 +34,7 @@ public class OrderQuerydslRepository {
 				.fetchOne(), 0L
 		);
 
-		List<Order> content = queryFactory
+		List<Order> content = jpaQueryFactory
 			.selectFrom(order)
 			.join(order.member, member).fetchJoin()
 			.where(eqMemberId(memberId), eqOrderStatus(orderStatus))
