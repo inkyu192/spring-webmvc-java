@@ -12,8 +12,6 @@ import jakarta.servlet.FilterChain
 import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.mock.web.MockHttpServletResponse
 import org.springframework.security.core.context.SecurityContextHolder
-import spring.web.kotlin.infrastructure.config.security.JwtAuthenticationFilter
-import spring.web.kotlin.infrastructure.config.security.JwtTokenProvider
 
 class JwtAuthenticationFilterTest : DescribeSpec({
     val filterChain = mockk<FilterChain>(relaxed = true)
@@ -66,7 +64,7 @@ class JwtAuthenticationFilterTest : DescribeSpec({
 
                 every { jwtTokenProvider.parseAccessToken(any()) } returns claims
                 every { claims["memberId"] } returns memberId
-                every { claims["permissions"] } returns permissions
+                every { claims["permissions", List::class.java] } returns permissions
 
                 request.addHeader("Authorization", "Bearer $token")
 
