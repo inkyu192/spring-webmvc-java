@@ -1,7 +1,6 @@
 package spring.web.kotlin.infrastructure.persistence
 
 import com.querydsl.jpa.impl.JPAQueryFactory
-import jakarta.persistence.EntityManager
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
@@ -13,19 +12,17 @@ import spring.web.kotlin.domain.model.enums.OrderStatus
 
 @Repository
 class OrderQuerydslRepository(
-    entityManager: EntityManager
+    private val jpaQueryFactory: JPAQueryFactory,
 ) {
-    private val queryFactory = JPAQueryFactory(entityManager)
-
     fun findAll(pageable: Pageable, memberId: Long?, orderStatus: OrderStatus?): Page<Order> {
-        val count = queryFactory
+        val count = jpaQueryFactory
             .select(order.count())
             .from(order)
             .join(order.member, member)
             .where(eqMemberId(memberId), eqOrderStatus(orderStatus))
             .fetchOne() ?: 0L
 
-        val content = queryFactory
+        val content = jpaQueryFactory
             .selectFrom(order)
             .join(order.member, member).fetchJoin()
             .where(eqMemberId(memberId), eqOrderStatus(orderStatus))

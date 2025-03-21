@@ -4,7 +4,6 @@ import com.querydsl.core.types.Order
 import com.querydsl.core.types.OrderSpecifier
 import com.querydsl.jpa.JPAExpressions
 import com.querydsl.jpa.impl.JPAQueryFactory
-import jakarta.persistence.EntityManager
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
@@ -15,18 +14,16 @@ import spring.web.kotlin.domain.model.entity.QOrderItem.orderItem
 
 @Repository
 class ItemQuerydslRepository(
-    entityManager: EntityManager
+    private val jpaQueryFactory: JPAQueryFactory,
 ) {
-    private val queryFactory = JPAQueryFactory(entityManager)
-
     fun findAll(pageable: Pageable, name: String?): Page<Item> {
-        val count = queryFactory
+        val count = jpaQueryFactory
             .select(item.count())
             .from(item)
             .where(likeName(name))
             .fetchOne() ?: 0
 
-        val content = queryFactory
+        val content = jpaQueryFactory
             .selectFrom(item)
             .where(likeName(name))
             .orderBy(createOrderSpecifier())
