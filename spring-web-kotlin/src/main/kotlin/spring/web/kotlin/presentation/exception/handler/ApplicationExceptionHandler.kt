@@ -12,13 +12,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
 import org.springframework.web.servlet.resource.NoResourceFoundException
 import spring.web.kotlin.presentation.exception.AtLeastOneRequiredException
-import spring.web.kotlin.presentation.exception.BusinessException
+import spring.web.kotlin.presentation.exception.AbstractHttpException
 
 @RestControllerAdvice
 class ApplicationExceptionHandler {
 
-    @ExceptionHandler(BusinessException::class)
-    fun handleBusinessException(e: BusinessException) =
+    @ExceptionHandler(AbstractHttpException::class)
+    fun handleBusinessException(e: AbstractHttpException) =
         ProblemDetail.forStatusAndDetail(e.httpStatus, e.message).apply {
             if (e is AtLeastOneRequiredException) {
                 setProperty("fields", e.fields)
