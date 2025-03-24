@@ -1,28 +1,23 @@
 package spring.web.kotlin.infrastructure.persistence
 
+import com.querydsl.jpa.impl.JPAQueryFactory
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
-import io.mockk.mockk
-import jakarta.persistence.EntityManager
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
-import org.springframework.boot.test.mock.mockito.MockBean
-import org.springframework.data.domain.Page
+import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
-import spring.web.kotlin.domain.converter.CryptoAttributeConverter
 import spring.web.kotlin.domain.model.entity.Item
 import spring.web.kotlin.domain.model.enums.Category
-import spring.web.kotlin.infrastructure.util.crypto.CryptoUtil
+import spring.web.kotlin.infrastructure.config.DataJpaTestConfig
 
 @DataJpaTest
+@Import(DataJpaTestConfig::class)
 class ItemQuerydslRepositoryTest(
-    @MockBean
-    private val cryptoUtil: CryptoUtil,
-    private val entityManager: EntityManager,
+    jpaQueryFactory: JPAQueryFactory,
     private val itemJpaRepository: ItemJpaRepository,
 ) : DescribeSpec({
-    val itemQuerydslRepository = ItemQuerydslRepository(entityManager)
+    val itemQuerydslRepository = ItemQuerydslRepository(jpaQueryFactory)
 
     describe("findAll 은") {
         it("name 을 필털링하고 페이징 되어서 조회한다") {

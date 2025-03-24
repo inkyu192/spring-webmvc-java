@@ -8,33 +8,32 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import jakarta.persistence.EntityManager;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+
 import spring.web.java.domain.model.entity.Item;
 import spring.web.java.domain.model.enums.Category;
-import spring.web.java.infrastructure.util.crypto.CryptoUtil;
+import spring.web.java.infrastructure.config.DataJpaTestConfig;
 
 @DataJpaTest
+@Import(DataJpaTestConfig.class)
 class ItemQuerydslRepositoryTest {
 
 	@Autowired
-	private EntityManager entityManager;
+	private JPAQueryFactory jpaQueryFactory;
 
 	@Autowired
 	private ItemJpaRepository itemJpaRepository;
-
-	@MockBean
-	private CryptoUtil cryptoUtil;
 
 	private ItemQuerydslRepository itemQuerydslRepository;
 
 	@BeforeEach
 	void setUp() {
-		itemQuerydslRepository = new ItemQuerydslRepository(entityManager);
+		itemQuerydslRepository = new ItemQuerydslRepository(jpaQueryFactory);
 	}
 
 	@Test
