@@ -6,7 +6,7 @@ import java.util.List;
 import lombok.Getter;
 
 @Getter
-public class AtLeastOneRequiredException extends ValidationFailedException {
+public class AtLeastOneRequiredException extends AbstractValidationException {
 
 	private final List<String> fields;
 

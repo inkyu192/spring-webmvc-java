@@ -18,13 +18,13 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import spring.web.java.presentation.exception.AtLeastOneRequiredException;
-import spring.web.java.presentation.exception.BusinessException;
+import spring.web.java.presentation.exception.AbstractHttpException;
 
 @RestControllerAdvice
 public class ApplicationExceptionHandler {
 
-	@ExceptionHandler(BusinessException.class)
-	public ProblemDetail handleBusinessException(BusinessException e) {
+	@ExceptionHandler(AbstractHttpException.class)
+	public ProblemDetail handleBusinessException(AbstractHttpException e) {
 		ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(e.getHttpStatus(), e.getMessage());
 
 		if (e instanceof AtLeastOneRequiredException atLeastOneRequiredException) {

@@ -2,7 +2,7 @@ package spring.web.java.presentation.exception;
 
 import org.springframework.http.HttpStatus;
 
-public class InsufficientQuantityException extends BusinessException {
+public class InsufficientQuantityException extends AbstractHttpException {
 
 	public InsufficientQuantityException(String productName, int requestedQuantity, int availableStock) {
 		super(

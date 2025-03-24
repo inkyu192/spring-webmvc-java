@@ -5,9 +5,9 @@ import org.springframework.http.HttpStatus;
 import lombok.Getter;
 
 @Getter
-public abstract class ValidationFailedException extends BusinessException {
+public abstract class AbstractValidationException extends AbstractHttpException {
 
-	public ValidationFailedException(String message) {
+	public AbstractValidationException(String message) {
 		super(message, HttpStatus.BAD_REQUEST);
 	}
 }
