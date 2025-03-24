@@ -68,6 +68,8 @@ public class MemberService {
 				memberSaveRequest.account(),
 				passwordEncoder.encode(memberSaveRequest.password()),
 				memberSaveRequest.name(),
+				memberSaveRequest.phone(),
+				memberSaveRequest.birthDate(),
 				memberRoles,
 				memberPermissions
 			)

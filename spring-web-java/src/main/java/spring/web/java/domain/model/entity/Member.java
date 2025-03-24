@@ -28,6 +28,8 @@ public class Member extends Base {
 	@GeneratedValue
 	@Column(name = "member_id")
 	private Long id;
+
+	@Convert(converter = CryptoAttributeConverter.class)
 	private String account;
 	private String password;
 
@@ -57,6 +59,8 @@ public class Member extends Base {
 		String account,
 		String password,
 		String name,
+		String phone,
+		LocalDate birthDate,
 		List<MemberRole> memberRoles,
 		List<MemberPermission> memberPermissions
 	) {
@@ -65,6 +69,8 @@ public class Member extends Base {
 		member.account = account;
 		member.password = password;
 		member.name = name;
+		member.phone = phone;
+		member.birthDate = birthDate;
 
 		memberRoles.forEach(member::associateRole);
 		memberPermissions.forEach(member::associatePermission);
