@@ -1,0 +1,29 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: spring-web-kotlin
+    container_name: spring-web-kotlin-container
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: local-docker
+    networks:
+      - spring-web-network
+
+  postgres:
+    container_name: postgres-container
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: my_db
+      POSTGRES_USER: my_user
+      POSTGRES_PASSWORD: my_password
+    ports:
+      - "5432:5432"
+    networks:
+      - spring-web-network
+
+networks:
+  spring-web-network:
+    external: true

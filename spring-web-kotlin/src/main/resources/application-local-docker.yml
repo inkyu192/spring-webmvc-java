@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres-container:5432/my_db
+    username: my_user
+    password: my_password
+    driver-class-name: org.postgresql.Driver
+  data:
+    redis:
+      host: redis-container
+      port: 6379
