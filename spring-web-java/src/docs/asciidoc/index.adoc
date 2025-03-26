@@ -1,0 +1,16 @@
+= API 문서
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+
+== 상품 상세 조회
+
+**Request**
+include::{snippets}/item/http-request.adoc[]
+// include::{snippets}/item/query-parameters.adoc[]
+
+**Response**
+include::{snippets}/item/http-response.adoc[]
+include::{snippets}/item/response-fields.adoc[]
