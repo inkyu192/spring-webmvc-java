@@ -22,7 +22,7 @@ import spring.web.java.domain.converter.CryptoAttributeConverter;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Member extends Base {
+public class Member extends BaseTime {
 
 	@Id
 	@GeneratedValue

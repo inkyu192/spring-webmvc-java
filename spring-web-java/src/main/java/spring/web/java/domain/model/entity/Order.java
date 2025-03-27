@@ -29,7 +29,7 @@ import spring.web.java.presentation.exception.OrderCancelNotAllowedException;
 @Getter
 @Table(name = "orders")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Order extends Base {
+public class Order extends BaseTime {
 
 	@Id
 	@GeneratedValue

@@ -21,7 +21,7 @@ import spring.web.java.domain.model.enums.DeliveryStatus;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Delivery extends Base {
+public class Delivery extends BaseTime {
 
 	@Id
 	@GeneratedValue

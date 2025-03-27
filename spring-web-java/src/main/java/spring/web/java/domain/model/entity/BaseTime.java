@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Base {
+public class BaseTime {
 
 	@CreatedDate
 	@Column(updatable = false)

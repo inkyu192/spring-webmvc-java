@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Notification extends Base {
+public class Notification extends BaseTime {
 
 	@Id
 	@GeneratedValue

@@ -15,7 +15,7 @@ import spring.web.java.presentation.exception.InsufficientQuantityException;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Item extends Base {
+public class Item extends BaseCreator {
 
 	@Id
 	@GeneratedValue

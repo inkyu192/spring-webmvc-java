@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Role extends Base {
+public class Role extends BaseTime {
 
 	@Id
 	@GeneratedValue
