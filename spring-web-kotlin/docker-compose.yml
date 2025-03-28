@@ -12,18 +12,6 @@ services:
     networks:
       - spring-web-network
 
-  postgres:
-    container_name: postgres-container
-    image: postgres:latest
-    environment:
-      POSTGRES_DB: my_db
-      POSTGRES_USER: my_user
-      POSTGRES_PASSWORD: my_password
-    ports:
-      - "5432:5432"
-    networks:
-      - spring-web-network
-
 networks:
   spring-web-network:
     external: true

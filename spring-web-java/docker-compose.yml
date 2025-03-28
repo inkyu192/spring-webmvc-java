@@ -12,19 +12,6 @@ services:
     networks:
       - spring-web-network
 
-  mysql:
-    container_name: mysql-container
-    image: mysql:latest
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: my_db
-      MYSQL_USER: my_user
-      MYSQL_PASSWORD: my_password
-    ports:
-      - "3306:3306"
-    networks:
-      - spring-web-network
-
 networks:
   spring-web-network:
     external: true

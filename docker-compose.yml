@@ -1,4 +1,29 @@
 services:
+  mysql:
+    container_name: mysql-container
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: my_db
+      MYSQL_USER: my_user
+      MYSQL_PASSWORD: my_password
+    ports:
+      - "3306:3306"
+    networks:
+      - spring-web-network
+  
+  postgres:
+    container_name: postgres-container
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: my_db
+      POSTGRES_USER: my_user
+      POSTGRES_PASSWORD: my_password
+    ports:
+      - "5432:5432"
+    networks:
+      - spring-web-network
+  
   redis:
     container_name: redis-container
     image: redis:latest
