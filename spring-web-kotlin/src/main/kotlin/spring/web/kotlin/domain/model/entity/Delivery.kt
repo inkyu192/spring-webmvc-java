@@ -12,7 +12,7 @@ class Delivery protected constructor(
     address: String,
     status: DeliveryStatus,
     order: Order,
-) : Base() {
+) : BaseTime() {
     @Id
     @GeneratedValue
     @Column(name = "delivery_id")

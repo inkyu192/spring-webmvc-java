@@ -11,7 +11,7 @@ class Order protected constructor(
     val orderedAt: Instant,
     status: OrderStatus,
     member: Member
-) : Base() {
+) : BaseTime() {
     @Id
     @GeneratedValue
     @Column(name = "order_id")

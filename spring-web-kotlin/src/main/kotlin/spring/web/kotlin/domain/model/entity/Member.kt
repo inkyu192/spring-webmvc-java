@@ -12,7 +12,7 @@ class Member protected constructor(
     name: String,
     phone: String,
     birthDate: LocalDate,
-) : Base() {
+) : BaseTime() {
     @Id
     @GeneratedValue
     @Column(name = "member_id")

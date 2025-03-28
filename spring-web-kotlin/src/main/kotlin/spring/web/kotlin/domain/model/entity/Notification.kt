@@ -12,7 +12,7 @@ class Notification protected constructor(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT))
     var member: Member,
-) : Base() {
+) : BaseTime() {
     @Id
     @GeneratedValue
     @Column(name = "notification_id")

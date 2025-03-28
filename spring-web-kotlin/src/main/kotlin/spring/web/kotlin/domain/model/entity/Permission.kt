@@ -8,7 +8,7 @@ import jakarta.persistence.Id
 @Entity
 class Permission protected constructor(
     val name: String,
-) : Base() {
+) : BaseTime() {
     @Id
     @GeneratedValue
     @Column(name = "permission_id")

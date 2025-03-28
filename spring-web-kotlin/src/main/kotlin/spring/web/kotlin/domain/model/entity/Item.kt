@@ -11,7 +11,7 @@ class Item protected constructor(
     price: Int,
     quantity: Int,
     category: Category,
-) : Base() {
+) : BaseCreator() {
     @Id
     @GeneratedValue
     @Column(name = "item_id")

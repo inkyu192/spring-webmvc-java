@@ -5,7 +5,7 @@ import jakarta.persistence.*
 @Entity
 class Role protected constructor(
     name: String,
-) : Base() {
+) : BaseTime() {
     @Id
     @GeneratedValue
     @Column(name = "role_id")

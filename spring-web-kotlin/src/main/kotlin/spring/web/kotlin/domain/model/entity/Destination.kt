@@ -11,7 +11,7 @@ class Destination protected constructor(
     address: String,
     isDefault: Boolean,
     member: Member,
-) : Base() {
+) : BaseTime() {
     @Id
     @GeneratedValue
     @Column(name = "delivery_id")
