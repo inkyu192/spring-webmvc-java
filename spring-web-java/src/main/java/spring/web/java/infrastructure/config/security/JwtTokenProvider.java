@@ -1,5 +1,6 @@
 package spring.web.java.infrastructure.config.security;
 
+import java.time.Duration;
 import java.util.Date;
 import java.util.List;
 
@@ -23,14 +24,14 @@ public class JwtTokenProvider {
 
 	public JwtTokenProvider(
 		@Value("${jwt.access-token.key}") String accessTokenKey,
-		@Value("${jwt.access-token.expiration-time}") long accessTokenExpirationTime,
+		@Value("${jwt.access-token.expiration-duration}") Duration accessTokenExpirationDuration,
 		@Value("${jwt.refresh-token.key}") String refreshTokenKey,
-		@Value("${jwt.refresh-token.expiration-time}") long refreshTokenExpirationTime
+		@Value("${jwt.refresh-token.expiration-duration}") Duration refreshTokenExpirationDuration
 	) {
 		this.accessTokenKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(accessTokenKey));
-		this.accessTokenExpirationTime = accessTokenExpirationTime * 60 * 1000;
+		this.accessTokenExpirationTime = accessTokenExpirationDuration.toMillis();
 		this.refreshTokenKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(refreshTokenKey));
-		this.refreshTokenExpirationTime = refreshTokenExpirationTime * 60 * 1000;
+		this.refreshTokenExpirationTime = refreshTokenExpirationDuration.toMillis();
 	}
 
 	public String createAccessToken(Long memberId, List<String> permissions) {

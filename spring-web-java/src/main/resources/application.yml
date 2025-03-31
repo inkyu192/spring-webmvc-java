@@ -23,10 +23,10 @@ logging:
 jwt:
   access-token:
     key: PQ8nDTkS2Rp17clN87/L02OgVe77EOwMnDY0Irq7w04=
-    expiration-time: 10
+    expiration-duration: 10m
   refresh-token:
     key: crCWzavmz2D382GG68dymsghw+UnWo3MnmWkPzc6Gik=
-    expiration-time: 60
+    expiration-duration: 7d
 
 crypto:
   secret-key: d9ANIqIyfTygI92m6jWFfAzUbEP73TNB
