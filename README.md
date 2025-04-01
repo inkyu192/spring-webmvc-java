@@ -1,14 +1,12 @@
 ## 개발 환경
-- **Language & Framework:** Java, Kotlin, Spring Web, Spring Data JPA, QueryDSL
-- **Database:** MySQL, PostgreSQL, Redis
-- **Test:** JUnit5, Kotest, Mockito
-- **Etc:** Docker, Docker Compose, Gradle
+- **Language & Framework:** Java, Spring Web MVC, Spring Security, Spring Data JPA, QueryDSL, Spring REST Docs
+- **Database:** MySQL, Redis
+- **Test & Tools:** JUnit5, Docker, Docker Compose, Gradle
 
 ---
 
 ## 환경 설정
-
-`docker-compose.yml`을 사용하여 MySQL, PostgreSQL, Redis를 실행할 수 있다.
+`docker-compose.yml`을 사용하여 MySQL, Redis를 실행할 수 있다.
 
 ```yaml
 services:
@@ -22,15 +20,6 @@ services:
     ports:
       - "3306:3306"
 
-  postgres:
-    image: postgres:latest
-    environment:
-      POSTGRES_DB: my_db
-      POSTGRES_USER: my_user
-      POSTGRES_PASSWORD: my_password
-    ports:
-      - "5432:5432"
-
   redis:
     image: redis:latest
     ports:
@@ -38,9 +27,8 @@ services:
 ```
 
 ---
-
 ## 아키텍처
-```sh  
+```sh
 ┌── application  # 애플리케이션 계층  
 │  
 ├── domain  # 도메인 계층  
