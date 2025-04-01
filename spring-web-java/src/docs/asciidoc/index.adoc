@@ -1,16 +1,152 @@
-= API 문서
+= Spring Web API Document
 :doctype: book
 :icons: font
 :source-highlighter: highlightjs
 :toc: left
 :toclevels: 2
+:sectnums:
 
-== 상품 상세 조회
+== 상품
 
-**Request**
-include::{snippets}/item/http-request.adoc[]
-// include::{snippets}/item/query-parameters.adoc[]
+'''
 
-**Response**
-include::{snippets}/item/http-response.adoc[]
-include::{snippets}/item/response-fields.adoc[]
+=== 생성
+
+**HTTP Request**
+include::{snippets}/item-create/http-request.adoc[]
+
+**Request Headers**
+include::{snippets}/item-create/request-headers.adoc[]
+
+**Request Fields**
+include::{snippets}/item-create/request-fields.adoc[]
+
+**HTTP Response**
+include::{snippets}/item-create/http-response.adoc[]
+
+**Response Fields**
+include::{snippets}/item-create/response-fields.adoc[]
+
+**HTTP Status Codes**
+[cols="1,3", options="header"]
+|===
+| Status Code | Description
+| 201 | Created
+| 401 | Unauthorized
+| 403 | Forbidden
+|===
+
+'''
+
+=== 목록 조회
+
+**HTTP Request**
+include::{snippets}/item-list/http-request.adoc[]
+
+**Request Headers**
+include::{snippets}/item-list/request-headers.adoc[]
+
+**Query Parameters**
+include::{snippets}/item-list/query-parameters.adoc[]
+
+**HTTP Response**
+include::{snippets}/item-list/http-response.adoc[]
+
+**Response Fields**
+include::{snippets}/item-list/response-fields.adoc[]
+
+**HTTP Status Codes**
+[cols="1,3", options="header"]
+|===
+| Status Code | Description
+| 200 | OK
+| 401 | Unauthorized
+| 403 | Forbidden
+|===
+
+'''
+
+=== 상세 조회
+
+**HTTP Request**
+include::{snippets}/item-get/http-request.adoc[]
+
+**Request Headers**
+include::{snippets}/item-get/request-headers.adoc[]
+
+**Path Parameters**
+include::{snippets}/item-get/path-parameters.adoc[]
+
+**HTTP Response**
+include::{snippets}/item-get/http-response.adoc[]
+
+**Response Fields**
+include::{snippets}/item-get/response-fields.adoc[]
+
+**HTTP Status Codes**
+[cols="1,3", options="header"]
+|===
+| Status Code | Description
+| 200 | OK
+| 401 | Unauthorized
+| 403 | Forbidden
+| 404 | Not Found
+|===
+
+'''
+
+=== 수정
+
+**HTTP Request**
+include::{snippets}/item-update/http-request.adoc[]
+
+**Request Headers**
+include::{snippets}/item-update/request-headers.adoc[]
+
+**Path Parameters**
+include::{snippets}/item-update/path-parameters.adoc[]
+
+**Request Fields**
+include::{snippets}/item-update/request-fields.adoc[]
+
+**HTTP Response**
+include::{snippets}/item-update/http-response.adoc[]
+
+**Response Fields**
+include::{snippets}/item-update/response-fields.adoc[]
+
+**HTTP Status Codes**
+[cols="1,3", options="header"]
+|===
+| Status Code | Description
+| 200 | OK
+| 201 | Created
+| 401 | Unauthorized
+| 403 | Forbidden
+|===
+
+'''
+
+=== 삭제
+
+**HTTP Request**
+include::{snippets}/item-delete/http-request.adoc[]
+
+**Request Headers**
+include::{snippets}/item-delete/request-headers.adoc[]
+
+**Path Parameters**
+include::{snippets}/item-delete/path-parameters.adoc[]
+
+**HTTP Response**
+include::{snippets}/item-delete/http-response.adoc[]
+
+**HTTP Status Codes**
+[cols="1,3", options="header"]
+|===
+| Status Code | Description
+| 204 | No Content
+| 401 | Unauthorized
+| 403 | Forbidden
+| 404 | Not Found
+|===
