@@ -10,15 +10,17 @@
 
 ```yaml
 services:
-  mysql:
-    image: mysql:latest
+  postgres:
+    container_name: postgres-container
+    image: postgres:latest
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: my_db
-      MYSQL_USER: my_user
-      MYSQL_PASSWORD: my_password
+      POSTGRES_DB: my_db
+      POSTGRES_USER: my_user
+      POSTGRES_PASSWORD: my_password
     ports:
-      - "3306:3306"
+      - "5432:5432"
+    networks:
+      - application-network
 
   redis:
     image: redis:latest
