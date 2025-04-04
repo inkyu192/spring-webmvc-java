@@ -64,12 +64,12 @@ tasks.named('asciidoctor') {
     attributes 'snippets': snippetsDir
 }
 
-tasks.register('copyDocument', Copy) {
+tasks.register('copyAsciidoc', Copy) {
     dependsOn asciidoctor
     from file("build/docs/asciidoc/")
     into file("src/main/resources/static/docs")
 }
 
 build {
-    dependsOn copyDocument
+    dependsOn copyAsciidoc
 }
