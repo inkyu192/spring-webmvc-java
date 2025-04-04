@@ -12,10 +12,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
-import com.querydsl.core.types.Order;
-import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
@@ -36,13 +34,20 @@ public class ItemQuerydslRepository {
 				.fetchOne(), 0L
 		);
 
-		List<Item> content = jpaQueryFactory
-			.selectFrom(item)
+		List<Tuple> tuples = jpaQueryFactory
+			.select(item, orderItem.count())
+			.from(item)
+			.leftJoin(orderItem).on(item.id.eq(orderItem.item.id))
 			.where(likeName(name))
-			.orderBy(createOrderSpecifier())
+			.groupBy(item.id)
+			.orderBy(orderItem.count().desc())
 			.limit(pageable.getPageSize())
 			.offset(pageable.getOffset())
 			.fetch();
+
+		List<Item> content = tuples.stream()
+			.map(tuple -> tuple.get(0, Item.class))
+			.toList();
 
 		return new PageImpl<>(content, pageable, count);
 	}
@@ -52,15 +57,5 @@ public class ItemQuerydslRepository {
 			return null;
 		}
 		return item.name.like("%" + name + "%");
-	}
-
-	private OrderSpecifier<Long> createOrderSpecifier() {
-		return new OrderSpecifier<>(
-			Order.DESC,
-			JPAExpressions
-				.select(orderItem.count())
-				.from(orderItem)
-				.where(orderItem.item.id.eq(item.id))
-		);
 	}
 }
