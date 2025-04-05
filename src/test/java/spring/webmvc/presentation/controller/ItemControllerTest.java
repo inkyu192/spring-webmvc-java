@@ -44,6 +44,9 @@ class ItemControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
 
+	@Autowired
+	private ObjectMapper objectMapper;
+
 	@MockitoBean
 	private ItemService itemService;
 
@@ -72,7 +75,7 @@ class ItemControllerTest {
 		mockMvc.perform(
 				RestDocumentationRequestBuilders.post("/items")
 					.contentType(MediaType.APPLICATION_JSON)
-					.content(new ObjectMapper().writeValueAsString(request))
+					.content(objectMapper.writeValueAsString(request))
 					.header("Authorization", authorization)
 			)
 			.andExpect(MockMvcResultMatchers.status().isCreated())
@@ -214,7 +217,7 @@ class ItemControllerTest {
 				RestDocumentationRequestBuilders.put("/items/{id}", requestId)
 					.contentType(MediaType.APPLICATION_JSON)
 					.header("Authorization", authorization)
-					.content(new ObjectMapper().writeValueAsString(request))
+					.content(objectMapper.writeValueAsString(request))
 			)
 			.andExpect(MockMvcResultMatchers.status().isOk())
 			.andDo(
