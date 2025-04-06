@@ -13,9 +13,14 @@ public class RequestLockRedisRepository {
 
 	private final RedisTemplate<String, String> redisTemplate;
 
+	private String createKey(Long memberId, String method, String uri) {
+		return "request-lock:%s:%s:%s".formatted(memberId, method, uri);
+	}
+
 	public boolean setIfAbsent(Long memberId, String method, String uri) {
-		Boolean result = redisTemplate.opsForValue()
-			.setIfAbsent("request_lock", String.format("%s:%s:%s", memberId, method, uri), Duration.ofSeconds(1));
+		String key = createKey(memberId, method, uri);
+
+		Boolean result = redisTemplate.opsForValue().setIfAbsent(key, "1", Duration.ofSeconds(1));
 
 		return Boolean.TRUE.equals(result);
 	}

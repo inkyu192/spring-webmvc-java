@@ -15,7 +15,6 @@ import spring.webmvc.domain.model.entity.Member;
 import spring.webmvc.domain.model.entity.MemberPermission;
 import spring.webmvc.domain.model.entity.Permission;
 import spring.webmvc.domain.model.entity.RolePermission;
-import spring.webmvc.domain.model.entity.Token;
 import spring.webmvc.domain.repository.MemberRepository;
 import spring.webmvc.domain.repository.TokenRepository;
 import spring.webmvc.infrastructure.config.security.JwtTokenProvider;
@@ -43,7 +42,7 @@ public class AuthService {
 		String accessToken = jwtTokenProvider.createAccessToken(member.getId(), getPermissions(member));
 		String refreshToken = jwtTokenProvider.createRefreshToken();
 
-		tokenRepository.save(Token.create(member.getId(), refreshToken));
+		tokenRepository.save(member.getId(), refreshToken);
 
 		return new TokenResponse(accessToken, refreshToken);
 	}
@@ -55,8 +54,7 @@ public class AuthService {
 		Member member = memberRepository.findById(memberId)
 			.orElseThrow(() -> new EntityNotFoundException(Member.class, memberId));
 
-		String refreshToken = tokenRepository.findById(memberId)
-			.map(Token::getRefreshToken)
+		String refreshToken = tokenRepository.findByMemberId(memberId)
 			.filter(it -> tokenRequest.refreshToken().equals(it))
 			.orElseThrow(() -> new BadCredentialsException("유효하지 않은 인증 정보입니다. 다시 로그인해 주세요."));
 

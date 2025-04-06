@@ -1,8 +1,33 @@
 package spring.webmvc.infrastructure.persistence;
 
-import org.springframework.data.repository.CrudRepository;
+import java.time.Duration;
+import java.util.Optional;
 
-import spring.webmvc.domain.model.entity.Token;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Repository;
 
-public interface TokenRedisRepository extends CrudRepository<Token, Long> {
+import lombok.RequiredArgsConstructor;
+
+@Repository
+@RequiredArgsConstructor
+public class TokenRedisRepository {
+
+	private final RedisTemplate<String, String> redisTemplate;
+
+	private String createKey(Long memberId) {
+		return "member:%s:token:refresh".formatted(memberId);
+	}
+
+	public Optional<String> findByMemberId(Long memberId) {
+		String key = createKey(memberId);
+		return Optional.ofNullable(redisTemplate.opsForValue().get(key));
+	}
+
+	public String save(Long memberId, String token) {
+		String key = createKey(memberId);
+
+		redisTemplate.opsForValue().set(key, token, Duration.ofDays(7));
+
+		return token;
+	}
 }
