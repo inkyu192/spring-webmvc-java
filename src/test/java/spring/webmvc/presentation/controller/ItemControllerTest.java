@@ -20,6 +20,7 @@ import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.headers.HeaderDocumentation;
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.restdocs.operation.preprocess.Preprocessors;
 import org.springframework.restdocs.payload.PayloadDocumentation;
 import org.springframework.restdocs.request.RequestDocumentation;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -63,24 +64,24 @@ class ItemControllerTest {
 			.build();
 	}
 
-	private final String authorization = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJtZW1iZXJJZCI6MSwicGVybWlzc2lvbnMiOlsiSVRFTV9SRUFERVIiLCJJVEVNX1dSSVRFUiJdLCJpYXQiOjE3NDM0ODUzMzYsImV4cCI6MTc0MzQ4NTkzNn0.tu5bcIGsTtmXy0RmqvKa3H-rWKBn3rB1i1RjPzlkTVs";
-
 	@Test
-	void saveItemTest() throws Exception {
+	void saveItem() throws Exception {
 		ItemSaveRequest request = new ItemSaveRequest("상품명", "설명", 1000, 5, Category.ROLE_BOOK);
-		ItemResponse itemResponse = new ItemResponse(1L, "상품명", "설명", 1000, 10, Instant.now());
+		ItemResponse response = new ItemResponse(1L, "상품명", "설명", 1000, 10, Instant.now());
 
-		Mockito.when(itemService.saveItem(request)).thenReturn(itemResponse);
+		Mockito.when(itemService.saveItem(request)).thenReturn(response);
 
 		mockMvc.perform(
 				RestDocumentationRequestBuilders.post("/items")
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(objectMapper.writeValueAsString(request))
-					.header("Authorization", authorization)
+					.header("Authorization", "Bearer access-token")
 			)
 			.andExpect(MockMvcResultMatchers.status().isCreated())
 			.andDo(
 				MockMvcRestDocumentation.document("item-create",
+					Preprocessors.preprocessRequest(Preprocessors.prettyPrint()),
+					Preprocessors.preprocessResponse(Preprocessors.prettyPrint()),
 					HeaderDocumentation.requestHeaders(
 						HeaderDocumentation.headerWithName("Authorization").description("액세스 토큰")
 					),
@@ -106,17 +107,18 @@ class ItemControllerTest {
 	@Test
 	void findItem() throws Exception {
 		Long requestId = 1L;
-		ItemResponse itemResponse = new ItemResponse(1L, "item1", "description", 1000, 10, Instant.now());
+		ItemResponse response = new ItemResponse(1L, "item1", "description", 1000, 10, Instant.now());
 
-		Mockito.when(itemService.findItem(requestId)).thenReturn(itemResponse);
+		Mockito.when(itemService.findItem(requestId)).thenReturn(response);
 
 		mockMvc.perform(
 				RestDocumentationRequestBuilders.get("/items/{id}", requestId)
-					.header("Authorization", authorization)
+					.header("Authorization", "Bearer access-token")
 			)
 			.andExpect(MockMvcResultMatchers.status().isOk())
 			.andDo(
 				MockMvcRestDocumentation.document("item-get",
+					Preprocessors.preprocessResponse(Preprocessors.prettyPrint()),
 					HeaderDocumentation.requestHeaders(
 						HeaderDocumentation.headerWithName("Authorization").description("액세스 토큰")
 					),
@@ -140,19 +142,19 @@ class ItemControllerTest {
 		Pageable pageable = PageRequest.of(0, 10);
 		String name = "item";
 
-		List<ItemResponse> itemResponse = List.of(
+		List<ItemResponse> response = List.of(
 			new ItemResponse(1L, "item1", "description", 1000, 10, Instant.now()),
 			new ItemResponse(2L, "item2", "description", 2000, 20, Instant.now()),
 			new ItemResponse(3L, "item3", "description", 3000, 30, Instant.now())
 		);
-		Page<ItemResponse> page = new PageImpl<>(itemResponse, pageable, itemResponse.size());
+		Page<ItemResponse> page = new PageImpl<>(response, pageable, response.size());
 
 		Mockito.when(itemService.findItems(pageable, name)).thenReturn(page);
 
 		// When & Then
 		mockMvc.perform(
 				RestDocumentationRequestBuilders.get("/items")
-					.header("Authorization", authorization)
+					.header("Authorization", "Bearer access-token")
 					.param("page", "0")
 					.param("size", "10")
 					.param("name", name)
@@ -160,6 +162,7 @@ class ItemControllerTest {
 			.andExpect(MockMvcResultMatchers.status().isOk())
 			.andDo(
 				MockMvcRestDocumentation.document("item-list",
+					Preprocessors.preprocessResponse(Preprocessors.prettyPrint()),
 					HeaderDocumentation.requestHeaders(
 						HeaderDocumentation.headerWithName("Authorization").description("액세스 토큰")
 					),
@@ -209,19 +212,21 @@ class ItemControllerTest {
 		Long requestId = 1L;
 
 		ItemSaveRequest request = new ItemSaveRequest("상품명", "설명", 1000, 5, Category.ROLE_BOOK);
-		ItemResponse itemResponse = new ItemResponse(1L, "상품명", "설명", 1000, 10, Instant.now());
+		ItemResponse response = new ItemResponse(1L, "상품명", "설명", 1000, 10, Instant.now());
 
-		Mockito.when(itemService.putItem(requestId, request)).thenReturn(Pair.of(false, itemResponse));
+		Mockito.when(itemService.putItem(requestId, request)).thenReturn(Pair.of(false, response));
 
 		mockMvc.perform(
 				RestDocumentationRequestBuilders.put("/items/{id}", requestId)
 					.contentType(MediaType.APPLICATION_JSON)
-					.header("Authorization", authorization)
+					.header("Authorization", "Bearer access-token")
 					.content(objectMapper.writeValueAsString(request))
 			)
 			.andExpect(MockMvcResultMatchers.status().isOk())
 			.andDo(
 				MockMvcRestDocumentation.document("item-update",
+					Preprocessors.preprocessRequest(Preprocessors.prettyPrint()),
+					Preprocessors.preprocessResponse(Preprocessors.prettyPrint()),
 					HeaderDocumentation.requestHeaders(
 						HeaderDocumentation.headerWithName("Authorization").description("액세스 토큰")
 					),
@@ -255,7 +260,7 @@ class ItemControllerTest {
 
 		mockMvc.perform(
 				RestDocumentationRequestBuilders.delete("/items/{id}", requestId)
-					.header("Authorization", authorization)
+					.header("Authorization", "Bearer access-token")
 			)
 			.andExpect(MockMvcResultMatchers.status().isNoContent())
 			.andDo(
