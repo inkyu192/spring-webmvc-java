@@ -9,6 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -33,17 +34,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import spring.webmvc.application.service.ItemService;
 import spring.webmvc.domain.model.enums.Category;
-import spring.webmvc.infrastructure.config.security.JwtTokenProvider;
-import spring.webmvc.infrastructure.util.ResponseWriter;
+import spring.webmvc.infrastructure.config.WebMvcTestConfig;
 import spring.webmvc.presentation.dto.request.ItemSaveRequest;
 import spring.webmvc.presentation.dto.response.ItemResponse;
 
 @WebMvcTest(ItemController.class)
+@Import(WebMvcTestConfig.class)
 @ExtendWith(RestDocumentationExtension.class)
 class ItemControllerTest {
-
-	@Autowired
-	private MockMvc mockMvc;
 
 	@Autowired
 	private ObjectMapper objectMapper;
@@ -51,16 +49,15 @@ class ItemControllerTest {
 	@MockitoBean
 	private ItemService itemService;
 
-	@MockitoBean
-	private JwtTokenProvider jwtTokenProvider;
-
-	@MockitoBean
-	private ResponseWriter responseWriter;
+	private MockMvc mockMvc;
 
 	@BeforeEach
 	public void setUp(RestDocumentationContextProvider restDocumentation, WebApplicationContext webApplicationContext) {
 		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
-			.apply(MockMvcRestDocumentation.documentationConfiguration(restDocumentation))
+			.apply(MockMvcRestDocumentation.documentationConfiguration(restDocumentation)
+				.operationPreprocessors()
+				.withRequestDefaults(Preprocessors.prettyPrint())
+				.withResponseDefaults(Preprocessors.prettyPrint()))
 			.build();
 	}
 
@@ -80,8 +77,6 @@ class ItemControllerTest {
 			.andExpect(MockMvcResultMatchers.status().isCreated())
 			.andDo(
 				MockMvcRestDocumentation.document("item-create",
-					Preprocessors.preprocessRequest(Preprocessors.prettyPrint()),
-					Preprocessors.preprocessResponse(Preprocessors.prettyPrint()),
 					HeaderDocumentation.requestHeaders(
 						HeaderDocumentation.headerWithName("Authorization").description("액세스 토큰")
 					),
@@ -118,7 +113,6 @@ class ItemControllerTest {
 			.andExpect(MockMvcResultMatchers.status().isOk())
 			.andDo(
 				MockMvcRestDocumentation.document("item-get",
-					Preprocessors.preprocessResponse(Preprocessors.prettyPrint()),
 					HeaderDocumentation.requestHeaders(
 						HeaderDocumentation.headerWithName("Authorization").description("액세스 토큰")
 					),
@@ -162,7 +156,6 @@ class ItemControllerTest {
 			.andExpect(MockMvcResultMatchers.status().isOk())
 			.andDo(
 				MockMvcRestDocumentation.document("item-list",
-					Preprocessors.preprocessResponse(Preprocessors.prettyPrint()),
 					HeaderDocumentation.requestHeaders(
 						HeaderDocumentation.headerWithName("Authorization").description("액세스 토큰")
 					),
@@ -225,8 +218,6 @@ class ItemControllerTest {
 			.andExpect(MockMvcResultMatchers.status().isOk())
 			.andDo(
 				MockMvcRestDocumentation.document("item-update",
-					Preprocessors.preprocessRequest(Preprocessors.prettyPrint()),
-					Preprocessors.preprocessResponse(Preprocessors.prettyPrint()),
 					HeaderDocumentation.requestHeaders(
 						HeaderDocumentation.headerWithName("Authorization").description("액세스 토큰")
 					),

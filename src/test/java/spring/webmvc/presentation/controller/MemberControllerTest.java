@@ -10,6 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
@@ -27,18 +28,15 @@ import org.springframework.web.context.WebApplicationContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import spring.webmvc.application.service.MemberService;
-import spring.webmvc.infrastructure.config.security.JwtTokenProvider;
-import spring.webmvc.infrastructure.util.ResponseWriter;
+import spring.webmvc.infrastructure.config.WebMvcTestConfig;
 import spring.webmvc.presentation.dto.request.MemberSaveRequest;
 import spring.webmvc.presentation.dto.request.MemberUpdateRequest;
 import spring.webmvc.presentation.dto.response.MemberResponse;
 
 @WebMvcTest(MemberController.class)
+@Import(WebMvcTestConfig.class)
 @ExtendWith(RestDocumentationExtension.class)
 class MemberControllerTest {
-
-	@Autowired
-	private MockMvc mockMvc;
 
 	@Autowired
 	private ObjectMapper objectMapper;
@@ -46,16 +44,15 @@ class MemberControllerTest {
 	@MockitoBean
 	private MemberService memberService;
 
-	@MockitoBean
-	private JwtTokenProvider jwtTokenProvider;
-
-	@MockitoBean
-	private ResponseWriter responseWriter;
+	private MockMvc mockMvc;
 
 	@BeforeEach
 	public void setUp(RestDocumentationContextProvider restDocumentation, WebApplicationContext webApplicationContext) {
 		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
-			.apply(MockMvcRestDocumentation.documentationConfiguration(restDocumentation))
+			.apply(MockMvcRestDocumentation.documentationConfiguration(restDocumentation)
+				.operationPreprocessors()
+				.withRequestDefaults(Preprocessors.prettyPrint())
+				.withResponseDefaults(Preprocessors.prettyPrint()))
 			.build();
 	}
 
@@ -89,8 +86,6 @@ class MemberControllerTest {
 			.andExpect(MockMvcResultMatchers.status().isCreated())
 			.andDo(
 				MockMvcRestDocumentation.document("member-create",
-					Preprocessors.preprocessRequest(Preprocessors.prettyPrint()),
-					Preprocessors.preprocessResponse(Preprocessors.prettyPrint()),
 					PayloadDocumentation.requestFields(
 						PayloadDocumentation.fieldWithPath("account").description("계정"),
 						PayloadDocumentation.fieldWithPath("password").description("패스워드"),
@@ -132,7 +127,6 @@ class MemberControllerTest {
 			.andExpect(MockMvcResultMatchers.status().isOk())
 			.andDo(
 				MockMvcRestDocumentation.document("member-get",
-					Preprocessors.preprocessResponse(Preprocessors.prettyPrint()),
 					HeaderDocumentation.requestHeaders(
 						HeaderDocumentation.headerWithName("Authorization").description("액세스 토큰")
 					),
@@ -176,8 +170,6 @@ class MemberControllerTest {
 			.andExpect(MockMvcResultMatchers.status().isOk())
 			.andDo(
 				MockMvcRestDocumentation.document("member-update",
-					Preprocessors.preprocessRequest(Preprocessors.prettyPrint()),
-					Preprocessors.preprocessResponse(Preprocessors.prettyPrint()),
 					HeaderDocumentation.requestHeaders(
 						HeaderDocumentation.headerWithName("Authorization").description("액세스 토큰")
 					),
