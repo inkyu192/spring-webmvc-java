@@ -122,7 +122,7 @@ class MemberControllerTest {
 
 		mockMvc.perform(
 				RestDocumentationRequestBuilders.get("/members")
-					.header("Authorization", "Bearer access-token")
+					.header("Authorization", "Bearer accessToken")
 			)
 			.andExpect(MockMvcResultMatchers.status().isOk())
 			.andDo(
@@ -164,7 +164,7 @@ class MemberControllerTest {
 		mockMvc.perform(
 				RestDocumentationRequestBuilders.patch("/members")
 					.contentType(MediaType.APPLICATION_JSON)
-					.header("Authorization", "Bearer access-token")
+					.header("Authorization", "Bearer accessToken")
 					.content(objectMapper.writeValueAsString(request))
 			)
 			.andExpect(MockMvcResultMatchers.status().isOk())
@@ -197,7 +197,7 @@ class MemberControllerTest {
 
 		mockMvc.perform(
 				RestDocumentationRequestBuilders.delete("/members")
-					.header("Authorization", "Bearer access-token")
+					.header("Authorization", "Bearer accessToken")
 			)
 			.andExpect(MockMvcResultMatchers.status().isNoContent())
 			.andDo(

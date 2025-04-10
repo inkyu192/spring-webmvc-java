@@ -14,7 +14,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.util.Pair;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
@@ -32,22 +31,24 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import spring.webmvc.application.service.ItemService;
-import spring.webmvc.domain.model.enums.Category;
+import spring.webmvc.application.service.OrderService;
+import spring.webmvc.domain.model.enums.OrderStatus;
 import spring.webmvc.infrastructure.config.WebMvcTestConfig;
-import spring.webmvc.presentation.dto.request.ItemSaveRequest;
-import spring.webmvc.presentation.dto.response.ItemResponse;
+import spring.webmvc.presentation.dto.request.OrderItemSaveRequest;
+import spring.webmvc.presentation.dto.request.OrderSaveRequest;
+import spring.webmvc.presentation.dto.response.OrderItemResponse;
+import spring.webmvc.presentation.dto.response.OrderResponse;
 
-@WebMvcTest(ItemController.class)
+@WebMvcTest(OrderController.class)
 @Import(WebMvcTestConfig.class)
 @ExtendWith(RestDocumentationExtension.class)
-class ItemControllerTest {
+class OrderControllerTest {
 
 	@Autowired
 	private ObjectMapper objectMapper;
 
 	@MockitoBean
-	private ItemService itemService;
+	private OrderService orderService;
 
 	private MockMvc mockMvc;
 
@@ -62,115 +63,105 @@ class ItemControllerTest {
 	}
 
 	@Test
-	void saveItem() throws Exception {
-		ItemSaveRequest request = new ItemSaveRequest("상품명", "설명", 1000, 5, Category.ROLE_BOOK);
-		ItemResponse response = new ItemResponse(1L, "상품명", "설명", 1000, 10, Instant.now());
+	void saveOrder() throws Exception {
+		OrderSaveRequest request = new OrderSaveRequest(
+			1L,
+			"city",
+			"street",
+			"zipcode",
+			List.of(new OrderItemSaveRequest(1L, 3))
+		);
 
-		Mockito.when(itemService.saveItem(request)).thenReturn(response);
+		OrderResponse response = new OrderResponse(
+			1L,
+			"name",
+			Instant.now(),
+			OrderStatus.ORDER,
+			List.of(new OrderItemResponse("name", 1000, 3))
+		);
+
+		Mockito.when(orderService.saveOrder(request)).thenReturn(response);
 
 		mockMvc.perform(
-				RestDocumentationRequestBuilders.post("/items")
+				RestDocumentationRequestBuilders.post("/orders")
 					.contentType(MediaType.APPLICATION_JSON)
-					.content(objectMapper.writeValueAsString(request))
 					.header("Authorization", "Bearer access-token")
+					.content(objectMapper.writeValueAsString(request))
 			)
 			.andExpect(MockMvcResultMatchers.status().isCreated())
 			.andDo(
-				MockMvcRestDocumentation.document("item-create",
+				MockMvcRestDocumentation.document("order-create",
 					HeaderDocumentation.requestHeaders(
 						HeaderDocumentation.headerWithName("Authorization").description("액세스 토큰")
 					),
 					PayloadDocumentation.requestFields(
-						PayloadDocumentation.fieldWithPath("name").description("상품명"),
-						PayloadDocumentation.fieldWithPath("description").description("설명"),
-						PayloadDocumentation.fieldWithPath("price").description("가격"),
-						PayloadDocumentation.fieldWithPath("quantity").description("수량"),
-						PayloadDocumentation.fieldWithPath("category").description("카테고리")
+						PayloadDocumentation.fieldWithPath("memberId").description("회원아이디"),
+						PayloadDocumentation.fieldWithPath("city").description("city"),
+						PayloadDocumentation.fieldWithPath("street").description("street"),
+						PayloadDocumentation.fieldWithPath("zipcode").description("우편번호"),
+						PayloadDocumentation.fieldWithPath("orderItems[].itemId").description("상품아이디"),
+						PayloadDocumentation.fieldWithPath("orderItems[].count").description("주문수량")
 					),
 					PayloadDocumentation.responseFields(
-						PayloadDocumentation.fieldWithPath("id").description("아이디"),
-						PayloadDocumentation.fieldWithPath("name").description("상품명"),
-						PayloadDocumentation.fieldWithPath("description").description("설명"),
-						PayloadDocumentation.fieldWithPath("price").description("가격"),
-						PayloadDocumentation.fieldWithPath("quantity").description("수량"),
-						PayloadDocumentation.fieldWithPath("createdAt").description("생성일시")
+						PayloadDocumentation.fieldWithPath("id").description("주문아이디"),
+						PayloadDocumentation.fieldWithPath("name").description("회원명"),
+						PayloadDocumentation.fieldWithPath("orderedAt").description("주문일시"),
+						PayloadDocumentation.fieldWithPath("status").description("주문상태"),
+						PayloadDocumentation.fieldWithPath("orderItems[].itemName").description("상품명"),
+						PayloadDocumentation.fieldWithPath("orderItems[].orderPrice").description("주문가격"),
+						PayloadDocumentation.fieldWithPath("orderItems[].count").description("주문수량")
 					)
 				)
 			);
 	}
 
 	@Test
-	void findItem() throws Exception {
-		Long requestId = 1L;
-		ItemResponse response = new ItemResponse(1L, "item1", "description", 1000, 10, Instant.now());
-
-		Mockito.when(itemService.findItem(requestId)).thenReturn(response);
-
-		mockMvc.perform(
-				RestDocumentationRequestBuilders.get("/items/{id}", requestId)
-					.header("Authorization", "Bearer access-token")
-			)
-			.andExpect(MockMvcResultMatchers.status().isOk())
-			.andDo(
-				MockMvcRestDocumentation.document("item-get",
-					HeaderDocumentation.requestHeaders(
-						HeaderDocumentation.headerWithName("Authorization").description("액세스 토큰")
-					),
-					RequestDocumentation.pathParameters(
-						RequestDocumentation.parameterWithName("id").description("아이디")
-					),
-					PayloadDocumentation.responseFields(
-						PayloadDocumentation.fieldWithPath("id").description("아이디"),
-						PayloadDocumentation.fieldWithPath("name").description("상품명"),
-						PayloadDocumentation.fieldWithPath("description").description("설명"),
-						PayloadDocumentation.fieldWithPath("price").description("가격"),
-						PayloadDocumentation.fieldWithPath("quantity").description("수량"),
-						PayloadDocumentation.fieldWithPath("createdAt").description("생성일시")
-					)
-				)
-			);
-	}
-
-	@Test
-	void findItems() throws Exception {
+	void findOrders() throws Exception {
 		Pageable pageable = PageRequest.of(0, 10);
-		String name = "item";
+		Long memberId = 1L;
+		OrderStatus orderStatus = OrderStatus.ORDER;
 
-		List<ItemResponse> response = List.of(
-			new ItemResponse(1L, "item1", "description", 1000, 10, Instant.now()),
-			new ItemResponse(2L, "item2", "description", 2000, 20, Instant.now()),
-			new ItemResponse(3L, "item3", "description", 3000, 30, Instant.now())
+		List<OrderResponse> response = List.of(
+			new OrderResponse(
+				1L,
+				"name",
+				Instant.now(),
+				OrderStatus.ORDER,
+				List.of(new OrderItemResponse("name", 1000, 3))
+			)
 		);
-		Page<ItemResponse> page = new PageImpl<>(response, pageable, response.size());
+		Page<OrderResponse> page = new PageImpl<>(response, pageable, response.size());
 
-		Mockito.when(itemService.findItems(pageable, name)).thenReturn(page);
+		Mockito.when(orderService.findOrders(memberId, orderStatus, pageable)).thenReturn(page);
 
-		// When & Then
 		mockMvc.perform(
-				RestDocumentationRequestBuilders.get("/items")
+				RestDocumentationRequestBuilders.get("/orders")
 					.header("Authorization", "Bearer access-token")
 					.param("page", String.valueOf(pageable.getPageNumber()))
 					.param("size", String.valueOf(pageable.getPageSize()))
-					.param("name", name)
+					.param("memberId", String.valueOf(memberId))
+					.param("orderStatus", String.valueOf(orderStatus))
 			)
 			.andExpect(MockMvcResultMatchers.status().isOk())
 			.andDo(
-				MockMvcRestDocumentation.document("item-list",
+				MockMvcRestDocumentation.document("order-list",
 					HeaderDocumentation.requestHeaders(
 						HeaderDocumentation.headerWithName("Authorization").description("액세스 토큰")
 					),
 					RequestDocumentation.queryParameters(
 						RequestDocumentation.parameterWithName("page").description("페이지 번호").optional(),
 						RequestDocumentation.parameterWithName("size").description("페이지 크기").optional(),
-						RequestDocumentation.parameterWithName("name").description("상품명").optional()
+						RequestDocumentation.parameterWithName("memberId").description("회원아아디").optional(),
+						RequestDocumentation.parameterWithName("orderStatus").description("주문상태").optional()
 					),
 					PayloadDocumentation.responseFields(
-						PayloadDocumentation.fieldWithPath("content[].id").description("아이디"),
-						PayloadDocumentation.fieldWithPath("content[].name").description("상품명"),
-						PayloadDocumentation.fieldWithPath("content[].description").description("설명"),
-						PayloadDocumentation.fieldWithPath("content[].price").description("가격"),
-						PayloadDocumentation.fieldWithPath("content[].quantity").description("수량"),
-						PayloadDocumentation.fieldWithPath("content[].createdAt").description("생성일시"),
+						PayloadDocumentation.fieldWithPath("content[].id").description("주문아이디"),
+						PayloadDocumentation.fieldWithPath("content[].name").description("회원명"),
+						PayloadDocumentation.fieldWithPath("content[].orderedAt").description("주문일시"),
+						PayloadDocumentation.fieldWithPath("content[].status").description("주문상태"),
+						PayloadDocumentation.fieldWithPath("content[].orderItems[].itemName").description("상품명"),
+						PayloadDocumentation.fieldWithPath("content[].orderItems[].orderPrice").description("주문가격"),
+						PayloadDocumentation.fieldWithPath("content[].orderItems[].count").description("주문수량"),
 
 						PayloadDocumentation.fieldWithPath("pageable.pageNumber").description("현재 페이지 번호"),
 						PayloadDocumentation.fieldWithPath("pageable.pageSize").description("페이지 크기"),
@@ -201,66 +192,80 @@ class ItemControllerTest {
 	}
 
 	@Test
-	void updateItem() throws Exception {
+	void findOrder() throws Exception {
 		Long requestId = 1L;
 
-		ItemSaveRequest request = new ItemSaveRequest("상품명", "설명", 1000, 5, Category.ROLE_BOOK);
-		ItemResponse response = new ItemResponse(1L, "상품명", "설명", 1000, 10, Instant.now());
+		OrderResponse response = new OrderResponse(
+			1L,
+			"name",
+			Instant.now(),
+			OrderStatus.ORDER,
+			List.of(new OrderItemResponse("name", 1000, 3))
+		);
 
-		Mockito.when(itemService.putItem(requestId, request)).thenReturn(Pair.of(false, response));
+		Mockito.when(orderService.findOrder(requestId)).thenReturn(response);
 
 		mockMvc.perform(
-				RestDocumentationRequestBuilders.put("/items/{id}", requestId)
-					.contentType(MediaType.APPLICATION_JSON)
+				RestDocumentationRequestBuilders.get("/orders/{id}", requestId)
 					.header("Authorization", "Bearer access-token")
-					.content(objectMapper.writeValueAsString(request))
 			)
 			.andExpect(MockMvcResultMatchers.status().isOk())
 			.andDo(
-				MockMvcRestDocumentation.document("item-update",
+				MockMvcRestDocumentation.document("order-get",
 					HeaderDocumentation.requestHeaders(
 						HeaderDocumentation.headerWithName("Authorization").description("액세스 토큰")
 					),
 					RequestDocumentation.pathParameters(
 						RequestDocumentation.parameterWithName("id").description("아이디")
 					),
-					PayloadDocumentation.requestFields(
-						PayloadDocumentation.fieldWithPath("name").description("상품명"),
-						PayloadDocumentation.fieldWithPath("description").description("설명"),
-						PayloadDocumentation.fieldWithPath("price").description("가격"),
-						PayloadDocumentation.fieldWithPath("quantity").description("수량"),
-						PayloadDocumentation.fieldWithPath("category").description("카테고리")
-					),
 					PayloadDocumentation.responseFields(
-						PayloadDocumentation.fieldWithPath("id").description("아이디"),
-						PayloadDocumentation.fieldWithPath("name").description("상품명"),
-						PayloadDocumentation.fieldWithPath("description").description("설명"),
-						PayloadDocumentation.fieldWithPath("price").description("가격"),
-						PayloadDocumentation.fieldWithPath("quantity").description("수량"),
-						PayloadDocumentation.fieldWithPath("createdAt").description("생성일시")
+						PayloadDocumentation.fieldWithPath("id").description("주문아이디"),
+						PayloadDocumentation.fieldWithPath("name").description("회원명"),
+						PayloadDocumentation.fieldWithPath("orderedAt").description("주문일시"),
+						PayloadDocumentation.fieldWithPath("status").description("주문상태"),
+						PayloadDocumentation.fieldWithPath("orderItems[].itemName").description("상품명"),
+						PayloadDocumentation.fieldWithPath("orderItems[].orderPrice").description("주문가격"),
+						PayloadDocumentation.fieldWithPath("orderItems[].count").description("주문수량")
 					)
 				)
 			);
 	}
 
 	@Test
-	void deleteItem() throws Exception {
+	void cancelOder() throws Exception {
 		Long requestId = 1L;
 
-		Mockito.doNothing().when(itemService).deleteItem(requestId);
+		OrderResponse response = new OrderResponse(
+			1L,
+			"name",
+			Instant.now(),
+			OrderStatus.ORDER,
+			List.of(new OrderItemResponse("name", 1000, 3))
+		);
+
+		Mockito.when(orderService.cancelOrder(requestId)).thenReturn(response);
 
 		mockMvc.perform(
-				RestDocumentationRequestBuilders.delete("/items/{id}", requestId)
+				RestDocumentationRequestBuilders.patch("/orders/{id}", requestId)
 					.header("Authorization", "Bearer access-token")
 			)
-			.andExpect(MockMvcResultMatchers.status().isNoContent())
+			.andExpect(MockMvcResultMatchers.status().isOk())
 			.andDo(
-				MockMvcRestDocumentation.document("item-delete",
+				MockMvcRestDocumentation.document("order-cancel",
 					HeaderDocumentation.requestHeaders(
 						HeaderDocumentation.headerWithName("Authorization").description("액세스 토큰")
 					),
 					RequestDocumentation.pathParameters(
 						RequestDocumentation.parameterWithName("id").description("아이디")
+					),
+					PayloadDocumentation.responseFields(
+						PayloadDocumentation.fieldWithPath("id").description("주문아이디"),
+						PayloadDocumentation.fieldWithPath("name").description("회원명"),
+						PayloadDocumentation.fieldWithPath("orderedAt").description("주문일시"),
+						PayloadDocumentation.fieldWithPath("status").description("주문상태"),
+						PayloadDocumentation.fieldWithPath("orderItems[].itemName").description("상품명"),
+						PayloadDocumentation.fieldWithPath("orderItems[].orderPrice").description("주문가격"),
+						PayloadDocumentation.fieldWithPath("orderItems[].count").description("주문수량")
 					)
 				)
 			);
