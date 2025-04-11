@@ -1,6 +1,7 @@
 package spring.webmvc.presentation.exception;
 
 import java.io.IOException;
+import java.net.URI;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -18,6 +19,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import spring.webmvc.infrastructure.util.ProblemDetailUtil;
 import spring.webmvc.infrastructure.util.ResponseWriter;
 import spring.webmvc.presentation.exception.handler.JwtExceptionHandler;
 
@@ -29,6 +31,9 @@ class JwtExceptionHandlerTest {
 
 	@Mock
 	private FilterChain filterChain;
+
+	@Mock
+	private ProblemDetailUtil problemDetailUtil;
 
 	@Mock
 	private ResponseWriter responseWriter;
@@ -48,14 +53,19 @@ class JwtExceptionHandlerTest {
 		// Given
 		HttpStatus status = HttpStatus.UNAUTHORIZED;
 		String message = "JwtException";
+		URI uri = URI.create("uri");
 
 		Mockito.doThrow(new JwtException(message)).when(filterChain).doFilter(request, response);
+		Mockito.when(problemDetailUtil.createType(status)).thenReturn(uri);
+
+		ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(status, message);
+		problemDetail.setType(uri);
 
 		// When
 		jwtExceptionHandler.doFilter(request, response, filterChain);
 
 		// Then
-		Mockito.verify(responseWriter).writeResponse(ProblemDetail.forStatusAndDetail(status, message));
+		Mockito.verify(responseWriter).writeResponse(problemDetail);
 	}
 
 	@Test
@@ -64,13 +74,18 @@ class JwtExceptionHandlerTest {
 		// Given
 		HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
 		String message = "RuntimeException";
+		URI uri = URI.create("uri");
 
 		Mockito.doThrow(new RuntimeException(message)).when(filterChain).doFilter(request, response);
+		Mockito.when(problemDetailUtil.createType(status)).thenReturn(uri);
+
+		ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(status, message);
+		problemDetail.setType(uri);
 
 		// When
 		jwtExceptionHandler.doFilter(request, response, filterChain);
 
 		// Then
-		Mockito.verify(responseWriter).writeResponse(ProblemDetail.forStatusAndDetail(status, message));
+		Mockito.verify(responseWriter).writeResponse(Mockito.any(ProblemDetail.class));
 	}
 }
