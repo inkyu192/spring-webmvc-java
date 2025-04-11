@@ -19,13 +19,13 @@ import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import spring.webmvc.infrastructure.util.ResponseWriter;
-import spring.webmvc.presentation.exception.handler.ExceptionHandlerFilter;
+import spring.webmvc.presentation.exception.handler.JwtExceptionHandler;
 
 @ExtendWith(MockitoExtension.class)
-class ExceptionHandlerFilterTest {
+class JwtExceptionHandlerTest {
 
 	@InjectMocks
-	private ExceptionHandlerFilter exceptionHandlerFilter;
+	private JwtExceptionHandler jwtExceptionHandler;
 
 	@Mock
 	private FilterChain filterChain;
@@ -52,7 +52,7 @@ class ExceptionHandlerFilterTest {
 		Mockito.doThrow(new JwtException(message)).when(filterChain).doFilter(request, response);
 
 		// When
-		exceptionHandlerFilter.doFilter(request, response, filterChain);
+		jwtExceptionHandler.doFilter(request, response, filterChain);
 
 		// Then
 		Mockito.verify(responseWriter).writeResponse(ProblemDetail.forStatusAndDetail(status, message));
@@ -68,7 +68,7 @@ class ExceptionHandlerFilterTest {
 		Mockito.doThrow(new RuntimeException(message)).when(filterChain).doFilter(request, response);
 
 		// When
-		exceptionHandlerFilter.doFilter(request, response, filterChain);
+		jwtExceptionHandler.doFilter(request, response, filterChain);
 
 		// Then
 		Mockito.verify(responseWriter).writeResponse(ProblemDetail.forStatusAndDetail(status, message));

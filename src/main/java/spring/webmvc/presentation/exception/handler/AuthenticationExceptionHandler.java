@@ -11,25 +11,25 @@ import org.springframework.stereotype.Component;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import spring.webmvc.infrastructure.util.ProblemDetailUtil;
 import spring.webmvc.infrastructure.util.ResponseWriter;
 
 @Component
 @RequiredArgsConstructor
 public class AuthenticationExceptionHandler implements AuthenticationEntryPoint {
 
+	private final ProblemDetailUtil problemDetailUtil;
 	private final ResponseWriter responseWriter;
 
 	@Override
 	public void commence(
 		HttpServletRequest request,
 		HttpServletResponse response,
-		AuthenticationException authException
+		AuthenticationException exception
 	) throws IOException {
-		responseWriter.writeResponse(
-			ProblemDetail.forStatusAndDetail(
-				HttpStatus.UNAUTHORIZED,
-				authException.getMessage()
-			)
-		);
+		ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, exception.getMessage());
+		problemDetail.setType(problemDetailUtil.createType(HttpStatus.UNAUTHORIZED));
+
+		responseWriter.writeResponse(problemDetail);
 	}
 }
