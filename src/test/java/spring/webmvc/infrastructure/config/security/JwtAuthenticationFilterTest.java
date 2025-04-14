@@ -29,7 +29,7 @@ class JwtAuthenticationFilterTest {
 	private JwtAuthenticationFilter jwtAuthenticationFilter;
 
 	@Mock
-	private JwtTokenProvider jwtTokenProvider;
+	private JwtProvider jwtProvider;
 
 	@Mock
 	private FilterChain filterChain;
@@ -75,7 +75,7 @@ class JwtAuthenticationFilterTest {
 		// Given
 		String token = "invalid.jwt.token";
 
-		Mockito.when(jwtTokenProvider.parseAccessToken(token)).thenThrow(new JwtException("invalidToken"));
+		Mockito.when(jwtProvider.parseAccessToken(token)).thenThrow(new JwtException("invalidToken"));
 
 		request.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token);
 
@@ -93,7 +93,7 @@ class JwtAuthenticationFilterTest {
 		Long memberId = 1L;
 		List<String> permissions = List.of("ITEM_READ");
 
-		Mockito.when(jwtTokenProvider.parseAccessToken(token)).thenReturn(claims);
+		Mockito.when(jwtProvider.parseAccessToken(token)).thenReturn(claims);
 		Mockito.when(claims.get("memberId", Long.class)).thenReturn(memberId);
 		Mockito.when(claims.get("permissions", List.class)).thenReturn(permissions);
 

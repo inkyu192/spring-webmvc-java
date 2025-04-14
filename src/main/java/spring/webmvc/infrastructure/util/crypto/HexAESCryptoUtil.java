@@ -12,19 +12,19 @@ import org.springframework.stereotype.Component;
 @Component
 public class HexAESCryptoUtil implements CryptoUtil {
 
-	@Value("${crypto.secret-key}")
-	private String secretKey;
-	@Value("${crypto.iv-parameter}")
-	private String ivParameter;
+	private final SecretKeySpec secretKey;
+	private final IvParameterSpec ivParameter;
+
+	public HexAESCryptoUtil(CryptoProperties cryptoProperties) {
+		secretKey = new SecretKeySpec(cryptoProperties.getSecretKey().getBytes(StandardCharsets.UTF_8), "AES");
+		ivParameter = new IvParameterSpec(cryptoProperties.getIvParameter().getBytes(StandardCharsets.UTF_8));
+	}
 
 	@Override
 	public String encrypt(String plainText) {
 		try {
-			SecretKeySpec secretKeySpec = new SecretKeySpec(secretKey.getBytes(StandardCharsets.UTF_8), "AES");
-			IvParameterSpec ivParameterSpec = new IvParameterSpec(ivParameter.getBytes(StandardCharsets.UTF_8));
-
 			Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-			cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, ivParameterSpec);
+			cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivParameter);
 
 			byte[] encryptedBytes = cipher.doFinal(plainText.getBytes(StandardCharsets.UTF_8));
 
@@ -37,11 +37,8 @@ public class HexAESCryptoUtil implements CryptoUtil {
 	@Override
 	public String decrypt(String encryptedText) {
 		try {
-			SecretKeySpec secretKeySpec = new SecretKeySpec(secretKey.getBytes(StandardCharsets.UTF_8), "AES");
-			IvParameterSpec ivParameterSpec = new IvParameterSpec(ivParameter.getBytes(StandardCharsets.UTF_8));
-
 			Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-			cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, ivParameterSpec);
+			cipher.init(Cipher.DECRYPT_MODE, secretKey, ivParameter);
 
 			byte[] decryptedBytes = cipher.doFinal(hexToBytes(encryptedText));
 

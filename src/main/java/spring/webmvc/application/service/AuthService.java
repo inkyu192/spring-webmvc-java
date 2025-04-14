@@ -17,7 +17,7 @@ import spring.webmvc.domain.model.entity.Permission;
 import spring.webmvc.domain.model.entity.RolePermission;
 import spring.webmvc.domain.repository.MemberRepository;
 import spring.webmvc.domain.repository.TokenRepository;
-import spring.webmvc.infrastructure.config.security.JwtTokenProvider;
+import spring.webmvc.infrastructure.config.security.JwtProvider;
 import spring.webmvc.presentation.dto.request.MemberLoginRequest;
 import spring.webmvc.presentation.dto.request.TokenRequest;
 import spring.webmvc.presentation.dto.response.TokenResponse;
@@ -28,7 +28,7 @@ import spring.webmvc.presentation.exception.EntityNotFoundException;
 @RequiredArgsConstructor
 public class AuthService {
 
-	private final JwtTokenProvider jwtTokenProvider;
+	private final JwtProvider jwtProvider;
 	private final TokenRepository tokenRepository;
 	private final MemberRepository memberRepository;
 	private final PasswordEncoder passwordEncoder;
@@ -39,8 +39,8 @@ public class AuthService {
 			.filter(it -> passwordEncoder.matches(memberLoginRequest.password(), it.getPassword()))
 			.orElseThrow(() -> new BadCredentialsException("잘못된 아이디 또는 비밀번호입니다."));
 
-		String accessToken = jwtTokenProvider.createAccessToken(member.getId(), getPermissions(member));
-		String refreshToken = jwtTokenProvider.createRefreshToken();
+		String accessToken = jwtProvider.createAccessToken(member.getId(), getPermissions(member));
+		String refreshToken = jwtProvider.createRefreshToken();
 
 		tokenRepository.save(member.getId(), refreshToken);
 
@@ -49,7 +49,7 @@ public class AuthService {
 
 	public TokenResponse refreshToken(TokenRequest tokenRequest) {
 		Long memberId = extractMemberId(tokenRequest.accessToken());
-		jwtTokenProvider.validateRefreshToken(tokenRequest.refreshToken());
+		jwtProvider.validateRefreshToken(tokenRequest.refreshToken());
 
 		Member member = memberRepository.findById(memberId)
 			.orElseThrow(() -> new EntityNotFoundException(Member.class, memberId));
@@ -59,7 +59,7 @@ public class AuthService {
 			.orElseThrow(() -> new BadCredentialsException("유효하지 않은 인증 정보입니다. 다시 로그인해 주세요."));
 
 		return new TokenResponse(
-			jwtTokenProvider.createAccessToken(
+			jwtProvider.createAccessToken(
 				member.getId(),
 				getPermissions(member)
 			),
@@ -71,7 +71,7 @@ public class AuthService {
 		Claims claims;
 
 		try {
-			claims = jwtTokenProvider.parseAccessToken(accessToken);
+			claims = jwtProvider.parseAccessToken(accessToken);
 		} catch (ExpiredJwtException e) {
 			claims = e.getClaims();
 		}
