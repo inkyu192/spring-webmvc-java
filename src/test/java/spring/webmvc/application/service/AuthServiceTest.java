@@ -18,7 +18,7 @@ import io.jsonwebtoken.JwtException;
 import spring.webmvc.domain.model.entity.Member;
 import spring.webmvc.domain.repository.MemberRepository;
 import spring.webmvc.domain.repository.TokenRepository;
-import spring.webmvc.infrastructure.config.security.JwtTokenProvider;
+import spring.webmvc.infrastructure.config.security.JwtProvider;
 import spring.webmvc.presentation.dto.request.MemberLoginRequest;
 import spring.webmvc.presentation.dto.request.TokenRequest;
 import spring.webmvc.presentation.dto.response.TokenResponse;
@@ -30,7 +30,7 @@ class AuthServiceTest {
 	private AuthService authService;
 
 	@Mock
-	private JwtTokenProvider jwtTokenProvider;
+	private JwtProvider jwtProvider;
 
 	@Mock
 	private TokenRepository tokenRepository;
@@ -79,8 +79,8 @@ class AuthServiceTest {
 
 		Mockito.when(memberRepository.findByAccount(Mockito.any())).thenReturn(Optional.of(member));
 		Mockito.when(passwordEncoder.matches(Mockito.any(), Mockito.any())).thenReturn(true);
-		Mockito.when(jwtTokenProvider.createAccessToken(Mockito.any(), Mockito.any())).thenReturn(accessToken);
-		Mockito.when(jwtTokenProvider.createRefreshToken()).thenReturn(refreshToken);
+		Mockito.when(jwtProvider.createAccessToken(Mockito.any(), Mockito.any())).thenReturn(accessToken);
+		Mockito.when(jwtProvider.createRefreshToken()).thenReturn(refreshToken);
 		Mockito.when(tokenRepository.save(Mockito.any(), Mockito.any())).thenReturn(refreshToken);
 
 		// When
@@ -98,7 +98,7 @@ class AuthServiceTest {
 		// Given
 		TokenRequest request = Mockito.mock(TokenRequest.class);
 
-		Mockito.when(jwtTokenProvider.parseAccessToken(request.accessToken())).thenThrow(JwtException.class);
+		Mockito.when(jwtProvider.parseAccessToken(request.accessToken())).thenThrow(JwtException.class);
 
 		// When & Then
 		Assertions.assertThatThrownBy(() -> authService.refreshToken(request)).isInstanceOf(JwtException.class);
@@ -112,8 +112,8 @@ class AuthServiceTest {
 		TokenRequest request = new TokenRequest("accessToken", "fakeRefreshToken");
 		Claims claims = Mockito.mock(Claims.class);
 
-		Mockito.when(jwtTokenProvider.parseAccessToken(request.accessToken())).thenReturn(claims);
-		Mockito.doThrow(JwtException.class).when(jwtTokenProvider).validateRefreshToken(Mockito.any());
+		Mockito.when(jwtProvider.parseAccessToken(request.accessToken())).thenReturn(claims);
+		Mockito.doThrow(JwtException.class).when(jwtProvider).validateRefreshToken(Mockito.any());
 		Mockito.when(claims.get("memberId")).thenReturn(memberId);
 
 		// When & Then
@@ -129,7 +129,7 @@ class AuthServiceTest {
 		Claims claims = Mockito.mock(Claims.class);
 		String token = "refreshToken";
 
-		Mockito.when(jwtTokenProvider.parseAccessToken(request.accessToken())).thenReturn(claims);
+		Mockito.when(jwtProvider.parseAccessToken(request.accessToken())).thenReturn(claims);
 		Mockito.when(memberRepository.findById(memberId)).thenReturn(Mockito.mock());
 		Mockito.when(claims.get("memberId")).thenReturn(memberId);
 		Mockito.when(tokenRepository.findByMemberId(memberId)).thenReturn(Optional.of(token));
@@ -150,12 +150,12 @@ class AuthServiceTest {
 		Claims claims = Mockito.mock(Claims.class);
 		Member member = Mockito.mock(Member.class);
 
-		Mockito.when(jwtTokenProvider.parseAccessToken(request.accessToken())).thenReturn(claims);
+		Mockito.when(jwtProvider.parseAccessToken(request.accessToken())).thenReturn(claims);
 		Mockito.when(memberRepository.findById(memberId)).thenReturn(Mockito.mock());
 		Mockito.when(claims.get("memberId")).thenReturn(memberId);
 		Mockito.when(tokenRepository.findByMemberId(memberId)).thenReturn(Optional.of(token));
 		Mockito.when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
-		Mockito.when(jwtTokenProvider.createAccessToken(Mockito.any(), Mockito.any())).thenReturn("newAccessToken");
+		Mockito.when(jwtProvider.createAccessToken(Mockito.any(), Mockito.any())).thenReturn("newAccessToken");
 
 		// When
 		TokenResponse response = authService.refreshToken(request);

@@ -23,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-	private final JwtTokenProvider jwtTokenProvider;
+	private final JwtProvider jwtProvider;
 
 	@Override
 	protected void doFilterInternal(
@@ -51,7 +51,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	}
 
 	private Authentication createAuthentication(String token) {
-		Claims claims = jwtTokenProvider.parseAccessToken(token);
+		Claims claims = jwtProvider.parseAccessToken(token);
 
 		Long memberId = claims.get("memberId", Long.class);
 		List<?> permissions = claims.get("permissions", List.class);

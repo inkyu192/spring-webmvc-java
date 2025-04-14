@@ -1,12 +1,10 @@
 package spring.webmvc.infrastructure.config.security;
 
-import java.time.Duration;
 import java.util.Date;
 import java.util.List;
 
 import javax.crypto.SecretKey;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
@@ -15,23 +13,18 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
 @Component
-public class JwtTokenProvider {
+public class JwtProvider {
 
 	private final SecretKey accessTokenKey;
 	private final long accessTokenExpirationTime;
 	private final SecretKey refreshTokenKey;
 	private final long refreshTokenExpirationTime;
 
-	public JwtTokenProvider(
-		@Value("${jwt.access-token.key}") String accessTokenKey,
-		@Value("${jwt.access-token.expiration-duration}") Duration accessTokenExpirationDuration,
-		@Value("${jwt.refresh-token.key}") String refreshTokenKey,
-		@Value("${jwt.refresh-token.expiration-duration}") Duration refreshTokenExpirationDuration
-	) {
-		this.accessTokenKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(accessTokenKey));
-		this.accessTokenExpirationTime = accessTokenExpirationDuration.toMillis();
-		this.refreshTokenKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(refreshTokenKey));
-		this.refreshTokenExpirationTime = refreshTokenExpirationDuration.toMillis();
+	public JwtProvider(JwtProperties jwtProperties) {
+		accessTokenKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtProperties.getAccessToken().getKey()));
+		accessTokenExpirationTime = jwtProperties.getAccessToken().getExpiration().toMillis();
+		refreshTokenKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtProperties.getRefreshToken().getKey()));
+		refreshTokenExpirationTime = jwtProperties.getRefreshToken().getExpiration().toMillis();
 	}
 
 	public String createAccessToken(Long memberId, List<String> permissions) {
