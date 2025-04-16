@@ -1,7 +1,7 @@
 package spring.webmvc.application.service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,17 +26,20 @@ public class RoleService {
 
 	@Transactional
 	public RoleResponse saveRole(RoleSaveRequest roleSaveRequest) {
-		List<RolePermission> rolePermissions = new ArrayList<>();
-		for (Long id : roleSaveRequest.permissionIds()) {
-			Permission permission = permissionRepository.findById(id)
-				.orElseThrow(() -> new EntityNotFoundException(Permission.class, id));
+		Role role = Role.create(roleSaveRequest.name());
 
-			rolePermissions.add(RolePermission.create(permission));
+		Map<Long, Permission> permissionMap = permissionRepository.findAllById(roleSaveRequest.permissionIds()).stream()
+			.collect(Collectors.toMap(Permission::getId, permission -> permission));
+
+		for (Long id : roleSaveRequest.permissionIds()) {
+			Permission permission = permissionMap.get(id);
+			if (permission == null) {
+				throw new EntityNotFoundException(Permission.class, id);
+			}
+			role.addPermission(permission);
 		}
 
-		Role role = roleRepository.save(
-			Role.create(roleSaveRequest.name(), rolePermissions)
-		);
+		roleRepository.save(role);
 
 		return new RoleResponse(
 			role,

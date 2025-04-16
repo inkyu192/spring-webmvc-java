@@ -60,9 +60,7 @@ public class Member extends BaseTime {
 		String password,
 		String name,
 		String phone,
-		LocalDate birthDate,
-		List<MemberRole> memberRoles,
-		List<MemberPermission> memberPermissions
+		LocalDate birthDate
 	) {
 		Member member = new Member();
 
@@ -72,20 +70,15 @@ public class Member extends BaseTime {
 		member.phone = phone;
 		member.birthDate = birthDate;
 
-		memberRoles.forEach(member::associateRole);
-		memberPermissions.forEach(member::associatePermission);
-
 		return member;
 	}
 
-	public void associateRole(MemberRole memberRole) {
-		memberRoles.add(memberRole);
-		memberRole.associateMember(this);
+	public void addRole(Role role) {
+		memberRoles.add(MemberRole.create(this, role));
 	}
 
-	public void associatePermission(MemberPermission memberPermission) {
-		memberPermissions.add(memberPermission);
-		memberPermission.associateMember(this);
+	public void addPermission(Permission permission) {
+		memberPermissions.add(MemberPermission.create(this, permission));
 	}
 
 	public void update(String password, String name, String phone, LocalDate birthDate) {

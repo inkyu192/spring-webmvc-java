@@ -31,15 +31,12 @@ public class MemberRole {
 	@JoinColumn(name = "role_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
 	private Role role;
 
-	public static MemberRole create(Role role) {
+	public static MemberRole create(Member member, Role role) {
 		MemberRole memberRole = new MemberRole();
 
+		memberRole.member = member;
 		memberRole.role = role;
 
 		return memberRole;
-	}
-
-	public void associateMember(Member member) {
-		this.member = member;
 	}
 }

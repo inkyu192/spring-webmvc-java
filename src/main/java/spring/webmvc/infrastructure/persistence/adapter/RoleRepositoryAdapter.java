@@ -1,6 +1,6 @@
 package spring.webmvc.infrastructure.persistence.adapter;
 
-import java.util.Optional;
+import java.util.List;
 
 import org.springframework.stereotype.Component;
 
@@ -21,7 +21,7 @@ public class RoleRepositoryAdapter implements RoleRepository {
 	}
 
 	@Override
-	public Optional<Role> findById(Long id) {
-		return jpaRepository.findById(id);
+	public List<Role> findAllById(Iterable<Long> ids) {
+		return jpaRepository.findAllById(ids);
 	}
 }

@@ -52,20 +52,18 @@ public class Order extends BaseTime {
 		return Collections.unmodifiableList(orderItems);
 	}
 
-	public static Order create(Member member, List<OrderItem> orderItems) {
+	public static Order create(Member member) {
 		Order order = new Order();
 
 		order.orderedAt = Instant.now();
 		order.status = OrderStatus.ORDER;
 		order.member = member;
-		orderItems.forEach(order::associateItem);
 
 		return order;
 	}
 
-	public void associateItem(OrderItem orderItem) {
-		orderItems.add(orderItem);
-		orderItem.associateOrder(this);
+	public void addItem(Item item, int count) {
+		orderItems.add(OrderItem.create(this, item, count));
 	}
 
 	public void cancel() {

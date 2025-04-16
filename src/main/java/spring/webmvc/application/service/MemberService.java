@@ -1,7 +1,7 @@
 package spring.webmvc.application.service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -12,8 +12,6 @@ import org.springframework.util.ObjectUtils;
 import lombok.RequiredArgsConstructor;
 import spring.webmvc.application.event.NotificationEvent;
 import spring.webmvc.domain.model.entity.Member;
-import spring.webmvc.domain.model.entity.MemberPermission;
-import spring.webmvc.domain.model.entity.MemberRole;
 import spring.webmvc.domain.model.entity.Permission;
 import spring.webmvc.domain.model.entity.Role;
 import spring.webmvc.domain.repository.MemberRepository;
@@ -43,37 +41,42 @@ public class MemberService {
 			throw new DuplicateEntityException(Member.class, memberSaveRequest.account());
 		}
 
-		List<MemberRole> memberRoles = new ArrayList<>();
-		if (!ObjectUtils.isEmpty(memberSaveRequest.roleIds())) {
-			for (Long id : memberSaveRequest.roleIds()) {
-				Role role = roleRepository.findById(id)
-					.orElseThrow(() -> new EntityNotFoundException(Role.class, id));
-
-				memberRoles.add(MemberRole.create(role));
-			}
-		}
-
-		List<MemberPermission> memberPermissions = new ArrayList<>();
-		if (!ObjectUtils.isEmpty(memberSaveRequest.permissionIds())) {
-			for (Long id : memberSaveRequest.permissionIds()) {
-				Permission permission = permissionRepository.findById(id)
-					.orElseThrow(() -> new EntityNotFoundException(Permission.class, id));
-
-				memberPermissions.add(MemberPermission.create(permission));
-			}
-		}
-
-		Member member = memberRepository.save(
-			Member.create(
-				memberSaveRequest.account(),
-				passwordEncoder.encode(memberSaveRequest.password()),
-				memberSaveRequest.name(),
-				memberSaveRequest.phone(),
-				memberSaveRequest.birthDate(),
-				memberRoles,
-				memberPermissions
-			)
+		Member member = Member.create(
+			memberSaveRequest.account(),
+			passwordEncoder.encode(memberSaveRequest.password()),
+			memberSaveRequest.name(),
+			memberSaveRequest.phone(),
+			memberSaveRequest.birthDate()
 		);
+
+		if (!ObjectUtils.isEmpty(memberSaveRequest.roleIds())) {
+			Map<Long, Role> roleMap = roleRepository.findAllById(memberSaveRequest.roleIds()).stream()
+				.collect(Collectors.toMap(Role::getId, role -> role));
+
+			for (Long id : memberSaveRequest.roleIds()) {
+				Role role = roleMap.get(id);
+				if (role == null) {
+					throw new EntityNotFoundException(Role.class, id);
+				}
+				member.addRole(role);
+			}
+		}
+
+		if (!ObjectUtils.isEmpty(memberSaveRequest.permissionIds())) {
+			Map<Long, Permission> permissionMap = permissionRepository.findAllById(memberSaveRequest.permissionIds())
+				.stream()
+				.collect(Collectors.toMap(Permission::getId, permission -> permission));
+
+			for (Long id : memberSaveRequest.permissionIds()) {
+				Permission permission = permissionMap.get(id);
+				if (permission == null) {
+					throw new EntityNotFoundException(Permission.class, id);
+				}
+				member.addPermission(permission);
+			}
+		}
+
+		memberRepository.save(member);
 
 		eventPublisher.publishEvent(
 			new NotificationEvent(
