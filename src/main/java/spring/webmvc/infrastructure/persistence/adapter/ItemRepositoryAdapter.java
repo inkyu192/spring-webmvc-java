@@ -31,13 +31,13 @@ public class ItemRepositoryAdapter implements ItemRepository {
 	}
 
 	@Override
-	public Item save(Item item) {
-		return jpaRepository.save(item);
+	public List<Item> findAllById(Iterable<Long> ids) {
+		return jpaRepository.findAllById(ids);
 	}
 
 	@Override
-	public List<Item> saveAll(Iterable<Item> items) {
-		return jpaRepository.saveAll(items);
+	public Item save(Item item) {
+		return jpaRepository.save(item);
 	}
 
 	@Override

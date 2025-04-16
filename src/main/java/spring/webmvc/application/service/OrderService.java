@@ -1,7 +1,7 @@
 package spring.webmvc.application.service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import spring.webmvc.domain.model.entity.Item;
 import spring.webmvc.domain.model.entity.Member;
 import spring.webmvc.domain.model.entity.Order;
-import spring.webmvc.domain.model.entity.OrderItem;
 import spring.webmvc.domain.model.enums.OrderStatus;
 import spring.webmvc.domain.repository.ItemRepository;
 import spring.webmvc.domain.repository.MemberRepository;
@@ -38,20 +37,29 @@ public class OrderService {
 		Member member = memberRepository.findById(memberId)
 			.orElseThrow(() -> new EntityNotFoundException(Member.class, memberId));
 
-		List<OrderItem> orderItems = new ArrayList<>();
-		if (!ObjectUtils.isEmpty(orderSaveRequest.orderItems())) {
-			for (OrderItemSaveRequest requestOrderIterm : orderSaveRequest.orderItems()) {
-				Long itemId = requestOrderIterm.itemId();
-				Item item = itemRepository.findById(itemId)
-					.orElseThrow(() -> new EntityNotFoundException(Item.class, itemId));
+		Order order = Order.create(member);
 
-				orderItems.add(OrderItem.create(item, requestOrderIterm.count()));
+		if (!ObjectUtils.isEmpty(orderSaveRequest.orderItems())) {
+			Map<Long, Item> itemMap = itemRepository.findAllById(
+					orderSaveRequest.orderItems()
+						.stream()
+						.map(OrderItemSaveRequest::itemId)
+						.toList())
+				.stream()
+				.collect(Collectors.toMap(Item::getId, item -> item));
+
+			for (OrderItemSaveRequest requestOrderIterm : orderSaveRequest.orderItems()) {
+				Item item = itemMap.get(requestOrderIterm.itemId());
+
+				if (item == null) {
+					throw new EntityNotFoundException(Item.class, requestOrderIterm.itemId());
+				}
+
+				order.addItem(item, requestOrderIterm.count());
 			}
 		}
 
-		Order order = orderRepository.save(
-			Order.create(member, orderItems)
-		);
+		orderRepository.save(order);
 
 		return new OrderResponse(order);
 	}

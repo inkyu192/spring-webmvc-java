@@ -12,7 +12,7 @@ import spring.webmvc.infrastructure.util.ResponseWriter;
 public class WebMvcTestConfig {
 
 	@Bean
-	public JwtProvider jwtTokenProvider() {
+	public JwtProvider jwtProvider() {
 		return Mockito.mock(JwtProvider.class);
 	}
 

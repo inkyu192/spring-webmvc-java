@@ -32,17 +32,15 @@ public class Role extends BaseTime {
 		return Collections.unmodifiableList(rolePermissions);
 	}
 
-	public static Role create(String name, List<RolePermission> rolePermissions) {
+	public static Role create(String name) {
 		Role role = new Role();
 
 		role.name = name;
-		rolePermissions.forEach(role::associatePermission);
 
 		return role;
 	}
 
-	public void associatePermission(RolePermission rolePermission) {
-		rolePermissions.add(rolePermission);
-		rolePermission.associateRole(this);
+	public void addPermission(Permission permission) {
+		rolePermissions.add(RolePermission.create(this, permission));
 	}
 }

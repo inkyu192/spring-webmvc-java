@@ -14,9 +14,9 @@ public interface ItemRepository {
 
 	Optional<Item> findById(Long id);
 
-	Item save(Item item);
+	List<Item> findAllById(Iterable<Long> ids);
 
-	List<Item> saveAll(Iterable<Item> items);
+	Item save(Item item);
 
 	void delete(Item item);
 }

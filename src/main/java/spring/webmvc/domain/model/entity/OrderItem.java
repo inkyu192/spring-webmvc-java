@@ -36,9 +36,10 @@ public class OrderItem {
 	private int orderPrice;
 	private int count;
 
-	public static OrderItem create(Item item, int count) {
+	public static OrderItem create(Order order, Item item, int count) {
 		OrderItem orderItem = new OrderItem();
 
+		orderItem.order = order;
 		orderItem.item = item;
 		orderItem.orderPrice = item.getPrice();
 		orderItem.count = count;
@@ -46,10 +47,6 @@ public class OrderItem {
 		item.removeQuantity(count);
 
 		return orderItem;
-	}
-
-	public void associateOrder(Order order) {
-		this.order = order;
 	}
 
 	public void cancel() {

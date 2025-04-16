@@ -31,15 +31,12 @@ public class MemberPermission {
 	@JoinColumn(name = "permission_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
 	private Permission permission;
 
-	public static MemberPermission create(Permission permission) {
+	public static MemberPermission create(Member member, Permission permission) {
 		MemberPermission memberPermission = new MemberPermission();
 
+		memberPermission.member = member;
 		memberPermission.permission = permission;
 
 		return memberPermission;
-	}
-
-	public void associateMember(Member member) {
-		this.member = member;
 	}
 }
