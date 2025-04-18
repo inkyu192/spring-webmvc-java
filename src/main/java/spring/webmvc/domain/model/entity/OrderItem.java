@@ -26,8 +26,8 @@ public class OrderItem {
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "item_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-	private Item item;
+	@JoinColumn(name = "product_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+	private Product product;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "order_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
@@ -36,20 +36,20 @@ public class OrderItem {
 	private int orderPrice;
 	private int count;
 
-	public static OrderItem create(Order order, Item item, int count) {
+	public static OrderItem create(Order order, Product product, int count) {
 		OrderItem orderItem = new OrderItem();
 
 		orderItem.order = order;
-		orderItem.item = item;
-		orderItem.orderPrice = item.getPrice();
+		orderItem.product = product;
+		orderItem.orderPrice = product.getPrice();
 		orderItem.count = count;
 
-		item.removeQuantity(count);
+		product.removeQuantity(count);
 
 		return orderItem;
 	}
 
 	public void cancel() {
-		item.addQuantity(count);
+		product.addQuantity(count);
 	}
 }
