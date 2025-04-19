@@ -5,7 +5,8 @@ spring:
   application:
     name: spring-webmvc-java
   jpa:
-    hibernate.ddl-auto: create
+    hibernate:
+      ddl-auto: create
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
@@ -16,11 +17,8 @@ spring:
 
 logging:
   level:
-    org:
-      hibernate:
-        SQL: debug
-        type: info
-#        orm.jdbc.bind: TRACE
+    org.hibernate.SQL: DEBUG
+    org.hibernate.orm.jdbc.bind: DEBUG
 
 jwt:
   access-token:
