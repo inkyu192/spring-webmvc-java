@@ -7,9 +7,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.redis.DataRedisTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.core.RedisTemplate;
 
+import spring.webmvc.infrastructure.config.RedisTestContainerConfig;
+
 @DataRedisTest
+@Import(RedisTestContainerConfig.class)
 class RequestLockRedisRepositoryTest {
 
 	private final RequestLockRedisRepository requestLockRedisRepository;
