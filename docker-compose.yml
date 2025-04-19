@@ -1,19 +1,19 @@
 services:
-  application:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: spring-webmvc-java
-    container_name: spring-webmvc-java-container
-    ports:
-      - "8080:8080"
-    environment:
-      SPRING_PROFILES_ACTIVE: docker
-    networks:
-      - application-network
-    depends_on:
-      - postgres
-      - redis
+#  application:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    image: spring-webmvc-java
+#    container_name: spring-webmvc-java-container
+#    ports:
+#      - "8080:8080"
+#    environment:
+#      SPRING_PROFILES_ACTIVE: docker
+#    networks:
+#      - application-network
+#    depends_on:
+#      - postgres
+#      - redis
 
   postgres:
     container_name: postgres-container
