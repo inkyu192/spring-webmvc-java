@@ -3,7 +3,7 @@ package spring.webmvc.presentation.dto.response;
 import spring.webmvc.domain.model.entity.OrderProduct;
 
 public record OrderProductResponse(
-	String itemName,
+	String productName,
 	int orderPrice,
 	int count
 ) {
