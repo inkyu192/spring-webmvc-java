@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import spring.webmvc.application.service.MemberService;
-import spring.webmvc.presentation.dto.request.MemberSaveRequest;
+import spring.webmvc.presentation.dto.request.MemberCreateRequest;
 import spring.webmvc.presentation.dto.request.MemberUpdateRequest;
 import spring.webmvc.presentation.dto.response.MemberResponse;
 import spring.webmvc.presentation.exception.AtLeastOneRequiredException;
@@ -31,15 +31,15 @@ public class MemberController {
 
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public MemberResponse saveMember(@RequestBody @Validated MemberSaveRequest memberSaveRequest) {
-		List<Long> roleIds = memberSaveRequest.roleIds();
-		List<Long> permissionIds = memberSaveRequest.permissionIds();
+	public MemberResponse createMember(@RequestBody @Validated MemberCreateRequest memberCreateRequest) {
+		List<Long> roleIds = memberCreateRequest.roleIds();
+		List<Long> permissionIds = memberCreateRequest.permissionIds();
 
 		if (ObjectUtils.isEmpty(roleIds) && ObjectUtils.isEmpty(permissionIds)) {
 			throw new AtLeastOneRequiredException("roleIds", "permissionIds");
 		}
 
-		return memberService.saveMember(memberSaveRequest);
+		return memberService.createMember(memberCreateRequest);
 	}
 
 	@GetMapping

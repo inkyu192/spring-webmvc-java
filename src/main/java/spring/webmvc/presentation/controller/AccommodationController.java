@@ -15,7 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import spring.webmvc.application.service.AccommodationService;
-import spring.webmvc.presentation.dto.request.AccommodationSaveRequest;
+import spring.webmvc.presentation.dto.request.AccommodationCreateRequest;
+import spring.webmvc.presentation.dto.request.AccommodationUpdateRequest;
 import spring.webmvc.presentation.dto.response.AccommodationResponse;
 
 @RestController
@@ -35,17 +36,17 @@ public class AccommodationController {
 	@PreAuthorize("hasAuthority('PRODUCT_WRITER')")
 	@ResponseStatus(HttpStatus.CREATED)
 	public AccommodationResponse createAccommodation(
-		@RequestBody @Validated AccommodationSaveRequest accommodationSaveRequest) {
-		return accommodationService.createAccommodation(accommodationSaveRequest);
+		@RequestBody @Validated AccommodationCreateRequest accommodationCreateRequest) {
+		return accommodationService.createAccommodation(accommodationCreateRequest);
 	}
 
 	@PatchMapping("/{id}")
 	@PreAuthorize("hasAuthority('PRODUCT_WRITER')")
 	public AccommodationResponse patchAccommodation(
 		@PathVariable Long id,
-		@RequestBody @Validated AccommodationSaveRequest accommodationSaveRequest
+		@RequestBody @Validated AccommodationUpdateRequest accommodationUpdateRequest
 	) {
-		return accommodationService.updateAccommodation(id, accommodationSaveRequest);
+		return accommodationService.updateAccommodation(id, accommodationUpdateRequest);
 	}
 
 	@DeleteMapping("/{id}")

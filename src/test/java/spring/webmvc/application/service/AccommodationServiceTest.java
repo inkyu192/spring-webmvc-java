@@ -15,7 +15,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import spring.webmvc.domain.model.entity.Accommodation;
 import spring.webmvc.domain.repository.AccommodationRepository;
-import spring.webmvc.presentation.dto.request.AccommodationSaveRequest;
+import spring.webmvc.presentation.dto.request.AccommodationCreateRequest;
+import spring.webmvc.presentation.dto.request.AccommodationUpdateRequest;
 import spring.webmvc.presentation.dto.response.AccommodationResponse;
 import spring.webmvc.presentation.exception.EntityNotFoundException;
 
@@ -32,7 +33,7 @@ class AccommodationServiceTest {
 	@DisplayName("createAccommodation은 숙소를 저장한다")
 	void createAccommodation_case1() {
 		// Given
-		AccommodationSaveRequest request = new AccommodationSaveRequest(
+		AccommodationCreateRequest request = new AccommodationCreateRequest(
 			"Hotel Room",
 			"A great hotel",
 			1000,
@@ -112,7 +113,7 @@ class AccommodationServiceTest {
 			Instant.now(),
 			Instant.now().plus(1, ChronoUnit.DAYS)
 		);
-		AccommodationSaveRequest request = new AccommodationSaveRequest(
+		AccommodationUpdateRequest request = new AccommodationUpdateRequest(
 			"New Hotel",
 			"New description",
 			2000,

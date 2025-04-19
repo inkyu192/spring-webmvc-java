@@ -29,7 +29,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import spring.webmvc.application.service.FlightService;
 import spring.webmvc.infrastructure.config.WebMvcTestConfig;
-import spring.webmvc.presentation.dto.request.FlightSaveRequest;
+import spring.webmvc.presentation.dto.request.FlightCreateRequest;
+import spring.webmvc.presentation.dto.request.FlightUpdateRequest;
 import spring.webmvc.presentation.dto.response.FlightResponse;
 
 @WebMvcTest(FlightController.class)
@@ -58,7 +59,7 @@ class FlightControllerTest {
     @Test
     void saveFlight() throws Exception {
         // Given
-        FlightSaveRequest request = new FlightSaveRequest(
+        FlightCreateRequest request = new FlightCreateRequest(
             "Flight 123",
             "A great flight",
             1000,
@@ -187,7 +188,7 @@ class FlightControllerTest {
     void updateFlight() throws Exception {
         // Given
         Long requestId = 1L;
-        FlightSaveRequest request = new FlightSaveRequest(
+        FlightUpdateRequest request = new FlightUpdateRequest(
             "Flight 123",
             "A great flight",
             1000,

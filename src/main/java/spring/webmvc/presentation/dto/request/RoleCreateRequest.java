@@ -5,13 +5,13 @@ import java.util.List;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-public record RoleSaveRequest(
+public record RoleCreateRequest(
 	@NotBlank
 	String name,
 	@Size(min = 1)
 	List<Long> permissionIds
 ) {
-	public RoleSaveRequest {
+	public RoleCreateRequest {
 		if (permissionIds == null) {
 			permissionIds = List.of();
 		}

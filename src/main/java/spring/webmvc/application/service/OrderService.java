@@ -17,8 +17,8 @@ import spring.webmvc.domain.model.enums.OrderStatus;
 import spring.webmvc.domain.repository.MemberRepository;
 import spring.webmvc.domain.repository.OrderRepository;
 import spring.webmvc.domain.repository.ProductRepository;
-import spring.webmvc.presentation.dto.request.OrderProductSaveRequest;
-import spring.webmvc.presentation.dto.request.OrderSaveRequest;
+import spring.webmvc.presentation.dto.request.OrderProductCreateRequest;
+import spring.webmvc.presentation.dto.request.OrderCreateRequest;
 import spring.webmvc.presentation.dto.response.OrderResponse;
 import spring.webmvc.presentation.exception.EntityNotFoundException;
 
@@ -32,23 +32,23 @@ public class OrderService {
 	private final OrderRepository orderRepository;
 
 	@Transactional
-	public OrderResponse saveOrder(OrderSaveRequest orderSaveRequest) {
-		Long memberId = orderSaveRequest.memberId();
+	public OrderResponse createOrder(OrderCreateRequest orderCreateRequest) {
+		Long memberId = orderCreateRequest.memberId();
 		Member member = memberRepository.findById(memberId)
 			.orElseThrow(() -> new EntityNotFoundException(Member.class, memberId));
 
 		Order order = Order.create(member);
 
-		if (!ObjectUtils.isEmpty(orderSaveRequest.orderProducts())) {
+		if (!ObjectUtils.isEmpty(orderCreateRequest.orderProducts())) {
 			Map<Long, Product> productMap = productRepository.findAllById(
-					orderSaveRequest.orderProducts()
+					orderCreateRequest.orderProducts()
 						.stream()
-						.map(OrderProductSaveRequest::productId)
+						.map(OrderProductCreateRequest::productId)
 						.toList())
 				.stream()
 				.collect(Collectors.toMap(Product::getId, product -> product));
 
-			for (OrderProductSaveRequest requestOrderIterm : orderSaveRequest.orderProducts()) {
+			for (OrderProductCreateRequest requestOrderIterm : orderCreateRequest.orderProducts()) {
 				Product product = productMap.get(requestOrderIterm.productId());
 
 				if (product == null) {

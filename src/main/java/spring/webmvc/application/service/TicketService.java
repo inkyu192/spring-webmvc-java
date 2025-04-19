@@ -6,7 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import spring.webmvc.domain.model.entity.Ticket;
 import spring.webmvc.domain.repository.TicketRepository;
-import spring.webmvc.presentation.dto.request.TicketSaveRequest;
+import spring.webmvc.presentation.dto.request.TicketCreateRequest;
+import spring.webmvc.presentation.dto.request.TicketUpdateRequest;
 import spring.webmvc.presentation.dto.response.TicketResponse;
 import spring.webmvc.presentation.exception.EntityNotFoundException;
 
@@ -25,17 +26,17 @@ public class TicketService {
 	}
 
 	@Transactional
-	public TicketResponse createTicket(TicketSaveRequest ticketSaveRequest) {
+	public TicketResponse createTicket(TicketCreateRequest ticketCreateRequest) {
 		Ticket ticket = ticketRepository.save(
 			Ticket.create(
-				ticketSaveRequest.name(),
-				ticketSaveRequest.description(),
-				ticketSaveRequest.price(),
-				ticketSaveRequest.quantity(),
-				ticketSaveRequest.place(),
-				ticketSaveRequest.performanceTime(),
-				ticketSaveRequest.duration(),
-				ticketSaveRequest.ageLimit()
+				ticketCreateRequest.name(),
+				ticketCreateRequest.description(),
+				ticketCreateRequest.price(),
+				ticketCreateRequest.quantity(),
+				ticketCreateRequest.place(),
+				ticketCreateRequest.performanceTime(),
+				ticketCreateRequest.duration(),
+				ticketCreateRequest.ageLimit()
 			)
 		);
 
@@ -43,19 +44,19 @@ public class TicketService {
 	}
 
 	@Transactional
-	public TicketResponse updateTicket(Long id, TicketSaveRequest ticketSaveRequest) {
+	public TicketResponse updateTicket(Long id, TicketUpdateRequest ticketUpdateRequest) {
 		Ticket ticket = ticketRepository.findById(id)
 			.orElseThrow(() -> new EntityNotFoundException(Ticket.class, id));
 
 		ticket.update(
-			ticketSaveRequest.name(),
-			ticketSaveRequest.description(),
-			ticketSaveRequest.price(),
-			ticketSaveRequest.quantity(),
-			ticketSaveRequest.place(),
-			ticketSaveRequest.performanceTime(),
-			ticketSaveRequest.duration(),
-			ticketSaveRequest.ageLimit()
+			ticketUpdateRequest.name(),
+			ticketUpdateRequest.description(),
+			ticketUpdateRequest.price(),
+			ticketUpdateRequest.quantity(),
+			ticketUpdateRequest.place(),
+			ticketUpdateRequest.performanceTime(),
+			ticketUpdateRequest.duration(),
+			ticketUpdateRequest.ageLimit()
 		);
 
 		return new TicketResponse(ticket);

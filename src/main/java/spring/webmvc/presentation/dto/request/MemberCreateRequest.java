@@ -8,7 +8,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
-public record MemberSaveRequest(
+public record MemberCreateRequest(
 	@NotBlank
 	@Email
 	String account,
@@ -23,7 +23,7 @@ public record MemberSaveRequest(
 	List<Long> roleIds,
 	List<Long> permissionIds
 ) {
-	public MemberSaveRequest {
+	public MemberCreateRequest {
 		if (roleIds == null) {
 			roleIds = List.of();
 		}

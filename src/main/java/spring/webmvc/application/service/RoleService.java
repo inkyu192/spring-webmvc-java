@@ -12,7 +12,7 @@ import spring.webmvc.domain.model.entity.Role;
 import spring.webmvc.domain.model.entity.RolePermission;
 import spring.webmvc.domain.repository.PermissionRepository;
 import spring.webmvc.domain.repository.RoleRepository;
-import spring.webmvc.presentation.dto.request.RoleSaveRequest;
+import spring.webmvc.presentation.dto.request.RoleCreateRequest;
 import spring.webmvc.presentation.dto.response.RoleResponse;
 import spring.webmvc.presentation.exception.EntityNotFoundException;
 
@@ -25,13 +25,13 @@ public class RoleService {
 	private final PermissionRepository permissionRepository;
 
 	@Transactional
-	public RoleResponse saveRole(RoleSaveRequest roleSaveRequest) {
-		Role role = Role.create(roleSaveRequest.name());
+	public RoleResponse createRole(RoleCreateRequest roleCreateRequest) {
+		Role role = Role.create(roleCreateRequest.name());
 
-		Map<Long, Permission> permissionMap = permissionRepository.findAllById(roleSaveRequest.permissionIds()).stream()
+		Map<Long, Permission> permissionMap = permissionRepository.findAllById(roleCreateRequest.permissionIds()).stream()
 			.collect(Collectors.toMap(Permission::getId, permission -> permission));
 
-		for (Long id : roleSaveRequest.permissionIds()) {
+		for (Long id : roleCreateRequest.permissionIds()) {
 			Permission permission = permissionMap.get(id);
 			if (permission == null) {
 				throw new EntityNotFoundException(Permission.class, id);

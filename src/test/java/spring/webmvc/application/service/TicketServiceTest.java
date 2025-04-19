@@ -14,7 +14,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import spring.webmvc.domain.model.entity.Ticket;
 import spring.webmvc.domain.repository.TicketRepository;
-import spring.webmvc.presentation.dto.request.TicketSaveRequest;
+import spring.webmvc.presentation.dto.request.TicketCreateRequest;
+import spring.webmvc.presentation.dto.request.TicketUpdateRequest;
 import spring.webmvc.presentation.dto.response.TicketResponse;
 import spring.webmvc.presentation.exception.EntityNotFoundException;
 
@@ -31,7 +32,7 @@ class TicketServiceTest {
 	@DisplayName("createTicket은 티켓을 생성한다")
 	void createTicket_case1() {
 		// Given
-		TicketSaveRequest request = new TicketSaveRequest(
+		TicketCreateRequest request = new TicketCreateRequest(
 			"Concert Ticket",
 			"A great concert",
 			1000,
@@ -110,7 +111,7 @@ class TicketServiceTest {
 			"2 hours",
 			"All ages"
 		);
-		TicketSaveRequest request = new TicketSaveRequest(
+		TicketUpdateRequest request = new TicketUpdateRequest(
 			"Concert Ticket",
 			"A great concert",
 			1000,
