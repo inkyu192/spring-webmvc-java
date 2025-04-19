@@ -7,7 +7,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import jakarta.persistence.EntityManager;
 
-@Configuration
+@Configuration(proxyBeanMethods = false)
 public class QuerydslConfig {
 
 	@Bean

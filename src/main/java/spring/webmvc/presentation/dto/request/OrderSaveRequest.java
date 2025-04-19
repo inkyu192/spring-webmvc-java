@@ -16,11 +16,11 @@ public record OrderSaveRequest(
 	@NotBlank
 	String zipcode,
 	@Size(min = 1)
-	List<OrderItemSaveRequest> orderItems
+	List<OrderProductSaveRequest> orderProducts
 ) {
 	public OrderSaveRequest {
-		if (orderItems == null) {
-			orderItems = List.of();
+		if (orderProducts == null) {
+			orderProducts = List.of();
 		}
 	}
 }

@@ -34,9 +34,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import spring.webmvc.application.service.OrderService;
 import spring.webmvc.domain.model.enums.OrderStatus;
 import spring.webmvc.infrastructure.config.WebMvcTestConfig;
-import spring.webmvc.presentation.dto.request.OrderItemSaveRequest;
+import spring.webmvc.presentation.dto.request.OrderProductSaveRequest;
 import spring.webmvc.presentation.dto.request.OrderSaveRequest;
-import spring.webmvc.presentation.dto.response.OrderItemResponse;
+import spring.webmvc.presentation.dto.response.OrderProductResponse;
 import spring.webmvc.presentation.dto.response.OrderResponse;
 
 @WebMvcTest(OrderController.class)
@@ -69,7 +69,7 @@ class OrderControllerTest {
 			"city",
 			"street",
 			"zipcode",
-			List.of(new OrderItemSaveRequest(1L, 3))
+			List.of(new OrderProductSaveRequest(1L, 3))
 		);
 
 		OrderResponse response = new OrderResponse(
@@ -77,7 +77,7 @@ class OrderControllerTest {
 			"name",
 			Instant.now(),
 			OrderStatus.ORDER,
-			List.of(new OrderItemResponse("name", 1000, 3))
+			List.of(new OrderProductResponse("name", 1000, 3))
 		);
 
 		Mockito.when(orderService.saveOrder(request)).thenReturn(response);
@@ -99,17 +99,17 @@ class OrderControllerTest {
 						PayloadDocumentation.fieldWithPath("city").description("city"),
 						PayloadDocumentation.fieldWithPath("street").description("street"),
 						PayloadDocumentation.fieldWithPath("zipcode").description("우편번호"),
-						PayloadDocumentation.fieldWithPath("orderItems[].itemId").description("상품아이디"),
-						PayloadDocumentation.fieldWithPath("orderItems[].count").description("주문수량")
+						PayloadDocumentation.fieldWithPath("orderProducts[].productId").description("상품아이디"),
+						PayloadDocumentation.fieldWithPath("orderProducts[].count").description("주문수량")
 					),
 					PayloadDocumentation.responseFields(
 						PayloadDocumentation.fieldWithPath("id").description("주문아이디"),
 						PayloadDocumentation.fieldWithPath("name").description("회원명"),
 						PayloadDocumentation.fieldWithPath("orderedAt").description("주문일시"),
 						PayloadDocumentation.fieldWithPath("status").description("주문상태"),
-						PayloadDocumentation.fieldWithPath("orderItems[].itemName").description("상품명"),
-						PayloadDocumentation.fieldWithPath("orderItems[].orderPrice").description("주문가격"),
-						PayloadDocumentation.fieldWithPath("orderItems[].count").description("주문수량")
+						PayloadDocumentation.fieldWithPath("orderProducts[].itemName").description("상품명"),
+						PayloadDocumentation.fieldWithPath("orderProducts[].orderPrice").description("주문가격"),
+						PayloadDocumentation.fieldWithPath("orderProducts[].count").description("주문수량")
 					)
 				)
 			);
@@ -127,7 +127,7 @@ class OrderControllerTest {
 				"name",
 				Instant.now(),
 				OrderStatus.ORDER,
-				List.of(new OrderItemResponse("name", 1000, 3))
+				List.of(new OrderProductResponse("name", 1000, 3))
 			)
 		);
 		Page<OrderResponse> page = new PageImpl<>(response, pageable, response.size());
@@ -159,9 +159,9 @@ class OrderControllerTest {
 						PayloadDocumentation.fieldWithPath("content[].name").description("회원명"),
 						PayloadDocumentation.fieldWithPath("content[].orderedAt").description("주문일시"),
 						PayloadDocumentation.fieldWithPath("content[].status").description("주문상태"),
-						PayloadDocumentation.fieldWithPath("content[].orderItems[].itemName").description("상품명"),
-						PayloadDocumentation.fieldWithPath("content[].orderItems[].orderPrice").description("주문가격"),
-						PayloadDocumentation.fieldWithPath("content[].orderItems[].count").description("주문수량"),
+						PayloadDocumentation.fieldWithPath("content[].orderProducts[].itemName").description("상품명"),
+						PayloadDocumentation.fieldWithPath("content[].orderProducts[].orderPrice").description("주문가격"),
+						PayloadDocumentation.fieldWithPath("content[].orderProducts[].count").description("주문수량"),
 
 						PayloadDocumentation.fieldWithPath("pageable.pageNumber").description("현재 페이지 번호"),
 						PayloadDocumentation.fieldWithPath("pageable.pageSize").description("페이지 크기"),
@@ -200,7 +200,7 @@ class OrderControllerTest {
 			"name",
 			Instant.now(),
 			OrderStatus.ORDER,
-			List.of(new OrderItemResponse("name", 1000, 3))
+			List.of(new OrderProductResponse("name", 1000, 3))
 		);
 
 		Mockito.when(orderService.findOrder(requestId)).thenReturn(response);
@@ -223,9 +223,9 @@ class OrderControllerTest {
 						PayloadDocumentation.fieldWithPath("name").description("회원명"),
 						PayloadDocumentation.fieldWithPath("orderedAt").description("주문일시"),
 						PayloadDocumentation.fieldWithPath("status").description("주문상태"),
-						PayloadDocumentation.fieldWithPath("orderItems[].itemName").description("상품명"),
-						PayloadDocumentation.fieldWithPath("orderItems[].orderPrice").description("주문가격"),
-						PayloadDocumentation.fieldWithPath("orderItems[].count").description("주문수량")
+						PayloadDocumentation.fieldWithPath("orderProducts[].itemName").description("상품명"),
+						PayloadDocumentation.fieldWithPath("orderProducts[].orderPrice").description("주문가격"),
+						PayloadDocumentation.fieldWithPath("orderProducts[].count").description("주문수량")
 					)
 				)
 			);
@@ -240,7 +240,7 @@ class OrderControllerTest {
 			"name",
 			Instant.now(),
 			OrderStatus.ORDER,
-			List.of(new OrderItemResponse("name", 1000, 3))
+			List.of(new OrderProductResponse("name", 1000, 3))
 		);
 
 		Mockito.when(orderService.cancelOrder(requestId)).thenReturn(response);
@@ -263,9 +263,9 @@ class OrderControllerTest {
 						PayloadDocumentation.fieldWithPath("name").description("회원명"),
 						PayloadDocumentation.fieldWithPath("orderedAt").description("주문일시"),
 						PayloadDocumentation.fieldWithPath("status").description("주문상태"),
-						PayloadDocumentation.fieldWithPath("orderItems[].itemName").description("상품명"),
-						PayloadDocumentation.fieldWithPath("orderItems[].orderPrice").description("주문가격"),
-						PayloadDocumentation.fieldWithPath("orderItems[].count").description("주문수량")
+						PayloadDocumentation.fieldWithPath("orderProducts[].itemName").description("상품명"),
+						PayloadDocumentation.fieldWithPath("orderProducts[].orderPrice").description("주문가격"),
+						PayloadDocumentation.fieldWithPath("orderProducts[].count").description("주문수량")
 					)
 				)
 			);

@@ -15,50 +15,51 @@ import org.springframework.data.domain.Pageable;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
-import spring.webmvc.domain.model.entity.Item;
+import spring.webmvc.domain.model.entity.Product;
 import spring.webmvc.domain.model.enums.Category;
 import spring.webmvc.infrastructure.config.DataJpaTestConfig;
 
 @DataJpaTest
 @Import(DataJpaTestConfig.class)
-class ItemQuerydslRepositoryTest {
+class ProductQuerydslRepositoryTest {
 
 	@Autowired
 	private JPAQueryFactory jpaQueryFactory;
 
 	@Autowired
-	private ItemJpaRepository itemJpaRepository;
+	private ProductJpaRepository productJpaRepository;
 
-	private ItemQuerydslRepository itemQuerydslRepository;
+	private ProductQuerydslRepository productQuerydslRepository;
 
 	@BeforeEach
 	void setUp() {
-		itemQuerydslRepository = new ItemQuerydslRepository(jpaQueryFactory);
+		productQuerydslRepository = new ProductQuerydslRepository(jpaQueryFactory);
 	}
 
 	@Test
 	@DisplayName("findAll 은 name 을 필터링하고 페이징 되어서 조회된다")
-	void findAllUsingQueryDsl() {
+	void findAll() {
 		// Given
-		List<Item> request = List.of(
-			Item.create("이름1", "설명1", 150, 1, Category.ROLE_BOOK),
-			Item.create("이름2", "설명2", 160, 2, Category.ROLE_BOOK),
-			Item.create("이름3", "설명3", 170, 3, Category.ROLE_BOOK),
-			Item.create("이름4", "설명4", 180, 4, Category.ROLE_TICKET),
-			Item.create("이5", "설명5", 190, 5, Category.ROLE_TICKET)
+		List<Product> request = List.of(
+			Product.create("product1", "description", 1000, 10, Category.TICKET),
+			Product.create("product2", "description", 2000, 20, Category.FLIGHT),
+			Product.create("product3", "description", 3000, 30, Category.TICKET),
+			Product.create("product4", "description", 1500, 30, Category.FLIGHT),
+			Product.create("fake", "description", 2500, 30, Category.ACCOMMODATION)
 		);
-		itemJpaRepository.saveAll(request);
+
+		productJpaRepository.saveAll(request);
 
 		Pageable pageable = PageRequest.of(0, 3);
-		String name = "이름";
+		String name = "product";
 
 		// When
-		Page<Item> response = itemQuerydslRepository.findAll(pageable, name);
+		Page<Product> response = productQuerydslRepository.findAll(pageable, name);
 
 		// Then
 		Assertions.assertThat(response.getNumber()).isEqualTo(pageable.getPageNumber());
 		Assertions.assertThat(response.getSize()).isEqualTo(pageable.getPageSize());
 		Assertions.assertThat(response.getTotalElements())
-			.isEqualTo(request.stream().map(Item::getName).filter(s -> s.contains(name)).count());
+			.isEqualTo(request.stream().map(Product::getName).filter(s -> s.contains(name)).count());
 	}
 }

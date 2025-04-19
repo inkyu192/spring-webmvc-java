@@ -8,7 +8,6 @@ import java.util.List;
 import org.springframework.util.StringUtils;
 
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -26,7 +25,6 @@ public class Member extends BaseTime {
 
 	@Id
 	@GeneratedValue
-	@Column(name = "member_id")
 	private Long id;
 
 	@Convert(converter = CryptoAttributeConverter.class)

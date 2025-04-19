@@ -1,54 +1,68 @@
 package spring.webmvc.domain.model.entity;
 
+import java.time.Instant;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.ConstraintMode;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.ForeignKey;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import spring.webmvc.domain.model.enums.Category;
 
-import java.time.LocalDate;
-
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Accommodation extends Product {
+public class Accommodation {
 
-    private String location;
-    private String accommodationType; // hotel, resort, apartment, etc.
-    private int roomCount;
-    private int maxOccupancy;
-    private LocalDate checkInDate;
-    private LocalDate checkOutDate;
+	@Id
+	@GeneratedValue
+	private Long id;
+	private String place;
+	private Instant checkInTime;
+	private Instant checkOutTime;
 
-    public static Accommodation create(String name, String description, int price, int quantity, 
-                                      String location, String accommodationType, int roomCount, 
-                                      int maxOccupancy, LocalDate checkInDate, LocalDate checkOutDate) {
-        Accommodation accommodation = new Accommodation();
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinColumn(name = "product_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+	private Product product;
 
-        accommodation.name = name;
-        accommodation.description = description;
-        accommodation.price = price;
-        accommodation.quantity = quantity;
-        accommodation.category = Category.ACCOMMODATION;
-        accommodation.location = location;
-        accommodation.accommodationType = accommodationType;
-        accommodation.roomCount = roomCount;
-        accommodation.maxOccupancy = maxOccupancy;
-        accommodation.checkInDate = checkInDate;
-        accommodation.checkOutDate = checkOutDate;
+	public static Accommodation create(
+		String name,
+		String description,
+		int price,
+		int quantity,
+		String place,
+		Instant checkInTime,
+		Instant checkOutTime
+	) {
+		Accommodation accommodation = new Accommodation();
 
-        return accommodation;
-    }
+		accommodation.product = Product.create(name, description, price, quantity, Category.ACCOMMODATION);
+		accommodation.place = place;
+		accommodation.checkInTime = checkInTime;
+		accommodation.checkOutTime = checkOutTime;
 
-    public void update(String name, String description, int price, int quantity,
-                      String location, String accommodationType, int roomCount, 
-                      int maxOccupancy, LocalDate checkInDate, LocalDate checkOutDate) {
-        super.update(name, description, price, quantity, Category.ACCOMMODATION);
-        this.location = location;
-        this.accommodationType = accommodationType;
-        this.roomCount = roomCount;
-        this.maxOccupancy = maxOccupancy;
-        this.checkInDate = checkInDate;
-        this.checkOutDate = checkOutDate;
-    }
+		return accommodation;
+	}
+
+	public void update(
+		String name,
+		String description,
+		int price,
+		int quantity,
+		String place,
+		Instant checkInTime,
+		Instant checkOutTime
+	) {
+		this.product.update(name, description, price, quantity);
+		this.place = place;
+		this.checkInTime = checkInTime;
+		this.checkOutTime = checkOutTime;
+	}
 }

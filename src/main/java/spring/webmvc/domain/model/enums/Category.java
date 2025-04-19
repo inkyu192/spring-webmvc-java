@@ -9,8 +9,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum Category {
 
-	ROLE_BOOK("책"),
-	ROLE_TICKET("표"),
 	FLIGHT("항공권"),
 	ACCOMMODATION("숙박"),
 	TICKET("티켓");

@@ -11,7 +11,7 @@ public record OrderResponse(
 	String name,
 	Instant orderedAt,
 	OrderStatus status,
-	List<OrderItemResponse> orderItems
+	List<OrderProductResponse> orderProducts
 ) {
 	public OrderResponse(Order order) {
 		this(
@@ -19,8 +19,8 @@ public record OrderResponse(
 			order.getMember().getName(),
 			order.getOrderedAt(),
 			order.getStatus(),
-			order.getOrderItems().stream()
-				.map(OrderItemResponse::new)
+			order.getOrderProducts().stream()
+				.map(OrderProductResponse::new)
 				.toList()
 		);
 	}

@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <property name="LOG_LEVEL" value="info"/>
-    <property name="LOG_PATH" value="spring-webmvc-java/log"/>
-    <property name="LOG_FILE_NAME" value="spring-webmvc-java"/>
+    <property name="LOG_PATH" value="logs"/>
+    <property name="LOG_FILE_NAME" value="application"/>
     <property name="LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level[%thread] %logger{36} : %msg%n"/>
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
@@ -17,13 +16,19 @@
             <pattern>${LOG_PATTERN}</pattern>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_PATH}/%d{yyyy-MM, aux}/${LOG_FILE_NAME}.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>${LOG_PATH}/%d{yyyyMMdd}_${LOG_FILE_NAME}.log</fileNamePattern>
             <maxHistory>30</maxHistory>
         </rollingPolicy>
     </appender>
 
-    <root level="${LOG_LEVEL}">
+    <!-- 일반 서버 환경 (파일 + 콘솔) -->
+    <root level="INFO">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="FILE" />
     </root>
+
+    <!-- 컨테이너 환경 (콘솔) -->
+    <!--    <root level="INFO">-->
+    <!--        <appender-ref ref="CONSOLE" />-->
+    <!--    </root>-->
 </configuration>
