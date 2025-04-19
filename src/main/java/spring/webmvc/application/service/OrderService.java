@@ -10,14 +10,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import lombok.RequiredArgsConstructor;
-import spring.webmvc.domain.model.entity.Item;
 import spring.webmvc.domain.model.entity.Member;
 import spring.webmvc.domain.model.entity.Order;
+import spring.webmvc.domain.model.entity.Product;
 import spring.webmvc.domain.model.enums.OrderStatus;
-import spring.webmvc.domain.repository.ItemRepository;
 import spring.webmvc.domain.repository.MemberRepository;
 import spring.webmvc.domain.repository.OrderRepository;
-import spring.webmvc.presentation.dto.request.OrderItemSaveRequest;
+import spring.webmvc.domain.repository.ProductRepository;
+import spring.webmvc.presentation.dto.request.OrderProductSaveRequest;
 import spring.webmvc.presentation.dto.request.OrderSaveRequest;
 import spring.webmvc.presentation.dto.response.OrderResponse;
 import spring.webmvc.presentation.exception.EntityNotFoundException;
@@ -28,7 +28,7 @@ import spring.webmvc.presentation.exception.EntityNotFoundException;
 public class OrderService {
 
 	private final MemberRepository memberRepository;
-	private final ItemRepository itemRepository;
+	private final ProductRepository productRepository;
 	private final OrderRepository orderRepository;
 
 	@Transactional
@@ -39,23 +39,23 @@ public class OrderService {
 
 		Order order = Order.create(member);
 
-		if (!ObjectUtils.isEmpty(orderSaveRequest.orderItems())) {
-			Map<Long, Item> itemMap = itemRepository.findAllById(
-					orderSaveRequest.orderItems()
+		if (!ObjectUtils.isEmpty(orderSaveRequest.orderProducts())) {
+			Map<Long, Product> productMap = productRepository.findAllById(
+					orderSaveRequest.orderProducts()
 						.stream()
-						.map(OrderItemSaveRequest::itemId)
+						.map(OrderProductSaveRequest::productId)
 						.toList())
 				.stream()
-				.collect(Collectors.toMap(Item::getId, item -> item));
+				.collect(Collectors.toMap(Product::getId, product -> product));
 
-			for (OrderItemSaveRequest requestOrderIterm : orderSaveRequest.orderItems()) {
-				Item item = itemMap.get(requestOrderIterm.itemId());
+			for (OrderProductSaveRequest requestOrderIterm : orderSaveRequest.orderProducts()) {
+				Product product = productMap.get(requestOrderIterm.productId());
 
-				if (item == null) {
-					throw new EntityNotFoundException(Item.class, requestOrderIterm.itemId());
+				if (product == null) {
+					throw new EntityNotFoundException(Product.class, requestOrderIterm.productId());
 				}
 
-				order.addItem(item, requestOrderIterm.count());
+				order.addProduct(product, requestOrderIterm.count());
 			}
 		}
 

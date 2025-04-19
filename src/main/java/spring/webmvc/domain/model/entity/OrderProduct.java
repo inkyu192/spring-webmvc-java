@@ -1,6 +1,5 @@
 package spring.webmvc.domain.model.entity;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.ConstraintMode;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -16,13 +15,12 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Table(name = "order_item")
+@Table(name = "order_product")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class OrderItem {
+public class OrderProduct {
 
 	@Id
 	@GeneratedValue
-	@Column(name = "order_item_id")
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -36,17 +34,17 @@ public class OrderItem {
 	private int orderPrice;
 	private int count;
 
-	public static OrderItem create(Order order, Product product, int count) {
-		OrderItem orderItem = new OrderItem();
+	public static OrderProduct create(Order order, Product product, int count) {
+		OrderProduct orderProduct = new OrderProduct();
 
-		orderItem.order = order;
-		orderItem.product = product;
-		orderItem.orderPrice = product.getPrice();
-		orderItem.count = count;
+		orderProduct.order = order;
+		orderProduct.product = product;
+		orderProduct.orderPrice = product.getPrice();
+		orderProduct.count = count;
 
 		product.removeQuantity(count);
 
-		return orderItem;
+		return orderProduct;
 	}
 
 	public void cancel() {

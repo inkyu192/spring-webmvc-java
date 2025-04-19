@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
 import jakarta.persistence.ConstraintMode;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -33,7 +32,6 @@ public class Order extends BaseTime {
 
 	@Id
 	@GeneratedValue
-	@Column(name = "order_id")
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -41,15 +39,15 @@ public class Order extends BaseTime {
 	private Member member;
 
 	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-	private List<OrderItem> orderItems = new ArrayList<>();
+	private List<OrderProduct> orderProducts = new ArrayList<>();
 
 	private Instant orderedAt;
 
 	@Enumerated(EnumType.STRING)
 	private OrderStatus status;
 
-	public List<OrderItem> getOrderItems() {
-		return Collections.unmodifiableList(orderItems);
+	public List<OrderProduct> getOrderProducts() {
+		return Collections.unmodifiableList(orderProducts);
 	}
 
 	public static Order create(Member member) {
@@ -62,8 +60,8 @@ public class Order extends BaseTime {
 		return order;
 	}
 
-	public void addItem(Item item, int count) {
-		orderItems.add(OrderItem.create(this, item, count));
+	public void addProduct(Product product, int count) {
+		orderProducts.add(OrderProduct.create(this, product, count));
 	}
 
 	public void cancel() {
@@ -72,6 +70,6 @@ public class Order extends BaseTime {
 		}
 
 		status = OrderStatus.CANCEL;
-		orderItems.forEach(OrderItem::cancel);
+		orderProducts.forEach(OrderProduct::cancel);
 	}
 }

@@ -1,6 +1,5 @@
 package spring.webmvc.domain.model.entity;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.ConstraintMode;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -20,7 +19,6 @@ public class MemberRole {
 
 	@Id
 	@GeneratedValue
-	@Column(name = "member_role_id")
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)

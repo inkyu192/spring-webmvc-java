@@ -1,51 +1,73 @@
 package spring.webmvc.domain.model.entity;
 
+import java.time.Instant;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.ConstraintMode;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.ForeignKey;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import spring.webmvc.domain.model.enums.Category;
 
-import java.time.LocalDateTime;
-
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Ticket extends Product {
+public class Ticket {
 
-    private String eventName;
-    private String venue;
-    private LocalDateTime eventDateTime;
-    private String seatNumber;
-    private String ticketType; // VIP, standard, etc.
+	@Id
+	@GeneratedValue
+	private Long id;
+	private String place;
+	private Instant performanceTime;
+	private String duration;
+	private String ageLimit;
 
-    public static Ticket create(String name, String description, int price, int quantity, 
-                               String eventName, String venue, LocalDateTime eventDateTime, 
-                               String seatNumber, String ticketType) {
-        Ticket ticket = new Ticket();
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinColumn(name = "product_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+	private Product product;
 
-        ticket.name = name;
-        ticket.description = description;
-        ticket.price = price;
-        ticket.quantity = quantity;
-        ticket.category = Category.TICKET;
-        ticket.eventName = eventName;
-        ticket.venue = venue;
-        ticket.eventDateTime = eventDateTime;
-        ticket.seatNumber = seatNumber;
-        ticket.ticketType = ticketType;
+	public static Ticket create(
+		String name,
+		String description,
+		int price,
+		int quantity,
+		String place,
+		Instant performanceTime,
+		String duration,
+		String ageLimit
+	) {
+		Ticket ticket = new Ticket();
 
-        return ticket;
-    }
+		ticket.product = Product.create(name, description, price, quantity, Category.TICKET);
+		ticket.place = place;
+		ticket.performanceTime = performanceTime;
+		ticket.duration = duration;
+		ticket.ageLimit = ageLimit;
 
-    public void update(String name, String description, int price, int quantity,
-                      String eventName, String venue, LocalDateTime eventDateTime, 
-                      String seatNumber, String ticketType) {
-        super.update(name, description, price, quantity, Category.TICKET);
-        this.eventName = eventName;
-        this.venue = venue;
-        this.eventDateTime = eventDateTime;
-        this.seatNumber = seatNumber;
-        this.ticketType = ticketType;
-    }
+		return ticket;
+	}
+
+	public void update(
+		String name,
+		String description,
+		int price,
+		int quantity,
+		String place,
+		Instant performanceTime,
+		String duration,
+		String ageLimit
+	) {
+		this.product.update(name, description, price, quantity);
+		this.place = place;
+		this.performanceTime = performanceTime;
+		this.duration = duration;
+		this.ageLimit = ageLimit;
+	}
 }
