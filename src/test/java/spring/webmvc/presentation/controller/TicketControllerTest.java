@@ -28,7 +28,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import spring.webmvc.application.service.TicketService;
 import spring.webmvc.infrastructure.config.WebMvcTestConfig;
-import spring.webmvc.presentation.dto.request.TicketSaveRequest;
+import spring.webmvc.presentation.dto.request.TicketCreateRequest;
+import spring.webmvc.presentation.dto.request.TicketUpdateRequest;
 import spring.webmvc.presentation.dto.response.TicketResponse;
 
 @WebMvcTest(TicketController.class)
@@ -57,7 +58,7 @@ class TicketControllerTest {
 	@Test
 	void createTicket() throws Exception {
 		// Given
-		TicketSaveRequest request = new TicketSaveRequest(
+		TicketCreateRequest request = new TicketCreateRequest(
 			"Concert Ticket",
 			"A great concert",
 			1000,
@@ -174,7 +175,7 @@ class TicketControllerTest {
 	void updateTicket() throws Exception {
 		// Given
 		Long requestId = 1L;
-		TicketSaveRequest request = new TicketSaveRequest(
+		TicketUpdateRequest request = new TicketUpdateRequest(
 			"Concert Ticket",
 			"A great concert",
 			1000,

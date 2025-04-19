@@ -34,8 +34,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import spring.webmvc.application.service.OrderService;
 import spring.webmvc.domain.model.enums.OrderStatus;
 import spring.webmvc.infrastructure.config.WebMvcTestConfig;
-import spring.webmvc.presentation.dto.request.OrderProductSaveRequest;
-import spring.webmvc.presentation.dto.request.OrderSaveRequest;
+import spring.webmvc.presentation.dto.request.OrderProductCreateRequest;
+import spring.webmvc.presentation.dto.request.OrderCreateRequest;
 import spring.webmvc.presentation.dto.response.OrderProductResponse;
 import spring.webmvc.presentation.dto.response.OrderResponse;
 
@@ -64,12 +64,12 @@ class OrderControllerTest {
 
 	@Test
 	void saveOrder() throws Exception {
-		OrderSaveRequest request = new OrderSaveRequest(
+		OrderCreateRequest request = new OrderCreateRequest(
 			1L,
 			"city",
 			"street",
 			"zipcode",
-			List.of(new OrderProductSaveRequest(1L, 3))
+			List.of(new OrderProductCreateRequest(1L, 3))
 		);
 
 		OrderResponse response = new OrderResponse(
@@ -80,7 +80,7 @@ class OrderControllerTest {
 			List.of(new OrderProductResponse("name", 1000, 3))
 		);
 
-		Mockito.when(orderService.saveOrder(request)).thenReturn(response);
+		Mockito.when(orderService.createOrder(request)).thenReturn(response);
 
 		mockMvc.perform(
 				RestDocumentationRequestBuilders.post("/orders")

@@ -6,7 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import spring.webmvc.domain.model.entity.Flight;
 import spring.webmvc.domain.repository.FlightRepository;
-import spring.webmvc.presentation.dto.request.FlightSaveRequest;
+import spring.webmvc.presentation.dto.request.FlightCreateRequest;
+import spring.webmvc.presentation.dto.request.FlightUpdateRequest;
 import spring.webmvc.presentation.dto.response.FlightResponse;
 import spring.webmvc.presentation.exception.EntityNotFoundException;
 
@@ -25,19 +26,19 @@ public class FlightService {
 	}
 
 	@Transactional
-	public FlightResponse createFlight(FlightSaveRequest flightSaveRequest) {
+	public FlightResponse createFlight(FlightCreateRequest flightCreateRequest) {
 		Flight flight = flightRepository.save(
 			Flight.create(
-				flightSaveRequest.name(),
-				flightSaveRequest.description(),
-				flightSaveRequest.price(),
-				flightSaveRequest.quantity(),
-				flightSaveRequest.airline(),
-				flightSaveRequest.flightNumber(),
-				flightSaveRequest.departureAirport(),
-				flightSaveRequest.arrivalAirport(),
-				flightSaveRequest.departureTime(),
-				flightSaveRequest.arrivalTime()
+				flightCreateRequest.name(),
+				flightCreateRequest.description(),
+				flightCreateRequest.price(),
+				flightCreateRequest.quantity(),
+				flightCreateRequest.airline(),
+				flightCreateRequest.flightNumber(),
+				flightCreateRequest.departureAirport(),
+				flightCreateRequest.arrivalAirport(),
+				flightCreateRequest.departureTime(),
+				flightCreateRequest.arrivalTime()
 			)
 		);
 
@@ -45,21 +46,21 @@ public class FlightService {
 	}
 
 	@Transactional
-	public FlightResponse updateFlight(Long id, FlightSaveRequest flightSaveRequest) {
+	public FlightResponse updateFlight(Long id, FlightUpdateRequest flightUpdateRequest) {
 		Flight flight = flightRepository.findById(id)
 			.orElseThrow(() -> new EntityNotFoundException(Flight.class, id));
 
 		flight.update(
-			flightSaveRequest.name(),
-			flightSaveRequest.description(),
-			flightSaveRequest.price(),
-			flightSaveRequest.quantity(),
-			flightSaveRequest.airline(),
-			flightSaveRequest.flightNumber(),
-			flightSaveRequest.departureAirport(),
-			flightSaveRequest.arrivalAirport(),
-			flightSaveRequest.departureTime(),
-			flightSaveRequest.arrivalTime()
+			flightUpdateRequest.name(),
+			flightUpdateRequest.description(),
+			flightUpdateRequest.price(),
+			flightUpdateRequest.quantity(),
+			flightUpdateRequest.airline(),
+			flightUpdateRequest.flightNumber(),
+			flightUpdateRequest.departureAirport(),
+			flightUpdateRequest.arrivalAirport(),
+			flightUpdateRequest.departureTime(),
+			flightUpdateRequest.arrivalTime()
 		);
 
 		return new FlightResponse(flight);

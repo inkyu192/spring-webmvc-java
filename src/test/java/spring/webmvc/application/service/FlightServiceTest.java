@@ -12,11 +12,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.util.Pair;
 
 import spring.webmvc.domain.model.entity.Flight;
 import spring.webmvc.domain.repository.FlightRepository;
-import spring.webmvc.presentation.dto.request.FlightSaveRequest;
+import spring.webmvc.presentation.dto.request.FlightCreateRequest;
+import spring.webmvc.presentation.dto.request.FlightUpdateRequest;
 import spring.webmvc.presentation.dto.response.FlightResponse;
 import spring.webmvc.presentation.exception.EntityNotFoundException;
 
@@ -33,7 +33,7 @@ class FlightServiceTest {
     @DisplayName("createFlight은 항공편을 생성한다")
     void createFlight_case1() {
         // Given
-        FlightSaveRequest request = new FlightSaveRequest(
+        FlightCreateRequest request = new FlightCreateRequest(
             "Flight 123",
             "A great flight",
             1000,
@@ -137,7 +137,7 @@ class FlightServiceTest {
             Instant.now(),
             Instant.now().plus(1, ChronoUnit.HOURS)
         );
-        FlightSaveRequest request = new FlightSaveRequest(
+        FlightUpdateRequest request = new FlightUpdateRequest(
             "Flight 123",
             "A great flight",
             1000,

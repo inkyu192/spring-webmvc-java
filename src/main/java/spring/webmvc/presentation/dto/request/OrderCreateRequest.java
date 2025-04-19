@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-public record OrderSaveRequest(
+public record OrderCreateRequest(
 	@NotNull
 	Long memberId,
 	@NotBlank
@@ -16,9 +16,9 @@ public record OrderSaveRequest(
 	@NotBlank
 	String zipcode,
 	@Size(min = 1)
-	List<OrderProductSaveRequest> orderProducts
+	List<OrderProductCreateRequest> orderProducts
 ) {
-	public OrderSaveRequest {
+	public OrderCreateRequest {
 		if (orderProducts == null) {
 			orderProducts = List.of();
 		}

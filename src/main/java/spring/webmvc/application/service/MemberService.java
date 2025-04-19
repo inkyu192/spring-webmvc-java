@@ -18,7 +18,7 @@ import spring.webmvc.domain.repository.MemberRepository;
 import spring.webmvc.domain.repository.PermissionRepository;
 import spring.webmvc.domain.repository.RoleRepository;
 import spring.webmvc.infrastructure.util.SecurityContextUtil;
-import spring.webmvc.presentation.dto.request.MemberSaveRequest;
+import spring.webmvc.presentation.dto.request.MemberCreateRequest;
 import spring.webmvc.presentation.dto.request.MemberUpdateRequest;
 import spring.webmvc.presentation.dto.response.MemberResponse;
 import spring.webmvc.presentation.exception.DuplicateEntityException;
@@ -36,24 +36,24 @@ public class MemberService {
 	private final ApplicationEventPublisher eventPublisher;
 
 	@Transactional
-	public MemberResponse saveMember(MemberSaveRequest memberSaveRequest) {
-		if (memberRepository.existsByAccount(memberSaveRequest.account())) {
-			throw new DuplicateEntityException(Member.class, memberSaveRequest.account());
+	public MemberResponse createMember(MemberCreateRequest memberCreateRequest) {
+		if (memberRepository.existsByAccount(memberCreateRequest.account())) {
+			throw new DuplicateEntityException(Member.class, memberCreateRequest.account());
 		}
 
 		Member member = Member.create(
-			memberSaveRequest.account(),
-			passwordEncoder.encode(memberSaveRequest.password()),
-			memberSaveRequest.name(),
-			memberSaveRequest.phone(),
-			memberSaveRequest.birthDate()
+			memberCreateRequest.account(),
+			passwordEncoder.encode(memberCreateRequest.password()),
+			memberCreateRequest.name(),
+			memberCreateRequest.phone(),
+			memberCreateRequest.birthDate()
 		);
 
-		if (!ObjectUtils.isEmpty(memberSaveRequest.roleIds())) {
-			Map<Long, Role> roleMap = roleRepository.findAllById(memberSaveRequest.roleIds()).stream()
+		if (!ObjectUtils.isEmpty(memberCreateRequest.roleIds())) {
+			Map<Long, Role> roleMap = roleRepository.findAllById(memberCreateRequest.roleIds()).stream()
 				.collect(Collectors.toMap(Role::getId, role -> role));
 
-			for (Long id : memberSaveRequest.roleIds()) {
+			for (Long id : memberCreateRequest.roleIds()) {
 				Role role = roleMap.get(id);
 				if (role == null) {
 					throw new EntityNotFoundException(Role.class, id);
@@ -62,12 +62,12 @@ public class MemberService {
 			}
 		}
 
-		if (!ObjectUtils.isEmpty(memberSaveRequest.permissionIds())) {
-			Map<Long, Permission> permissionMap = permissionRepository.findAllById(memberSaveRequest.permissionIds())
+		if (!ObjectUtils.isEmpty(memberCreateRequest.permissionIds())) {
+			Map<Long, Permission> permissionMap = permissionRepository.findAllById(memberCreateRequest.permissionIds())
 				.stream()
 				.collect(Collectors.toMap(Permission::getId, permission -> permission));
 
-			for (Long id : memberSaveRequest.permissionIds()) {
+			for (Long id : memberCreateRequest.permissionIds()) {
 				Permission permission = permissionMap.get(id);
 				if (permission == null) {
 					throw new EntityNotFoundException(Permission.class, id);

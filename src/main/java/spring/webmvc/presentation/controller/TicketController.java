@@ -15,7 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import spring.webmvc.application.service.TicketService;
-import spring.webmvc.presentation.dto.request.TicketSaveRequest;
+import spring.webmvc.presentation.dto.request.TicketCreateRequest;
+import spring.webmvc.presentation.dto.request.TicketUpdateRequest;
 import spring.webmvc.presentation.dto.response.TicketResponse;
 
 @RestController
@@ -34,17 +35,17 @@ public class TicketController {
 	@PostMapping
 	@PreAuthorize("hasAuthority('PRODUCT_WRITER')")
 	@ResponseStatus(HttpStatus.CREATED)
-	public TicketResponse createTicket(@RequestBody @Validated TicketSaveRequest ticketSaveRequest) {
-		return ticketService.createTicket(ticketSaveRequest);
+	public TicketResponse createTicket(@RequestBody @Validated TicketCreateRequest ticketCreateRequest) {
+		return ticketService.createTicket(ticketCreateRequest);
 	}
 
 	@PatchMapping("/{id}")
 	@PreAuthorize("hasAuthority('PRODUCT_WRITER')")
 	public TicketResponse updateTicket(
 		@PathVariable Long id,
-		@RequestBody @Validated TicketSaveRequest ticketSaveRequest
+		@RequestBody @Validated TicketUpdateRequest ticketUpdateRequest
 	) {
-		return ticketService.updateTicket(id, ticketSaveRequest);
+		return ticketService.updateTicket(id, ticketUpdateRequest);
 	}
 
 	@DeleteMapping("/{id}")

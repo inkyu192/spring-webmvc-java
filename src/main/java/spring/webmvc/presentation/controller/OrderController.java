@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 import spring.webmvc.application.service.OrderService;
 import spring.webmvc.domain.model.enums.OrderStatus;
 import spring.webmvc.infrastructure.aspect.RequestLock;
-import spring.webmvc.presentation.dto.request.OrderSaveRequest;
+import spring.webmvc.presentation.dto.request.OrderCreateRequest;
 import spring.webmvc.presentation.dto.response.OrderResponse;
 
 @RestController
@@ -34,8 +34,8 @@ public class OrderController {
 	@PreAuthorize("isAuthenticated()")
 	@RequestLock
 	@ResponseStatus(HttpStatus.CREATED)
-	public OrderResponse saveOrder(@RequestBody @Validated OrderSaveRequest orderSaveRequest) {
-		return orderService.saveOrder(orderSaveRequest);
+	public OrderResponse createOrder(@RequestBody @Validated OrderCreateRequest orderCreateRequest) {
+		return orderService.createOrder(orderCreateRequest);
 	}
 
 	@GetMapping

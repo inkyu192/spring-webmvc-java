@@ -1,14 +1,13 @@
 package spring.webmvc.presentation.dto.request;
 
+import java.time.Instant;
+
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import spring.webmvc.domain.model.enums.Category;
 
-import java.time.Instant;
-
-public record AccommodationSaveRequest(
+public record TicketUpdateRequest(
     @NotBlank
     String name,
     @NotBlank
@@ -20,8 +19,10 @@ public record AccommodationSaveRequest(
     @NotBlank
     String place,
     @NotNull
-    Instant checkInTime,
-    @NotNull
-    Instant checkOutTime
+    Instant performanceTime,
+    @NotBlank
+    String duration,
+    @NotBlank
+    String ageLimit
 ) {
 }

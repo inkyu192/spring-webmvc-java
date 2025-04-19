@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.time.Instant;
 
-public record FlightSaveRequest(
+public record AccommodationCreateRequest(
     @NotBlank
     String name,
     @NotBlank
@@ -17,16 +17,10 @@ public record FlightSaveRequest(
     @Max(9999)
     int quantity,
     @NotBlank
-    String airline,
-    @NotBlank
-    String flightNumber,
-    @NotBlank
-    String departureAirport,
-    @NotBlank
-    String arrivalAirport,
+    String place,
     @NotNull
-    Instant departureTime,
+    Instant checkInTime,
     @NotNull
-    Instant arrivalTime
+    Instant checkOutTime
 ) {
 }

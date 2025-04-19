@@ -29,7 +29,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import spring.webmvc.application.service.MemberService;
 import spring.webmvc.infrastructure.config.WebMvcTestConfig;
-import spring.webmvc.presentation.dto.request.MemberSaveRequest;
+import spring.webmvc.presentation.dto.request.MemberCreateRequest;
 import spring.webmvc.presentation.dto.request.MemberUpdateRequest;
 import spring.webmvc.presentation.dto.response.MemberResponse;
 
@@ -58,7 +58,7 @@ class MemberControllerTest {
 
 	@Test
 	void saveMember() throws Exception {
-		MemberSaveRequest request = new MemberSaveRequest(
+		MemberCreateRequest request = new MemberCreateRequest(
 			"test@gmail.com",
 			"password",
 			"name",
@@ -76,7 +76,7 @@ class MemberControllerTest {
 			Instant.now()
 		);
 
-		Mockito.when(memberService.saveMember(request)).thenReturn(response);
+		Mockito.when(memberService.createMember(request)).thenReturn(response);
 
 		mockMvc.perform(
 				RestDocumentationRequestBuilders.post("/members")

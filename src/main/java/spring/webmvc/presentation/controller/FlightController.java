@@ -15,7 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import spring.webmvc.application.service.FlightService;
-import spring.webmvc.presentation.dto.request.FlightSaveRequest;
+import spring.webmvc.presentation.dto.request.FlightCreateRequest;
+import spring.webmvc.presentation.dto.request.FlightUpdateRequest;
 import spring.webmvc.presentation.dto.response.FlightResponse;
 
 @RestController
@@ -34,17 +35,17 @@ public class FlightController {
 	@PostMapping
 	@PreAuthorize("hasAuthority('PRODUCT_WRITER')")
 	@ResponseStatus(HttpStatus.CREATED)
-	public FlightResponse createFlight(@RequestBody @Validated FlightSaveRequest flightSaveRequest) {
-		return flightService.createFlight(flightSaveRequest);
+	public FlightResponse createFlight(@RequestBody @Validated FlightCreateRequest flightCreateRequest) {
+		return flightService.createFlight(flightCreateRequest);
 	}
 
 	@PatchMapping("/{id}")
 	@PreAuthorize("hasAuthority('PRODUCT_WRITER')")
 	public FlightResponse updateFlight(
 		@PathVariable Long id,
-		@RequestBody @Validated FlightSaveRequest flightSaveRequest
+		@RequestBody @Validated FlightUpdateRequest flightUpdateRequest
 	) {
-		return flightService.updateFlight(id, flightSaveRequest);
+		return flightService.updateFlight(id, flightUpdateRequest);
 	}
 
 	@DeleteMapping("/{id}")

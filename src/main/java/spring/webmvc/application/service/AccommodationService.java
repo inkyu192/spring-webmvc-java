@@ -6,7 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import spring.webmvc.domain.model.entity.Accommodation;
 import spring.webmvc.domain.repository.AccommodationRepository;
-import spring.webmvc.presentation.dto.request.AccommodationSaveRequest;
+import spring.webmvc.presentation.dto.request.AccommodationCreateRequest;
+import spring.webmvc.presentation.dto.request.AccommodationUpdateRequest;
 import spring.webmvc.presentation.dto.response.AccommodationResponse;
 import spring.webmvc.presentation.exception.EntityNotFoundException;
 
@@ -25,16 +26,16 @@ public class AccommodationService {
 	}
 
 	@Transactional
-	public AccommodationResponse createAccommodation(AccommodationSaveRequest accommodationSaveRequest) {
+	public AccommodationResponse createAccommodation(AccommodationCreateRequest accommodationCreateRequest) {
 		Accommodation accommodation = accommodationRepository.save(
 			Accommodation.create(
-				accommodationSaveRequest.name(),
-				accommodationSaveRequest.description(),
-				accommodationSaveRequest.price(),
-				accommodationSaveRequest.quantity(),
-				accommodationSaveRequest.place(),
-				accommodationSaveRequest.checkInTime(),
-				accommodationSaveRequest.checkOutTime()
+				accommodationCreateRequest.name(),
+				accommodationCreateRequest.description(),
+				accommodationCreateRequest.price(),
+				accommodationCreateRequest.quantity(),
+				accommodationCreateRequest.place(),
+				accommodationCreateRequest.checkInTime(),
+				accommodationCreateRequest.checkOutTime()
 			)
 		);
 
@@ -42,18 +43,18 @@ public class AccommodationService {
 	}
 
 	@Transactional
-	public AccommodationResponse updateAccommodation(Long id, AccommodationSaveRequest accommodationSaveRequest) {
+	public AccommodationResponse updateAccommodation(Long id, AccommodationUpdateRequest accommodationUpdateRequest) {
 		Accommodation accommodation = accommodationRepository.findById(id)
 			.orElseThrow(() -> new EntityNotFoundException(Accommodation.class, id));
 
 		accommodation.update(
-			accommodationSaveRequest.name(),
-			accommodationSaveRequest.description(),
-			accommodationSaveRequest.price(),
-			accommodationSaveRequest.quantity(),
-			accommodationSaveRequest.place(),
-			accommodationSaveRequest.checkInTime(),
-			accommodationSaveRequest.checkOutTime()
+			accommodationUpdateRequest.name(),
+			accommodationUpdateRequest.description(),
+			accommodationUpdateRequest.price(),
+			accommodationUpdateRequest.quantity(),
+			accommodationUpdateRequest.place(),
+			accommodationUpdateRequest.checkInTime(),
+			accommodationUpdateRequest.checkOutTime()
 		);
 
 		return new AccommodationResponse(accommodation);

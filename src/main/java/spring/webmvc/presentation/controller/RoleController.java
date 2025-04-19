@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import spring.webmvc.application.service.RoleService;
-import spring.webmvc.presentation.dto.request.RoleSaveRequest;
+import spring.webmvc.presentation.dto.request.RoleCreateRequest;
 import spring.webmvc.presentation.dto.response.RoleResponse;
 
 @RestController
@@ -22,7 +22,7 @@ public class RoleController {
 
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public RoleResponse saveRole(@RequestBody @Validated RoleSaveRequest roleSaveRequest) {
-		return roleService.saveRole(roleSaveRequest);
+	public RoleResponse createRole(@RequestBody @Validated RoleCreateRequest roleCreateRequest) {
+		return roleService.createRole(roleCreateRequest);
 	}
 }
