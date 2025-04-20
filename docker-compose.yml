@@ -35,6 +35,22 @@ services:
     networks:
       - application-network
 
+  localstack:
+    container_name: localstack-container
+    image: localstack/localstack:latest
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=s3
+      - DEBUG=1
+      - AWS_ACCESS_KEY_ID=accessKey
+      - AWS_SECRET_ACCESS_KEY=secretKey
+      - DEFAULT_REGION=ap-northeast-2
+    volumes:
+      - ./init-localstack.sh:/etc/localstack/init/ready.d/init.sh
+    networks:
+      - application-network
+
 networks:
   application-network:
     name: application-network
