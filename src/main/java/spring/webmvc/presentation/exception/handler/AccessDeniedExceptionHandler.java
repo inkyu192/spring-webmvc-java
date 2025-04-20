@@ -11,14 +11,14 @@ import org.springframework.stereotype.Component;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import spring.webmvc.infrastructure.util.ProblemDetailUtil;
-import spring.webmvc.infrastructure.util.ResponseWriter;
+import spring.webmvc.infrastructure.support.ProblemDetailSupport;
+import spring.webmvc.infrastructure.support.ResponseWriter;
 
 @Component
 @RequiredArgsConstructor
 public class AccessDeniedExceptionHandler implements AccessDeniedHandler {
 
-	private final ProblemDetailUtil problemDetailUtil;
+	private final ProblemDetailSupport problemDetailSupport;
 	private final ResponseWriter responseWriter;
 
 	@Override
@@ -28,7 +28,7 @@ public class AccessDeniedExceptionHandler implements AccessDeniedHandler {
 		AccessDeniedException exception
 	) throws IOException {
 		ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, exception.getMessage());
-		problemDetail.setType(problemDetailUtil.createType(HttpStatus.FORBIDDEN));
+		problemDetail.setType(problemDetailSupport.createType(HttpStatus.FORBIDDEN));
 
 		responseWriter.writeResponse(problemDetail);
 	}

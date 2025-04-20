@@ -1,4 +1,4 @@
-package spring.webmvc.infrastructure.util;
+package spring.webmvc.infrastructure.support;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
