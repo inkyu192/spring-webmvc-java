@@ -37,7 +37,7 @@ class ProductQuerydslRepositoryTest {
 	}
 
 	@Test
-	@DisplayName("findAll 은 name 을 필터링하고 페이징 되어서 조회된다")
+	@DisplayName("findAll: Product 조건 조회 후 반환한다")
 	void findAll() {
 		// Given
 		List<Product> request = List.of(

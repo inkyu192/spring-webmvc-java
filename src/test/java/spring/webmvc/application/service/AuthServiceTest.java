@@ -42,8 +42,8 @@ class AuthServiceTest {
 	private PasswordEncoder passwordEncoder;
 
 	@Test
-	@DisplayName("login 은 계정이 존재하지 않을 경우 BadCredentialsException 던진다")
-	void login_case1() {
+	@DisplayName("login: Member 엔티티 없을 경우 BadCredentialsException 발생한다")
+	void loginCase1() {
 		// Given
 		MemberLoginRequest request = Mockito.mock(MemberLoginRequest.class);
 
@@ -54,8 +54,8 @@ class AuthServiceTest {
 	}
 
 	@Test
-	@DisplayName("login 은 비밀번호가 일치하지 않을 경우 BadCredentialsException 던진다")
-	void login_case2() {
+	@DisplayName("login: 비밀번호가 일치하지 않을 경우 BadCredentialsException 발생한다")
+	void loginCase2() {
 		// Given
 		MemberLoginRequest request = Mockito.mock(MemberLoginRequest.class);
 		Member member = Mockito.mock(Member.class);
@@ -68,8 +68,8 @@ class AuthServiceTest {
 	}
 
 	@Test
-	@DisplayName("login 은 비밀번호가 일치할 경우 토큰을 발급한다")
-	void login_case3() {
+	@DisplayName("login: 유효성 검사 성공할 경우 Token 저장하고 반환한다")
+	void loginCase3() {
 		// Given
 		String accessToken = "accessToken";
 		String refreshToken = "refreshToken";
@@ -93,8 +93,8 @@ class AuthServiceTest {
 	}
 
 	@Test
-	@DisplayName("refreshToken 은 Access 토큰이 유효하지 않을 경우 JwtException 던진다")
-	void refreshToken_case1() {
+	@DisplayName("refreshToken: AccessToken 유효하지 않을 경우 JwtException 발생한다")
+	void refreshTokenCase1() {
 		// Given
 		TokenRequest request = Mockito.mock(TokenRequest.class);
 
@@ -105,8 +105,8 @@ class AuthServiceTest {
 	}
 
 	@Test
-	@DisplayName("refreshToken 은 Refresh 토큰이 유효하지 않을 경우 JwtException 던진다")
-	void refreshToken_case2() {
+	@DisplayName("refreshToken: RefreshToken 유효하지 않을 경우 JwtException 발생한다")
+	void refreshTokenCase2() {
 		// Given
 		Long memberId = 1L;
 		TokenRequest request = new TokenRequest("accessToken", "fakeRefreshToken");
@@ -121,8 +121,8 @@ class AuthServiceTest {
 	}
 
 	@Test
-	@DisplayName("refreshToken 은 Refresh 토큰이 일치하지 않을 경우 BadCredentialsException 던진다")
-	void refreshToken_case3() {
+	@DisplayName("refreshToken: RefreshToken 일치하지 않을 경우 BadCredentialsException 발생한다")
+	void refreshTokenCase3() {
 		// Given
 		Long memberId = 1L;
 		TokenRequest request = new TokenRequest("accessToken", "fakeRefreshToken");
@@ -140,8 +140,8 @@ class AuthServiceTest {
 	}
 
 	@Test
-	@DisplayName("refreshToken 은 토큰이 유효할 경우 Access 토큰이 갱신된다")
-	void refreshToken_case4() {
+	@DisplayName("refreshToken: 유효성 검사 성공할 경우 AccessToken 갱신된다")
+	void refreshTokenCase4() {
 		// Given
 		Long memberId = 1L;
 		TokenRequest request = new TokenRequest("accessToken", "refreshToken");

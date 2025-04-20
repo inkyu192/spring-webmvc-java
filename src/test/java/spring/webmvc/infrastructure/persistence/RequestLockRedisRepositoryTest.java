@@ -24,8 +24,8 @@ class RequestLockRedisRepositoryTest {
 	}
 
 	@Test
-	@DisplayName("setIfAbsent 는 기존 데이터가 있을 경우 저장하지 않는다")
-	void case1() {
+	@DisplayName("setIfAbsent: RequestLock 있을 경우 false 반환한다")
+	void setIfAbsentCase1() {
 		// Given
 		Long memberId = 1L;
 		String method = "GET";
@@ -41,8 +41,8 @@ class RequestLockRedisRepositoryTest {
 	}
 
 	@Test
-	@DisplayName("setIfAbsent 는 기존 데이터가 없을 경우 저장한다")
-	void case2() throws InterruptedException {
+	@DisplayName("setIfAbsent: RequestLock 없을 경우 저장 후 true 반환한다")
+	void setIfAbsentCase2() throws InterruptedException {
 		// Given
 		Long memberId = 1L;
 		String method = "GET";

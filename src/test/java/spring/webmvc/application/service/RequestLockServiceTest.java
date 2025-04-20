@@ -22,8 +22,8 @@ class RequestLockServiceTest {
 	private RequestLockRepository requestLockRepository;
 
 	@Test
-	@DisplayName("validate 는 데이터가 없을 경우 저장한다")
-	void case1() {
+	@DisplayName("validate: RequestLock 없을 경우 저장한다")
+	void validateCase1() {
 		// Given
 		Long memberId = 1L;
 		String method = "GET";
@@ -40,8 +40,8 @@ class RequestLockServiceTest {
 	}
 
 	@Test
-	@DisplayName("validate 는 데이터가 있을 경우 DuplicateRequestException 던진다")
-	void case2() {
+	@DisplayName("validate: RequestLock 있을 경우 DuplicateRequestException 발생한다")
+	void validateCase2() {
 		// Given
 		Long memberId = 1L;
 		String method = "GET";

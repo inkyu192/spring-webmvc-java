@@ -60,22 +60,22 @@ class AccommodationControllerTest {
 	void createAccommodation() throws Exception {
 		// Given
 		AccommodationCreateRequest request = new AccommodationCreateRequest(
-			"Hotel Room",
-			"A great hotel",
+			"name",
+			"description",
 			1000,
 			5,
-			"Seoul Hotel",
+			"place",
 			Instant.now(),
 			Instant.now().plus(1, ChronoUnit.DAYS)
 		);
 		AccommodationResponse response = new AccommodationResponse(
 			1L,
-			"Hotel Room",
-			"A great hotel",
+			"name",
+			"description",
 			1000,
 			5,
 			Instant.now(),
-			"Seoul Hotel",
+			"place",
 			Instant.now(),
 			Instant.now().plus(1, ChronoUnit.DAYS)
 		);
@@ -125,12 +125,12 @@ class AccommodationControllerTest {
 		Long requestId = 1L;
 		AccommodationResponse response = new AccommodationResponse(
 			1L,
-			"Hotel Room",
-			"A great hotel",
+			"name",
+			"description",
 			1000,
 			5,
 			Instant.now(),
-			"Seoul Hotel",
+			"place",
 			Instant.now(),
 			Instant.now().plus(1, ChronoUnit.DAYS)
 		);
@@ -171,21 +171,21 @@ class AccommodationControllerTest {
 		// Given
 		Long requestId = 1L;
 		AccommodationUpdateRequest request = new AccommodationUpdateRequest(
-			"Hotel Room",
-			"A great hotel",
+			"name",
+			"description",
 			1000,
 			5,
-			"Seoul Hotel",
+			"place",
 			Instant.now(), Instant.now().plus(1, ChronoUnit.DAYS)
 		);
 		AccommodationResponse response = new AccommodationResponse(
 			1L,
-			"Hotel Room",
-			"A great hotel",
+			"name",
+			"description",
 			1000,
 			5,
 			Instant.now(),
-			"Seoul Hotel",
+			"place",
 			Instant.now(),
 			Instant.now().plus(1, ChronoUnit.DAYS)
 		);

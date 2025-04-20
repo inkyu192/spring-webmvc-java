@@ -30,30 +30,30 @@ class FlightServiceTest {
     private FlightRepository flightRepository;
 
     @Test
-    @DisplayName("createFlight은 항공편을 생성한다")
-    void createFlight_case1() {
+    @DisplayName("createFlight: flight 저장하고 반환한다")
+    void createFlight() {
         // Given
         FlightCreateRequest request = new FlightCreateRequest(
-            "Flight 123",
-            "A great flight",
+            "name",
+            "description",
             1000,
             5,
-            "Airline",
-            "FL123",
-            "ICN",
-            "JFK",
+            "airline",
+            "flightNumber",
+            "departureAirport",
+            "arrivalAirport",
             Instant.now(),
             Instant.now().plus(1, ChronoUnit.HOURS)
         );
         Flight flight = Flight.create(
-            "Flight 123",
-            "A great flight",
+            "name",
+            "description",
             1000,
             5,
-            "Airline",
-            "FL123",
-            "ICN",
-            "JFK",
+            "airline",
+            "flightNumber",
+            "departureAirport",
+            "arrivalAirport",
             Instant.now(),
             Instant.now().plus(1, ChronoUnit.HOURS)
         );
@@ -75,19 +75,31 @@ class FlightServiceTest {
     }
 
     @Test
-    @DisplayName("findFlight은 데이터가 있을 경우 조회한다")
-    void findFlight_case1() {
+    @DisplayName("findFlight: Flight 없을 경우 EntityNotFoundException 발생한다")
+    void findFlightCase1() {
+        // Given
+        Long flightId = 1L;
+
+        Mockito.when(flightRepository.findById(flightId)).thenReturn(Optional.empty());
+
+        // When & Then
+        Assertions.assertThatThrownBy(() -> flightService.findFlight(flightId)).isInstanceOf(EntityNotFoundException.class);
+    }
+
+    @Test
+    @DisplayName("findFlight: Flight 있을 경우 조회 후 반환한다")
+    void findFlightCase2() {
         // Given
         Long flightId = 1L;
         Flight flight = Flight.create(
-            "Flight 123",
-            "A great flight",
+            "name",
+            "description",
             1000,
             5,
-            "Airline",
-            "FL123",
-            "ICN",
-            "JFK",
+            "airline",
+            "flightNumber",
+            "departureAirport",
+            "arrivalAirport",
             Instant.now(),
             Instant.now().plus(1, ChronoUnit.HOURS)
         );
@@ -109,48 +121,61 @@ class FlightServiceTest {
     }
 
     @Test
-    @DisplayName("findFlight은 데이터가 없을 경우 EntityNotFoundException을 던진다")
-    void findFlight_case2() {
+    @DisplayName("updateFlight: Flight 없을 경우 EntityNotFoundException 발생한다")
+    void updateFlightCase1() {
         // Given
         Long flightId = 1L;
+        FlightUpdateRequest request = new FlightUpdateRequest(
+            "name",
+            "description",
+            1000,
+            5,
+            "airline",
+            "flightNumber",
+            "departureAirport",
+            "arrivalAirport",
+            Instant.now(),
+            Instant.now().plus(1, ChronoUnit.HOURS)
+        );
 
         Mockito.when(flightRepository.findById(flightId)).thenReturn(Optional.empty());
 
         // When & Then
-        Assertions.assertThatThrownBy(() -> flightService.findFlight(flightId)).isInstanceOf(EntityNotFoundException.class);
+        Assertions.assertThatThrownBy(() -> flightService.updateFlight(flightId, request))
+            .isInstanceOf(EntityNotFoundException.class);
     }
-
+    
     @Test
-    @DisplayName("updateFlight은 데이터가 있을 경우 수정한다")
-    void updateFlight_case2() {
+    @DisplayName("updateFlight: Flight 있을 경우 수정 후 반환한다")
+    void updateFlightCase2() {
         // Given
         Long flightId = 1L;
-        Flight oldFlight = Flight.create(
-            "Flight 123",
-            "A great flight",
+        FlightUpdateRequest request = new FlightUpdateRequest(
+            "name",
+            "description",
             1000,
             5,
-            "Airline",
-            "FL123",
-            "ICN",
-            "JFK",
+            "airline",
+            "flightNumber",
+            "departureAirport",
+            "arrivalAirport",
             Instant.now(),
             Instant.now().plus(1, ChronoUnit.HOURS)
         );
-        FlightUpdateRequest request = new FlightUpdateRequest(
-            "Flight 123",
-            "A great flight",
+        Flight flight = Flight.create(
+            "name",
+            "description",
             1000,
             5,
-            "Airline",
-            "FL123",
-            "ICN",
-            "JFK",
+            "airline",
+            "flightNumber",
+            "departureAirport",
+            "arrivalAirport",
             Instant.now(),
             Instant.now().plus(1, ChronoUnit.HOURS)
         );
 
-        Mockito.when(flightRepository.findById(flightId)).thenReturn(Optional.of(oldFlight));
+        Mockito.when(flightRepository.findById(flightId)).thenReturn(Optional.of(flight));
 
         // When
         FlightResponse response = flightService.updateFlight(flightId, request);
@@ -169,8 +194,8 @@ class FlightServiceTest {
     }
 
     @Test
-    @DisplayName("deleteFlight은 데이터가 없을 경우 EntityNotFoundException을 던진다")
-    void deleteFlight_case1() {
+    @DisplayName("deleteFlight: Flight 없을 경우 EntityNotFoundException 발생한다")
+    void deleteFlightCase1() {
         // Given
         Long flightId = 1L;
 
@@ -181,19 +206,19 @@ class FlightServiceTest {
     }
 
     @Test
-    @DisplayName("deleteFlight은 데이터가 있을 경우 삭제한다")
-    void deleteFlight_case2() {
+    @DisplayName("deleteFlight: Flight 있을 경우 삭제한다")
+    void deleteFlightCase2() {
         // Given
         Long flightId = 1L;
         Flight flight = Flight.create(
-            "Flight 123",
-            "A great flight",
+            "name",
+            "description",
             1000,
             5,
-            "Airline",
-            "FL123",
-            "ICN",
-            "JFK",
+            "airline",
+            "flightNumber",
+            "departureAirport",
+            "arrivalAirport",
             Instant.now(),
             Instant.now().plus(1, ChronoUnit.HOURS)
         );

@@ -52,7 +52,7 @@ class ProductControllerTest {
 	}
 
 	@Test
-	void findProducts() throws Exception {
+	void findProducts_withNameFilter_returnsProductList() throws Exception {
 		Pageable pageable = PageRequest.of(0, 10);
 		String name = "product";
 

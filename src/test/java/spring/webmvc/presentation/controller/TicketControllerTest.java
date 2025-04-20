@@ -59,26 +59,26 @@ class TicketControllerTest {
 	void createTicket() throws Exception {
 		// Given
 		TicketCreateRequest request = new TicketCreateRequest(
-			"Concert Ticket",
-			"A great concert",
+			"name",
+			"description",
 			1000,
 			5,
-			"Concert Hall",
+			"place",
 			Instant.now(),
-			"2 hours",
-			"All ages"
+			"duration",
+			"ageLimit"
 		);
 		TicketResponse response = new TicketResponse(
 			1L,
-			"Concert Ticket",
-			"A great concert",
+			"name",
+			"description",
 			1000,
 			5,
 			Instant.now(),
-			"Concert Hall",
+			"place",
 			Instant.now(),
-			"2 hours",
-			"All ages"
+			"duration",
+			"ageLimit"
 		);
 
 		Mockito.when(ticketService.createTicket(request)).thenReturn(response);
@@ -128,15 +128,15 @@ class TicketControllerTest {
 		Long requestId = 1L;
 		TicketResponse response = new TicketResponse(
 			1L,
-			"Concert Ticket",
-			"A great concert",
+			"name",
+			"description",
 			1000,
 			5,
 			Instant.now(),
-			"Concert Hall",
+			"place",
 			Instant.now(),
-			"2 hours",
-			"All ages"
+			"duration",
+			"ageLimit"
 		);
 
 		Mockito.when(ticketService.findTicket(requestId)).thenReturn(response);
@@ -176,26 +176,26 @@ class TicketControllerTest {
 		// Given
 		Long requestId = 1L;
 		TicketUpdateRequest request = new TicketUpdateRequest(
-			"Concert Ticket",
-			"A great concert",
+			"name",
+			"description",
 			1000,
 			5,
-			"Concert Hall",
+			"place",
 			Instant.now(),
-			"2 hours",
-			"All ages"
+			"duration",
+			"ageLimit"
 		);
 		TicketResponse response = new TicketResponse(
 			1L,
-			"Concert Ticket",
-			"A great concert",
+			"name",
+			"description",
 			1000,
 			5,
 			Instant.now(),
-			"Concert Hall",
+			"place",
 			Instant.now(),
-			"2 hours",
-			"All ages"
+			"duration",
+			"ageLimit"
 		);
 
 		Mockito.when(ticketService.updateTicket(requestId, request)).thenReturn(response);
