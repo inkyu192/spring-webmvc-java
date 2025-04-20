@@ -12,15 +12,3 @@ logging:
   level:
     org.hibernate.SQL: DEBUG
     org.hibernate.orm.jdbc.bind: TRACE
-
-jwt:
-  access-token:
-    key: PQ8nDTkS2Rp17clN87/L02OgVe77EOwMnDY0Irq7w04=
-    expiration: 10m
-  refresh-token:
-    key: crCWzavmz2D382GG68dymsghw+UnWo3MnmWkPzc6Gik=
-    expiration: 7d
-
-crypto:
-  secret-key: d9ANIqIyfTygI92m6jWFfAzUbEP73TNB
-  iv-parameter: F22DBBB19D308662
