@@ -60,28 +60,28 @@ class FlightControllerTest {
     void saveFlight() throws Exception {
         // Given
         FlightCreateRequest request = new FlightCreateRequest(
-            "Flight 123",
-            "A great flight",
+            "name",
+            "description",
             1000,
             5,
-            "Airline",
-            "FL123",
-            "ICN",
-            "JFK",
+            "airline",
+            "flightNumber",
+            "departureAirport",
+            "arrivalAirport",
             Instant.now(),
             Instant.now().plus(1, ChronoUnit.HOURS)
         );
         FlightResponse response = new FlightResponse(
             1L,
-            "Flight 123",
-            "A great flight",
+            "name",
+            "description",
             1000,
             5,
             Instant.now(),
-            "Airline",
-            "FL123",
-            "ICN",
-            "JFK",
+            "airline",
+            "flightNumber",
+            "departureAirport",
+            "arrivalAirport",
             Instant.now(),
             Instant.now().plus(1, ChronoUnit.HOURS)
         );
@@ -137,15 +137,15 @@ class FlightControllerTest {
         Long requestId = 1L;
         FlightResponse response = new FlightResponse(
             1L,
-            "Updated Flight",
-            "Updated description",
-            2000,
-            10,
+            "name",
+            "description",
+            1000,
+            5,
             Instant.now(),
-            "New Airline",
-            "FL456",
-            "LAX",
-            "SFO",
+            "airline",
+            "flightNumber",
+            "departureAirport",
+            "arrivalAirport",
             Instant.now(),
             Instant.now().plus(1, ChronoUnit.HOURS)
         );
@@ -189,28 +189,28 @@ class FlightControllerTest {
         // Given
         Long requestId = 1L;
         FlightUpdateRequest request = new FlightUpdateRequest(
-            "Flight 123",
-            "A great flight",
+            "name",
+            "description",
             1000,
             5,
-            "Airline",
-            "FL123",
-            "ICN",
-            "JFK",
+            "airline",
+            "flightNumber",
+            "departureAirport",
+            "arrivalAirport",
             Instant.now(),
             Instant.now().plus(1, ChronoUnit.HOURS)
         );
         FlightResponse response = new FlightResponse(
             1L,
-            "Updated Flight",
-            "Updated description",
-            2000,
-            10,
+            "name",
+            "description",
+            1000,
+            5,
             Instant.now(),
-            "New Airline",
-            "FL456",
-            "LAX",
-            "SFO",
+            "airline",
+            "flightNumber",
+            "departureAirport",
+            "arrivalAirport",
             Instant.now(),
             Instant.now().plus(1, ChronoUnit.HOURS)
         );

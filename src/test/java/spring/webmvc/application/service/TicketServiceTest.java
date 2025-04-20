@@ -29,21 +29,29 @@ class TicketServiceTest {
 	private TicketRepository ticketRepository;
 
 	@Test
-	@DisplayName("createTicket은 티켓을 생성한다")
-	void createTicket_case1() {
+	@DisplayName("createTicket: Ticket 저장하고 반환한다")
+	void createTicket() {
 		// Given
 		TicketCreateRequest request = new TicketCreateRequest(
-			"Concert Ticket",
-			"A great concert",
+			"name",
+			"description",
 			1000,
 			5,
-			"Concert Hall",
+			"place",
 			Instant.now(),
-			"2 hours",
-			"All ages"
+			"duration",
+			"ageLimit"
 		);
-		Ticket ticket = Ticket.create("Concert Ticket", "A great concert", 1000, 5,
-			"Concert Hall", Instant.now(), "2 hours", "All ages");
+		Ticket ticket = Ticket.create(
+			"name",
+			"description",
+			1000,
+			5,
+			"place",
+			Instant.now(),
+			"duration",
+			"ageLimit"
+		);
 
 		Mockito.when(ticketRepository.save(Mockito.any(Ticket.class))).thenReturn(ticket);
 
@@ -61,12 +69,33 @@ class TicketServiceTest {
 	}
 
 	@Test
-	@DisplayName("findTicket은 데이터가 있을 경우 조회한다")
-	void findTicket_case1() {
+	@DisplayName("findTicket: Ticket 없을 경우 EntityNotFoundException 발생한다")
+	void findTicketCase1() {
 		// Given
 		Long ticketId = 1L;
-		Ticket ticket = Ticket.create("Concert Ticket", "A great concert", 1000, 5,
-			"Concert Hall", Instant.now(), "2 hours", "All ages");
+
+		Mockito.when(ticketRepository.findById(ticketId)).thenReturn(Optional.empty());
+
+		// When & Then
+		Assertions.assertThatThrownBy(() -> ticketService.findTicket(ticketId))
+			.isInstanceOf(EntityNotFoundException.class);
+	}
+
+	@Test
+	@DisplayName("findTicket: Ticket 있을 경우 조회 후 반환한다")
+	void findTicketCase2() {
+		// Given
+		Long ticketId = 1L;
+		Ticket ticket = Ticket.create(
+			"name",
+			"description",
+			1000,
+			5,
+			"place",
+			Instant.now(),
+			"duration",
+			"ageLimit"
+		);
 
 		Mockito.when(ticketRepository.findById(ticketId)).thenReturn(Optional.of(ticket));
 
@@ -84,45 +113,55 @@ class TicketServiceTest {
 	}
 
 	@Test
-	@DisplayName("findTicket은 데이터가 없을 경우 EntityNotFoundException을 던진다")
-	void findTicket_case2() {
+	@DisplayName("updateTicket: Ticket 없을 경우 EntityNotFoundException 발생한다")
+	void updateTicketCase1() {
 		// Given
 		Long ticketId = 1L;
+		TicketUpdateRequest request = new TicketUpdateRequest(
+			"name",
+			"description",
+			1000,
+			5,
+			"place",
+			Instant.now(),
+			"duration",
+			"ageLimit"
+		);
 
 		Mockito.when(ticketRepository.findById(ticketId)).thenReturn(Optional.empty());
 
 		// When & Then
-		Assertions.assertThatThrownBy(() -> ticketService.findTicket(ticketId))
+		Assertions.assertThatThrownBy(() -> ticketService.updateTicket(ticketId, request))
 			.isInstanceOf(EntityNotFoundException.class);
 	}
-
+	
 	@Test
-	@DisplayName("updateTicket은 티켓을 수정한다")
-	void updateTicket_case2() {
+	@DisplayName("updateTicket: Ticket 있을 경우 수정 후 반환한다")
+	void updateTicketCase2() {
 		// Given
 		Long ticketId = 1L;
-		Ticket oldTicket = Ticket.create(
-			"Old Concert",
-			"Old description",
-			1000,
-			5,
-			"Old Hall",
-			Instant.now(),
-			"2 hours",
-			"All ages"
-		);
 		TicketUpdateRequest request = new TicketUpdateRequest(
-			"Concert Ticket",
-			"A great concert",
+			"name",
+			"description",
 			1000,
 			5,
-			"Concert Hall",
+			"place",
 			Instant.now(),
-			"2 hours",
-			"All ages"
+			"duration",
+			"ageLimit"
+		);
+		Ticket ticket = Ticket.create(
+			"name",
+			"description",
+			1000,
+			5,
+			"place",
+			Instant.now(),
+			"duration",
+			"ageLimit"
 		);
 
-		Mockito.when(ticketRepository.findById(ticketId)).thenReturn(Optional.of(oldTicket));
+		Mockito.when(ticketRepository.findById(ticketId)).thenReturn(Optional.of(ticket));
 
 		// When
 		TicketResponse response = ticketService.updateTicket(ticketId, request);
@@ -140,8 +179,8 @@ class TicketServiceTest {
 	}
 
 	@Test
-	@DisplayName("deleteTicket은 데이터가 없을 경우 EntityNotFoundException을 던진다")
-	void deleteTicket_case1() {
+	@DisplayName("deleteTicket: Ticket 없을 경우 EntityNotFoundException 발생한다")
+	void deleteTicketCase1() {
 		// Given
 		Long ticketId = 1L;
 
@@ -153,19 +192,19 @@ class TicketServiceTest {
 	}
 
 	@Test
-	@DisplayName("deleteTicket은 데이터가 있을 경우 삭제한다")
-	void deleteTicket_case2() {
+	@DisplayName("deleteTicket: Ticket 있을 경우 삭제한다")
+	void deleteTicketCase2() {
 		// Given
 		Long ticketId = 1L;
 		Ticket ticket = Ticket.create(
-			"Old Concert",
-			"Old description",
+			"name",
+			"description",
 			1000,
 			5,
-			"Old Hall",
+			"place",
 			Instant.now(),
-			"2 hours",
-			"All ages"
+			"duration",
+			"ageLimit"
 		);
 
 		Mockito.when(ticketRepository.findById(ticketId)).thenReturn(Optional.of(ticket));

@@ -30,24 +30,24 @@ class AccommodationServiceTest {
 	private AccommodationRepository accommodationRepository;
 
 	@Test
-	@DisplayName("createAccommodation은 숙소를 저장한다")
-	void createAccommodation_case1() {
+	@DisplayName("createAccommodation: Accommodation 저장하고 반환한다")
+	void createAccommodation() {
 		// Given
 		AccommodationCreateRequest request = new AccommodationCreateRequest(
-			"Hotel Room",
-			"A great hotel",
+			"name",
+			"description",
 			1000,
 			5,
-			"Seoul Hotel",
+			"place",
 			Instant.now(),
 			Instant.now().plus(1, ChronoUnit.DAYS)
 		);
 		Accommodation accommodation = Accommodation.create(
-			"Hotel Room",
-			"A great hotel",
+			"name",
+			"description",
 			1000,
 			5,
-			"Seoul Hotel",
+			"place",
 			Instant.now(),
 			Instant.now().plus(1, ChronoUnit.DAYS)
 		);
@@ -66,12 +66,32 @@ class AccommodationServiceTest {
 	}
 
 	@Test
-	@DisplayName("findAccommodation은 데이터가 있을 경우 조회한다")
-	void findAccommodation_case1() {
+	@DisplayName("findAccommodation: Accommodation 없을 경우 EntityNotFoundException 발생한다")
+	void findAccommodationCase1() {
 		// Given
 		Long accommodationId = 1L;
-		Accommodation accommodation = Accommodation.create("Hotel Room", "A great hotel", 1000, 5,
-			"Seoul Hotel", Instant.now(), Instant.now().plusSeconds(3600 * 24));
+
+		Mockito.when(accommodationRepository.findById(accommodationId)).thenReturn(Optional.empty());
+
+		// When & Then
+		Assertions.assertThatThrownBy(() -> accommodationService.findAccommodation(accommodationId))
+			.isInstanceOf(EntityNotFoundException.class);
+	}
+
+	@Test
+	@DisplayName("findAccommodation: Accommodation 있을 경우 조회 후 반환한다")
+	void findAccommodationCase2() {
+		// Given
+		Long accommodationId = 1L;
+		Accommodation accommodation = Accommodation.create(
+			"name",
+			"description",
+			1000,
+			5,
+			"place",
+			Instant.now(),
+			Instant.now().plus(1, ChronoUnit.DAYS)
+		);
 
 		Mockito.when(accommodationRepository.findById(accommodationId)).thenReturn(Optional.of(accommodation));
 
@@ -87,32 +107,10 @@ class AccommodationServiceTest {
 	}
 
 	@Test
-	@DisplayName("findAccommodation은 데이터가 없을 경우 EntityNotFoundException을 던진다")
-	void findAccommodation_case2() {
+	@DisplayName("updateAccommodation: Accommodation 없을 경우 EntityNotFoundException 발생한다")
+	void updateAccommodationCase1() {
 		// Given
 		Long accommodationId = 1L;
-
-		Mockito.when(accommodationRepository.findById(accommodationId)).thenReturn(Optional.empty());
-
-		// When & Then
-		Assertions.assertThatThrownBy(() -> accommodationService.findAccommodation(accommodationId))
-			.isInstanceOf(EntityNotFoundException.class);
-	}
-
-	@Test
-	@DisplayName("updateAccommodation은 데이터가 있을 경우 수정한다")
-	void updateAccommodation_case1() {
-		// Given
-		Long accommodationId = 1L;
-		Accommodation oldAccommodation = Accommodation.create(
-			"Old Hotel",
-			"Old description",
-			1000,
-			5,
-			"Old Hotel",
-			Instant.now(),
-			Instant.now().plus(1, ChronoUnit.DAYS)
-		);
 		AccommodationUpdateRequest request = new AccommodationUpdateRequest(
 			"New Hotel",
 			"New description",
@@ -123,7 +121,38 @@ class AccommodationServiceTest {
 			Instant.now().plus(1, ChronoUnit.DAYS)
 		);
 
-		Mockito.when(accommodationRepository.findById(accommodationId)).thenReturn(Optional.of(oldAccommodation));
+		Mockito.when(accommodationRepository.findById(accommodationId)).thenReturn(Optional.empty());
+
+		// When & Then
+		Assertions.assertThatThrownBy(() -> accommodationService.updateAccommodation(accommodationId, request))
+			.isInstanceOf(EntityNotFoundException.class);
+	}
+
+	@Test
+	@DisplayName("updateAccommodation: Accommodation 있을 경우 수정 후 반환한다")
+	void updateAccommodationCase2() {
+		// Given
+		Long accommodationId = 1L;
+		AccommodationUpdateRequest request = new AccommodationUpdateRequest(
+			"name",
+			"description",
+			1000,
+			5,
+			"place",
+			Instant.now(),
+			Instant.now().plus(1, ChronoUnit.DAYS)
+		);
+		Accommodation accommodation = Accommodation.create(
+			"name",
+			"description",
+			1000,
+			5,
+			"place",
+			Instant.now(),
+			Instant.now().plus(1, ChronoUnit.DAYS)
+		);
+
+		Mockito.when(accommodationRepository.findById(accommodationId)).thenReturn(Optional.of(accommodation));
 
 		// When
 		AccommodationResponse response = accommodationService.updateAccommodation(accommodationId, request);
@@ -139,8 +168,8 @@ class AccommodationServiceTest {
 	}
 
 	@Test
-	@DisplayName("deleteAccommodation은 데이터가 없을 경우 EntityNotFoundException을 던진다")
-	void deleteAccommodation_case1() {
+	@DisplayName("deleteAccommodation: Accommodation 없을 경우 EntityNotFoundException 발생한다")
+	void deleteAccommodationCase1() {
 		// Given
 		Long accommodationId = 1L;
 
@@ -152,16 +181,16 @@ class AccommodationServiceTest {
 	}
 
 	@Test
-	@DisplayName("deleteAccommodation은 데이터가 있을 경우 삭제한다")
-	void deleteAccommodation_case2() {
+	@DisplayName("deleteAccommodation: Accommodation 있을 경우 삭제한다")
+	void deleteAccommodationCase2() {
 		// Given
 		Long accommodationId = 1L;
 		Accommodation accommodation = Accommodation.create(
-			"Hotel Room",
-			"A great hotel",
+			"name",
+			"description",
 			1000,
 			5,
-			"Seoul Hotel",
+			"place",
 			Instant.now(),
 			Instant.now().plus(1, ChronoUnit.DAYS)
 		);

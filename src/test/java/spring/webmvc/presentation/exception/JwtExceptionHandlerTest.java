@@ -48,8 +48,8 @@ class JwtExceptionHandlerTest {
 	}
 
 	@Test
-	@DisplayName("ExceptionHandlerFilter 는 JwtException 발생할 경우 UNAUTHORIZED 반환한다")
-	void case1() throws ServletException, IOException {
+	@DisplayName("doFilter: JwtException 발생할 경우 ProblemDetail 반환한다")
+	void doFilterCase1() throws ServletException, IOException {
 		// Given
 		HttpStatus status = HttpStatus.UNAUTHORIZED;
 		String message = "JwtException";
@@ -69,14 +69,14 @@ class JwtExceptionHandlerTest {
 	}
 
 	@Test
-	@DisplayName("ExceptionHandlerFilter 는 RuntimeException 발생할 경우 INTERNAL_SERVER_ERROR 반환한다")
-	void case2() throws ServletException, IOException {
+	@DisplayName("doFilter: ServletException 발생할 경우 ProblemDetail 반환한다")
+	void doFilterCase2() throws ServletException, IOException {
 		// Given
 		HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
-		String message = "RuntimeException";
+		String message = "ServletException";
 		URI uri = URI.create("uri");
 
-		Mockito.doThrow(new RuntimeException(message)).when(filterChain).doFilter(request, response);
+		Mockito.doThrow(new ServletException(message)).when(filterChain).doFilter(request, response);
 		Mockito.when(problemDetailUtil.createType(status)).thenReturn(uri);
 
 		ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(status, message);

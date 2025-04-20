@@ -30,15 +30,15 @@ class ProductServiceTest {
 	private ProductRepository productRepository;
 
 	@Test
-	@DisplayName("findProducts 은 여러개를 조회한다")
-	void findProducts_case1() {
+	@DisplayName("findProducts: Product 조회 후 반환한다")
+	void findProducts() {
 		// Given
 		Pageable pageable = PageRequest.of(0, 10);
-		String name = "product";
+		String name = "name";
 		List<Product> products = List.of(
-			Product.create("product1", "description", 1000, 10, Category.ACCOMMODATION),
-			Product.create("product2", "description", 2000, 20, Category.FLIGHT),
-			Product.create("product3", "description", 3000, 30, Category.TICKET)
+			Product.create("name1", "description", 1000, 10, Category.ACCOMMODATION),
+			Product.create("name2", "description", 2000, 20, Category.FLIGHT),
+			Product.create("name3", "description", 3000, 30, Category.TICKET)
 		);
 		Page<Product> page = new PageImpl<>(products, pageable, products.size());
 

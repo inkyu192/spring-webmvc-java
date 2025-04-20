@@ -45,8 +45,8 @@ class JwtAuthenticationFilterTest {
 	}
 
 	@Test
-	@DisplayName("JwtAuthenticationFilter 는 토큰이 null 일 경우 authentication 을 생성하지 않는다")
-	void case1() throws ServletException, IOException {
+	@DisplayName("doFilter: Authorization 없을 경우 Authentication 을 생성하지 않는다")
+	void doFilterCase1() throws ServletException, IOException {
 		// Given
 
 		// When
@@ -57,8 +57,8 @@ class JwtAuthenticationFilterTest {
 	}
 
 	@Test
-	@DisplayName("JwtAuthenticationFilter 는 토큰이 비어있을 경우 authentication 을 생성하지 않는다")
-	void case2() throws ServletException, IOException {
+	@DisplayName("doFilter: Authorization 비어있을 경우 Authentication 을 생성하지 않는다")
+	void doFilterCase2() throws ServletException, IOException {
 		// Given
 		request.addHeader(HttpHeaders.AUTHORIZATION, "");
 
@@ -70,14 +70,14 @@ class JwtAuthenticationFilterTest {
 	}
 
 	@Test
-	@DisplayName("JwtAuthenticationFilter 는 잘못된 토큰일 경우 JwtException 발생한다")
-	void case3() {
+	@DisplayName("doFilter: Authorization 있고 유효성 검사 실패할 경우 JwtException 발생한다")
+	void doFilterCase3() {
 		// Given
 		String token = "invalid.jwt.token";
 
 		Mockito.when(jwtProvider.parseAccessToken(token)).thenThrow(new JwtException("invalidToken"));
 
-		request.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token);
+		request.addHeader(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(token));
 
 		// When & Then
 		Assertions.assertThatThrownBy(() -> jwtAuthenticationFilter.doFilter(request, response, filterChain))
@@ -85,8 +85,8 @@ class JwtAuthenticationFilterTest {
 	}
 
 	@Test
-	@DisplayName("JwtAuthenticationFilter 는 유효한 토큰일 경우 authentication 을 생성 한다")
-	void case4() throws ServletException, IOException {
+	@DisplayName("doFilter: Authorization 있고 유효성 검사 성공할 경우 Authentication 생성한다")
+	void doFilterCase4() throws ServletException, IOException {
 		// Given
 		String token = "valid.jwt.token";
 		Claims claims = Mockito.mock(Claims.class);
@@ -97,7 +97,7 @@ class JwtAuthenticationFilterTest {
 		Mockito.when(claims.get("memberId", Long.class)).thenReturn(memberId);
 		Mockito.when(claims.get("permissions", List.class)).thenReturn(permissions);
 
-		request.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token);
+		request.addHeader(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(token));
 
 		// When
 		jwtAuthenticationFilter.doFilter(request, response, filterChain);
