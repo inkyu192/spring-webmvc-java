@@ -13,4 +13,9 @@ public abstract class AbstractHttpException extends RuntimeException {
 		super(message);
 		this.httpStatus = httpStatus;
 	}
+
+	public AbstractHttpException(String message, HttpStatus httpStatus, Throwable throwable) {
+		super(message, throwable);
+		this.httpStatus = httpStatus;
+	}
 }
