@@ -1,4 +1,4 @@
-package spring.webmvc.infrastructure.util;
+package spring.webmvc.infrastructure.support;
 
 import java.net.URI;
 
@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class ProblemDetailUtil {
+public class ProblemDetailSupport {
 
 	private final HttpServletRequest request;
 

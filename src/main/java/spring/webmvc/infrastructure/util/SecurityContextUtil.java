@@ -4,7 +4,10 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-public abstract class SecurityContextUtil {
+public final class SecurityContextUtil {
+
+	private SecurityContextUtil() {
+	}
 
 	public static Long getMemberId() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

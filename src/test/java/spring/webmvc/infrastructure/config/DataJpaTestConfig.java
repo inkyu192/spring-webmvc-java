@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Bean;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import jakarta.persistence.EntityManager;
-import spring.webmvc.infrastructure.util.crypto.CryptoUtil;
+import spring.webmvc.infrastructure.crypto.CryptoService;
 
 @TestConfiguration
 public class DataJpaTestConfig {
@@ -18,7 +18,7 @@ public class DataJpaTestConfig {
 	}
 
 	@Bean
-	public CryptoUtil cryptoUtil() {
-		return Mockito.mock(CryptoUtil.class);
+	public CryptoService cryptoUtil() {
+		return Mockito.mock(CryptoService.class);
 	}
 }

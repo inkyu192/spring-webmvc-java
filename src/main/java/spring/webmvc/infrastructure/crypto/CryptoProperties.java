@@ -1,4 +1,4 @@
-package spring.webmvc.infrastructure.util.crypto;
+package spring.webmvc.infrastructure.crypto;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

@@ -18,7 +18,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import lombok.RequiredArgsConstructor;
-import spring.webmvc.infrastructure.util.ProblemDetailUtil;
+import spring.webmvc.infrastructure.support.ProblemDetailSupport;
 import spring.webmvc.presentation.exception.AbstractHttpException;
 import spring.webmvc.presentation.exception.AtLeastOneRequiredException;
 
@@ -26,12 +26,12 @@ import spring.webmvc.presentation.exception.AtLeastOneRequiredException;
 @RequiredArgsConstructor
 public class ApplicationExceptionHandler {
 
-	private final ProblemDetailUtil problemDetailUtil;
+	private final ProblemDetailSupport problemDetailSupport;
 
 	@ExceptionHandler(AbstractHttpException.class)
 	public ProblemDetail handleBusinessException(AbstractHttpException e) {
 		ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(e.getHttpStatus(), e.getMessage());
-		problemDetail.setType(problemDetailUtil.createType(e.getHttpStatus()));
+		problemDetail.setType(problemDetailSupport.createType(e.getHttpStatus()));
 
 		if (e instanceof AtLeastOneRequiredException atLeastOneRequiredException) {
 			problemDetail.setProperty("fields", atLeastOneRequiredException.getFields());
@@ -47,7 +47,7 @@ public class ApplicationExceptionHandler {
 	})
 	public ProblemDetail handleResourceNotFound(ErrorResponse errorResponse) {
 		ProblemDetail problemDetail = errorResponse.getBody();
-		problemDetail.setType(problemDetailUtil.createType(problemDetail.getStatus()));
+		problemDetail.setType(problemDetailSupport.createType(problemDetail.getStatus()));
 
 		return problemDetail;
 	}
@@ -55,7 +55,7 @@ public class ApplicationExceptionHandler {
 	@ExceptionHandler({HttpMessageNotReadableException.class, MethodArgumentTypeMismatchException.class})
 	public ProblemDetail handleInvalidRequestBody(Exception exception) {
 		ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, exception.getMessage());
-		problemDetail.setType(problemDetailUtil.createType(HttpStatus.BAD_REQUEST));
+		problemDetail.setType(problemDetailSupport.createType(HttpStatus.BAD_REQUEST));
 
 		return problemDetail;
 	}
@@ -63,7 +63,7 @@ public class ApplicationExceptionHandler {
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ProblemDetail handleValidationException(MethodArgumentNotValidException exception) {
 		ProblemDetail problemDetail = exception.getBody();
-		problemDetail.setType(problemDetailUtil.createType(problemDetail.getStatus()));
+		problemDetail.setType(problemDetailSupport.createType(problemDetail.getStatus()));
 		problemDetail.setProperties(Map.of("fields", exception.getBindingResult().getFieldErrors().stream()
 			.collect(Collectors.toMap(FieldError::getField, DefaultMessageSourceResolvable::getDefaultMessage))));
 

@@ -14,15 +14,15 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import spring.webmvc.infrastructure.logging.HttpLogFilter;
-import spring.webmvc.infrastructure.util.ProblemDetailUtil;
-import spring.webmvc.infrastructure.util.ResponseWriter;
+import spring.webmvc.infrastructure.support.ProblemDetailSupport;
+import spring.webmvc.infrastructure.support.ResponseWriter;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtExceptionHandler extends OncePerRequestFilter {
 
-	private final ProblemDetailUtil problemDetailUtil;
+	private final ProblemDetailSupport problemDetailSupport;
 	private final ResponseWriter responseWriter;
 
 	@Override
@@ -43,7 +43,7 @@ public class JwtExceptionHandler extends OncePerRequestFilter {
 
 	private void handleException(HttpStatus status, String message) throws IOException {
 		ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(status, message);
-		problemDetail.setType(problemDetailUtil.createType(status));
+		problemDetail.setType(problemDetailSupport.createType(status));
 
 		responseWriter.writeResponse(problemDetail);
 	}
