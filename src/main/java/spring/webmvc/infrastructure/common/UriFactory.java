@@ -1,4 +1,4 @@
-package spring.webmvc.infrastructure.support;
+package spring.webmvc.infrastructure.common;
 
 import java.net.URI;
 
@@ -10,22 +10,27 @@ import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class ProblemDetailSupport {
+public class UriFactory {
 
 	private final HttpServletRequest request;
 
-	public URI createType(int statusCode) {
+	public URI createApiDocUri(int statusCode) {
 		HttpStatus status = HttpStatus.resolve(statusCode);
-		return createType(status);
+
+		if (status == null) {
+			return URI.create("about:blank");
+		}
+
+		return createApiDocUri(status);
 	}
 
-	public URI createType(HttpStatus status) {
-		String baseUrl = getBaseUrl();
-		String typeUri = String.format("%s/docs/index.html#%s", baseUrl, status.name());
+	public URI createApiDocUri(HttpStatus status) {
+		String baseUri = getBaseUri();
+		String typeUri = String.format("%s/docs/index.html#%s", baseUri, status.name());
 		return URI.create(typeUri);
 	}
 
-	private String getBaseUrl() {
+	private String getBaseUri() {
 		String scheme = request.getScheme();
 		String serverName = request.getServerName();
 		int serverPort = request.getServerPort();
