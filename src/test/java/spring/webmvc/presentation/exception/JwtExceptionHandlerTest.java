@@ -19,8 +19,8 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import spring.webmvc.infrastructure.support.ProblemDetailSupport;
-import spring.webmvc.infrastructure.support.ResponseWriter;
+import spring.webmvc.infrastructure.common.UriFactory;
+import spring.webmvc.infrastructure.common.ResponseWriter;
 import spring.webmvc.presentation.exception.handler.JwtExceptionHandler;
 
 @ExtendWith(MockitoExtension.class)
@@ -33,7 +33,7 @@ class JwtExceptionHandlerTest {
 	private FilterChain filterChain;
 
 	@Mock
-	private ProblemDetailSupport problemDetailSupport;
+	private UriFactory uriFactory;
 
 	@Mock
 	private ResponseWriter responseWriter;
@@ -56,7 +56,7 @@ class JwtExceptionHandlerTest {
 		URI uri = URI.create("uri");
 
 		Mockito.doThrow(new JwtException(message)).when(filterChain).doFilter(request, response);
-		Mockito.when(problemDetailSupport.createType(status)).thenReturn(uri);
+		Mockito.when(uriFactory.createApiDocUri(status)).thenReturn(uri);
 
 		ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(status, message);
 		problemDetail.setType(uri);
@@ -77,7 +77,7 @@ class JwtExceptionHandlerTest {
 		URI uri = URI.create("uri");
 
 		Mockito.doThrow(new ServletException(message)).when(filterChain).doFilter(request, response);
-		Mockito.when(problemDetailSupport.createType(status)).thenReturn(uri);
+		Mockito.when(uriFactory.createApiDocUri(status)).thenReturn(uri);
 
 		ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(status, message);
 		problemDetail.setType(uri);
