@@ -1,12 +1,14 @@
 ## 개발 환경
-- **Language & Framework:** Java, Spring Web MVC, Spring Security, Spring Data JPA, Querydsl, Spring REST Docs
-- **Database:** MySQL, Redis
-- **Test & Tools:** JUnit5, Mockito, Docker, Docker Compose, Gradle
+- **Language:** Java
+- **Library / Framework:** Spring Web MVC, Spring Data JPA, Querydsl, Spring REST Docs
+- **Database:** PostgreSQL, Redis
+- **Testing:** JUnit 5, Mockito, Testcontainers
+- **Infrastructure**: Docker, Docker Compose, LocalStack
 
 ---
 
 ## 환경 설정
-`docker-compose.yml`을 사용하여 MySQL, Redis를 실행할 수 있습니다.
+`docker-compose.yml`을 사용하여 PostgreSQL, Redis, LocalStack 실행할 수 있습니다.
 
 ```yaml
 services:
@@ -23,9 +25,32 @@ services:
       - application-network
 
   redis:
+    container_name: redis-container
     image: redis:latest
     ports:
       - "6379:6379"
+    networks:
+      - application-network
+
+  localstack:
+    container_name: localstack-container
+    image: localstack/localstack:latest
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=s3
+      - DEBUG=1
+      - AWS_ACCESS_KEY_ID=accessKey
+      - AWS_SECRET_ACCESS_KEY=secretKey
+      - DEFAULT_REGION=ap-northeast-2
+    volumes:
+      - ./init-localstack.sh:/etc/localstack/init/ready.d/init.sh
+    networks:
+      - application-network
+
+networks:
+  application-network:
+    name: application-network
 ```
 
 ---
