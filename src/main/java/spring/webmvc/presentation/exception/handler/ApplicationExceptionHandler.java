@@ -20,7 +20,7 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 import lombok.RequiredArgsConstructor;
 import spring.webmvc.infrastructure.common.UriFactory;
 import spring.webmvc.presentation.exception.AbstractHttpException;
-import spring.webmvc.presentation.exception.AtLeastOneRequiredException;
+import spring.webmvc.presentation.exception.AbstractValidationException;
 
 @RestControllerAdvice
 @RequiredArgsConstructor
@@ -29,12 +29,15 @@ public class ApplicationExceptionHandler {
 	private final UriFactory uriFactory;
 
 	@ExceptionHandler(AbstractHttpException.class)
-	public ProblemDetail handleBusinessException(AbstractHttpException e) {
-		ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(e.getHttpStatus(), e.getMessage());
-		problemDetail.setType(uriFactory.createApiDocUri(e.getHttpStatus()));
+	public ProblemDetail handleAbstractHttpException(AbstractHttpException httpException) {
+		HttpStatus httpStatus = httpException.getHttpStatus();
+		String message = httpException.getMessage();
 
-		if (e instanceof AtLeastOneRequiredException atLeastOneRequiredException) {
-			problemDetail.setProperty("fields", atLeastOneRequiredException.getFields());
+		ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(httpStatus, message);
+		problemDetail.setType(uriFactory.createApiDocUri(httpStatus));
+
+		if (httpException instanceof AbstractValidationException validationException) {
+			problemDetail.setProperty("fields", validationException.getFields());
 		}
 
 		return problemDetail;
