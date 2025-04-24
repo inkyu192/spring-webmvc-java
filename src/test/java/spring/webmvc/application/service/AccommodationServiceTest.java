@@ -30,7 +30,7 @@ class AccommodationServiceTest {
 	private AccommodationRepository accommodationRepository;
 
 	@Test
-	@DisplayName("createAccommodation: Accommodation 저장하고 반환한다")
+	@DisplayName("createAccommodation: Accommodation 저장 후 반환한다")
 	void createAccommodation() {
 		// Given
 		AccommodationCreateRequest request = new AccommodationCreateRequest(
