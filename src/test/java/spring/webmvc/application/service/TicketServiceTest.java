@@ -29,7 +29,7 @@ class TicketServiceTest {
 	private TicketRepository ticketRepository;
 
 	@Test
-	@DisplayName("createTicket: Ticket 저장하고 반환한다")
+	@DisplayName("createTicket: Ticket 저장 후 반환한다")
 	void createTicket() {
 		// Given
 		TicketCreateRequest request = new TicketCreateRequest(

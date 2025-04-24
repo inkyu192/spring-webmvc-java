@@ -34,8 +34,7 @@ public class ProductQuerydslRepository {
 		);
 
 		List<Product> content = jpaQueryFactory
-			.select(product)
-			.from(product)
+			.selectFrom(product)
 			.leftJoin(orderProduct).on(product.id.eq(orderProduct.product.id))
 			.where(likeName(name))
 			.groupBy(product.id)

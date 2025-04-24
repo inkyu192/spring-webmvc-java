@@ -68,7 +68,7 @@ class AuthServiceTest {
 	}
 
 	@Test
-	@DisplayName("login: 유효성 검사 성공할 경우 Token 저장하고 반환한다")
+	@DisplayName("login: 유효성 검사 성공할 경우 Token 저장 후 반환한다")
 	void loginCase3() {
 		// Given
 		String accessToken = "accessToken";

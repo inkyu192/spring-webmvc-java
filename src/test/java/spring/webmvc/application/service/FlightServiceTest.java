@@ -30,7 +30,7 @@ class FlightServiceTest {
     private FlightRepository flightRepository;
 
     @Test
-    @DisplayName("createFlight: flight 저장하고 반환한다")
+    @DisplayName("createFlight: flight 저장 후 반환한다")
     void createFlight() {
         // Given
         FlightCreateRequest request = new FlightCreateRequest(
