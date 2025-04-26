@@ -39,19 +39,36 @@ public class MemberController {
 			throw new AtLeastOneRequiredException("roleIds", "permissionIds");
 		}
 
-		return memberService.createMember(memberCreateRequest);
+		return new MemberResponse(
+			memberService.createMember(
+				memberCreateRequest.account(),
+				memberCreateRequest.password(),
+				memberCreateRequest.name(),
+				memberCreateRequest.phone(),
+				memberCreateRequest.birthDate(),
+				memberCreateRequest.roleIds(),
+				memberCreateRequest.permissionIds()
+			)
+		);
 	}
 
 	@GetMapping
 	@PreAuthorize("isAuthenticated()")
 	public MemberResponse findMember() {
-		return memberService.findMember();
+		return new MemberResponse(memberService.findMember());
 	}
 
 	@PatchMapping
 	@PreAuthorize("isAuthenticated()")
 	public MemberResponse updateMember(@RequestBody @Validated MemberUpdateRequest memberUpdateRequest) {
-		return memberService.updateMember(memberUpdateRequest);
+		return new MemberResponse(
+			memberService.updateMember(
+				memberUpdateRequest.password(),
+				memberUpdateRequest.name(),
+				memberUpdateRequest.phone(),
+				memberUpdateRequest.birthDate()
+			)
+		);
 	}
 
 	@DeleteMapping
