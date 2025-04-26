@@ -29,14 +29,29 @@ public class FlightController {
 	@GetMapping("/{id}")
 	@PreAuthorize("hasAuthority('PRODUCT_READER')")
 	public FlightResponse findFlight(@PathVariable Long id) {
-		return flightService.findFlight(id);
+		return new FlightResponse(flightService.findFlight(id));
 	}
 
 	@PostMapping
 	@PreAuthorize("hasAuthority('PRODUCT_WRITER')")
 	@ResponseStatus(HttpStatus.CREATED)
-	public FlightResponse createFlight(@RequestBody @Validated FlightCreateRequest flightCreateRequest) {
-		return flightService.createFlight(flightCreateRequest);
+	public FlightResponse createFlight(
+		@RequestBody @Validated FlightCreateRequest flightCreateRequest
+	) {
+		return new FlightResponse(
+			flightService.createFlight(
+				flightCreateRequest.name(),
+				flightCreateRequest.description(),
+				flightCreateRequest.price(),
+				flightCreateRequest.quantity(),
+				flightCreateRequest.airline(),
+				flightCreateRequest.flightNumber(),
+				flightCreateRequest.departureAirport(),
+				flightCreateRequest.arrivalAirport(),
+				flightCreateRequest.departureTime(),
+				flightCreateRequest.arrivalTime()
+			)
+		);
 	}
 
 	@PatchMapping("/{id}")
@@ -45,7 +60,21 @@ public class FlightController {
 		@PathVariable Long id,
 		@RequestBody @Validated FlightUpdateRequest flightUpdateRequest
 	) {
-		return flightService.updateFlight(id, flightUpdateRequest);
+		return new FlightResponse(
+			flightService.updateFlight(
+				id,
+				flightUpdateRequest.name(),
+				flightUpdateRequest.description(),
+				flightUpdateRequest.price(),
+				flightUpdateRequest.quantity(),
+				flightUpdateRequest.airline(),
+				flightUpdateRequest.flightNumber(),
+				flightUpdateRequest.departureAirport(),
+				flightUpdateRequest.arrivalAirport(),
+				flightUpdateRequest.departureTime(),
+				flightUpdateRequest.arrivalTime()
+			)
+		);
 	}
 
 	@DeleteMapping("/{id}")

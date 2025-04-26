@@ -28,10 +28,10 @@ import org.springframework.web.context.WebApplicationContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import spring.webmvc.application.service.AccommodationService;
+import spring.webmvc.domain.model.entity.Accommodation;
 import spring.webmvc.infrastructure.config.WebMvcTestConfig;
 import spring.webmvc.presentation.dto.request.AccommodationCreateRequest;
 import spring.webmvc.presentation.dto.request.AccommodationUpdateRequest;
-import spring.webmvc.presentation.dto.response.AccommodationResponse;
 
 @WebMvcTest(AccommodationController.class)
 @Import(WebMvcTestConfig.class)
@@ -59,28 +59,43 @@ class AccommodationControllerTest {
 	@Test
 	void createAccommodation() throws Exception {
 		// Given
-		AccommodationCreateRequest request = new AccommodationCreateRequest(
-			"name",
-			"description",
-			1000,
-			5,
-			"place",
-			Instant.now(),
-			Instant.now().plus(1, ChronoUnit.DAYS)
-		);
-		AccommodationResponse response = new AccommodationResponse(
-			1L,
-			"name",
-			"description",
-			1000,
-			5,
-			Instant.now(),
-			"place",
-			Instant.now(),
-			Instant.now().plus(1, ChronoUnit.DAYS)
-		);
+		String name = "name";
+		String description = "description";
+		int price = 1000;
+		int quantity = 5;
+		String place = "place";
+		Instant checkInTime = Instant.now();
+		Instant checkOutTime = Instant.now().plus(1, ChronoUnit.DAYS);
 
-		Mockito.when(accommodationService.createAccommodation(request)).thenReturn(response);
+		AccommodationCreateRequest request = new AccommodationCreateRequest(
+			name,
+			description,
+			price,
+			quantity,
+			place,
+			checkInTime,
+			checkOutTime
+		);
+		Accommodation accommodation = Accommodation.create(
+			name,
+			description,
+			price,
+			quantity,
+			place,
+			checkInTime,
+			checkOutTime
+		);
+		Mockito.when(
+			accommodationService.createAccommodation(
+				name,
+				description,
+				price,
+				quantity,
+				place,
+				checkInTime,
+				checkOutTime
+			)
+		).thenReturn(accommodation);
 
 		// When & Then
 		mockMvc.perform(
@@ -123,19 +138,18 @@ class AccommodationControllerTest {
 	void findAccommodation() throws Exception {
 		// Given
 		Long requestId = 1L;
-		AccommodationResponse response = new AccommodationResponse(
-			1L,
+
+		Accommodation accommodation = Accommodation.create(
 			"name",
 			"description",
 			1000,
 			5,
-			Instant.now(),
 			"place",
 			Instant.now(),
 			Instant.now().plus(1, ChronoUnit.DAYS)
 		);
 
-		Mockito.when(accommodationService.findAccommodation(requestId)).thenReturn(response);
+		Mockito.when(accommodationService.findAccommodation(requestId)).thenReturn(accommodation);
 
 		// When & Then
 		mockMvc.perform(
@@ -170,27 +184,44 @@ class AccommodationControllerTest {
 	void updateAccommodation() throws Exception {
 		// Given
 		Long requestId = 1L;
-		AccommodationUpdateRequest request = new AccommodationUpdateRequest(
-			"name",
-			"description",
-			1000,
-			5,
-			"place",
-			Instant.now(), Instant.now().plus(1, ChronoUnit.DAYS)
-		);
-		AccommodationResponse response = new AccommodationResponse(
-			1L,
-			"name",
-			"description",
-			1000,
-			5,
-			Instant.now(),
-			"place",
-			Instant.now(),
-			Instant.now().plus(1, ChronoUnit.DAYS)
-		);
+		String name = "name";
+		String description = "description";
+		int price = 1000;
+		int quantity = 5;
+		String place = "place";
+		Instant checkInTime = Instant.now();
+		Instant checkOutTime = Instant.now().plus(1, ChronoUnit.DAYS);
 
-		Mockito.when(accommodationService.updateAccommodation(requestId, request)).thenReturn(response);
+		AccommodationUpdateRequest request = new AccommodationUpdateRequest(
+			name,
+			description,
+			price,
+			quantity,
+			place,
+			checkInTime,
+			checkOutTime
+		);
+		Accommodation accommodation = Accommodation.create(
+			name,
+			description,
+			price,
+			quantity,
+			place,
+			checkInTime,
+			checkOutTime
+		);
+		Mockito.when(
+			accommodationService.updateAccommodation(
+				requestId,
+				name,
+				description,
+				price,
+				quantity,
+				place,
+				checkInTime,
+				checkOutTime
+			)
+		).thenReturn(accommodation);
 
 		// When & Then
 		mockMvc.perform(

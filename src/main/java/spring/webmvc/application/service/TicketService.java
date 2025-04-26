@@ -1,14 +1,13 @@
 package spring.webmvc.application.service;
 
+import java.time.Instant;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import spring.webmvc.domain.model.entity.Ticket;
 import spring.webmvc.domain.repository.TicketRepository;
-import spring.webmvc.presentation.dto.request.TicketCreateRequest;
-import spring.webmvc.presentation.dto.request.TicketUpdateRequest;
-import spring.webmvc.presentation.dto.response.TicketResponse;
 import spring.webmvc.presentation.exception.EntityNotFoundException;
 
 @Service
@@ -18,48 +17,63 @@ public class TicketService {
 
 	private final TicketRepository ticketRepository;
 
-	public TicketResponse findTicket(Long id) {
-		Ticket ticket = ticketRepository.findById(id)
+	public Ticket findTicket(Long id) {
+		return ticketRepository.findById(id)
 			.orElseThrow(() -> new EntityNotFoundException(Ticket.class, id));
-
-		return new TicketResponse(ticket);
 	}
 
 	@Transactional
-	public TicketResponse createTicket(TicketCreateRequest ticketCreateRequest) {
-		Ticket ticket = ticketRepository.save(
+	public Ticket createTicket(
+		String name,
+		String description,
+		int price,
+		int quantity,
+		String place,
+		Instant performanceTime,
+		String duration,
+		String ageLimit
+	) {
+		return ticketRepository.save(
 			Ticket.create(
-				ticketCreateRequest.name(),
-				ticketCreateRequest.description(),
-				ticketCreateRequest.price(),
-				ticketCreateRequest.quantity(),
-				ticketCreateRequest.place(),
-				ticketCreateRequest.performanceTime(),
-				ticketCreateRequest.duration(),
-				ticketCreateRequest.ageLimit()
+				name,
+				description,
+				price,
+				quantity,
+				place,
+				performanceTime,
+				duration,
+				ageLimit
 			)
 		);
-
-		return new TicketResponse(ticket);
 	}
 
 	@Transactional
-	public TicketResponse updateTicket(Long id, TicketUpdateRequest ticketUpdateRequest) {
+	public Ticket updateTicket(
+		Long id,
+		String name,
+		String description,
+		int price,
+		int quantity,
+		String place,
+		Instant performanceTime,
+		String duration,
+		String ageLimit
+	) {
 		Ticket ticket = ticketRepository.findById(id)
 			.orElseThrow(() -> new EntityNotFoundException(Ticket.class, id));
 
 		ticket.update(
-			ticketUpdateRequest.name(),
-			ticketUpdateRequest.description(),
-			ticketUpdateRequest.price(),
-			ticketUpdateRequest.quantity(),
-			ticketUpdateRequest.place(),
-			ticketUpdateRequest.performanceTime(),
-			ticketUpdateRequest.duration(),
-			ticketUpdateRequest.ageLimit()
+			name,
+			description,
+			price,
+			quantity,
+			place,
+			performanceTime,
+			duration,
+			ageLimit
 		);
 
-		return new TicketResponse(ticket);
+		return ticket;
 	}
 
 	@Transactional

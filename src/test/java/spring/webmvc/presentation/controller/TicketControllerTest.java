@@ -27,10 +27,10 @@ import org.springframework.web.context.WebApplicationContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import spring.webmvc.application.service.TicketService;
+import spring.webmvc.domain.model.entity.Ticket;
 import spring.webmvc.infrastructure.config.WebMvcTestConfig;
 import spring.webmvc.presentation.dto.request.TicketCreateRequest;
 import spring.webmvc.presentation.dto.request.TicketUpdateRequest;
-import spring.webmvc.presentation.dto.response.TicketResponse;
 
 @WebMvcTest(TicketController.class)
 @Import(WebMvcTestConfig.class)
@@ -58,30 +58,49 @@ class TicketControllerTest {
 	@Test
 	void createTicket() throws Exception {
 		// Given
+		String name = "name";
+		String description = "description";
+		int price = 1000;
+		int quantity = 5;
+		String place = "place";
+		Instant performanceTime = Instant.now();
+		String duration = "duration";
+		String ageLimit = "ageLimit";
+
 		TicketCreateRequest request = new TicketCreateRequest(
-			"name",
-			"description",
-			1000,
-			5,
-			"place",
-			Instant.now(),
-			"duration",
-			"ageLimit"
-		);
-		TicketResponse response = new TicketResponse(
-			1L,
-			"name",
-			"description",
-			1000,
-			5,
-			Instant.now(),
-			"place",
-			Instant.now(),
-			"duration",
-			"ageLimit"
+			name,
+			description,
+			price,
+			quantity,
+			place,
+			performanceTime,
+			duration,
+			ageLimit
 		);
 
-		Mockito.when(ticketService.createTicket(request)).thenReturn(response);
+		Ticket ticket = Ticket.create(
+			name,
+			description,
+			price,
+			quantity,
+			place,
+			performanceTime,
+			duration,
+			ageLimit
+		);
+
+		Mockito.when(
+			ticketService.createTicket(
+				name,
+				description,
+				price,
+				quantity,
+				place,
+				performanceTime,
+				duration,
+				ageLimit
+			)
+		).thenReturn(ticket);
 
 		// When & Then
 		mockMvc.perform(
@@ -126,20 +145,19 @@ class TicketControllerTest {
 	void findTicket() throws Exception {
 		// Given
 		Long requestId = 1L;
-		TicketResponse response = new TicketResponse(
-			1L,
+
+		Ticket ticket = Ticket.create(
 			"name",
 			"description",
 			1000,
 			5,
-			Instant.now(),
 			"place",
 			Instant.now(),
 			"duration",
 			"ageLimit"
 		);
 
-		Mockito.when(ticketService.findTicket(requestId)).thenReturn(response);
+		Mockito.when(ticketService.findTicket(requestId)).thenReturn(ticket);
 
 		// When & Then
 		mockMvc.perform(
@@ -175,30 +193,50 @@ class TicketControllerTest {
 	void updateTicket() throws Exception {
 		// Given
 		Long requestId = 1L;
+		String name = "name";
+		String description = "description";
+		int price = 1000;
+		int quantity = 5;
+		String place = "place";
+		Instant performanceTime = Instant.now();
+		String duration = "duration";
+		String ageLimit = "ageLimit";
+
 		TicketUpdateRequest request = new TicketUpdateRequest(
-			"name",
-			"description",
-			1000,
-			5,
-			"place",
-			Instant.now(),
-			"duration",
-			"ageLimit"
-		);
-		TicketResponse response = new TicketResponse(
-			1L,
-			"name",
-			"description",
-			1000,
-			5,
-			Instant.now(),
-			"place",
-			Instant.now(),
-			"duration",
-			"ageLimit"
+			name,
+			description,
+			price,
+			quantity,
+			place,
+			performanceTime,
+			duration,
+			ageLimit
 		);
 
-		Mockito.when(ticketService.updateTicket(requestId, request)).thenReturn(response);
+		Ticket ticket = Ticket.create(
+			name,
+			description,
+			price,
+			quantity,
+			place,
+			performanceTime,
+			duration,
+			ageLimit
+		);
+
+		Mockito.when(
+			ticketService.updateTicket(
+				requestId,
+				name,
+				description,
+				price,
+				quantity,
+				place,
+				performanceTime,
+				duration,
+				ageLimit
+			)
+		).thenReturn(ticket);
 
 		// When & Then
 		mockMvc.perform(
