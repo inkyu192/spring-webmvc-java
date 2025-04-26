@@ -1,6 +1,5 @@
 package spring.webmvc.presentation.controller;
 
-import java.time.Instant;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -28,8 +27,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import spring.webmvc.application.service.ProductService;
+import spring.webmvc.domain.model.entity.Product;
+import spring.webmvc.domain.model.enums.Category;
 import spring.webmvc.infrastructure.config.WebMvcTestConfig;
-import spring.webmvc.presentation.dto.response.ProductResponse;
 
 @WebMvcTest(ProductController.class)
 @Import(WebMvcTestConfig.class)
@@ -56,12 +56,12 @@ class ProductControllerTest {
 		Pageable pageable = PageRequest.of(0, 10);
 		String name = "product";
 
-		List<ProductResponse> response = List.of(
-			new ProductResponse(1L, "product1", "description", 1000, 10, Instant.now()),
-			new ProductResponse(2L, "product2", "description", 2000, 20, Instant.now()),
-			new ProductResponse(3L, "product3", "description", 3000, 30, Instant.now())
+		List<Product> response = List.of(
+			Product.create("name1", "description", 1000, 10, Category.ACCOMMODATION),
+			Product.create("name2", "description", 2000, 20, Category.FLIGHT),
+			Product.create("name3", "description", 3000, 30, Category.TICKET)
 		);
-		Page<ProductResponse> page = new PageImpl<>(response, pageable, response.size());
+		Page<Product> page = new PageImpl<>(response, pageable, response.size());
 
 		Mockito.when(productService.findProducts(pageable, name)).thenReturn(page);
 
