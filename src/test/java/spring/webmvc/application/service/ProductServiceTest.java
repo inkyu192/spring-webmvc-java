@@ -18,7 +18,6 @@ import org.springframework.data.domain.Pageable;
 import spring.webmvc.domain.model.entity.Product;
 import spring.webmvc.domain.model.enums.Category;
 import spring.webmvc.domain.repository.ProductRepository;
-import spring.webmvc.presentation.dto.response.ProductResponse;
 
 @ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
@@ -45,7 +44,7 @@ class ProductServiceTest {
 		Mockito.when(productRepository.findAll(pageable, name)).thenReturn(page);
 
 		// When
-		Page<ProductResponse> response = productService.findProducts(pageable, name);
+		Page<Product> response = productService.findProducts(pageable, name);
 
 		// Then
 		Assertions.assertThat(response.getTotalElements()).isEqualTo(products.size());

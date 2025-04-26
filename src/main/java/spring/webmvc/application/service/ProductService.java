@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import spring.webmvc.domain.model.entity.Product;
 import spring.webmvc.domain.repository.ProductRepository;
 import spring.webmvc.presentation.dto.response.ProductResponse;
 
@@ -16,7 +17,7 @@ public class ProductService {
 
 	private final ProductRepository productRepository;
 
-	public Page<ProductResponse> findProducts(Pageable pageable, String name) {
-		return productRepository.findAll(pageable, name).map(ProductResponse::new);
+	public Page<Product> findProducts(Pageable pageable, String name) {
+		return productRepository.findAll(pageable, name);
 	}
 }

@@ -26,6 +26,6 @@ public class ProductController {
 		@PageableDefault Pageable pageable,
 		@RequestParam(required = false) String name
 	) {
-		return productService.findProducts(pageable, name);
+		return productService.findProducts(pageable, name).map(ProductResponse::new);
 	}
 }
