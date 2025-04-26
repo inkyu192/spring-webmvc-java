@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import spring.webmvc.application.service.RoleService;
+import spring.webmvc.domain.model.entity.Role;
+import spring.webmvc.domain.model.entity.RolePermission;
 import spring.webmvc.presentation.dto.request.RoleCreateRequest;
 import spring.webmvc.presentation.dto.response.RoleResponse;
 
@@ -23,6 +25,13 @@ public class RoleController {
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public RoleResponse createRole(@RequestBody @Validated RoleCreateRequest roleCreateRequest) {
-		return roleService.createRole(roleCreateRequest);
+		Role role = roleService.createRole(roleCreateRequest.name(), roleCreateRequest.permissionIds());
+
+		return new RoleResponse(
+			role,
+			role.getRolePermissions().stream()
+				.map(RolePermission::getPermission)
+				.toList()
+		);
 	}
 }

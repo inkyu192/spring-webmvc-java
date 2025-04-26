@@ -7,6 +7,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.util.Pair;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
@@ -53,10 +54,14 @@ class AuthControllerTest {
 
 	@Test
 	void login() throws Exception {
-		MemberLoginRequest request = new MemberLoginRequest("test@gmail.com", "password");
-		TokenResponse response = new TokenResponse("accessToken", "refreshToken");
+		String accessToken = "accessToken";
+		String refreshToken = "refreshToken";
+		String account = "test@gmail.com";
+		String password = "password";
 
-		Mockito.when(authService.login(request)).thenReturn(response);
+		MemberLoginRequest request = new MemberLoginRequest(account, password);
+
+		Mockito.when(authService.login(account, password)).thenReturn(Pair.of(accessToken, refreshToken));
 
 		mockMvc.perform(
 				RestDocumentationRequestBuilders.post("/auth/login")
@@ -80,10 +85,13 @@ class AuthControllerTest {
 
 	@Test
 	void refreshToken() throws Exception {
-		TokenRequest request = new TokenRequest("oldAccessToken", "refreshToken");
-		TokenResponse response = new TokenResponse("newAccessToken", "refreshToken");
+		String oldAccessToken = "oldAccessToken";
+		String newAccessToken = "newAccessToken";
+		String refreshToken = "refreshToken";
+		TokenRequest request = new TokenRequest(oldAccessToken, refreshToken);
 
-		Mockito.when(authService.refreshToken(request)).thenReturn(response);
+		Mockito.when(authService.refreshToken(oldAccessToken, refreshToken))
+			.thenReturn(Pair.of(newAccessToken, refreshToken));
 
 		mockMvc.perform(
 				RestDocumentationRequestBuilders.post("/auth/token/refresh")
