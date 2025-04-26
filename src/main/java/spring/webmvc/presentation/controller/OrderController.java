@@ -1,7 +1,10 @@
 package spring.webmvc.presentation.controller;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.util.Pair;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -35,29 +38,32 @@ public class OrderController {
 	@RequestLock
 	@ResponseStatus(HttpStatus.CREATED)
 	public OrderResponse createOrder(@RequestBody @Validated OrderCreateRequest orderCreateRequest) {
-		return orderService.createOrder(orderCreateRequest);
+		List<Pair<Long, Integer>> productQuantities = orderCreateRequest.products().stream()
+			.map(it -> Pair.of(it.productId(), it.quantity()))
+			.toList();
+
+		return new OrderResponse(orderService.createOrder(productQuantities));
 	}
 
 	@GetMapping
 	@PreAuthorize("isAuthenticated()")
 	public Page<OrderResponse> findOrders(
 		@PageableDefault Pageable pageable,
-		@RequestParam(required = false) Long memberId,
 		@RequestParam(required = false) OrderStatus orderStatus
 	) {
-		return orderService.findOrders(memberId, orderStatus, pageable);
+		return orderService.findOrders(pageable, orderStatus).map(OrderResponse::new);
 	}
 
 	@GetMapping("/{id}")
 	@PreAuthorize("isAuthenticated()")
 	public OrderResponse findOrder(@PathVariable Long id) {
-		return orderService.findOrder(id);
+		return new OrderResponse(orderService.findOrder(id));
 	}
 
 	@PatchMapping("/{id}")
 	@PreAuthorize("isAuthenticated()")
 	@RequestLock
 	public OrderResponse cancelOrder(@PathVariable Long id) {
-		return orderService.cancelOrder(id);
+		return new OrderResponse(orderService.cancelOrder(id));
 	}
 }

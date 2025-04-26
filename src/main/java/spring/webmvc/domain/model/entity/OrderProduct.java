@@ -32,22 +32,22 @@ public class OrderProduct {
 	private Order order;
 
 	private int orderPrice;
-	private int count;
+	private int quantity;
 
-	public static OrderProduct create(Order order, Product product, int count) {
+	public static OrderProduct create(Order order, Product product, int quantity) {
 		OrderProduct orderProduct = new OrderProduct();
 
 		orderProduct.order = order;
 		orderProduct.product = product;
 		orderProduct.orderPrice = product.getPrice();
-		orderProduct.count = count;
+		orderProduct.quantity = quantity;
 
-		product.removeQuantity(count);
+		product.removeQuantity(quantity);
 
 		return orderProduct;
 	}
 
 	public void cancel() {
-		product.addQuantity(count);
+		product.addQuantity(quantity);
 	}
 }

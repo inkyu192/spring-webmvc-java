@@ -12,7 +12,7 @@ public interface OrderRepository {
 
 	Page<Order> findAll(Pageable pageable, Long memberId, OrderStatus orderStatus);
 
-	Optional<Order> findById(Long id);
+	Optional<Order> findByIdAndMemberId(Long id, Long memberId);
 
 	Order save(Order order);
 }

@@ -60,8 +60,8 @@ public class Order extends BaseTime {
 		return order;
 	}
 
-	public void addProduct(Product product, int count) {
-		orderProducts.add(OrderProduct.create(this, product, count));
+	public void addProduct(Product product, int quantity) {
+		orderProducts.add(OrderProduct.create(this, product, quantity));
 	}
 
 	public void cancel() {

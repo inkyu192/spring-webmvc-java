@@ -5,13 +5,13 @@ import spring.webmvc.domain.model.entity.OrderProduct;
 public record OrderProductResponse(
 	String productName,
 	int orderPrice,
-	int count
+	int quantity
 ) {
 	public OrderProductResponse(OrderProduct orderProduct) {
 		this(
 			orderProduct.getProduct().getName(),
 			orderProduct.getOrderPrice(),
-			orderProduct.getCount()
+			orderProduct.getQuantity()
 		);
 	}
 }
