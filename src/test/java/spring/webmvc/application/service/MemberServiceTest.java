@@ -25,7 +25,6 @@ import spring.webmvc.domain.model.entity.Member;
 import spring.webmvc.domain.repository.MemberRepository;
 import spring.webmvc.domain.repository.PermissionRepository;
 import spring.webmvc.domain.repository.RoleRepository;
-import spring.webmvc.presentation.dto.response.MemberResponse;
 import spring.webmvc.presentation.exception.EntityNotFoundException;
 
 @ExtendWith(MockitoExtension.class)
@@ -68,7 +67,9 @@ class MemberServiceTest {
 	@Test
 	@DisplayName("findMember: Member 없을 경우 EntityNotFoundException 발생한다")
 	void findMemberCase1() {
-		Mockito.when(memberRepository.findById(Mockito.any())).thenReturn(Optional.empty());
+		Long memberId = 1L;
+
+		Mockito.when(memberRepository.findById(memberId)).thenReturn(Optional.empty());
 
 		Assertions.assertThatThrownBy(() -> memberService.findMember())
 			.isInstanceOf(EntityNotFoundException.class);
@@ -87,15 +88,15 @@ class MemberServiceTest {
 		Mockito.when(member.getBirthDate()).thenReturn(LocalDate.now());
 		Mockito.when(member.getCreatedAt()).thenReturn(Instant.now());
 
-		Mockito.when(memberRepository.findById(Mockito.any())).thenReturn(Optional.of(member));
+		Mockito.when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
 
-		MemberResponse response = memberService.findMember();
+		Member findMember = memberService.findMember();
 
-		Assertions.assertThat(response.id()).isEqualTo(member.getId());
-		Assertions.assertThat(response.account()).isEqualTo(member.getAccount());
-		Assertions.assertThat(response.name()).isEqualTo(member.getName());
-		Assertions.assertThat(response.phone()).isEqualTo(member.getPhone());
-		Assertions.assertThat(response.birthDate()).isEqualTo(member.getBirthDate());
-		Assertions.assertThat(response.createdAt()).isEqualTo(member.getCreatedAt());
+		Assertions.assertThat(findMember.getId()).isEqualTo(member.getId());
+		Assertions.assertThat(findMember.getAccount()).isEqualTo(member.getAccount());
+		Assertions.assertThat(findMember.getName()).isEqualTo(member.getName());
+		Assertions.assertThat(findMember.getPhone()).isEqualTo(member.getPhone());
+		Assertions.assertThat(findMember.getBirthDate()).isEqualTo(member.getBirthDate());
+		Assertions.assertThat(findMember.getCreatedAt()).isEqualTo(member.getCreatedAt());
 	}
 }

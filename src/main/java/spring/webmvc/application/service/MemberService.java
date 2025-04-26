@@ -1,5 +1,7 @@
 package spring.webmvc.application.service;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -18,9 +20,6 @@ import spring.webmvc.domain.repository.MemberRepository;
 import spring.webmvc.domain.repository.PermissionRepository;
 import spring.webmvc.domain.repository.RoleRepository;
 import spring.webmvc.infrastructure.util.SecurityContextUtil;
-import spring.webmvc.presentation.dto.request.MemberCreateRequest;
-import spring.webmvc.presentation.dto.request.MemberUpdateRequest;
-import spring.webmvc.presentation.dto.response.MemberResponse;
 import spring.webmvc.presentation.exception.DuplicateEntityException;
 import spring.webmvc.presentation.exception.EntityNotFoundException;
 
@@ -36,24 +35,26 @@ public class MemberService {
 	private final ApplicationEventPublisher eventPublisher;
 
 	@Transactional
-	public MemberResponse createMember(MemberCreateRequest memberCreateRequest) {
-		if (memberRepository.existsByAccount(memberCreateRequest.account())) {
-			throw new DuplicateEntityException(Member.class, memberCreateRequest.account());
+	public Member createMember(
+		String account,
+		String password,
+		String name,
+		String phone,
+		LocalDate birthDate,
+		List<Long> roleIds,
+		List<Long> permissionIds
+	) {
+		if (memberRepository.existsByAccount(account)) {
+			throw new DuplicateEntityException(Member.class, account);
 		}
 
-		Member member = Member.create(
-			memberCreateRequest.account(),
-			passwordEncoder.encode(memberCreateRequest.password()),
-			memberCreateRequest.name(),
-			memberCreateRequest.phone(),
-			memberCreateRequest.birthDate()
-		);
+		Member member = Member.create(account, passwordEncoder.encode(password), name, phone, birthDate);
 
-		if (!ObjectUtils.isEmpty(memberCreateRequest.roleIds())) {
-			Map<Long, Role> roleMap = roleRepository.findAllById(memberCreateRequest.roleIds()).stream()
+		if (!ObjectUtils.isEmpty(roleIds)) {
+			Map<Long, Role> roleMap = roleRepository.findAllById(roleIds).stream()
 				.collect(Collectors.toMap(Role::getId, role -> role));
 
-			for (Long id : memberCreateRequest.roleIds()) {
+			for (Long id : roleIds) {
 				Role role = roleMap.get(id);
 				if (role == null) {
 					throw new EntityNotFoundException(Role.class, id);
@@ -62,12 +63,12 @@ public class MemberService {
 			}
 		}
 
-		if (!ObjectUtils.isEmpty(memberCreateRequest.permissionIds())) {
-			Map<Long, Permission> permissionMap = permissionRepository.findAllById(memberCreateRequest.permissionIds())
+		if (!ObjectUtils.isEmpty(permissionIds)) {
+			Map<Long, Permission> permissionMap = permissionRepository.findAllById(permissionIds)
 				.stream()
 				.collect(Collectors.toMap(Permission::getId, permission -> permission));
 
-			for (Long id : memberCreateRequest.permissionIds()) {
+			for (Long id : permissionIds) {
 				Permission permission = permissionMap.get(id);
 				if (permission == null) {
 					throw new EntityNotFoundException(Permission.class, id);
@@ -87,31 +88,25 @@ public class MemberService {
 			)
 		);
 
-		return new MemberResponse(member);
+		return member;
 	}
 
-	public MemberResponse findMember() {
+	public Member findMember() {
 		Long memberId = SecurityContextUtil.getMemberId();
-		Member member = memberRepository.findById(memberId)
-			.orElseThrow(() -> new EntityNotFoundException(Member.class, memberId));
 
-		return new MemberResponse(member);
+		return memberRepository.findById(memberId)
+			.orElseThrow(() -> new EntityNotFoundException(Member.class, memberId));
 	}
 
 	@Transactional
-	public MemberResponse updateMember(MemberUpdateRequest memberUpdateRequest) {
+	public Member updateMember(String password, String name, String phone, LocalDate birthDate) {
 		Long memberId = SecurityContextUtil.getMemberId();
 		Member member = memberRepository.findById(memberId)
 			.orElseThrow(() -> new EntityNotFoundException(Member.class, memberId));
 
-		member.update(
-			memberUpdateRequest.password(),
-			memberUpdateRequest.name(),
-			memberUpdateRequest.phone(),
-			memberUpdateRequest.birthDate()
-		);
+		member.update(password, name, phone, birthDate);
 
-		return new MemberResponse(member);
+		return member;
 	}
 
 	@Transactional

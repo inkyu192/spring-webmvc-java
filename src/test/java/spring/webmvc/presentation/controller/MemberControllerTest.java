@@ -1,6 +1,5 @@
 package spring.webmvc.presentation.controller;
 
-import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -28,10 +27,10 @@ import org.springframework.web.context.WebApplicationContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import spring.webmvc.application.service.MemberService;
+import spring.webmvc.domain.model.entity.Member;
 import spring.webmvc.infrastructure.config.WebMvcTestConfig;
 import spring.webmvc.presentation.dto.request.MemberCreateRequest;
 import spring.webmvc.presentation.dto.request.MemberUpdateRequest;
-import spring.webmvc.presentation.dto.response.MemberResponse;
 
 @WebMvcTest(MemberController.class)
 @Import(WebMvcTestConfig.class)
@@ -57,26 +56,22 @@ class MemberControllerTest {
 	}
 
 	@Test
-	void saveMember() throws Exception {
-		MemberCreateRequest request = new MemberCreateRequest(
-			"test@gmail.com",
-			"password",
-			"name",
-			"010-1234-1234",
-			LocalDate.now(),
-			List.of(),
-			List.of(1L)
-		);
-		MemberResponse response = new MemberResponse(
-			1L,
-			"test@gmail.com",
-			"name",
-			"010-1234-1234",
-			LocalDate.now(),
-			Instant.now()
-		);
+	void createMember() throws Exception {
+		String account = "test@gmail.com";
+		String password = "password";
+		String name = "name";
+		String phone = "010-1234-1234";
+		LocalDate birthDate = LocalDate.now();
+		List<Long> roleIds = List.of(1L);
+		List<Long> permissionIds = List.of();
 
-		Mockito.when(memberService.createMember(request)).thenReturn(response);
+		MemberCreateRequest request =
+			new MemberCreateRequest(account, password, name, phone, birthDate, roleIds, permissionIds);
+
+		Member member = Mockito.mock(Member.class);
+
+		Mockito.when(memberService.createMember(account, password, name, phone, birthDate, roleIds, permissionIds))
+			.thenReturn(member);
 
 		mockMvc.perform(
 				RestDocumentationRequestBuilders.post("/members")
@@ -109,16 +104,9 @@ class MemberControllerTest {
 
 	@Test
 	void findMember() throws Exception {
-		MemberResponse response = new MemberResponse(
-			1L,
-			"test@gmail.com",
-			"name",
-			"010-1234-1234",
-			LocalDate.now(),
-			Instant.now()
-		);
+		Member member = Mockito.mock(Member.class);
 
-		Mockito.when(memberService.findMember()).thenReturn(response);
+		Mockito.when(memberService.findMember()).thenReturn(member);
 
 		mockMvc.perform(
 				RestDocumentationRequestBuilders.get("/members")
@@ -144,22 +132,16 @@ class MemberControllerTest {
 
 	@Test
 	void updateMember() throws Exception {
-		MemberUpdateRequest request = new MemberUpdateRequest(
-			"password",
-			"name",
-			"010-1234-1234",
-			LocalDate.now()
-		);
-		MemberResponse response = new MemberResponse(
-			1L,
-			"test@gmail.com",
-			"name",
-			"010-1234-1234",
-			LocalDate.now(),
-			Instant.now()
-		);
+		String password = "password";
+		String name = "name";
+		String phone = "010-1234-1234";
+		LocalDate birthDate = LocalDate.now();
 
-		Mockito.when(memberService.updateMember(request)).thenReturn(response);
+		MemberUpdateRequest request = new MemberUpdateRequest(password, name, phone, birthDate);
+
+		Member member = Mockito.mock(Member.class);
+
+		Mockito.when(memberService.updateMember(password, name, phone, birthDate)).thenReturn(member);
 
 		mockMvc.perform(
 				RestDocumentationRequestBuilders.patch("/members")
