@@ -29,15 +29,26 @@ public class AccommodationController {
 	@GetMapping("/{id}")
 	@PreAuthorize("hasAuthority('PRODUCT_READER')")
 	public AccommodationResponse findAccommodation(@PathVariable Long id) {
-		return accommodationService.findAccommodation(id);
+		return new AccommodationResponse(accommodationService.findAccommodation(id));
 	}
 
 	@PostMapping
 	@PreAuthorize("hasAuthority('PRODUCT_WRITER')")
 	@ResponseStatus(HttpStatus.CREATED)
 	public AccommodationResponse createAccommodation(
-		@RequestBody @Validated AccommodationCreateRequest accommodationCreateRequest) {
-		return accommodationService.createAccommodation(accommodationCreateRequest);
+		@RequestBody @Validated AccommodationCreateRequest accommodationCreateRequest
+	) {
+		return new AccommodationResponse(
+			accommodationService.createAccommodation(
+				accommodationCreateRequest.name(),
+				accommodationCreateRequest.description(),
+				accommodationCreateRequest.price(),
+				accommodationCreateRequest.quantity(),
+				accommodationCreateRequest.place(),
+				accommodationCreateRequest.checkInTime(),
+				accommodationCreateRequest.checkOutTime()
+			)
+		);
 	}
 
 	@PatchMapping("/{id}")
@@ -46,7 +57,18 @@ public class AccommodationController {
 		@PathVariable Long id,
 		@RequestBody @Validated AccommodationUpdateRequest accommodationUpdateRequest
 	) {
-		return accommodationService.updateAccommodation(id, accommodationUpdateRequest);
+		return new AccommodationResponse(
+			accommodationService.updateAccommodation(
+				id,
+				accommodationUpdateRequest.name(),
+				accommodationUpdateRequest.description(),
+				accommodationUpdateRequest.price(),
+				accommodationUpdateRequest.quantity(),
+				accommodationUpdateRequest.place(),
+				accommodationUpdateRequest.checkInTime(),
+				accommodationUpdateRequest.checkOutTime()
+			)
+		);
 	}
 
 	@DeleteMapping("/{id}")

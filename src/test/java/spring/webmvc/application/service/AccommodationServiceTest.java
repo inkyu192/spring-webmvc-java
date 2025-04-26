@@ -15,9 +15,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import spring.webmvc.domain.model.entity.Accommodation;
 import spring.webmvc.domain.repository.AccommodationRepository;
-import spring.webmvc.presentation.dto.request.AccommodationCreateRequest;
-import spring.webmvc.presentation.dto.request.AccommodationUpdateRequest;
-import spring.webmvc.presentation.dto.response.AccommodationResponse;
 import spring.webmvc.presentation.exception.EntityNotFoundException;
 
 @ExtendWith(MockitoExtension.class)
@@ -33,36 +30,45 @@ class AccommodationServiceTest {
 	@DisplayName("createAccommodation: Accommodation 저장 후 반환한다")
 	void createAccommodation() {
 		// Given
-		AccommodationCreateRequest request = new AccommodationCreateRequest(
-			"name",
-			"description",
-			1000,
-			5,
-			"place",
-			Instant.now(),
-			Instant.now().plus(1, ChronoUnit.DAYS)
-		);
+		String name = "name";
+		String description = "description";
+		int price = 1000;
+		int quantity = 5;
+		String place = "place";
+		Instant checkInTime = Instant.now();
+		Instant checkOutTime = Instant.now().plus(1, ChronoUnit.DAYS);
+
 		Accommodation accommodation = Accommodation.create(
-			"name",
-			"description",
-			1000,
-			5,
-			"place",
-			Instant.now(),
-			Instant.now().plus(1, ChronoUnit.DAYS)
+			name,
+			description,
+			price,
+			quantity,
+			place,
+			checkInTime,
+			checkOutTime
 		);
 
 		Mockito.when(accommodationRepository.save(Mockito.any(Accommodation.class))).thenReturn(accommodation);
 
 		// When
-		AccommodationResponse response = accommodationService.createAccommodation(request);
+		Accommodation result = accommodationService.createAccommodation(
+			name,
+			description,
+			price,
+			quantity,
+			place,
+			checkInTime,
+			checkOutTime
+		);
 
 		// Then
-		Assertions.assertThat(request.name()).isEqualTo(response.name());
-		Assertions.assertThat(request.description()).isEqualTo(response.description());
-		Assertions.assertThat(request.price()).isEqualTo(response.price());
-		Assertions.assertThat(request.quantity()).isEqualTo(response.quantity());
-		Assertions.assertThat(request.place()).isEqualTo(response.place());
+		Assertions.assertThat(name).isEqualTo(result.getProduct().getName());
+		Assertions.assertThat(description).isEqualTo(result.getProduct().getDescription());
+		Assertions.assertThat(price).isEqualTo(result.getProduct().getPrice());
+		Assertions.assertThat(quantity).isEqualTo(result.getProduct().getQuantity());
+		Assertions.assertThat(place).isEqualTo(result.getPlace());
+		Assertions.assertThat(checkInTime).isEqualTo(result.getCheckInTime());
+		Assertions.assertThat(checkOutTime).isEqualTo(result.getCheckOutTime());
 	}
 
 	@Test
@@ -96,14 +102,17 @@ class AccommodationServiceTest {
 		Mockito.when(accommodationRepository.findById(accommodationId)).thenReturn(Optional.of(accommodation));
 
 		// When
-		AccommodationResponse response = accommodationService.findAccommodation(accommodationId);
+		Accommodation result = accommodationService.findAccommodation(accommodationId);
 
 		// Then
-		Assertions.assertThat(accommodation.getProduct().getName()).isEqualTo(response.name());
-		Assertions.assertThat(accommodation.getProduct().getDescription()).isEqualTo(response.description());
-		Assertions.assertThat(accommodation.getProduct().getPrice()).isEqualTo(response.price());
-		Assertions.assertThat(accommodation.getProduct().getQuantity()).isEqualTo(response.quantity());
-		Assertions.assertThat(accommodation.getPlace()).isEqualTo(response.place());
+		Assertions.assertThat(accommodation.getProduct().getName()).isEqualTo(result.getProduct().getName());
+		Assertions.assertThat(accommodation.getProduct().getDescription())
+			.isEqualTo(result.getProduct().getDescription());
+		Assertions.assertThat(accommodation.getProduct().getPrice()).isEqualTo(result.getProduct().getPrice());
+		Assertions.assertThat(accommodation.getProduct().getQuantity()).isEqualTo(result.getProduct().getQuantity());
+		Assertions.assertThat(accommodation.getPlace()).isEqualTo(result.getPlace());
+		Assertions.assertThat(accommodation.getCheckInTime()).isEqualTo(result.getCheckInTime());
+		Assertions.assertThat(accommodation.getCheckOutTime()).isEqualTo(result.getCheckOutTime());
 	}
 
 	@Test
@@ -111,20 +120,29 @@ class AccommodationServiceTest {
 	void updateAccommodationCase1() {
 		// Given
 		Long accommodationId = 1L;
-		AccommodationUpdateRequest request = new AccommodationUpdateRequest(
-			"New Hotel",
-			"New description",
-			2000,
-			10,
-			"New Hotel",
-			Instant.now(),
-			Instant.now().plus(1, ChronoUnit.DAYS)
-		);
+		String name = "name";
+		String description = "description";
+		int price = 1000;
+		int quantity = 5;
+		String place = "place";
+		Instant checkInTime = Instant.now();
+		Instant checkOutTime = Instant.now().plus(1, ChronoUnit.DAYS);
 
 		Mockito.when(accommodationRepository.findById(accommodationId)).thenReturn(Optional.empty());
 
 		// When & Then
-		Assertions.assertThatThrownBy(() -> accommodationService.updateAccommodation(accommodationId, request))
+		Assertions.assertThatThrownBy(() ->
+				accommodationService.updateAccommodation(
+					accommodationId,
+					name,
+					description,
+					price,
+					quantity,
+					place,
+					checkInTime,
+					checkOutTime
+				)
+			)
 			.isInstanceOf(EntityNotFoundException.class);
 	}
 
@@ -133,36 +151,46 @@ class AccommodationServiceTest {
 	void updateAccommodationCase2() {
 		// Given
 		Long accommodationId = 1L;
-		AccommodationUpdateRequest request = new AccommodationUpdateRequest(
-			"name",
-			"description",
-			1000,
-			5,
-			"place",
-			Instant.now(),
-			Instant.now().plus(1, ChronoUnit.DAYS)
-		);
+		String name = "name";
+		String description = "description";
+		int price = 1000;
+		int quantity = 5;
+		String place = "place";
+		Instant checkInTime = Instant.now();
+		Instant checkOutTime = Instant.now().plus(1, ChronoUnit.DAYS);
+
 		Accommodation accommodation = Accommodation.create(
-			"name",
-			"description",
-			1000,
-			5,
-			"place",
-			Instant.now(),
-			Instant.now().plus(1, ChronoUnit.DAYS)
+			name,
+			description,
+			price,
+			quantity,
+			place,
+			checkInTime,
+			checkOutTime
 		);
 
 		Mockito.when(accommodationRepository.findById(accommodationId)).thenReturn(Optional.of(accommodation));
 
 		// When
-		AccommodationResponse response = accommodationService.updateAccommodation(accommodationId, request);
+		Accommodation result = accommodationService.updateAccommodation(
+			accommodationId,
+			name,
+			description,
+			price,
+			quantity,
+			place,
+			checkInTime,
+			checkOutTime
+		);
 
 		// Then
-		Assertions.assertThat(request.name()).isEqualTo(response.name());
-		Assertions.assertThat(request.description()).isEqualTo(response.description());
-		Assertions.assertThat(request.price()).isEqualTo(response.price());
-		Assertions.assertThat(request.quantity()).isEqualTo(response.quantity());
-		Assertions.assertThat(request.place()).isEqualTo(response.place());
+		Assertions.assertThat(name).isEqualTo(result.getProduct().getName());
+		Assertions.assertThat(description).isEqualTo(result.getProduct().getDescription());
+		Assertions.assertThat(price).isEqualTo(result.getProduct().getPrice());
+		Assertions.assertThat(quantity).isEqualTo(result.getProduct().getQuantity());
+		Assertions.assertThat(place).isEqualTo(result.getPlace());
+		Assertions.assertThat(checkInTime).isEqualTo(result.getCheckInTime());
+		Assertions.assertThat(checkOutTime).isEqualTo(result.getCheckOutTime());
 
 		Mockito.verify(accommodationRepository, Mockito.never()).save(Mockito.any());
 	}

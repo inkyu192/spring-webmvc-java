@@ -28,6 +28,7 @@ import org.springframework.web.context.WebApplicationContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import spring.webmvc.application.service.FlightService;
+import spring.webmvc.domain.model.entity.Flight;
 import spring.webmvc.infrastructure.config.WebMvcTestConfig;
 import spring.webmvc.presentation.dto.request.FlightCreateRequest;
 import spring.webmvc.presentation.dto.request.FlightUpdateRequest;
@@ -57,36 +58,59 @@ class FlightControllerTest {
     }
 
     @Test
-    void saveFlight() throws Exception {
+    void createFlight() throws Exception {
         // Given
+        String name = "name";
+        String description = "description";
+        int price = 1000;
+        int quantity = 5;
+        String airline = "airline";
+        String flightNumber = "flightNumber";
+        String departureAirport = "departureAirport";
+        String arrivalAirport = "arrivalAirport";
+        Instant departureTime = Instant.now();
+        Instant arrivalTime = Instant.now().plus(1, ChronoUnit.HOURS);
+
         FlightCreateRequest request = new FlightCreateRequest(
-            "name",
-            "description",
-            1000,
-            5,
-            "airline",
-            "flightNumber",
-            "departureAirport",
-            "arrivalAirport",
-            Instant.now(),
-            Instant.now().plus(1, ChronoUnit.HOURS)
-        );
-        FlightResponse response = new FlightResponse(
-            1L,
-            "name",
-            "description",
-            1000,
-            5,
-            Instant.now(),
-            "airline",
-            "flightNumber",
-            "departureAirport",
-            "arrivalAirport",
-            Instant.now(),
-            Instant.now().plus(1, ChronoUnit.HOURS)
+            name,
+            description,
+            price,
+            quantity,
+            airline,
+            flightNumber,
+            departureAirport,
+            arrivalAirport,
+            departureTime,
+            arrivalTime
         );
 
-        Mockito.when(flightService.createFlight(request)).thenReturn(response);
+        Flight flight = Flight.create(
+            name,
+            description,
+            price,
+            quantity,
+            airline,
+            flightNumber,
+            departureAirport,
+            arrivalAirport,
+            departureTime,
+            arrivalTime
+        );
+
+        Mockito.when(
+            flightService.createFlight(
+                name,
+                description,
+                price,
+                quantity,
+                airline,
+                flightNumber,
+                departureAirport,
+                arrivalAirport,
+                departureTime,
+                arrivalTime
+            )
+        ).thenReturn(flight);
 
         // When & Then
         mockMvc.perform(
@@ -135,13 +159,12 @@ class FlightControllerTest {
     void findFlight() throws Exception {
         // Given
         Long requestId = 1L;
-        FlightResponse response = new FlightResponse(
-            1L,
+
+        Flight flight = Flight.create(
             "name",
             "description",
             1000,
             5,
-            Instant.now(),
             "airline",
             "flightNumber",
             "departureAirport",
@@ -150,7 +173,7 @@ class FlightControllerTest {
             Instant.now().plus(1, ChronoUnit.HOURS)
         );
 
-        Mockito.when(flightService.findFlight(requestId)).thenReturn(response);
+        Mockito.when(flightService.findFlight(requestId)).thenReturn(flight);
 
         // When & Then
         mockMvc.perform(
@@ -188,34 +211,58 @@ class FlightControllerTest {
     void updateFlight() throws Exception {
         // Given
         Long requestId = 1L;
+        String name = "name";
+        String description = "description";
+        int price = 1000;
+        int quantity = 5;
+        String airline = "airline";
+        String flightNumber = "flightNumber";
+        String departureAirport = "departureAirport";
+        String arrivalAirport = "arrivalAirport";
+        Instant departureTime = Instant.now();
+        Instant arrivalTime = Instant.now().plus(1, ChronoUnit.HOURS);
+
         FlightUpdateRequest request = new FlightUpdateRequest(
-            "name",
-            "description",
-            1000,
-            5,
-            "airline",
-            "flightNumber",
-            "departureAirport",
-            "arrivalAirport",
-            Instant.now(),
-            Instant.now().plus(1, ChronoUnit.HOURS)
-        );
-        FlightResponse response = new FlightResponse(
-            1L,
-            "name",
-            "description",
-            1000,
-            5,
-            Instant.now(),
-            "airline",
-            "flightNumber",
-            "departureAirport",
-            "arrivalAirport",
-            Instant.now(),
-            Instant.now().plus(1, ChronoUnit.HOURS)
+            name,
+            description,
+            price,
+            quantity,
+            airline,
+            flightNumber,
+            departureAirport,
+            arrivalAirport,
+            departureTime,
+            arrivalTime
         );
 
-        Mockito.when(flightService.updateFlight(requestId, request)).thenReturn(response);
+        Flight flight = Flight.create(
+            name,
+            description,
+            price,
+            quantity,
+            airline,
+            flightNumber,
+            departureAirport,
+            arrivalAirport,
+            departureTime,
+            arrivalTime
+        );
+
+        Mockito.when(
+            flightService.updateFlight(
+                requestId,
+                name,
+                description,
+                price,
+                quantity,
+                airline,
+                flightNumber,
+                departureAirport,
+                arrivalAirport,
+                departureTime,
+                arrivalTime
+            )
+        ).thenReturn(flight);
 
         // When & Then
         mockMvc.perform(

@@ -29,14 +29,27 @@ public class TicketController {
 	@GetMapping("/{id}")
 	@PreAuthorize("hasAuthority('PRODUCT_READER')")
 	public TicketResponse findTicket(@PathVariable Long id) {
-		return ticketService.findTicket(id);
+		return new TicketResponse(ticketService.findTicket(id));
 	}
 
 	@PostMapping
 	@PreAuthorize("hasAuthority('PRODUCT_WRITER')")
 	@ResponseStatus(HttpStatus.CREATED)
-	public TicketResponse createTicket(@RequestBody @Validated TicketCreateRequest ticketCreateRequest) {
-		return ticketService.createTicket(ticketCreateRequest);
+	public TicketResponse createTicket(
+		@RequestBody @Validated TicketCreateRequest ticketCreateRequest
+	) {
+		return new TicketResponse(
+			ticketService.createTicket(
+				ticketCreateRequest.name(),
+				ticketCreateRequest.description(),
+				ticketCreateRequest.price(),
+				ticketCreateRequest.quantity(),
+				ticketCreateRequest.place(),
+				ticketCreateRequest.performanceTime(),
+				ticketCreateRequest.duration(),
+				ticketCreateRequest.ageLimit()
+			)
+		);
 	}
 
 	@PatchMapping("/{id}")
@@ -45,7 +58,19 @@ public class TicketController {
 		@PathVariable Long id,
 		@RequestBody @Validated TicketUpdateRequest ticketUpdateRequest
 	) {
-		return ticketService.updateTicket(id, ticketUpdateRequest);
+		return new TicketResponse(
+			ticketService.updateTicket(
+				id,
+				ticketUpdateRequest.name(),
+				ticketUpdateRequest.description(),
+				ticketUpdateRequest.price(),
+				ticketUpdateRequest.quantity(),
+				ticketUpdateRequest.place(),
+				ticketUpdateRequest.performanceTime(),
+				ticketUpdateRequest.duration(),
+				ticketUpdateRequest.ageLimit()
+			)
+		);
 	}
 
 	@DeleteMapping("/{id}")

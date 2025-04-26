@@ -14,9 +14,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import spring.webmvc.domain.model.entity.Ticket;
 import spring.webmvc.domain.repository.TicketRepository;
-import spring.webmvc.presentation.dto.request.TicketCreateRequest;
-import spring.webmvc.presentation.dto.request.TicketUpdateRequest;
-import spring.webmvc.presentation.dto.response.TicketResponse;
 import spring.webmvc.presentation.exception.EntityNotFoundException;
 
 @ExtendWith(MockitoExtension.class)
@@ -32,40 +29,49 @@ class TicketServiceTest {
 	@DisplayName("createTicket: Ticket 저장 후 반환한다")
 	void createTicket() {
 		// Given
-		TicketCreateRequest request = new TicketCreateRequest(
-			"name",
-			"description",
-			1000,
-			5,
-			"place",
-			Instant.now(),
-			"duration",
-			"ageLimit"
-		);
+		String name = "name";
+		String description = "description";
+		int price = 1000;
+		int quantity = 5;
+		String place = "place";
+		Instant performanceTime = Instant.now();
+		String duration = "duration";
+		String ageLimit = "ageLimit";
+
 		Ticket ticket = Ticket.create(
-			"name",
-			"description",
-			1000,
-			5,
-			"place",
-			Instant.now(),
-			"duration",
-			"ageLimit"
+			name,
+			description,
+			price,
+			quantity,
+			place,
+			performanceTime,
+			duration,
+			ageLimit
 		);
 
 		Mockito.when(ticketRepository.save(Mockito.any(Ticket.class))).thenReturn(ticket);
 
 		// When
-		TicketResponse response = ticketService.createTicket(request);
+		Ticket result = ticketService.createTicket(
+			name,
+			description,
+			price,
+			quantity,
+			place,
+			performanceTime,
+			duration,
+			ageLimit
+		);
 
 		// Then
-		Assertions.assertThat(request.name()).isEqualTo(response.name());
-		Assertions.assertThat(request.description()).isEqualTo(response.description());
-		Assertions.assertThat(request.price()).isEqualTo(response.price());
-		Assertions.assertThat(request.quantity()).isEqualTo(response.quantity());
-		Assertions.assertThat(request.place()).isEqualTo(response.place());
-		Assertions.assertThat(request.duration()).isEqualTo(response.duration());
-		Assertions.assertThat(request.ageLimit()).isEqualTo(response.ageLimit());
+		Assertions.assertThat(name).isEqualTo(result.getProduct().getName());
+		Assertions.assertThat(description).isEqualTo(result.getProduct().getDescription());
+		Assertions.assertThat(price).isEqualTo(result.getProduct().getPrice());
+		Assertions.assertThat(quantity).isEqualTo(result.getProduct().getQuantity());
+		Assertions.assertThat(place).isEqualTo(result.getPlace());
+		Assertions.assertThat(performanceTime).isEqualTo(result.getPerformanceTime());
+		Assertions.assertThat(duration).isEqualTo(result.getDuration());
+		Assertions.assertThat(ageLimit).isEqualTo(result.getAgeLimit());
 	}
 
 	@Test
@@ -100,16 +106,17 @@ class TicketServiceTest {
 		Mockito.when(ticketRepository.findById(ticketId)).thenReturn(Optional.of(ticket));
 
 		// When
-		TicketResponse response = ticketService.findTicket(ticketId);
+		Ticket result = ticketService.findTicket(ticketId);
 
 		// Then
-		Assertions.assertThat(ticket.getProduct().getName()).isEqualTo(response.name());
-		Assertions.assertThat(ticket.getProduct().getDescription()).isEqualTo(response.description());
-		Assertions.assertThat(ticket.getProduct().getPrice()).isEqualTo(response.price());
-		Assertions.assertThat(ticket.getProduct().getQuantity()).isEqualTo(response.quantity());
-		Assertions.assertThat(ticket.getPlace()).isEqualTo(response.place());
-		Assertions.assertThat(ticket.getDuration()).isEqualTo(response.duration());
-		Assertions.assertThat(ticket.getAgeLimit()).isEqualTo(response.ageLimit());
+		Assertions.assertThat(ticket.getProduct().getName()).isEqualTo(result.getProduct().getName());
+		Assertions.assertThat(ticket.getProduct().getDescription()).isEqualTo(result.getProduct().getDescription());
+		Assertions.assertThat(ticket.getProduct().getPrice()).isEqualTo(result.getProduct().getPrice());
+		Assertions.assertThat(ticket.getProduct().getQuantity()).isEqualTo(result.getProduct().getQuantity());
+		Assertions.assertThat(ticket.getPlace()).isEqualTo(result.getPlace());
+		Assertions.assertThat(ticket.getPerformanceTime()).isEqualTo(result.getPerformanceTime());
+		Assertions.assertThat(ticket.getDuration()).isEqualTo(result.getDuration());
+		Assertions.assertThat(ticket.getAgeLimit()).isEqualTo(result.getAgeLimit());
 	}
 
 	@Test
@@ -117,63 +124,83 @@ class TicketServiceTest {
 	void updateTicketCase1() {
 		// Given
 		Long ticketId = 1L;
-		TicketUpdateRequest request = new TicketUpdateRequest(
-			"name",
-			"description",
-			1000,
-			5,
-			"place",
-			Instant.now(),
-			"duration",
-			"ageLimit"
-		);
+		String name = "name";
+		String description = "description";
+		int price = 1000;
+		int quantity = 5;
+		String place = "place";
+		Instant performanceTime = Instant.now();
+		String duration = "duration";
+		String ageLimit = "ageLimit";
 
 		Mockito.when(ticketRepository.findById(ticketId)).thenReturn(Optional.empty());
 
 		// When & Then
-		Assertions.assertThatThrownBy(() -> ticketService.updateTicket(ticketId, request))
+		Assertions.assertThatThrownBy(() ->
+				ticketService.updateTicket(
+					ticketId,
+					name,
+					description,
+					price,
+					quantity,
+					place,
+					performanceTime,
+					duration,
+					ageLimit
+				)
+			)
 			.isInstanceOf(EntityNotFoundException.class);
 	}
-	
+
 	@Test
 	@DisplayName("updateTicket: Ticket 있을 경우 수정 후 반환한다")
 	void updateTicketCase2() {
 		// Given
 		Long ticketId = 1L;
-		TicketUpdateRequest request = new TicketUpdateRequest(
-			"name",
-			"description",
-			1000,
-			5,
-			"place",
-			Instant.now(),
-			"duration",
-			"ageLimit"
-		);
+		String name = "name";
+		String description = "description";
+		int price = 1000;
+		int quantity = 5;
+		String place = "place";
+		Instant performanceTime = Instant.now();
+		String duration = "duration";
+		String ageLimit = "ageLimit";
+
 		Ticket ticket = Ticket.create(
-			"name",
-			"description",
-			1000,
-			5,
-			"place",
-			Instant.now(),
-			"duration",
-			"ageLimit"
+			name,
+			description,
+			price,
+			quantity,
+			place,
+			performanceTime,
+			duration,
+			ageLimit
 		);
 
 		Mockito.when(ticketRepository.findById(ticketId)).thenReturn(Optional.of(ticket));
 
 		// When
-		TicketResponse response = ticketService.updateTicket(ticketId, request);
+		Ticket result = ticketService.updateTicket(
+			ticketId,
+			name,
+			description,
+			price,
+			quantity,
+			place,
+			performanceTime,
+			duration,
+			ageLimit
+		);
 
 		// Then
-		Assertions.assertThat(request.name()).isEqualTo(response.name());
-		Assertions.assertThat(request.description()).isEqualTo(response.description());
-		Assertions.assertThat(request.price()).isEqualTo(response.price());
-		Assertions.assertThat(request.quantity()).isEqualTo(response.quantity());
-		Assertions.assertThat(request.place()).isEqualTo(response.place());
-		Assertions.assertThat(request.duration()).isEqualTo(response.duration());
-		Assertions.assertThat(request.ageLimit()).isEqualTo(response.ageLimit());
+		Assertions.assertThat(name).isEqualTo(result.getProduct().getName());
+		Assertions.assertThat(description).isEqualTo(result.getProduct().getDescription());
+		Assertions.assertThat(price).isEqualTo(result.getProduct().getPrice());
+		Assertions.assertThat(quantity).isEqualTo(result.getProduct().getQuantity());
+		Assertions.assertThat(place).isEqualTo(result.getPlace());
+		Assertions.assertThat(performanceTime).isEqualTo(result.getPerformanceTime());
+		Assertions.assertThat(duration).isEqualTo(result.getDuration());
+		Assertions.assertThat(ageLimit).isEqualTo(result.getAgeLimit());
 
 		Mockito.verify(ticketRepository, Mockito.never()).save(Mockito.any());
 	}
