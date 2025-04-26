@@ -7,6 +7,6 @@ public record OrderProductCreateRequest(
 	@NotNull
 	Long productId,
 	@Min(1)
-	int count
+	int quantity
 ) {
 }
