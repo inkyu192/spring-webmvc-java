@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import spring.webmvc.domain.model.entity.Product;
 import spring.webmvc.domain.repository.ProductRepository;
-import spring.webmvc.presentation.dto.response.ProductResponse;
 
 @Service
 @Transactional(readOnly = true)

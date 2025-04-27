@@ -19,9 +19,6 @@ import spring.webmvc.domain.model.entity.RolePermission;
 import spring.webmvc.domain.repository.MemberRepository;
 import spring.webmvc.domain.repository.TokenRepository;
 import spring.webmvc.infrastructure.config.security.JwtProvider;
-import spring.webmvc.presentation.dto.request.MemberLoginRequest;
-import spring.webmvc.presentation.dto.request.TokenRequest;
-import spring.webmvc.presentation.dto.response.TokenResponse;
 import spring.webmvc.presentation.exception.EntityNotFoundException;
 
 @Service
