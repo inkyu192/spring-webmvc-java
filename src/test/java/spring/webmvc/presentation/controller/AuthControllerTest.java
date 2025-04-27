@@ -85,13 +85,12 @@ class AuthControllerTest {
 
 	@Test
 	void refreshToken() throws Exception {
-		String oldAccessToken = "oldAccessToken";
-		String newAccessToken = "newAccessToken";
+		String accessToken = "accessToken";
 		String refreshToken = "refreshToken";
-		TokenRequest request = new TokenRequest(oldAccessToken, refreshToken);
+		TokenRequest request = new TokenRequest(accessToken, refreshToken);
 
-		Mockito.when(authService.refreshToken(oldAccessToken, refreshToken))
-			.thenReturn(Pair.of(newAccessToken, refreshToken));
+		Mockito.when(authService.refreshToken(accessToken, refreshToken))
+			.thenReturn(Pair.of(accessToken, refreshToken));
 
 		mockMvc.perform(
 				RestDocumentationRequestBuilders.post("/auth/token/refresh")
