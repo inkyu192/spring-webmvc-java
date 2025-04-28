@@ -14,10 +14,8 @@ import org.springframework.util.ObjectUtils;
 import lombok.RequiredArgsConstructor;
 import spring.webmvc.application.event.NotificationEvent;
 import spring.webmvc.domain.model.entity.Member;
-import spring.webmvc.domain.model.entity.Permission;
 import spring.webmvc.domain.model.entity.Role;
 import spring.webmvc.domain.repository.MemberRepository;
-import spring.webmvc.domain.repository.PermissionRepository;
 import spring.webmvc.domain.repository.RoleRepository;
 import spring.webmvc.infrastructure.util.SecurityContextUtil;
 import spring.webmvc.presentation.exception.DuplicateEntityException;
@@ -30,7 +28,7 @@ public class MemberService {
 
 	private final MemberRepository memberRepository;
 	private final RoleRepository roleRepository;
-	private final PermissionRepository permissionRepository;
+	private final PermissionService permissionService;
 	private final PasswordEncoder passwordEncoder;
 	private final ApplicationEventPublisher eventPublisher;
 
@@ -64,17 +62,7 @@ public class MemberService {
 		}
 
 		if (!ObjectUtils.isEmpty(permissionIds)) {
-			Map<Long, Permission> permissionMap = permissionRepository.findAllById(permissionIds)
-				.stream()
-				.collect(Collectors.toMap(Permission::getId, permission -> permission));
-
-			for (Long id : permissionIds) {
-				Permission permission = permissionMap.get(id);
-				if (permission == null) {
-					throw new EntityNotFoundException(Permission.class, id);
-				}
-				member.addPermission(permission);
-			}
+			permissionService.addPermission(permissionIds, member::addPermission);
 		}
 
 		memberRepository.save(member);
