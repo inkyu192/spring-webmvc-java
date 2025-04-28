@@ -19,7 +19,7 @@ public class NotificationService {
 	private final NotificationRepository notificationRepository;
 
 	@Transactional
-	public void saveNotification(NotificationEvent notificationEvent) {
+	public void createNotification(NotificationEvent notificationEvent) {
 		Member member = memberRepository.findById(notificationEvent.memberId()).orElseThrow(RuntimeException::new);
 
 		notificationRepository.save(
