@@ -17,6 +17,6 @@ public class NotificationEventListener {
 	@Async
 	@TransactionalEventListener
 	public void handleNotificationEvent(NotificationEvent notificationEvent) {
-		notificationService.saveNotification(notificationEvent);
+		notificationService.createNotification(notificationEvent);
 	}
 }
