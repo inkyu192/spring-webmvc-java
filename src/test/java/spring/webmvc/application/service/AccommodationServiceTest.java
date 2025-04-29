@@ -62,13 +62,13 @@ class AccommodationServiceTest {
 		);
 
 		// Then
-		Assertions.assertThat(name).isEqualTo(result.getProduct().getName());
-		Assertions.assertThat(description).isEqualTo(result.getProduct().getDescription());
-		Assertions.assertThat(price).isEqualTo(result.getProduct().getPrice());
-		Assertions.assertThat(quantity).isEqualTo(result.getProduct().getQuantity());
-		Assertions.assertThat(place).isEqualTo(result.getPlace());
-		Assertions.assertThat(checkInTime).isEqualTo(result.getCheckInTime());
-		Assertions.assertThat(checkOutTime).isEqualTo(result.getCheckOutTime());
+		Assertions.assertThat(result.getProduct().getName()).isEqualTo(name);
+		Assertions.assertThat(result.getProduct().getDescription()).isEqualTo(description);
+		Assertions.assertThat(result.getProduct().getPrice()).isEqualTo(price);
+		Assertions.assertThat(result.getProduct().getQuantity()).isEqualTo(quantity);
+		Assertions.assertThat(result.getPlace()).isEqualTo(place);
+		Assertions.assertThat(result.getCheckInTime()).isEqualTo(checkInTime);
+		Assertions.assertThat(result.getCheckOutTime()).isEqualTo(checkOutTime);
 	}
 
 	@Test
@@ -105,14 +105,13 @@ class AccommodationServiceTest {
 		Accommodation result = accommodationService.findAccommodation(accommodationId);
 
 		// Then
-		Assertions.assertThat(accommodation.getProduct().getName()).isEqualTo(result.getProduct().getName());
-		Assertions.assertThat(accommodation.getProduct().getDescription())
-			.isEqualTo(result.getProduct().getDescription());
-		Assertions.assertThat(accommodation.getProduct().getPrice()).isEqualTo(result.getProduct().getPrice());
-		Assertions.assertThat(accommodation.getProduct().getQuantity()).isEqualTo(result.getProduct().getQuantity());
-		Assertions.assertThat(accommodation.getPlace()).isEqualTo(result.getPlace());
-		Assertions.assertThat(accommodation.getCheckInTime()).isEqualTo(result.getCheckInTime());
-		Assertions.assertThat(accommodation.getCheckOutTime()).isEqualTo(result.getCheckOutTime());
+		Assertions.assertThat(result.getProduct().getName()).isEqualTo(accommodation.getProduct().getName());
+		Assertions.assertThat(result.getProduct().getDescription()).isEqualTo(accommodation.getProduct().getDescription());
+		Assertions.assertThat(result.getProduct().getPrice()).isEqualTo(accommodation.getProduct().getPrice());
+		Assertions.assertThat(result.getProduct().getQuantity()).isEqualTo(accommodation.getProduct().getQuantity());
+		Assertions.assertThat(result.getPlace()).isEqualTo(accommodation.getPlace());
+		Assertions.assertThat(result.getCheckInTime()).isEqualTo(accommodation.getCheckInTime());
+		Assertions.assertThat(result.getCheckOutTime()).isEqualTo(accommodation.getCheckOutTime());
 	}
 
 	@Test
@@ -184,13 +183,13 @@ class AccommodationServiceTest {
 		);
 
 		// Then
-		Assertions.assertThat(name).isEqualTo(result.getProduct().getName());
-		Assertions.assertThat(description).isEqualTo(result.getProduct().getDescription());
-		Assertions.assertThat(price).isEqualTo(result.getProduct().getPrice());
-		Assertions.assertThat(quantity).isEqualTo(result.getProduct().getQuantity());
-		Assertions.assertThat(place).isEqualTo(result.getPlace());
-		Assertions.assertThat(checkInTime).isEqualTo(result.getCheckInTime());
-		Assertions.assertThat(checkOutTime).isEqualTo(result.getCheckOutTime());
+		Assertions.assertThat(result.getProduct().getName()).isEqualTo(name);
+		Assertions.assertThat(result.getProduct().getDescription()).isEqualTo(description);
+		Assertions.assertThat(result.getProduct().getPrice()).isEqualTo(price);
+		Assertions.assertThat(result.getProduct().getQuantity()).isEqualTo(quantity);
+		Assertions.assertThat(result.getPlace()).isEqualTo(place);
+		Assertions.assertThat(result.getCheckInTime()).isEqualTo(checkInTime);
+		Assertions.assertThat(result.getCheckOutTime()).isEqualTo(checkOutTime);
 
 		Mockito.verify(accommodationRepository, Mockito.never()).save(Mockito.any());
 	}
