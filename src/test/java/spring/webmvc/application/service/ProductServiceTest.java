@@ -44,9 +44,9 @@ class ProductServiceTest {
 		Mockito.when(productRepository.findAll(pageable, name)).thenReturn(page);
 
 		// When
-		Page<Product> response = productService.findProducts(pageable, name);
+		Page<Product> result = productService.findProducts(pageable, name);
 
 		// Then
-		Assertions.assertThat(response.getTotalElements()).isEqualTo(products.size());
+		Assertions.assertThat(result.getContent()).hasSize(products.size());
 	}
 }
