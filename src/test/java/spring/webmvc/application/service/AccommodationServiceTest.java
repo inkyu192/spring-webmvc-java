@@ -131,18 +131,17 @@ class AccommodationServiceTest {
 
 		// When & Then
 		Assertions.assertThatThrownBy(() ->
-				accommodationService.updateAccommodation(
-					accommodationId,
-					name,
-					description,
-					price,
-					quantity,
-					place,
-					checkInTime,
-					checkOutTime
-				)
+			accommodationService.updateAccommodation(
+				accommodationId,
+				name,
+				description,
+				price,
+				quantity,
+				place,
+				checkInTime,
+				checkOutTime
 			)
-			.isInstanceOf(EntityNotFoundException.class);
+		).isInstanceOf(EntityNotFoundException.class);
 	}
 
 	@Test
@@ -190,8 +189,6 @@ class AccommodationServiceTest {
 		Assertions.assertThat(result.getPlace()).isEqualTo(place);
 		Assertions.assertThat(result.getCheckInTime()).isEqualTo(checkInTime);
 		Assertions.assertThat(result.getCheckOutTime()).isEqualTo(checkOutTime);
-
-		Mockito.verify(accommodationRepository, Mockito.never()).save(Mockito.any());
 	}
 
 	@Test

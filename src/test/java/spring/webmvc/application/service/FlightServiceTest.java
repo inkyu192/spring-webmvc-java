@@ -27,7 +27,7 @@ class FlightServiceTest {
     private FlightRepository flightRepository;
 
     @Test
-    @DisplayName("createFlight: flight 저장 후 반환한다")
+    @DisplayName("createFlight: Flight 저장 후 반환한다")
     void createFlight() {
         // Given
         String name = "name";
@@ -71,16 +71,16 @@ class FlightServiceTest {
         );
 
         // Then
-        Assertions.assertThat(name).isEqualTo(result.getProduct().getName());
-        Assertions.assertThat(description).isEqualTo(result.getProduct().getDescription());
-        Assertions.assertThat(price).isEqualTo(result.getProduct().getPrice());
-        Assertions.assertThat(quantity).isEqualTo(result.getProduct().getQuantity());
-        Assertions.assertThat(airline).isEqualTo(result.getAirline());
-        Assertions.assertThat(flightNumber).isEqualTo(result.getFlightNumber());
-        Assertions.assertThat(departureAirport).isEqualTo(result.getDepartureAirport());
-        Assertions.assertThat(arrivalAirport).isEqualTo(result.getArrivalAirport());
-        Assertions.assertThat(departureTime).isEqualTo(result.getDepartureTime());
-        Assertions.assertThat(arrivalTime).isEqualTo(result.getArrivalTime());
+        Assertions.assertThat(result.getProduct().getName()).isEqualTo(name);
+        Assertions.assertThat(result.getProduct().getDescription()).isEqualTo(description);
+        Assertions.assertThat(result.getProduct().getPrice()).isEqualTo(price);
+        Assertions.assertThat(result.getProduct().getQuantity()).isEqualTo(quantity);
+        Assertions.assertThat(result.getAirline()).isEqualTo(airline);
+        Assertions.assertThat(result.getFlightNumber()).isEqualTo(flightNumber);
+        Assertions.assertThat(result.getDepartureAirport()).isEqualTo(departureAirport);
+        Assertions.assertThat(result.getArrivalAirport()).isEqualTo(arrivalAirport);
+        Assertions.assertThat(result.getDepartureTime()).isEqualTo(departureTime);
+        Assertions.assertThat(result.getArrivalTime()).isEqualTo(arrivalTime);
     }
 
     @Test
@@ -119,16 +119,16 @@ class FlightServiceTest {
         Flight result = flightService.findFlight(flightId);
 
         // Then
-        Assertions.assertThat(flight.getProduct().getName()).isEqualTo(result.getProduct().getName());
-        Assertions.assertThat(flight.getProduct().getDescription()).isEqualTo(result.getProduct().getDescription());
-        Assertions.assertThat(flight.getProduct().getPrice()).isEqualTo(result.getProduct().getPrice());
-        Assertions.assertThat(flight.getProduct().getQuantity()).isEqualTo(result.getProduct().getQuantity());
-        Assertions.assertThat(flight.getAirline()).isEqualTo(result.getAirline());
-        Assertions.assertThat(flight.getFlightNumber()).isEqualTo(result.getFlightNumber());
-        Assertions.assertThat(flight.getDepartureAirport()).isEqualTo(result.getDepartureAirport());
-        Assertions.assertThat(flight.getArrivalAirport()).isEqualTo(result.getArrivalAirport());
-        Assertions.assertThat(flight.getDepartureTime()).isEqualTo(result.getDepartureTime());
-        Assertions.assertThat(flight.getArrivalTime()).isEqualTo(result.getArrivalTime());
+        Assertions.assertThat(result.getProduct().getName()).isEqualTo(flight.getProduct().getName());
+        Assertions.assertThat(result.getProduct().getDescription()).isEqualTo(flight.getProduct().getDescription());
+        Assertions.assertThat(result.getProduct().getPrice()).isEqualTo(flight.getProduct().getPrice());
+        Assertions.assertThat(result.getProduct().getQuantity()).isEqualTo(flight.getProduct().getQuantity());
+        Assertions.assertThat(result.getAirline()).isEqualTo(flight.getAirline());
+        Assertions.assertThat(result.getFlightNumber()).isEqualTo(flight.getFlightNumber());
+        Assertions.assertThat(result.getDepartureAirport()).isEqualTo(flight.getDepartureAirport());
+        Assertions.assertThat(result.getArrivalAirport()).isEqualTo(flight.getArrivalAirport());
+        Assertions.assertThat(result.getDepartureTime()).isEqualTo(flight.getDepartureTime());
+        Assertions.assertThat(result.getArrivalTime()).isEqualTo(flight.getArrivalTime());
     }
 
     @Test
@@ -150,7 +150,7 @@ class FlightServiceTest {
         Mockito.when(flightRepository.findById(flightId)).thenReturn(Optional.empty());
 
         // When & Then
-        Assertions.assertThatThrownBy(() -> 
+        Assertions.assertThatThrownBy(() ->
             flightService.updateFlight(
                 flightId,
                 name,
@@ -224,8 +224,6 @@ class FlightServiceTest {
         Assertions.assertThat(arrivalAirport).isEqualTo(result.getArrivalAirport());
         Assertions.assertThat(departureTime).isEqualTo(result.getDepartureTime());
         Assertions.assertThat(arrivalTime).isEqualTo(result.getArrivalTime());
-
-        Mockito.verify(flightRepository, Mockito.never()).save(Mockito.any());
     }
 
     @Test

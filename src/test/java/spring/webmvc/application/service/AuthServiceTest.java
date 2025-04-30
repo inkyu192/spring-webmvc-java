@@ -87,12 +87,12 @@ class AuthServiceTest {
 		Mockito.when(tokenRepository.save(Mockito.any(), Mockito.any())).thenReturn(refreshToken);
 
 		// When
-		Pair<String, String> pair = authService.login(account, password);
+		Pair<String, String> result = authService.login(account, password);
 
 		// Then
 		Mockito.verify(tokenRepository, Mockito.times(1)).save(Mockito.any(), Mockito.any());
-		Assertions.assertThat(pair.getFirst()).isEqualTo(accessToken);
-		Assertions.assertThat(pair.getSecond()).isEqualTo(refreshToken);
+		Assertions.assertThat(result.getFirst()).isEqualTo(accessToken);
+		Assertions.assertThat(result.getSecond()).isEqualTo(refreshToken);
 	}
 
 	@Test
@@ -136,9 +136,10 @@ class AuthServiceTest {
 		String fakeRefreshToken = "fakeRefreshToken";
 		String refreshToken = "refreshToken";
 		Claims claims = Mockito.mock(Claims.class);
+		Member member = Mockito.mock(Member.class);
 
 		Mockito.when(jwtProvider.parseAccessToken(accessToken)).thenReturn(claims);
-		Mockito.when(memberRepository.findById(memberId)).thenReturn(Mockito.mock());
+		Mockito.when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
 		Mockito.when(claims.get("memberId")).thenReturn(memberId);
 		Mockito.when(tokenRepository.findByMemberId(memberId)).thenReturn(Optional.of(refreshToken));
 
@@ -153,23 +154,23 @@ class AuthServiceTest {
 		// Given
 		Long memberId = 1L;
 		String accessToken = "accessToken";
+		String newAccessToken = "newAccessToken";
 		String refreshToken = "refreshToken";
 
 		Claims claims = Mockito.mock(Claims.class);
 		Member member = Mockito.mock(Member.class);
 
 		Mockito.when(jwtProvider.parseAccessToken(accessToken)).thenReturn(claims);
-		Mockito.when(memberRepository.findById(memberId)).thenReturn(Mockito.mock());
+		Mockito.when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
 		Mockito.when(claims.get("memberId")).thenReturn(memberId);
 		Mockito.when(tokenRepository.findByMemberId(memberId)).thenReturn(Optional.of(refreshToken));
-		Mockito.when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
-		Mockito.when(jwtProvider.createAccessToken(Mockito.any(), Mockito.any())).thenReturn("newAccessToken");
+		Mockito.when(jwtProvider.createAccessToken(Mockito.any(), Mockito.any())).thenReturn(newAccessToken);
 
 		// When
-		Pair<String, String> pair = authService.refreshToken(accessToken, refreshToken);
+		Pair<String, String> result = authService.refreshToken(accessToken, refreshToken);
 
 		// Then
-		Assertions.assertThat(pair.getFirst()).isNotEqualTo(accessToken);
-		Assertions.assertThat(pair.getSecond()).isEqualTo(refreshToken);
+		Assertions.assertThat(result.getFirst()).isNotEqualTo(accessToken);
+		Assertions.assertThat(result.getSecond()).isEqualTo(refreshToken);
 	}
 }

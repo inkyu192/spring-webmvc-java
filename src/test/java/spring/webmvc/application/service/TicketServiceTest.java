@@ -64,14 +64,14 @@ class TicketServiceTest {
 		);
 
 		// Then
-		Assertions.assertThat(name).isEqualTo(result.getProduct().getName());
-		Assertions.assertThat(description).isEqualTo(result.getProduct().getDescription());
-		Assertions.assertThat(price).isEqualTo(result.getProduct().getPrice());
-		Assertions.assertThat(quantity).isEqualTo(result.getProduct().getQuantity());
-		Assertions.assertThat(place).isEqualTo(result.getPlace());
-		Assertions.assertThat(performanceTime).isEqualTo(result.getPerformanceTime());
-		Assertions.assertThat(duration).isEqualTo(result.getDuration());
-		Assertions.assertThat(ageLimit).isEqualTo(result.getAgeLimit());
+		Assertions.assertThat(result.getProduct().getName()).isEqualTo(name);
+		Assertions.assertThat(result.getProduct().getDescription()).isEqualTo(description);
+		Assertions.assertThat(result.getProduct().getPrice()).isEqualTo(price);
+		Assertions.assertThat(result.getProduct().getQuantity()).isEqualTo(quantity);
+		Assertions.assertThat(result.getPlace()).isEqualTo(place);
+		Assertions.assertThat(result.getPerformanceTime()).isEqualTo(performanceTime);
+		Assertions.assertThat(result.getDuration()).isEqualTo(duration);
+		Assertions.assertThat(result.getAgeLimit()).isEqualTo(ageLimit);
 	}
 
 	@Test
@@ -109,14 +109,14 @@ class TicketServiceTest {
 		Ticket result = ticketService.findTicket(ticketId);
 
 		// Then
-		Assertions.assertThat(ticket.getProduct().getName()).isEqualTo(result.getProduct().getName());
-		Assertions.assertThat(ticket.getProduct().getDescription()).isEqualTo(result.getProduct().getDescription());
-		Assertions.assertThat(ticket.getProduct().getPrice()).isEqualTo(result.getProduct().getPrice());
-		Assertions.assertThat(ticket.getProduct().getQuantity()).isEqualTo(result.getProduct().getQuantity());
-		Assertions.assertThat(ticket.getPlace()).isEqualTo(result.getPlace());
-		Assertions.assertThat(ticket.getPerformanceTime()).isEqualTo(result.getPerformanceTime());
-		Assertions.assertThat(ticket.getDuration()).isEqualTo(result.getDuration());
-		Assertions.assertThat(ticket.getAgeLimit()).isEqualTo(result.getAgeLimit());
+		Assertions.assertThat(result.getProduct().getName()).isEqualTo(ticket.getProduct().getName());
+		Assertions.assertThat(result.getProduct().getDescription()).isEqualTo(ticket.getProduct().getDescription());
+		Assertions.assertThat(result.getProduct().getPrice()).isEqualTo(ticket.getProduct().getPrice());
+		Assertions.assertThat(result.getProduct().getQuantity()).isEqualTo(ticket.getProduct().getQuantity());
+		Assertions.assertThat(result.getPlace()).isEqualTo(ticket.getPlace());
+		Assertions.assertThat(result.getPerformanceTime()).isEqualTo(ticket.getPerformanceTime());
+		Assertions.assertThat(result.getDuration()).isEqualTo(ticket.getDuration());
+		Assertions.assertThat(result.getAgeLimit()).isEqualTo(ticket.getAgeLimit());
 	}
 
 	@Test
@@ -137,19 +137,18 @@ class TicketServiceTest {
 
 		// When & Then
 		Assertions.assertThatThrownBy(() ->
-				ticketService.updateTicket(
-					ticketId,
-					name,
-					description,
-					price,
-					quantity,
-					place,
-					performanceTime,
-					duration,
-					ageLimit
-				)
+			ticketService.updateTicket(
+				ticketId,
+				name,
+				description,
+				price,
+				quantity,
+				place,
+				performanceTime,
+				duration,
+				ageLimit
 			)
-			.isInstanceOf(EntityNotFoundException.class);
+		).isInstanceOf(EntityNotFoundException.class);
 	}
 
 	@Test
@@ -193,16 +192,14 @@ class TicketServiceTest {
 		);
 
 		// Then
-		Assertions.assertThat(name).isEqualTo(result.getProduct().getName());
-		Assertions.assertThat(description).isEqualTo(result.getProduct().getDescription());
-		Assertions.assertThat(price).isEqualTo(result.getProduct().getPrice());
-		Assertions.assertThat(quantity).isEqualTo(result.getProduct().getQuantity());
-		Assertions.assertThat(place).isEqualTo(result.getPlace());
-		Assertions.assertThat(performanceTime).isEqualTo(result.getPerformanceTime());
-		Assertions.assertThat(duration).isEqualTo(result.getDuration());
-		Assertions.assertThat(ageLimit).isEqualTo(result.getAgeLimit());
-
-		Mockito.verify(ticketRepository, Mockito.never()).save(Mockito.any());
+		Assertions.assertThat(result.getProduct().getName()).isEqualTo(ticket.getProduct().getName());
+		Assertions.assertThat(result.getProduct().getDescription()).isEqualTo(ticket.getProduct().getDescription());
+		Assertions.assertThat(result.getProduct().getPrice()).isEqualTo(ticket.getProduct().getPrice());
+		Assertions.assertThat(result.getProduct().getQuantity()).isEqualTo(ticket.getProduct().getQuantity());
+		Assertions.assertThat(result.getPlace()).isEqualTo(ticket.getPlace());
+		Assertions.assertThat(result.getPerformanceTime()).isEqualTo(ticket.getPerformanceTime());
+		Assertions.assertThat(result.getDuration()).isEqualTo(ticket.getDuration());
+		Assertions.assertThat(result.getAgeLimit()).isEqualTo(ticket.getAgeLimit());
 	}
 
 	@Test

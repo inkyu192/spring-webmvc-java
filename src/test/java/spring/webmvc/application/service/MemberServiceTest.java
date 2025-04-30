@@ -40,7 +40,7 @@ class MemberServiceTest {
 	private RoleRepository roleRepository;
 
 	@Mock
-	private PermissionRepository permissionRepository;
+	private PermissionService permissionService;
 
 	@Mock
 	private PasswordEncoder passwordEncoder;
@@ -90,13 +90,13 @@ class MemberServiceTest {
 
 		Mockito.when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
 
-		Member findMember = memberService.findMember();
+		Member result = memberService.findMember();
 
-		Assertions.assertThat(findMember.getId()).isEqualTo(member.getId());
-		Assertions.assertThat(findMember.getAccount()).isEqualTo(member.getAccount());
-		Assertions.assertThat(findMember.getName()).isEqualTo(member.getName());
-		Assertions.assertThat(findMember.getPhone()).isEqualTo(member.getPhone());
-		Assertions.assertThat(findMember.getBirthDate()).isEqualTo(member.getBirthDate());
-		Assertions.assertThat(findMember.getCreatedAt()).isEqualTo(member.getCreatedAt());
+		Assertions.assertThat(result.getId()).isEqualTo(member.getId());
+		Assertions.assertThat(result.getAccount()).isEqualTo(member.getAccount());
+		Assertions.assertThat(result.getName()).isEqualTo(member.getName());
+		Assertions.assertThat(result.getPhone()).isEqualTo(member.getPhone());
+		Assertions.assertThat(result.getBirthDate()).isEqualTo(member.getBirthDate());
+		Assertions.assertThat(result.getCreatedAt()).isEqualTo(member.getCreatedAt());
 	}
 }
