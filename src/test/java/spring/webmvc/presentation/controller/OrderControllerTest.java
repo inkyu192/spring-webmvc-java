@@ -68,7 +68,7 @@ class OrderControllerTest {
 		OrderCreateRequest request = new OrderCreateRequest(
 			List.of(new OrderProductCreateRequest(1L, 3))
 		);
-		List<Pair<Long, Integer>> productCountList = List.of(Pair.of(1L, 3));
+		List<Pair<Long, Integer>> productQuantities = List.of(Pair.of(1L, 3));
 
 		Order order = Mockito.mock(Order.class);
 		Product product = Mockito.mock(Product.class);
@@ -76,8 +76,7 @@ class OrderControllerTest {
 
 		Mockito.when(orderProduct.getProduct()).thenReturn(product);
 		Mockito.when(order.getOrderProducts()).thenReturn(List.of(orderProduct));
-
-		Mockito.when(orderService.createOrder(productCountList)).thenReturn(order);
+		Mockito.when(orderService.createOrder(productQuantities)).thenReturn(order);
 
 		mockMvc.perform(
 				RestDocumentationRequestBuilders.post("/orders")

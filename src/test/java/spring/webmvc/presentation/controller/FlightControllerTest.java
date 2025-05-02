@@ -234,7 +234,6 @@ class FlightControllerTest {
             departureTime,
             arrivalTime
         );
-
         Flight flight = Flight.create(
             name,
             description,

@@ -214,16 +214,16 @@ class FlightServiceTest {
         );
 
         // Then
-        Assertions.assertThat(name).isEqualTo(result.getProduct().getName());
-        Assertions.assertThat(description).isEqualTo(result.getProduct().getDescription());
-        Assertions.assertThat(price).isEqualTo(result.getProduct().getPrice());
-        Assertions.assertThat(quantity).isEqualTo(result.getProduct().getQuantity());
-        Assertions.assertThat(airline).isEqualTo(result.getAirline());
-        Assertions.assertThat(flightNumber).isEqualTo(result.getFlightNumber());
-        Assertions.assertThat(departureAirport).isEqualTo(result.getDepartureAirport());
-        Assertions.assertThat(arrivalAirport).isEqualTo(result.getArrivalAirport());
-        Assertions.assertThat(departureTime).isEqualTo(result.getDepartureTime());
-        Assertions.assertThat(arrivalTime).isEqualTo(result.getArrivalTime());
+        Assertions.assertThat(result.getProduct().getName()).isEqualTo(name);
+        Assertions.assertThat(result.getProduct().getDescription()).isEqualTo(description);
+        Assertions.assertThat(result.getProduct().getPrice()).isEqualTo(price);
+        Assertions.assertThat(result.getProduct().getQuantity()).isEqualTo(quantity);
+        Assertions.assertThat(result.getAirline()).isEqualTo(airline);
+        Assertions.assertThat(result.getFlightNumber()).isEqualTo(flightNumber);
+        Assertions.assertThat(result.getDepartureAirport()).isEqualTo(departureAirport);
+        Assertions.assertThat(result.getArrivalAirport()).isEqualTo(arrivalAirport);
+        Assertions.assertThat(result.getDepartureTime()).isEqualTo(departureTime);
+        Assertions.assertThat(result.getArrivalTime()).isEqualTo(arrivalTime);
     }
 
     @Test

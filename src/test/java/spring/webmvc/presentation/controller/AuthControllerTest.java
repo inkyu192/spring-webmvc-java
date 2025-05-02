@@ -60,8 +60,9 @@ class AuthControllerTest {
 		String password = "password";
 
 		MemberLoginRequest request = new MemberLoginRequest(account, password);
+		Pair<String, String> pair = Pair.of(accessToken, refreshToken);
 
-		Mockito.when(authService.login(account, password)).thenReturn(Pair.of(accessToken, refreshToken));
+		Mockito.when(authService.login(account, password)).thenReturn(pair);
 
 		mockMvc.perform(
 				RestDocumentationRequestBuilders.post("/auth/login")
@@ -87,10 +88,12 @@ class AuthControllerTest {
 	void refreshToken() throws Exception {
 		String accessToken = "accessToken";
 		String refreshToken = "refreshToken";
+
 		TokenRequest request = new TokenRequest(accessToken, refreshToken);
+		Pair<String, String> pair = Pair.of(accessToken, refreshToken);
 
 		Mockito.when(authService.refreshToken(accessToken, refreshToken))
-			.thenReturn(Pair.of(accessToken, refreshToken));
+			.thenReturn(pair);
 
 		mockMvc.perform(
 				RestDocumentationRequestBuilders.post("/auth/token/refresh")
