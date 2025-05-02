@@ -2,6 +2,7 @@ package spring.webmvc.presentation.dto.response;
 
 import java.time.Instant;
 
+import spring.webmvc.application.dto.TicketDto;
 import spring.webmvc.domain.model.entity.Ticket;
 
 public record TicketResponse(
@@ -28,6 +29,21 @@ public record TicketResponse(
             ticket.getPerformanceTime(),
             ticket.getDuration(),
             ticket.getAgeLimit()
+        );
+    }
+
+    public TicketResponse(TicketDto ticketDto) {
+        this(
+            ticketDto.id(),
+            ticketDto.name(),
+            ticketDto.description(),
+            ticketDto.price(),
+            ticketDto.quantity(),
+            ticketDto.createdAt(),
+            ticketDto.place(),
+            ticketDto.performanceTime(),
+            ticketDto.duration(),
+            ticketDto.ageLimit()
         );
     }
 }
