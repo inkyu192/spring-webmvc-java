@@ -26,6 +26,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import spring.webmvc.application.dto.TicketDto;
 import spring.webmvc.application.service.TicketService;
 import spring.webmvc.domain.model.entity.Ticket;
 import spring.webmvc.infrastructure.config.WebMvcTestConfig;
@@ -145,18 +146,20 @@ class TicketControllerTest {
 		// Given
 		Long requestId = 1L;
 
-		Ticket ticket = Ticket.create(
+		TicketDto ticketDto = new TicketDto(
+			1L,
 			"name",
 			"description",
 			1000,
 			5,
+			Instant.now(),
 			"place",
 			Instant.now(),
 			"duration",
 			"ageLimit"
 		);
 
-		Mockito.when(ticketService.findTicket(requestId)).thenReturn(ticket);
+		Mockito.when(ticketService.findTicket(requestId)).thenReturn(ticketDto);
 
 		// When & Then
 		mockMvc.perform(

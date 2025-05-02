@@ -12,8 +12,11 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import spring.webmvc.application.dto.TicketDto;
+import spring.webmvc.domain.cache.TicketCache;
 import spring.webmvc.domain.model.entity.Ticket;
 import spring.webmvc.domain.repository.TicketRepository;
+import spring.webmvc.infrastructure.common.JsonSupport;
 import spring.webmvc.presentation.exception.EntityNotFoundException;
 
 @ExtendWith(MockitoExtension.class)
@@ -24,6 +27,12 @@ class TicketServiceTest {
 
 	@Mock
 	private TicketRepository ticketRepository;
+
+	@Mock
+	private TicketCache ticketCache;
+
+	@Mock
+	private JsonSupport jsonSupport;
 
 	@Test
 	@DisplayName("createTicket: Ticket 저장 후 반환한다")
@@ -106,17 +115,17 @@ class TicketServiceTest {
 		Mockito.when(ticketRepository.findById(ticketId)).thenReturn(Optional.of(ticket));
 
 		// When
-		Ticket result = ticketService.findTicket(ticketId);
+		TicketDto result = ticketService.findTicket(ticketId);
 
 		// Then
-		Assertions.assertThat(result.getProduct().getName()).isEqualTo(ticket.getProduct().getName());
-		Assertions.assertThat(result.getProduct().getDescription()).isEqualTo(ticket.getProduct().getDescription());
-		Assertions.assertThat(result.getProduct().getPrice()).isEqualTo(ticket.getProduct().getPrice());
-		Assertions.assertThat(result.getProduct().getQuantity()).isEqualTo(ticket.getProduct().getQuantity());
-		Assertions.assertThat(result.getPlace()).isEqualTo(ticket.getPlace());
-		Assertions.assertThat(result.getPerformanceTime()).isEqualTo(ticket.getPerformanceTime());
-		Assertions.assertThat(result.getDuration()).isEqualTo(ticket.getDuration());
-		Assertions.assertThat(result.getAgeLimit()).isEqualTo(ticket.getAgeLimit());
+		Assertions.assertThat(result.name()).isEqualTo(ticket.getProduct().getName());
+		Assertions.assertThat(result.description()).isEqualTo(ticket.getProduct().getDescription());
+		Assertions.assertThat(result.price()).isEqualTo(ticket.getProduct().getPrice());
+		Assertions.assertThat(result.quantity()).isEqualTo(ticket.getProduct().getQuantity());
+		Assertions.assertThat(result.place()).isEqualTo(ticket.getPlace());
+		Assertions.assertThat(result.performanceTime()).isEqualTo(ticket.getPerformanceTime());
+		Assertions.assertThat(result.duration()).isEqualTo(ticket.getDuration());
+		Assertions.assertThat(result.ageLimit()).isEqualTo(ticket.getAgeLimit());
 	}
 
 	@Test
