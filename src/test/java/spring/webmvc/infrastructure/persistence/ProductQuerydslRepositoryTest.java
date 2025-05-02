@@ -54,12 +54,12 @@ class ProductQuerydslRepositoryTest {
 		String name = "product";
 
 		// When
-		Page<Product> response = productQuerydslRepository.findAll(pageable, name);
+		Page<Product> result = productQuerydslRepository.findAll(pageable, name);
 
 		// Then
-		Assertions.assertThat(response.getNumber()).isEqualTo(pageable.getPageNumber());
-		Assertions.assertThat(response.getSize()).isEqualTo(pageable.getPageSize());
-		Assertions.assertThat(response.getTotalElements())
+		Assertions.assertThat(result.getNumber()).isEqualTo(pageable.getPageNumber());
+		Assertions.assertThat(result.getSize()).isEqualTo(pageable.getPageSize());
+		Assertions.assertThat(result.getTotalElements())
 			.isEqualTo(request.stream().map(Product::getName).filter(s -> s.contains(name)).count());
 	}
 }

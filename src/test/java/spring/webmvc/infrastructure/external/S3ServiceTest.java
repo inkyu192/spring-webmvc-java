@@ -43,7 +43,6 @@ class S3ServiceTest {
 			.build();
 
 		s3Client.createBucket(CreateBucketRequest.builder().bucket(BUCKET).build());
-
 		s3Service = new S3Service(s3Client);
 	}
 
@@ -70,7 +69,8 @@ class S3ServiceTest {
 				.build()
 		);
 
-		String downloaded = new String(response.readAllBytes(), StandardCharsets.UTF_8);
-		Assertions.assertThat(downloaded).isEqualTo(content);
+		String result = new String(response.readAllBytes(), StandardCharsets.UTF_8);
+
+		Assertions.assertThat(result).isEqualTo(content);
 	}
 }

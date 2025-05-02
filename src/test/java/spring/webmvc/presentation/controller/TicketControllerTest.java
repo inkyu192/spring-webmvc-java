@@ -77,7 +77,6 @@ class TicketControllerTest {
 			duration,
 			ageLimit
 		);
-
 		Ticket ticket = Ticket.create(
 			name,
 			description,
@@ -212,7 +211,6 @@ class TicketControllerTest {
 			duration,
 			ageLimit
 		);
-
 		Ticket ticket = Ticket.create(
 			name,
 			description,
