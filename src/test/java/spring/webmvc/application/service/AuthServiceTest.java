@@ -16,9 +16,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
+import spring.webmvc.domain.cache.TokenCache;
 import spring.webmvc.domain.model.entity.Member;
 import spring.webmvc.domain.repository.MemberRepository;
-import spring.webmvc.domain.repository.TokenRepository;
 import spring.webmvc.infrastructure.config.security.JwtProvider;
 
 @ExtendWith(MockitoExtension.class)
@@ -31,13 +31,13 @@ class AuthServiceTest {
 	private JwtProvider jwtProvider;
 
 	@Mock
-	private TokenRepository tokenRepository;
-
-	@Mock
 	private MemberRepository memberRepository;
 
 	@Mock
 	private PasswordEncoder passwordEncoder;
+
+	@Mock
+	private TokenCache tokenCache;
 
 	@Test
 	@DisplayName("login: Member 엔티티 없을 경우 BadCredentialsException 발생한다")
@@ -84,13 +84,12 @@ class AuthServiceTest {
 		Mockito.when(passwordEncoder.matches(Mockito.any(), Mockito.any())).thenReturn(true);
 		Mockito.when(jwtProvider.createAccessToken(Mockito.any(), Mockito.any())).thenReturn(accessToken);
 		Mockito.when(jwtProvider.createRefreshToken()).thenReturn(refreshToken);
-		Mockito.when(tokenRepository.save(Mockito.any(), Mockito.any())).thenReturn(refreshToken);
 
 		// When
 		Pair<String, String> result = authService.login(account, password);
 
 		// Then
-		Mockito.verify(tokenRepository, Mockito.times(1)).save(Mockito.any(), Mockito.any());
+		Mockito.verify(tokenCache, Mockito.times(1)).set(Mockito.any(), Mockito.any());
 		Assertions.assertThat(result.getFirst()).isEqualTo(accessToken);
 		Assertions.assertThat(result.getSecond()).isEqualTo(refreshToken);
 	}
@@ -141,7 +140,6 @@ class AuthServiceTest {
 		Mockito.when(jwtProvider.parseAccessToken(accessToken)).thenReturn(claims);
 		Mockito.when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
 		Mockito.when(claims.get("memberId")).thenReturn(memberId);
-		Mockito.when(tokenRepository.findByMemberId(memberId)).thenReturn(Optional.of(refreshToken));
 
 		// When & Then
 		Assertions.assertThatThrownBy(() -> authService.refreshToken(accessToken, fakeRefreshToken))
@@ -163,7 +161,7 @@ class AuthServiceTest {
 		Mockito.when(jwtProvider.parseAccessToken(accessToken)).thenReturn(claims);
 		Mockito.when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
 		Mockito.when(claims.get("memberId")).thenReturn(memberId);
-		Mockito.when(tokenRepository.findByMemberId(memberId)).thenReturn(Optional.of(refreshToken));
+		Mockito.when(tokenCache.get(memberId)).thenReturn(Optional.of(refreshToken));
 		Mockito.when(jwtProvider.createAccessToken(Mockito.any(), Mockito.any())).thenReturn(newAccessToken);
 
 		// When
