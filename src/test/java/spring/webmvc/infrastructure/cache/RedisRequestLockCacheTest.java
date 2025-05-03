@@ -1,4 +1,4 @@
-package spring.webmvc.infrastructure.persistence;
+package spring.webmvc.infrastructure.cache;
 
 import java.time.Duration;
 
@@ -14,13 +14,13 @@ import spring.webmvc.infrastructure.config.RedisTestContainerConfig;
 
 @DataRedisTest
 @Import(RedisTestContainerConfig.class)
-class RequestLockRedisRepositoryTest {
+class RedisRequestLockCacheTest {
 
-	private final RequestLockRedisRepository requestLockRedisRepository;
+	private final RedisRequestLockCache requestLockCache;
 
 	@Autowired
-	public RequestLockRedisRepositoryTest(RedisTemplate<String, String> redisTemplate) {
-		this.requestLockRedisRepository = new RequestLockRedisRepository(redisTemplate);
+	public RedisRequestLockCacheTest(RedisTemplate<String, String> redisTemplate) {
+		requestLockCache = new RedisRequestLockCache(redisTemplate);
 	}
 
 	@Test
@@ -31,10 +31,10 @@ class RequestLockRedisRepositoryTest {
 		String method = "GET";
 		String uri = "/members";
 
-		requestLockRedisRepository.setIfAbsent(memberId, method, uri);
+		requestLockCache.setIfAbsent(memberId, method, uri);
 
 		// When
-		boolean result = requestLockRedisRepository.setIfAbsent(memberId, method, uri);
+		boolean result = requestLockCache.setIfAbsent(memberId, method, uri);
 
 		// Then
 		Assertions.assertThat(result).isFalse();
@@ -48,11 +48,11 @@ class RequestLockRedisRepositoryTest {
 		String method = "GET";
 		String uri = "/members";
 
-		requestLockRedisRepository.setIfAbsent(memberId, method, uri);
+		requestLockCache.setIfAbsent(memberId, method, uri);
 
 		// When
 		Thread.sleep(Duration.ofSeconds(1));
-		boolean result = requestLockRedisRepository.setIfAbsent(memberId, method, uri);
+		boolean result = requestLockCache.setIfAbsent(memberId, method, uri);
 
 		// Then
 		Assertions.assertThat(result).isTrue();

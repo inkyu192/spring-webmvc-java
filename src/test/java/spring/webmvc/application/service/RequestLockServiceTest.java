@@ -9,7 +9,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import spring.webmvc.domain.repository.RequestLockRepository;
+import spring.webmvc.domain.cache.RequestLockCache;
 import spring.webmvc.presentation.exception.DuplicateRequestException;
 
 @ExtendWith(MockitoExtension.class)
@@ -19,7 +19,7 @@ class RequestLockServiceTest {
 	private RequestLockService requestLockService;
 
 	@Mock
-	private RequestLockRepository requestLockRepository;
+	private RequestLockCache requestLockCache;
 
 	@Test
 	@DisplayName("validate: RequestLock 없을 경우 저장한다")
@@ -29,13 +29,13 @@ class RequestLockServiceTest {
 		String method = "GET";
 		String uri = "/members";
 
-		Mockito.when(requestLockRepository.setIfAbsent(memberId, method, uri)).thenReturn(true);
+		Mockito.when(requestLockCache.setIfAbsent(memberId, method, uri)).thenReturn(true);
 
 		// When
 		requestLockService.validate(memberId, method, uri);
 
 		// Then
-		Mockito.verify(requestLockRepository, Mockito.times(1))
+		Mockito.verify(requestLockCache, Mockito.times(1))
 			.setIfAbsent(memberId, method, uri);
 	}
 
@@ -47,7 +47,7 @@ class RequestLockServiceTest {
 		String method = "GET";
 		String uri = "/members";
 
-		Mockito.when(requestLockRepository.setIfAbsent(memberId, method, uri)).thenReturn(false);
+		Mockito.when(requestLockCache.setIfAbsent(memberId, method, uri)).thenReturn(false);
 
 		// When & Then
 		Assertions.assertThatThrownBy(() -> requestLockService.validate(memberId, method, uri))
