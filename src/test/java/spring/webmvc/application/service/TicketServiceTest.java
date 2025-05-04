@@ -153,6 +153,7 @@ class TicketServiceTest {
 		Mockito.when(ticketCache.get(ticketId)).thenReturn(Optional.empty());
 		Mockito.when(ticketRepository.findById(ticketId)).thenReturn(Optional.of(ticket));
 		Mockito.when(jsonSupport.writeValueAsString(Mockito.any(TicketDto.class))).thenReturn(Optional.of(value));
+		Mockito.doNothing().when(ticketCache).set(ticketId, value);
 
 		// When
 		TicketDto result = ticketService.findTicket(ticketId);
