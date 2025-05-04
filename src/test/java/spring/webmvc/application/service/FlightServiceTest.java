@@ -167,6 +167,7 @@ class FlightServiceTest {
         Mockito.when(flightCache.get(flightId)).thenReturn(Optional.empty());
         Mockito.when(flightRepository.findById(flightId)).thenReturn(Optional.of(flight));
         Mockito.when(jsonSupport.writeValueAsString(Mockito.any(FlightDto.class))).thenReturn(Optional.of(value));
+        Mockito.doNothing().when(flightCache).set(flightId, value);
 
         // When
         FlightDto result = flightService.findFlight(flightId);

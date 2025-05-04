@@ -147,6 +147,7 @@ class AccommodationServiceTest {
 		Mockito.when(accommodationCache.get(accommodationId)).thenReturn(Optional.empty());
 		Mockito.when(accommodationRepository.findById(accommodationId)).thenReturn(Optional.of(accommodation));
 		Mockito.when(jsonSupport.writeValueAsString(Mockito.any(AccommodationDto.class))).thenReturn(Optional.of(value));
+		Mockito.doNothing().when(accommodationCache).set(accommodationId, value);
 
 		// When
 		AccommodationDto result = accommodationService.findAccommodation(accommodationId);
