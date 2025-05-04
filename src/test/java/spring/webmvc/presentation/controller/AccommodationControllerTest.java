@@ -27,6 +27,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import spring.webmvc.application.dto.AccommodationDto;
 import spring.webmvc.application.service.AccommodationService;
 import spring.webmvc.domain.model.entity.Accommodation;
 import spring.webmvc.infrastructure.config.WebMvcTestConfig;
@@ -137,23 +138,25 @@ class AccommodationControllerTest {
 	@Test
 	void findAccommodation() throws Exception {
 		// Given
-		Long requestId = 1L;
+		Long accommodationId = 1L;
 
-		Accommodation accommodation = Accommodation.create(
+		AccommodationDto accommodationDto = new AccommodationDto(
+			accommodationId,
 			"name",
 			"description",
 			1000,
 			5,
+			Instant.now(),
 			"place",
 			Instant.now(),
 			Instant.now().plus(1, ChronoUnit.DAYS)
 		);
 
-		Mockito.when(accommodationService.findAccommodation(requestId)).thenReturn(accommodation);
+		Mockito.when(accommodationService.findAccommodation(accommodationId)).thenReturn(accommodationDto);
 
 		// When & Then
 		mockMvc.perform(
-				RestDocumentationRequestBuilders.get("/products/accommodations/{id}", requestId)
+				RestDocumentationRequestBuilders.get("/products/accommodations/{id}", accommodationId)
 					.header("Authorization", "Bearer access-token")
 			)
 			.andExpect(MockMvcResultMatchers.status().isOk())
@@ -183,7 +186,7 @@ class AccommodationControllerTest {
 	@Test
 	void updateAccommodation() throws Exception {
 		// Given
-		Long requestId = 1L;
+		Long accommodationId = 1L;
 		String name = "name";
 		String description = "description";
 		int price = 1000;
@@ -212,7 +215,7 @@ class AccommodationControllerTest {
 		);
 		Mockito.when(
 			accommodationService.updateAccommodation(
-				requestId,
+				accommodationId,
 				name,
 				description,
 				price,
@@ -225,7 +228,7 @@ class AccommodationControllerTest {
 
 		// When & Then
 		mockMvc.perform(
-				RestDocumentationRequestBuilders.patch("/products/accommodations/{id}", requestId)
+				RestDocumentationRequestBuilders.patch("/products/accommodations/{id}", accommodationId)
 					.contentType(MediaType.APPLICATION_JSON)
 					.header("Authorization", "Bearer access-token")
 					.content(objectMapper.writeValueAsString(request))
@@ -266,13 +269,13 @@ class AccommodationControllerTest {
 	@Test
 	void deleteAccommodation() throws Exception {
 		// Given
-		Long requestId = 1L;
+		Long accommodationId = 1L;
 
-		Mockito.doNothing().when(accommodationService).deleteAccommodation(requestId);
+		Mockito.doNothing().when(accommodationService).deleteAccommodation(accommodationId);
 
 		// When & Then
 		mockMvc.perform(
-				RestDocumentationRequestBuilders.delete("/products/accommodations/{id}", requestId)
+				RestDocumentationRequestBuilders.delete("/products/accommodations/{id}", accommodationId)
 					.header("Authorization", "Bearer access-token")
 			)
 			.andExpect(MockMvcResultMatchers.status().isNoContent())

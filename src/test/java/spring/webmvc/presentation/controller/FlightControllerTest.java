@@ -27,12 +27,12 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import spring.webmvc.application.dto.FlightDto;
 import spring.webmvc.application.service.FlightService;
 import spring.webmvc.domain.model.entity.Flight;
 import spring.webmvc.infrastructure.config.WebMvcTestConfig;
 import spring.webmvc.presentation.dto.request.FlightCreateRequest;
 import spring.webmvc.presentation.dto.request.FlightUpdateRequest;
-import spring.webmvc.presentation.dto.response.FlightResponse;
 
 @WebMvcTest(FlightController.class)
 @Import(WebMvcTestConfig.class)
@@ -158,13 +158,14 @@ class FlightControllerTest {
     @Test
     void findFlight() throws Exception {
         // Given
-        Long requestId = 1L;
-
-        Flight flight = Flight.create(
+        Long flightId = 1L;
+        FlightDto flightDto = new FlightDto(
+            flightId,
             "name",
             "description",
             1000,
             5,
+            Instant.now(),
             "airline",
             "flightNumber",
             "departureAirport",
@@ -173,11 +174,11 @@ class FlightControllerTest {
             Instant.now().plus(1, ChronoUnit.HOURS)
         );
 
-        Mockito.when(flightService.findFlight(requestId)).thenReturn(flight);
+        Mockito.when(flightService.findFlight(flightId)).thenReturn(flightDto);
 
         // When & Then
         mockMvc.perform(
-                RestDocumentationRequestBuilders.get("/products/flights/{id}", requestId)
+                RestDocumentationRequestBuilders.get("/products/flights/{id}", flightId)
                     .header("Authorization", "Bearer access-token")
             )
             .andExpect(MockMvcResultMatchers.status().isOk())
@@ -210,7 +211,7 @@ class FlightControllerTest {
     @Test
     void updateFlight() throws Exception {
         // Given
-        Long requestId = 1L;
+        Long flightId = 1L;
         String name = "name";
         String description = "description";
         int price = 1000;
@@ -249,7 +250,7 @@ class FlightControllerTest {
 
         Mockito.when(
             flightService.updateFlight(
-                requestId,
+                flightId,
                 name,
                 description,
                 price,
@@ -265,7 +266,7 @@ class FlightControllerTest {
 
         // When & Then
         mockMvc.perform(
-                RestDocumentationRequestBuilders.patch("/products/flights/{id}", requestId)
+                RestDocumentationRequestBuilders.patch("/products/flights/{id}", flightId)
                     .contentType(MediaType.APPLICATION_JSON)
                     .header("Authorization", "Bearer access-token")
                     .content(objectMapper.writeValueAsString(request))
@@ -312,13 +313,13 @@ class FlightControllerTest {
     @Test
     void deleteFlight() throws Exception {
         // Given
-        Long requestId = 1L;
+        Long flightId = 1L;
 
-        Mockito.doNothing().when(flightService).deleteFlight(requestId);
+        Mockito.doNothing().when(flightService).deleteFlight(flightId);
 
         // When & Then
         mockMvc.perform(
-                RestDocumentationRequestBuilders.delete("/products/flights/{id}", requestId)
+                RestDocumentationRequestBuilders.delete("/products/flights/{id}", flightId)
                     .header("Authorization", "Bearer access-token")
             )
             .andExpect(MockMvcResultMatchers.status().isNoContent())

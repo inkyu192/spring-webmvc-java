@@ -144,10 +144,10 @@ class TicketControllerTest {
 	@Test
 	void findTicket() throws Exception {
 		// Given
-		Long requestId = 1L;
+		Long ticketId = 1L;
 
 		TicketDto ticketDto = new TicketDto(
-			1L,
+			ticketId,
 			"name",
 			"description",
 			1000,
@@ -159,11 +159,11 @@ class TicketControllerTest {
 			"ageLimit"
 		);
 
-		Mockito.when(ticketService.findTicket(requestId)).thenReturn(ticketDto);
+		Mockito.when(ticketService.findTicket(ticketId)).thenReturn(ticketDto);
 
 		// When & Then
 		mockMvc.perform(
-				RestDocumentationRequestBuilders.get("/products/tickets/{id}", requestId)
+				RestDocumentationRequestBuilders.get("/products/tickets/{id}", ticketId)
 					.header("Authorization", "Bearer access-token")
 			)
 			.andExpect(MockMvcResultMatchers.status().isOk())
@@ -194,7 +194,7 @@ class TicketControllerTest {
 	@Test
 	void updateTicket() throws Exception {
 		// Given
-		Long requestId = 1L;
+		Long ticketId = 1L;
 		String name = "name";
 		String description = "description";
 		int price = 1000;
@@ -227,7 +227,7 @@ class TicketControllerTest {
 
 		Mockito.when(
 			ticketService.updateTicket(
-				requestId,
+				ticketId,
 				name,
 				description,
 				price,
@@ -241,7 +241,7 @@ class TicketControllerTest {
 
 		// When & Then
 		mockMvc.perform(
-				RestDocumentationRequestBuilders.patch("/products/tickets/{id}", requestId)
+				RestDocumentationRequestBuilders.patch("/products/tickets/{id}", ticketId)
 					.contentType(MediaType.APPLICATION_JSON)
 					.header("Authorization", "Bearer access-token")
 					.content(objectMapper.writeValueAsString(request))
@@ -284,13 +284,13 @@ class TicketControllerTest {
 	@Test
 	void deleteTicket() throws Exception {
 		// Given
-		Long requestId = 1L;
+		Long ticketId = 1L;
 
-		Mockito.doNothing().when(ticketService).deleteTicket(requestId);
+		Mockito.doNothing().when(ticketService).deleteTicket(ticketId);
 
 		// When & Then
 		mockMvc.perform(
-				RestDocumentationRequestBuilders.delete("/products/tickets/{id}", requestId)
+				RestDocumentationRequestBuilders.delete("/products/tickets/{id}", ticketId)
 					.header("Authorization", "Bearer access-token")
 			)
 			.andExpect(MockMvcResultMatchers.status().isNoContent())
