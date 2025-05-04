@@ -16,7 +16,7 @@ public enum Category {
 	private final String description;
 
 	@JsonCreator
-	public static Category of(Object name) {
+	public static Category of(String name) {
 		return Arrays.stream(Category.values())
 			.filter(category -> category.name().equals(name))
 			.findFirst()

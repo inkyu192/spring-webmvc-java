@@ -12,11 +12,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import spring.webmvc.application.dto.TicketDto;
-import spring.webmvc.domain.cache.TicketCache;
 import spring.webmvc.domain.model.entity.Ticket;
 import spring.webmvc.domain.repository.TicketRepository;
-import spring.webmvc.infrastructure.common.JsonSupport;
 import spring.webmvc.presentation.exception.EntityNotFoundException;
 
 @ExtendWith(MockitoExtension.class)
@@ -27,12 +24,6 @@ class TicketServiceTest {
 
 	@Mock
 	private TicketRepository ticketRepository;
-
-	@Mock
-	private TicketCache ticketCache;
-
-	@Mock
-	private JsonSupport jsonSupport;
 
 	@Test
 	@DisplayName("createTicket: Ticket 저장 후 반환한다")
@@ -81,92 +72,6 @@ class TicketServiceTest {
 		Assertions.assertThat(result.getPerformanceTime()).isEqualTo(performanceTime);
 		Assertions.assertThat(result.getDuration()).isEqualTo(duration);
 		Assertions.assertThat(result.getAgeLimit()).isEqualTo(ageLimit);
-	}
-
-	@Test
-	@DisplayName("findTicket: Ticket 없을 경우 EntityNotFoundException 발생한다")
-	void findTicketCase1() {
-		// Given
-		Long ticketId = 1L;
-
-		Mockito.when(ticketCache.get(ticketId)).thenReturn(Optional.empty());
-		Mockito.when(ticketRepository.findById(ticketId)).thenReturn(Optional.empty());
-
-		// When & Then
-		Assertions.assertThatThrownBy(() -> ticketService.findTicket(ticketId))
-			.isInstanceOf(EntityNotFoundException.class);
-	}
-
-	@Test
-	@DisplayName("findTicket: Ticket cache 있을 경우 cache 반환한다")
-	void findTicketCase2() {
-		// Given
-		Long ticketId = 1L;
-		String value = "value";
-		TicketDto ticketDto = new TicketDto(
-			ticketId,
-			"name",
-			"description",
-			1000,
-			5,
-			Instant.now(),
-			"place",
-			Instant.now(),
-			"duration",
-			"ageLimit"
-		);
-
-		Mockito.when(ticketCache.get(ticketId)).thenReturn(Optional.of(value));
-		Mockito.when(jsonSupport.readValue(value, TicketDto.class)).thenReturn(Optional.of(ticketDto));
-
-		// When
-		TicketDto result = ticketService.findTicket(ticketId);
-
-		// Then
-		Assertions.assertThat(result.name()).isEqualTo(ticketDto.name());
-		Assertions.assertThat(result.description()).isEqualTo(ticketDto.description());
-		Assertions.assertThat(result.price()).isEqualTo(ticketDto.price());
-		Assertions.assertThat(result.quantity()).isEqualTo(ticketDto.quantity());
-		Assertions.assertThat(result.place()).isEqualTo(ticketDto.place());
-		Assertions.assertThat(result.performanceTime()).isEqualTo(ticketDto.performanceTime());
-		Assertions.assertThat(result.duration()).isEqualTo(ticketDto.duration());
-		Assertions.assertThat(result.ageLimit()).isEqualTo(ticketDto.ageLimit());
-	}
-
-	@Test
-	@DisplayName("findTicket: Ticket cache 없을 경우 repository 조회 후 반환한다")
-	void findTicketCase3() {
-		// Given
-		Long ticketId = 1L;
-		String value = "value";
-		Ticket ticket = Ticket.create(
-			"name",
-			"description",
-			1000,
-			5,
-			"place",
-			Instant.now(),
-			"duration",
-			"ageLimit"
-		);
-
-		Mockito.when(ticketCache.get(ticketId)).thenReturn(Optional.empty());
-		Mockito.when(ticketRepository.findById(ticketId)).thenReturn(Optional.of(ticket));
-		Mockito.when(jsonSupport.writeValueAsString(Mockito.any(TicketDto.class))).thenReturn(Optional.of(value));
-		Mockito.doNothing().when(ticketCache).set(ticketId, value);
-
-		// When
-		TicketDto result = ticketService.findTicket(ticketId);
-
-		// Then
-		Assertions.assertThat(result.name()).isEqualTo(ticket.getProduct().getName());
-		Assertions.assertThat(result.description()).isEqualTo(ticket.getProduct().getDescription());
-		Assertions.assertThat(result.price()).isEqualTo(ticket.getProduct().getPrice());
-		Assertions.assertThat(result.quantity()).isEqualTo(ticket.getProduct().getQuantity());
-		Assertions.assertThat(result.place()).isEqualTo(ticket.getPlace());
-		Assertions.assertThat(result.performanceTime()).isEqualTo(ticket.getPerformanceTime());
-		Assertions.assertThat(result.duration()).isEqualTo(ticket.getDuration());
-		Assertions.assertThat(result.ageLimit()).isEqualTo(ticket.getAgeLimit());
 	}
 
 	@Test

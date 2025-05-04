@@ -5,13 +5,22 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
+import spring.webmvc.application.dto.result.AccommodationResult;
+import spring.webmvc.application.dto.result.FlightResult;
+import spring.webmvc.application.dto.result.ProductResult;
+import spring.webmvc.application.dto.result.TicketResult;
 import spring.webmvc.application.service.ProductService;
+import spring.webmvc.domain.model.enums.Category;
+import spring.webmvc.presentation.dto.response.AccommodationResponse;
+import spring.webmvc.presentation.dto.response.FlightResponse;
 import spring.webmvc.presentation.dto.response.ProductResponse;
+import spring.webmvc.presentation.dto.response.TicketResponse;
 
 @RestController
 @RequestMapping("/products")
@@ -27,5 +36,17 @@ public class ProductController {
 		@RequestParam(required = false) String name
 	) {
 		return productService.findProducts(pageable, name).map(ProductResponse::new);
+	}
+
+	@GetMapping("/{id}")
+	@PreAuthorize("hasAuthority('PRODUCT_READER')")
+	public ProductResponse findProduct(@PathVariable Long id, @RequestParam Category category) {
+		ProductResult productResult = productService.findProduct(id, category);
+
+		return switch (productResult.getCategory()) {
+			case TICKET -> new TicketResponse((TicketResult)productResult);
+			case FLIGHT -> new FlightResponse((FlightResult)productResult);
+			case ACCOMMODATION -> new AccommodationResponse((AccommodationResult)productResult);
+		};
 	}
 }

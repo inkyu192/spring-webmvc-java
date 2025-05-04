@@ -1,5 +1,7 @@
 package spring.webmvc.presentation.controller;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -26,8 +28,11 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import spring.webmvc.application.dto.result.AccommodationResult;
+import spring.webmvc.application.dto.result.FlightResult;
+import spring.webmvc.application.dto.result.ProductResult;
+import spring.webmvc.application.dto.result.TicketResult;
 import spring.webmvc.application.service.ProductService;
-import spring.webmvc.domain.model.entity.Product;
 import spring.webmvc.domain.model.enums.Category;
 import spring.webmvc.infrastructure.config.WebMvcTestConfig;
 
@@ -54,14 +59,13 @@ class ProductControllerTest {
 	@Test
 	void findProducts() throws Exception {
 		Pageable pageable = PageRequest.of(0, 10);
-		String name = "product";
-
-		List<Product> response = List.of(
-			Product.create("name1", "description", 1000, 10, Category.ACCOMMODATION),
-			Product.create("name2", "description", 2000, 20, Category.FLIGHT),
-			Product.create("name3", "description", 3000, 30, Category.TICKET)
+		String name = "name";
+		List<ProductResult> response = List.of(
+			new ProductResult(1L, Category.ACCOMMODATION, "name1", "description", 1000, 10, Instant.now()),
+			new ProductResult(2L, Category.FLIGHT, "name2", "description", 2000, 20, Instant.now()),
+			new ProductResult(3L, Category.TICKET, "name3", "description", 3000, 30, Instant.now())
 		);
-		Page<Product> page = new PageImpl<>(response, pageable, response.size());
+		Page<ProductResult> page = new PageImpl<>(response, pageable, response.size());
 
 		Mockito.when(productService.findProducts(pageable, name)).thenReturn(page);
 
@@ -86,6 +90,7 @@ class ProductControllerTest {
 					),
 					PayloadDocumentation.responseFields(
 						PayloadDocumentation.fieldWithPath("content[].id").description("아이디"),
+						PayloadDocumentation.fieldWithPath("content[].category").description("카테고리"),
 						PayloadDocumentation.fieldWithPath("content[].name").description("상품명"),
 						PayloadDocumentation.fieldWithPath("content[].description").description("설명"),
 						PayloadDocumentation.fieldWithPath("content[].price").description("가격"),
@@ -115,6 +120,178 @@ class ProductControllerTest {
 
 						PayloadDocumentation.fieldWithPath("numberOfElements").description("현재 페이지의 아이템 수"),
 						PayloadDocumentation.fieldWithPath("empty").description("빈 페이지 여부")
+					)
+				)
+			);
+	}
+
+	@Test
+	void findTicket() throws Exception {
+		// Given
+		Long productId = 1L;
+		Category category = Category.TICKET;
+		TicketResult ticketResult = new TicketResult(
+			productId,
+			"name",
+			"description",
+			1000,
+			10, Instant.now(),
+			1L,
+			"place",
+			Instant.now(),
+			"duration",
+			"ageLimit"
+		);
+
+		Mockito.when(productService.findProduct(productId, category)).thenReturn(ticketResult);
+
+		// When & Then
+		mockMvc.perform(
+				RestDocumentationRequestBuilders.get("/products/{id}", productId)
+					.header("Authorization", "Bearer access-token")
+					.queryParam("category", String.valueOf(category))
+			)
+			.andExpect(MockMvcResultMatchers.status().isOk())
+			.andDo(
+				MockMvcRestDocumentation.document("product-ticket-get",
+					HeaderDocumentation.requestHeaders(
+						HeaderDocumentation.headerWithName("Authorization").description("액세스 토큰")
+					),
+					RequestDocumentation.pathParameters(
+						RequestDocumentation.parameterWithName("id").description("아이디")
+					),
+					RequestDocumentation.queryParameters(
+						RequestDocumentation.parameterWithName("category").description("카테고리")
+					),
+					PayloadDocumentation.responseFields(
+						PayloadDocumentation.fieldWithPath("id").description("아이디"),
+						PayloadDocumentation.fieldWithPath("category").description("카테고리"),
+						PayloadDocumentation.fieldWithPath("name").description("티켓명"),
+						PayloadDocumentation.fieldWithPath("description").description("설명"),
+						PayloadDocumentation.fieldWithPath("price").description("가격"),
+						PayloadDocumentation.fieldWithPath("quantity").description("수량"),
+						PayloadDocumentation.fieldWithPath("createdAt").description("생성일시"),
+						PayloadDocumentation.fieldWithPath("ticketId").description("티켓아이디"),
+						PayloadDocumentation.fieldWithPath("place").description("장소"),
+						PayloadDocumentation.fieldWithPath("performanceTime").description("공연 시간"),
+						PayloadDocumentation.fieldWithPath("duration").description("공연 시간"),
+						PayloadDocumentation.fieldWithPath("ageLimit").description("관람 연령")
+					)
+				)
+			);
+	}
+
+	@Test
+	void findFlight() throws Exception {
+		// Given
+		Long productId = 1L;
+		Category category = Category.FLIGHT;
+		FlightResult flightResult = new FlightResult(
+			productId,
+			"name",
+			"description",
+			1000,
+			10,
+			Instant.now(),
+			1L,
+			"airline",
+			"flightNumber",
+			"departureAirport",
+			"arrivalAirport",
+			Instant.now(),
+			Instant.now().plus(1, ChronoUnit.DAYS)
+		);
+
+		Mockito.when(productService.findProduct(productId, category)).thenReturn(flightResult);
+
+		// When & Then
+		mockMvc.perform(
+				RestDocumentationRequestBuilders.get("/products/{id}", productId)
+					.header("Authorization", "Bearer access-token")
+					.queryParam("category", String.valueOf(category))
+			)
+			.andExpect(MockMvcResultMatchers.status().isOk())
+			.andDo(
+				MockMvcRestDocumentation.document("product-flight-get",
+					HeaderDocumentation.requestHeaders(
+						HeaderDocumentation.headerWithName("Authorization").description("액세스 토큰")
+					),
+					RequestDocumentation.pathParameters(
+						RequestDocumentation.parameterWithName("id").description("아이디")
+					),
+					RequestDocumentation.queryParameters(
+						RequestDocumentation.parameterWithName("category").description("카테고리")
+					),
+					PayloadDocumentation.responseFields(
+						PayloadDocumentation.fieldWithPath("id").description("아이디"),
+						PayloadDocumentation.fieldWithPath("category").description("카테고리"),
+						PayloadDocumentation.fieldWithPath("name").description("티켓명"),
+						PayloadDocumentation.fieldWithPath("description").description("설명"),
+						PayloadDocumentation.fieldWithPath("price").description("가격"),
+						PayloadDocumentation.fieldWithPath("quantity").description("수량"),
+						PayloadDocumentation.fieldWithPath("createdAt").description("생성일시"),
+						PayloadDocumentation.fieldWithPath("flightId").description("항공아이디"),
+						PayloadDocumentation.fieldWithPath("airline").description("항공사"),
+						PayloadDocumentation.fieldWithPath("flightNumber").description("항공편 ID"),
+						PayloadDocumentation.fieldWithPath("departureAirport").description("출발 공항"),
+						PayloadDocumentation.fieldWithPath("arrivalAirport").description("도착 공항"),
+						PayloadDocumentation.fieldWithPath("departureTime").description("출발 시간"),
+						PayloadDocumentation.fieldWithPath("arrivalTime").description("도착 시간")
+					)
+				)
+			);
+	}
+
+	@Test
+	void findAccommodation() throws Exception {
+		// Given
+		Long productId = 1L;
+		Category category = Category.ACCOMMODATION;
+		AccommodationResult accommodationResult = new AccommodationResult(
+			productId,
+			"name",
+			"description",
+			1000,
+			10,
+			Instant.now(),
+			1L,
+			"place",
+			Instant.now(),
+			Instant.now().plus(1, ChronoUnit.DAYS)
+		);
+
+		Mockito.when(productService.findProduct(productId, category)).thenReturn(accommodationResult);
+
+		// When & Then
+		mockMvc.perform(
+				RestDocumentationRequestBuilders.get("/products/{id}", productId)
+					.header("Authorization", "Bearer access-token")
+					.queryParam("category", String.valueOf(category))
+			)
+			.andExpect(MockMvcResultMatchers.status().isOk())
+			.andDo(
+				MockMvcRestDocumentation.document("product-accommodation-get",
+					HeaderDocumentation.requestHeaders(
+						HeaderDocumentation.headerWithName("Authorization").description("액세스 토큰")
+					),
+					RequestDocumentation.pathParameters(
+						RequestDocumentation.parameterWithName("id").description("아이디")
+					),
+					RequestDocumentation.queryParameters(
+						RequestDocumentation.parameterWithName("category").description("카테고리")
+					),
+					PayloadDocumentation.responseFields(
+						PayloadDocumentation.fieldWithPath("id").description("아이디"),
+						PayloadDocumentation.fieldWithPath("category").description("카테고리"),
+						PayloadDocumentation.fieldWithPath("name").description("티켓명"),
+						PayloadDocumentation.fieldWithPath("description").description("설명"),
+						PayloadDocumentation.fieldWithPath("price").description("가격"),
+						PayloadDocumentation.fieldWithPath("quantity").description("수량"),
+						PayloadDocumentation.fieldWithPath("createdAt").description("생성일시"),
+						PayloadDocumentation.fieldWithPath("accommodationId").description("숙소아이디"),
+						PayloadDocumentation.fieldWithPath("place").description("장소"),
+						PayloadDocumentation.fieldWithPath("checkInTime").description("체크인 시간"),
+						PayloadDocumentation.fieldWithPath("checkOutTime").description("체크아웃 시간")
 					)
 				)
 			);

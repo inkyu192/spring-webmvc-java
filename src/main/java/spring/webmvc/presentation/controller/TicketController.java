@@ -4,7 +4,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,12 +24,6 @@ import spring.webmvc.presentation.dto.response.TicketResponse;
 public class TicketController {
 
 	private final TicketService ticketService;
-
-	@GetMapping("/{id}")
-	@PreAuthorize("hasAuthority('PRODUCT_READER')")
-	public TicketResponse findTicket(@PathVariable Long id) {
-		return new TicketResponse(ticketService.findTicket(id));
-	}
 
 	@PostMapping
 	@PreAuthorize("hasAuthority('PRODUCT_WRITER')")

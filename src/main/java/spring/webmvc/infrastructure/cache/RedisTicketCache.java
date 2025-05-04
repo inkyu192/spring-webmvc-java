@@ -1,16 +1,13 @@
 package spring.webmvc.infrastructure.cache;
 
 import java.time.Duration;
-import java.util.Optional;
 
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import spring.webmvc.domain.cache.TicketCache;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class RedisTicketCache implements TicketCache {
@@ -18,21 +15,20 @@ public class RedisTicketCache implements TicketCache {
 	private final RedisTemplate<String, String> redisTemplate;
 
 	private String createKey(Long productId) {
-		return "product:%s".formatted(productId);
+		return "product:ticket:%s".formatted(productId);
 	}
 
 	@Override
-	public Optional<String> get(Long id) {
+	public String get(Long productId) {
 		try {
-			String value = redisTemplate.opsForValue().get(createKey(id));
-			return Optional.ofNullable(value);
+			return redisTemplate.opsForValue().get(createKey(productId));
 		} catch (RuntimeException e) {
-			return Optional.empty();
+			return null;
 		}
 	}
 
 	@Override
-	public void set(Long id, String value) {
-		redisTemplate.opsForValue().set(createKey(id), value, Duration.ofHours(1));
+	public void set(Long productId, String value) {
+		redisTemplate.opsForValue().set(createKey(productId), value, Duration.ofHours(1));
 	}
 }

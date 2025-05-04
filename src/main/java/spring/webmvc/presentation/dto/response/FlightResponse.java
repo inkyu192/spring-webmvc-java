@@ -2,54 +2,39 @@ package spring.webmvc.presentation.dto.response;
 
 import java.time.Instant;
 
-import spring.webmvc.application.dto.FlightDto;
+import lombok.Getter;
+import spring.webmvc.application.dto.result.FlightResult;
 import spring.webmvc.domain.model.entity.Flight;
 
-public record FlightResponse(
-	Long id,
-	String name,
-	String description,
-	int price,
-	int quantity,
-	Instant createdAt,
-	String airline,
-	String flightNumber,
-	String departureAirport,
-	String arrivalAirport,
-	Instant departureTime,
-	Instant arrivalTime
-) {
-	public FlightResponse(Flight flight) {
-		this(
-			flight.getId(),
-			flight.getProduct().getName(),
-			flight.getProduct().getDescription(),
-			flight.getProduct().getPrice(),
-			flight.getProduct().getQuantity(),
-			flight.getProduct().getCreatedAt(),
-			flight.getAirline(),
-			flight.getFlightNumber(),
-			flight.getDepartureAirport(),
-			flight.getArrivalAirport(),
-			flight.getDepartureTime(),
-			flight.getArrivalTime()
-		);
+@Getter
+public class FlightResponse extends ProductResponse {
+	private final Long flightId;
+	private final String airline;
+	private final String flightNumber;
+	private final String departureAirport;
+	private final String arrivalAirport;
+	private final Instant departureTime;
+	private final Instant arrivalTime;
+
+	public FlightResponse(FlightResult flightResult) {
+		super(flightResult);
+		flightId = flightResult.getId();
+		airline = flightResult.getAirline();
+		flightNumber = flightResult.getFlightNumber();
+		departureAirport = flightResult.getDepartureAirport();
+		arrivalAirport = flightResult.getArrivalAirport();
+		departureTime = flightResult.getDepartureTime();
+		arrivalTime = flightResult.getArrivalTime();
 	}
 
-	public FlightResponse(FlightDto flightDto) {
-		this(
-			flightDto.id(),
-			flightDto.name(),
-			flightDto.description(),
-			flightDto.price(),
-			flightDto.quantity(),
-			flightDto.createdAt(),
-			flightDto.airline(),
-			flightDto.flightNumber(),
-			flightDto.departureAirport(),
-			flightDto.arrivalAirport(),
-			flightDto.departureTime(),
-			flightDto.arrivalTime()
-		);
+	public FlightResponse(Flight flight) {
+		super(flight.getProduct());
+		flightId = flight.getId();
+		airline = flight.getAirline();
+		flightNumber = flight.getFlightNumber();
+		departureAirport = flight.getDepartureAirport();
+		arrivalAirport = flight.getArrivalAirport();
+		departureTime = flight.getDepartureTime();
+		arrivalTime = flight.getArrivalTime();
 	}
 }

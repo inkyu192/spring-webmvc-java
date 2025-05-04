@@ -26,7 +26,6 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import spring.webmvc.application.dto.TicketDto;
 import spring.webmvc.application.service.TicketService;
 import spring.webmvc.domain.model.entity.Ticket;
 import spring.webmvc.infrastructure.config.WebMvcTestConfig;
@@ -127,61 +126,13 @@ class TicketControllerTest {
 					),
 					PayloadDocumentation.responseFields(
 						PayloadDocumentation.fieldWithPath("id").description("아이디"),
+						PayloadDocumentation.fieldWithPath("category").description("카테고리"),
 						PayloadDocumentation.fieldWithPath("name").description("티켓명"),
 						PayloadDocumentation.fieldWithPath("description").description("설명"),
 						PayloadDocumentation.fieldWithPath("price").description("가격"),
 						PayloadDocumentation.fieldWithPath("quantity").description("수량"),
 						PayloadDocumentation.fieldWithPath("createdAt").description("생성일시"),
-						PayloadDocumentation.fieldWithPath("place").description("장소"),
-						PayloadDocumentation.fieldWithPath("performanceTime").description("공연 시간"),
-						PayloadDocumentation.fieldWithPath("duration").description("공연 시간"),
-						PayloadDocumentation.fieldWithPath("ageLimit").description("관람 연령")
-					)
-				)
-			);
-	}
-
-	@Test
-	void findTicket() throws Exception {
-		// Given
-		Long ticketId = 1L;
-
-		TicketDto ticketDto = new TicketDto(
-			ticketId,
-			"name",
-			"description",
-			1000,
-			5,
-			Instant.now(),
-			"place",
-			Instant.now(),
-			"duration",
-			"ageLimit"
-		);
-
-		Mockito.when(ticketService.findTicket(ticketId)).thenReturn(ticketDto);
-
-		// When & Then
-		mockMvc.perform(
-				RestDocumentationRequestBuilders.get("/products/tickets/{id}", ticketId)
-					.header("Authorization", "Bearer access-token")
-			)
-			.andExpect(MockMvcResultMatchers.status().isOk())
-			.andDo(
-				MockMvcRestDocumentation.document("ticket-get",
-					HeaderDocumentation.requestHeaders(
-						HeaderDocumentation.headerWithName("Authorization").description("액세스 토큰")
-					),
-					RequestDocumentation.pathParameters(
-						RequestDocumentation.parameterWithName("id").description("아이디")
-					),
-					PayloadDocumentation.responseFields(
-						PayloadDocumentation.fieldWithPath("id").description("아이디"),
-						PayloadDocumentation.fieldWithPath("name").description("티켓명"),
-						PayloadDocumentation.fieldWithPath("description").description("설명"),
-						PayloadDocumentation.fieldWithPath("price").description("가격"),
-						PayloadDocumentation.fieldWithPath("quantity").description("수량"),
-						PayloadDocumentation.fieldWithPath("createdAt").description("생성일시"),
+						PayloadDocumentation.fieldWithPath("ticketId").description("티켓아이디"),
 						PayloadDocumentation.fieldWithPath("place").description("장소"),
 						PayloadDocumentation.fieldWithPath("performanceTime").description("공연 시간"),
 						PayloadDocumentation.fieldWithPath("duration").description("공연 시간"),
@@ -267,11 +218,13 @@ class TicketControllerTest {
 					),
 					PayloadDocumentation.responseFields(
 						PayloadDocumentation.fieldWithPath("id").description("아이디"),
+						PayloadDocumentation.fieldWithPath("category").description("카테고리"),
 						PayloadDocumentation.fieldWithPath("name").description("티켓명"),
 						PayloadDocumentation.fieldWithPath("description").description("설명"),
 						PayloadDocumentation.fieldWithPath("price").description("가격"),
 						PayloadDocumentation.fieldWithPath("quantity").description("수량"),
 						PayloadDocumentation.fieldWithPath("createdAt").description("생성일시"),
+						PayloadDocumentation.fieldWithPath("ticketId").description("티켓아이디"),
 						PayloadDocumentation.fieldWithPath("place").description("장소"),
 						PayloadDocumentation.fieldWithPath("performanceTime").description("공연 시간"),
 						PayloadDocumentation.fieldWithPath("duration").description("공연 시간"),

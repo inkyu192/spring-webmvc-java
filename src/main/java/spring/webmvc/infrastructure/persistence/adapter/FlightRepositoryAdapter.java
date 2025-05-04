@@ -21,6 +21,11 @@ public class FlightRepositoryAdapter implements FlightRepository {
 	}
 
 	@Override
+	public Optional<Flight> findByProductId(Long productId) {
+		return jpaRepository.findByProductId(productId);
+	}
+
+	@Override
 	public Flight save(Flight flight) {
 		return jpaRepository.save(flight);
 	}

@@ -27,7 +27,6 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import spring.webmvc.application.dto.AccommodationDto;
 import spring.webmvc.application.service.AccommodationService;
 import spring.webmvc.domain.model.entity.Accommodation;
 import spring.webmvc.infrastructure.config.WebMvcTestConfig;
@@ -122,59 +121,13 @@ class AccommodationControllerTest {
 					),
 					PayloadDocumentation.responseFields(
 						PayloadDocumentation.fieldWithPath("id").description("아이디"),
+						PayloadDocumentation.fieldWithPath("category").description("카테고리"),
 						PayloadDocumentation.fieldWithPath("name").description("숙소명"),
 						PayloadDocumentation.fieldWithPath("description").description("설명"),
 						PayloadDocumentation.fieldWithPath("price").description("가격"),
 						PayloadDocumentation.fieldWithPath("quantity").description("수량"),
 						PayloadDocumentation.fieldWithPath("createdAt").description("생성일시"),
-						PayloadDocumentation.fieldWithPath("place").description("장소"),
-						PayloadDocumentation.fieldWithPath("checkInTime").description("체크인 시간"),
-						PayloadDocumentation.fieldWithPath("checkOutTime").description("체크아웃 시간")
-					)
-				)
-			);
-	}
-
-	@Test
-	void findAccommodation() throws Exception {
-		// Given
-		Long accommodationId = 1L;
-
-		AccommodationDto accommodationDto = new AccommodationDto(
-			accommodationId,
-			"name",
-			"description",
-			1000,
-			5,
-			Instant.now(),
-			"place",
-			Instant.now(),
-			Instant.now().plus(1, ChronoUnit.DAYS)
-		);
-
-		Mockito.when(accommodationService.findAccommodation(accommodationId)).thenReturn(accommodationDto);
-
-		// When & Then
-		mockMvc.perform(
-				RestDocumentationRequestBuilders.get("/products/accommodations/{id}", accommodationId)
-					.header("Authorization", "Bearer access-token")
-			)
-			.andExpect(MockMvcResultMatchers.status().isOk())
-			.andDo(
-				MockMvcRestDocumentation.document("accommodation-get",
-					HeaderDocumentation.requestHeaders(
-						HeaderDocumentation.headerWithName("Authorization").description("액세스 토큰")
-					),
-					RequestDocumentation.pathParameters(
-						RequestDocumentation.parameterWithName("id").description("아이디")
-					),
-					PayloadDocumentation.responseFields(
-						PayloadDocumentation.fieldWithPath("id").description("아이디"),
-						PayloadDocumentation.fieldWithPath("name").description("숙소명"),
-						PayloadDocumentation.fieldWithPath("description").description("설명"),
-						PayloadDocumentation.fieldWithPath("price").description("가격"),
-						PayloadDocumentation.fieldWithPath("quantity").description("수량"),
-						PayloadDocumentation.fieldWithPath("createdAt").description("생성일시"),
+						PayloadDocumentation.fieldWithPath("accommodationId").description("숙소아이디"),
 						PayloadDocumentation.fieldWithPath("place").description("장소"),
 						PayloadDocumentation.fieldWithPath("checkInTime").description("체크인 시간"),
 						PayloadDocumentation.fieldWithPath("checkOutTime").description("체크아웃 시간")
@@ -253,11 +206,13 @@ class AccommodationControllerTest {
 					),
 					PayloadDocumentation.responseFields(
 						PayloadDocumentation.fieldWithPath("id").description("아이디"),
+						PayloadDocumentation.fieldWithPath("category").description("카테고리"),
 						PayloadDocumentation.fieldWithPath("name").description("숙소명"),
 						PayloadDocumentation.fieldWithPath("description").description("설명"),
 						PayloadDocumentation.fieldWithPath("price").description("가격"),
 						PayloadDocumentation.fieldWithPath("quantity").description("수량"),
 						PayloadDocumentation.fieldWithPath("createdAt").description("생성일시"),
+						PayloadDocumentation.fieldWithPath("accommodationId").description("숙소아이디"),
 						PayloadDocumentation.fieldWithPath("place").description("장소"),
 						PayloadDocumentation.fieldWithPath("checkInTime").description("체크인 시간"),
 						PayloadDocumentation.fieldWithPath("checkOutTime").description("체크아웃 시간")
