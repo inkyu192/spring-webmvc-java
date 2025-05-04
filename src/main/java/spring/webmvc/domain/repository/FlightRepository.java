@@ -8,6 +8,8 @@ public interface FlightRepository {
 
 	Optional<Flight> findById(Long id);
 
+	Optional<Flight> findByProductId(Long productId);
+
 	Flight save(Flight flight);
 
 	void delete(Flight flight);

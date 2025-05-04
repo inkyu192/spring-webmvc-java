@@ -1,6 +1,7 @@
 package spring.webmvc.infrastructure.persistence.adapter;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +19,11 @@ public class ProductRepositoryAdapter implements ProductRepository {
 
 	private final ProductJpaRepository jpaRepository;
 	private final ProductQuerydslRepository querydslRepository;
+
+	@Override
+	public Optional<Product> findById(Long id) {
+		return jpaRepository.findById(id);
+	}
 
 	@Override
 	public Page<Product> findAll(Pageable pageable, String name) {

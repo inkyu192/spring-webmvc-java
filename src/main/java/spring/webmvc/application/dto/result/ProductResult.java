@@ -1,14 +1,15 @@
-package spring.webmvc.presentation.dto.response;
+package spring.webmvc.application.dto.result;
 
 import java.time.Instant;
 
 import lombok.Getter;
-import spring.webmvc.application.dto.result.ProductResult;
+import lombok.RequiredArgsConstructor;
 import spring.webmvc.domain.model.entity.Product;
 import spring.webmvc.domain.model.enums.Category;
 
 @Getter
-public class ProductResponse {
+@RequiredArgsConstructor
+public class ProductResult {
 	private final Long id;
 	private final Category category;
 	private final String name;
@@ -17,17 +18,7 @@ public class ProductResponse {
 	private final int quantity;
 	private final Instant createdAt;
 
-	public ProductResponse(ProductResult productResult) {
-		id = productResult.getId();
-		category = productResult.getCategory();
-		name = productResult.getName();
-		description = productResult.getDescription();
-		price = productResult.getPrice();
-		quantity = productResult.getQuantity();
-		createdAt = productResult.getCreatedAt();
-	}
-
-	public ProductResponse(Product product) {
+	public ProductResult(Product product) {
 		id = product.getId();
 		category = product.getCategory();
 		name = product.getName();

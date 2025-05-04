@@ -21,6 +21,11 @@ public class AccommodationRepositoryAdapter implements AccommodationRepository {
 	}
 
 	@Override
+	public Optional<Accommodation> findByProductId(Long productId) {
+		return jpaRepository.findByProductId(productId);
+	}
+
+	@Override
 	public Accommodation save(Accommodation accommodation) {
 		return jpaRepository.save(accommodation);
 	}

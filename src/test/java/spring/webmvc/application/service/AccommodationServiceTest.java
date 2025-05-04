@@ -13,11 +13,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import spring.webmvc.application.dto.AccommodationDto;
-import spring.webmvc.domain.cache.AccommodationCache;
 import spring.webmvc.domain.model.entity.Accommodation;
 import spring.webmvc.domain.repository.AccommodationRepository;
-import spring.webmvc.infrastructure.common.JsonSupport;
 import spring.webmvc.presentation.exception.EntityNotFoundException;
 
 @ExtendWith(MockitoExtension.class)
@@ -28,12 +25,6 @@ class AccommodationServiceTest {
 
 	@Mock
 	private AccommodationRepository accommodationRepository;
-
-	@Mock
-	private AccommodationCache accommodationCache;
-
-	@Mock
-	private JsonSupport jsonSupport;
 
 	@Test
 	@DisplayName("createAccommodation: Accommodation 저장 후 반환한다")
@@ -78,88 +69,6 @@ class AccommodationServiceTest {
 		Assertions.assertThat(result.getPlace()).isEqualTo(place);
 		Assertions.assertThat(result.getCheckInTime()).isEqualTo(checkInTime);
 		Assertions.assertThat(result.getCheckOutTime()).isEqualTo(checkOutTime);
-	}
-
-	@Test
-	@DisplayName("findAccommodation: Accommodation 없을 경우 EntityNotFoundException 발생한다")
-	void findAccommodationCase1() {
-		// Given
-		Long accommodationId = 1L;
-
-		Mockito.when(accommodationCache.get(accommodationId)).thenReturn(Optional.empty());
-		Mockito.when(accommodationRepository.findById(accommodationId)).thenReturn(Optional.empty());
-
-		// When & Then
-		Assertions.assertThatThrownBy(() -> accommodationService.findAccommodation(accommodationId))
-			.isInstanceOf(EntityNotFoundException.class);
-	}
-
-	@Test
-	@DisplayName("findAccommodation: Accommodation cache 있을 경우 cache 반환한다")
-	void findAccommodationCase2() {
-		// Given
-		Long accommodationId = 1L;
-		String value = "value";
-		AccommodationDto accommodationDto = new AccommodationDto(
-			accommodationId,
-			"name",
-			"description",
-			1000,
-			5,
-			Instant.now(),
-			"place",
-			Instant.now(),
-			Instant.now().plus(1, ChronoUnit.DAYS)
-		);
-
-		Mockito.when(accommodationCache.get(accommodationId)).thenReturn(Optional.of(value));
-		Mockito.when(jsonSupport.readValue(value, AccommodationDto.class)).thenReturn(Optional.of(accommodationDto));
-
-		// When
-		AccommodationDto result = accommodationService.findAccommodation(accommodationId);
-
-		// Then
-		Assertions.assertThat(result.name()).isEqualTo(accommodationDto.name());
-		Assertions.assertThat(result.description()).isEqualTo(accommodationDto.description());
-		Assertions.assertThat(result.price()).isEqualTo(accommodationDto.price());
-		Assertions.assertThat(result.quantity()).isEqualTo(accommodationDto.quantity());
-		Assertions.assertThat(result.place()).isEqualTo(accommodationDto.place());
-		Assertions.assertThat(result.checkInTime()).isEqualTo(accommodationDto.checkInTime());
-		Assertions.assertThat(result.checkOutTime()).isEqualTo(accommodationDto.checkOutTime());
-	}
-
-	@Test
-	@DisplayName("findAccommodation: Accommodation cache 없을 경우 repository 조회 후 반환한다")
-	void findAccommodationCase3() {
-		// Given
-		Long accommodationId = 1L;
-		String value = "value";
-		Accommodation accommodation = Accommodation.create(
-			"name",
-			"description",
-			1000,
-			5,
-			"place",
-			Instant.now(),
-			Instant.now().plus(1, ChronoUnit.DAYS)
-		);
-
-		Mockito.when(accommodationCache.get(accommodationId)).thenReturn(Optional.empty());
-		Mockito.when(accommodationRepository.findById(accommodationId)).thenReturn(Optional.of(accommodation));
-		Mockito.when(jsonSupport.writeValueAsString(Mockito.any(AccommodationDto.class))).thenReturn(Optional.of(value));
-		Mockito.doNothing().when(accommodationCache).set(accommodationId, value);
-
-		// When
-		AccommodationDto result = accommodationService.findAccommodation(accommodationId);
-
-		// Then
-		Assertions.assertThat(result.name()).isEqualTo(accommodation.getProduct().getName());
-		Assertions.assertThat(result.description()).isEqualTo(accommodation.getProduct().getDescription());
-		Assertions.assertThat(result.price()).isEqualTo(accommodation.getProduct().getPrice());
-		Assertions.assertThat(result.quantity()).isEqualTo(accommodation.getProduct().getQuantity());
-		Assertions.assertThat(result.place()).isEqualTo(accommodation.getPlace());
-		Assertions.assertThat(result.checkInTime()).isEqualTo(accommodation.getCheckInTime());
-		Assertions.assertThat(result.checkOutTime()).isEqualTo(accommodation.getCheckOutTime());
 	}
 
 	@Test
