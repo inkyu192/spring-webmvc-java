@@ -182,7 +182,7 @@ class OrderControllerTest {
 
 	@Test
 	void findOrder() throws Exception {
-		Long requestId = 1L;
+		Long orderId = 1L;
 
 		Order order = Mockito.mock(Order.class);
 		Product product = Mockito.mock(Product.class);
@@ -191,10 +191,10 @@ class OrderControllerTest {
 		Mockito.when(orderProduct.getProduct()).thenReturn(product);
 		Mockito.when(order.getOrderProducts()).thenReturn(List.of(orderProduct));
 
-		Mockito.when(orderService.findOrder(requestId)).thenReturn(order);
+		Mockito.when(orderService.findOrder(orderId)).thenReturn(order);
 
 		mockMvc.perform(
-				RestDocumentationRequestBuilders.get("/orders/{id}", requestId)
+				RestDocumentationRequestBuilders.get("/orders/{id}", orderId)
 					.header("Authorization", "Bearer access-token")
 			)
 			.andExpect(MockMvcResultMatchers.status().isOk())
@@ -220,7 +220,7 @@ class OrderControllerTest {
 
 	@Test
 	void cancelOder() throws Exception {
-		Long requestId = 1L;
+		Long orderId = 1L;
 
 		Order order = Mockito.mock(Order.class);
 		Product product = Mockito.mock(Product.class);
@@ -229,10 +229,10 @@ class OrderControllerTest {
 		Mockito.when(orderProduct.getProduct()).thenReturn(product);
 		Mockito.when(order.getOrderProducts()).thenReturn(List.of(orderProduct));
 
-		Mockito.when(orderService.cancelOrder(requestId)).thenReturn(order);
+		Mockito.when(orderService.cancelOrder(orderId)).thenReturn(order);
 
 		mockMvc.perform(
-				RestDocumentationRequestBuilders.patch("/orders/{id}", requestId)
+				RestDocumentationRequestBuilders.patch("/orders/{id}", orderId)
 					.header("Authorization", "Bearer access-token")
 			)
 			.andExpect(MockMvcResultMatchers.status().isOk())

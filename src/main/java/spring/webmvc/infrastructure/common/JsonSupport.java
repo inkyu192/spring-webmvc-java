@@ -21,7 +21,7 @@ public class JsonSupport {
 		try {
 			return Optional.of(objectMapper.readValue(json, clazz));
 		} catch (JsonProcessingException e) {
-			log.warn("JsonSupport: Failed to deserialize [{}] to [{}]: {}", json, clazz.getSimpleName(), e.getMessage());
+			log.warn("Failed to deserialize [{}] to [{}]: {}", json, clazz.getSimpleName(), e.getMessage());
 			return Optional.empty();
 		}
 	}
@@ -30,7 +30,7 @@ public class JsonSupport {
 		try {
 			return Optional.of(objectMapper.writeValueAsString(obj));
 		} catch (JsonProcessingException e) {
-			log.warn("JsonSupport: Failed to serialize [{}]: {}", obj.getClass().getSimpleName(), e.getMessage());
+			log.warn("Failed to serialize [{}]: {}", obj.getClass().getSimpleName(), e.getMessage());
 			return Optional.empty();
 		}
 	}

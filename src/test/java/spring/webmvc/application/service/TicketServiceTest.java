@@ -89,6 +89,7 @@ class TicketServiceTest {
 		// Given
 		Long ticketId = 1L;
 
+		Mockito.when(ticketCache.get(ticketId)).thenReturn(Optional.empty());
 		Mockito.when(ticketRepository.findById(ticketId)).thenReturn(Optional.empty());
 
 		// When & Then
@@ -97,10 +98,47 @@ class TicketServiceTest {
 	}
 
 	@Test
-	@DisplayName("findTicket: Ticket 있을 경우 조회 후 반환한다")
+	@DisplayName("findTicket: Ticket cache 있을 경우 cache 반환한다")
 	void findTicketCase2() {
 		// Given
 		Long ticketId = 1L;
+		String value = "value";
+		TicketDto ticketDto = new TicketDto(
+			ticketId,
+			"name",
+			"description",
+			1000,
+			5,
+			Instant.now(),
+			"place",
+			Instant.now(),
+			"duration",
+			"ageLimit"
+		);
+
+		Mockito.when(ticketCache.get(ticketId)).thenReturn(Optional.of(value));
+		Mockito.when(jsonSupport.readValue(value, TicketDto.class)).thenReturn(Optional.of(ticketDto));
+
+		// When
+		TicketDto result = ticketService.findTicket(ticketId);
+
+		// Then
+		Assertions.assertThat(result.name()).isEqualTo(ticketDto.name());
+		Assertions.assertThat(result.description()).isEqualTo(ticketDto.description());
+		Assertions.assertThat(result.price()).isEqualTo(ticketDto.price());
+		Assertions.assertThat(result.quantity()).isEqualTo(ticketDto.quantity());
+		Assertions.assertThat(result.place()).isEqualTo(ticketDto.place());
+		Assertions.assertThat(result.performanceTime()).isEqualTo(ticketDto.performanceTime());
+		Assertions.assertThat(result.duration()).isEqualTo(ticketDto.duration());
+		Assertions.assertThat(result.ageLimit()).isEqualTo(ticketDto.ageLimit());
+	}
+
+	@Test
+	@DisplayName("findTicket: Ticket cache 없을 경우 repository 조회 후 반환한다")
+	void findTicketCase3() {
+		// Given
+		Long ticketId = 1L;
+		String value = "value";
 		Ticket ticket = Ticket.create(
 			"name",
 			"description",
@@ -112,7 +150,9 @@ class TicketServiceTest {
 			"ageLimit"
 		);
 
+		Mockito.when(ticketCache.get(ticketId)).thenReturn(Optional.empty());
 		Mockito.when(ticketRepository.findById(ticketId)).thenReturn(Optional.of(ticket));
+		Mockito.when(jsonSupport.writeValueAsString(Mockito.any(TicketDto.class))).thenReturn(Optional.of(value));
 
 		// When
 		TicketDto result = ticketService.findTicket(ticketId);

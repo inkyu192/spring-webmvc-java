@@ -27,7 +27,6 @@ public class RedisTicketCache implements TicketCache {
 			String value = redisTemplate.opsForValue().get(createKey(id));
 			return Optional.ofNullable(value);
 		} catch (RuntimeException e) {
-			log.error("RedisTicketCache.get() failed. id={}, reason={}", id, e.getMessage(), e);
 			return Optional.empty();
 		}
 	}

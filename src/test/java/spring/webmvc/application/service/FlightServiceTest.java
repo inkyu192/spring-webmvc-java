@@ -13,8 +13,11 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import spring.webmvc.application.dto.FlightDto;
+import spring.webmvc.domain.cache.FlightCache;
 import spring.webmvc.domain.model.entity.Flight;
 import spring.webmvc.domain.repository.FlightRepository;
+import spring.webmvc.infrastructure.common.JsonSupport;
 import spring.webmvc.presentation.exception.EntityNotFoundException;
 
 @ExtendWith(MockitoExtension.class)
@@ -25,6 +28,12 @@ class FlightServiceTest {
 
     @Mock
     private FlightRepository flightRepository;
+
+    @Mock
+    private FlightCache flightCache;
+
+    @Mock
+    private JsonSupport jsonSupport;
 
     @Test
     @DisplayName("createFlight: Flight 저장 후 반환한다")
@@ -89,6 +98,7 @@ class FlightServiceTest {
         // Given
         Long flightId = 1L;
 
+        Mockito.when(flightCache.get(flightId)).thenReturn(Optional.empty());
         Mockito.when(flightRepository.findById(flightId)).thenReturn(Optional.empty());
 
         // When & Then
@@ -96,10 +106,51 @@ class FlightServiceTest {
     }
 
     @Test
-    @DisplayName("findFlight: Flight 있을 경우 조회 후 반환한다")
+    @DisplayName("findFlight: Flight cache 있을 경우 cache 반환한다")
     void findFlightCase2() {
         // Given
         Long flightId = 1L;
+        String value = "value";
+        FlightDto flightDto = new FlightDto(
+            flightId,
+            "name",
+            "description",
+            1000,
+            5,
+            Instant.now(),
+            "airline",
+            "flightNumber",
+            "departureAirport",
+            "arrivalAirport",
+            Instant.now(),
+            Instant.now().plus(1, ChronoUnit.HOURS)
+        );
+
+        Mockito.when(flightCache.get(flightId)).thenReturn(Optional.of(value));
+        Mockito.when(jsonSupport.readValue(value, FlightDto.class)).thenReturn(Optional.of(flightDto));
+
+        // When
+        FlightDto result = flightService.findFlight(flightId);
+
+        // Then
+        Assertions.assertThat(result.name()).isEqualTo(flightDto.name());
+        Assertions.assertThat(result.description()).isEqualTo(flightDto.description());
+        Assertions.assertThat(result.price()).isEqualTo(flightDto.price());
+        Assertions.assertThat(result.quantity()).isEqualTo(flightDto.quantity());
+        Assertions.assertThat(result.airline()).isEqualTo(flightDto.airline());
+        Assertions.assertThat(result.flightNumber()).isEqualTo(flightDto.flightNumber());
+        Assertions.assertThat(result.departureAirport()).isEqualTo(flightDto.departureAirport());
+        Assertions.assertThat(result.arrivalAirport()).isEqualTo(flightDto.arrivalAirport());
+        Assertions.assertThat(result.departureTime()).isEqualTo(flightDto.departureTime());
+        Assertions.assertThat(result.arrivalTime()).isEqualTo(flightDto.arrivalTime());
+    }
+
+    @Test
+    @DisplayName("findFlight: Flight cache 없을 경우 repository 조회 후 반환한다")
+    void findFlightCase3() {
+        // Given
+        Long flightId = 1L;
+        String value = "value";
         Flight flight = Flight.create(
             "name",
             "description",
@@ -113,22 +164,24 @@ class FlightServiceTest {
             Instant.now().plus(1, ChronoUnit.HOURS)
         );
 
+        Mockito.when(flightCache.get(flightId)).thenReturn(Optional.empty());
         Mockito.when(flightRepository.findById(flightId)).thenReturn(Optional.of(flight));
+        Mockito.when(jsonSupport.writeValueAsString(Mockito.any(FlightDto.class))).thenReturn(Optional.of(value));
 
         // When
-        Flight result = flightService.findFlight(flightId);
+        FlightDto result = flightService.findFlight(flightId);
 
         // Then
-        Assertions.assertThat(result.getProduct().getName()).isEqualTo(flight.getProduct().getName());
-        Assertions.assertThat(result.getProduct().getDescription()).isEqualTo(flight.getProduct().getDescription());
-        Assertions.assertThat(result.getProduct().getPrice()).isEqualTo(flight.getProduct().getPrice());
-        Assertions.assertThat(result.getProduct().getQuantity()).isEqualTo(flight.getProduct().getQuantity());
-        Assertions.assertThat(result.getAirline()).isEqualTo(flight.getAirline());
-        Assertions.assertThat(result.getFlightNumber()).isEqualTo(flight.getFlightNumber());
-        Assertions.assertThat(result.getDepartureAirport()).isEqualTo(flight.getDepartureAirport());
-        Assertions.assertThat(result.getArrivalAirport()).isEqualTo(flight.getArrivalAirport());
-        Assertions.assertThat(result.getDepartureTime()).isEqualTo(flight.getDepartureTime());
-        Assertions.assertThat(result.getArrivalTime()).isEqualTo(flight.getArrivalTime());
+        Assertions.assertThat(result.name()).isEqualTo(flight.getProduct().getName());
+        Assertions.assertThat(result.description()).isEqualTo(flight.getProduct().getDescription());
+        Assertions.assertThat(result.price()).isEqualTo(flight.getProduct().getPrice());
+        Assertions.assertThat(result.quantity()).isEqualTo(flight.getProduct().getQuantity());
+        Assertions.assertThat(result.airline()).isEqualTo(flight.getAirline());
+        Assertions.assertThat(result.flightNumber()).isEqualTo(flight.getFlightNumber());
+        Assertions.assertThat(result.departureAirport()).isEqualTo(flight.getDepartureAirport());
+        Assertions.assertThat(result.arrivalAirport()).isEqualTo(flight.getArrivalAirport());
+        Assertions.assertThat(result.departureTime()).isEqualTo(flight.getDepartureTime());
+        Assertions.assertThat(result.arrivalTime()).isEqualTo(flight.getArrivalTime());
     }
 
     @Test

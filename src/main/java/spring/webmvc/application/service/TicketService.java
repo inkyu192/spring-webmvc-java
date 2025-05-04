@@ -26,11 +26,11 @@ public class TicketService {
 	private final JsonSupport jsonSupport;
 
 	public TicketDto findTicket(Long id) {
-		Optional<TicketDto> optionalTicketDto = ticketCache.get(id)
+		Optional<TicketDto> cached = ticketCache.get(id)
 			.flatMap(value -> jsonSupport.readValue(value, TicketDto.class));
 
-		if (optionalTicketDto.isPresent()) {
-			return optionalTicketDto.get();
+		if (cached.isPresent()) {
+			return cached.get();
 		}
 
 		TicketDto ticketDto = ticketRepository.findById(id)
