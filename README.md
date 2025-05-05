@@ -2,7 +2,7 @@
 - **Language:** Java
 - **Library / Framework:** Spring Web MVC, Spring Data JPA, Querydsl, Spring REST Docs
 - **Database:** PostgreSQL, Redis
-- **Testing:** JUnit 5, Mockito, Testcontainers
+- **Test:** JUnit 5, Mockito, Testcontainers
 - **Infrastructure**: Docker, Docker Compose, LocalStack
 
 ---
