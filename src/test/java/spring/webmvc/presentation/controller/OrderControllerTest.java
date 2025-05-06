@@ -1,5 +1,6 @@
 package spring.webmvc.presentation.controller;
 
+import java.time.Instant;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -74,6 +75,12 @@ class OrderControllerTest {
 		Product product = Mockito.mock(Product.class);
 		OrderProduct orderProduct = Mockito.mock(OrderProduct.class);
 
+		Mockito.when(order.getId()).thenReturn(1L);
+		Mockito.when(order.getOrderedAt()).thenReturn(Instant.now());
+		Mockito.when(order.getStatus()).thenReturn(OrderStatus.ORDER);
+		Mockito.when(product.getName()).thenReturn("name");
+		Mockito.when(orderProduct.getQuantity()).thenReturn(3);
+		Mockito.when(orderProduct.getOrderPrice()).thenReturn(5000);
 		Mockito.when(orderProduct.getProduct()).thenReturn(product);
 		Mockito.when(order.getOrderProducts()).thenReturn(List.of(orderProduct));
 		Mockito.when(orderService.createOrder(productQuantities)).thenReturn(order);
@@ -98,8 +105,8 @@ class OrderControllerTest {
 						PayloadDocumentation.fieldWithPath("id").description("주문아이디"),
 						PayloadDocumentation.fieldWithPath("orderedAt").description("주문일시"),
 						PayloadDocumentation.fieldWithPath("status").description("주문상태"),
-						PayloadDocumentation.fieldWithPath("products[].productName").description("상품명"),
-						PayloadDocumentation.fieldWithPath("products[].orderPrice").description("주문가격"),
+						PayloadDocumentation.fieldWithPath("products[].name").description("상품명"),
+						PayloadDocumentation.fieldWithPath("products[].price").description("주문가격"),
 						PayloadDocumentation.fieldWithPath("products[].quantity").description("주문수량")
 					)
 				)
@@ -116,12 +123,17 @@ class OrderControllerTest {
 		Product product = Mockito.mock(Product.class);
 		OrderProduct orderProduct = Mockito.mock(OrderProduct.class);
 
-		Mockito.when(orderProduct.getProduct()).thenReturn(product);
-		Mockito.when(order.getOrderProducts()).thenReturn(List.of(orderProduct));
-
 		List<Order> response = List.of(order);
 		Page<Order> page = new PageImpl<>(response, pageable, response.size());
 
+		Mockito.when(order.getId()).thenReturn(1L);
+		Mockito.when(order.getOrderedAt()).thenReturn(Instant.now());
+		Mockito.when(order.getStatus()).thenReturn(OrderStatus.ORDER);
+		Mockito.when(product.getName()).thenReturn("name");
+		Mockito.when(orderProduct.getQuantity()).thenReturn(3);
+		Mockito.when(orderProduct.getOrderPrice()).thenReturn(5000);
+		Mockito.when(orderProduct.getProduct()).thenReturn(product);
+		Mockito.when(order.getOrderProducts()).thenReturn(List.of(orderProduct));
 		Mockito.when(orderService.findOrders(pageable, orderStatus)).thenReturn(page);
 
 		mockMvc.perform(
@@ -148,8 +160,8 @@ class OrderControllerTest {
 						PayloadDocumentation.fieldWithPath("content[].id").description("주문아이디"),
 						PayloadDocumentation.fieldWithPath("content[].orderedAt").description("주문일시"),
 						PayloadDocumentation.fieldWithPath("content[].status").description("주문상태"),
-						PayloadDocumentation.fieldWithPath("content[].products[].productName").description("상품명"),
-						PayloadDocumentation.fieldWithPath("content[].products[].orderPrice").description("주문가격"),
+						PayloadDocumentation.fieldWithPath("content[].products[].name").description("상품명"),
+						PayloadDocumentation.fieldWithPath("content[].products[].price").description("주문가격"),
 						PayloadDocumentation.fieldWithPath("content[].products[].quantity").description("주문수량"),
 
 						PayloadDocumentation.fieldWithPath("pageable.pageNumber").description("현재 페이지 번호"),
@@ -188,9 +200,14 @@ class OrderControllerTest {
 		Product product = Mockito.mock(Product.class);
 		OrderProduct orderProduct = Mockito.mock(OrderProduct.class);
 
+		Mockito.when(order.getId()).thenReturn(1L);
+		Mockito.when(order.getOrderedAt()).thenReturn(Instant.now());
+		Mockito.when(order.getStatus()).thenReturn(OrderStatus.ORDER);
+		Mockito.when(product.getName()).thenReturn("name");
+		Mockito.when(orderProduct.getQuantity()).thenReturn(3);
+		Mockito.when(orderProduct.getOrderPrice()).thenReturn(5000);
 		Mockito.when(orderProduct.getProduct()).thenReturn(product);
 		Mockito.when(order.getOrderProducts()).thenReturn(List.of(orderProduct));
-
 		Mockito.when(orderService.findOrder(orderId)).thenReturn(order);
 
 		mockMvc.perform(
@@ -210,8 +227,8 @@ class OrderControllerTest {
 						PayloadDocumentation.fieldWithPath("id").description("주문아이디"),
 						PayloadDocumentation.fieldWithPath("orderedAt").description("주문일시"),
 						PayloadDocumentation.fieldWithPath("status").description("주문상태"),
-						PayloadDocumentation.fieldWithPath("products[].productName").description("상품명"),
-						PayloadDocumentation.fieldWithPath("products[].orderPrice").description("주문가격"),
+						PayloadDocumentation.fieldWithPath("products[].name").description("상품명"),
+						PayloadDocumentation.fieldWithPath("products[].price").description("주문가격"),
 						PayloadDocumentation.fieldWithPath("products[].quantity").description("주문수량")
 					)
 				)
@@ -226,9 +243,14 @@ class OrderControllerTest {
 		Product product = Mockito.mock(Product.class);
 		OrderProduct orderProduct = Mockito.mock(OrderProduct.class);
 
+		Mockito.when(order.getId()).thenReturn(1L);
+		Mockito.when(order.getOrderedAt()).thenReturn(Instant.now());
+		Mockito.when(order.getStatus()).thenReturn(OrderStatus.ORDER);
+		Mockito.when(product.getName()).thenReturn("name");
+		Mockito.when(orderProduct.getQuantity()).thenReturn(3);
+		Mockito.when(orderProduct.getOrderPrice()).thenReturn(5000);
 		Mockito.when(orderProduct.getProduct()).thenReturn(product);
 		Mockito.when(order.getOrderProducts()).thenReturn(List.of(orderProduct));
-
 		Mockito.when(orderService.cancelOrder(orderId)).thenReturn(order);
 
 		mockMvc.perform(
@@ -248,8 +270,8 @@ class OrderControllerTest {
 						PayloadDocumentation.fieldWithPath("id").description("주문아이디"),
 						PayloadDocumentation.fieldWithPath("orderedAt").description("주문일시"),
 						PayloadDocumentation.fieldWithPath("status").description("주문상태"),
-						PayloadDocumentation.fieldWithPath("products[].productName").description("상품명"),
-						PayloadDocumentation.fieldWithPath("products[].orderPrice").description("주문가격"),
+						PayloadDocumentation.fieldWithPath("products[].name").description("상품명"),
+						PayloadDocumentation.fieldWithPath("products[].price").description("주문가격"),
 						PayloadDocumentation.fieldWithPath("products[].quantity").description("주문수량")
 					)
 				)
