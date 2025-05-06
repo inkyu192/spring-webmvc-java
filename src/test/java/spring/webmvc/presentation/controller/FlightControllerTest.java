@@ -29,6 +29,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import spring.webmvc.application.service.FlightService;
 import spring.webmvc.domain.model.entity.Flight;
+import spring.webmvc.domain.model.entity.Product;
 import spring.webmvc.infrastructure.config.WebMvcTestConfig;
 import spring.webmvc.presentation.dto.request.FlightCreateRequest;
 import spring.webmvc.presentation.dto.request.FlightUpdateRequest;
@@ -83,19 +84,26 @@ class FlightControllerTest {
 			arrivalTime
 		);
 
-		Flight flight = Flight.create(
-			name,
-			description,
-			price,
-			quantity,
-			airline,
-			flightNumber,
-			departureAirport,
-			arrivalAirport,
-			departureTime,
-			arrivalTime
+		Flight flight = Mockito.spy(
+			Flight.create(
+				name,
+				description,
+				price,
+				quantity,
+				airline,
+				flightNumber,
+				departureAirport,
+				arrivalAirport,
+				departureTime,
+				arrivalTime
+			)
 		);
+		Product product = Mockito.spy(flight.getProduct());
 
+		Mockito.when(flight.getId()).thenReturn(1L);
+		Mockito.when(flight.getProduct()).thenReturn(product);
+		Mockito.when(product.getId()).thenReturn(1L);
+		Mockito.when(product.getCreatedAt()).thenReturn(Instant.now());
 		Mockito.when(
 			flightService.createFlight(
 				name,
@@ -183,19 +191,26 @@ class FlightControllerTest {
 			departureTime,
 			arrivalTime
 		);
-		Flight flight = Flight.create(
-			name,
-			description,
-			price,
-			quantity,
-			airline,
-			flightNumber,
-			departureAirport,
-			arrivalAirport,
-			departureTime,
-			arrivalTime
+		Flight flight = Mockito.spy(
+			Flight.create(
+				name,
+				description,
+				price,
+				quantity,
+				airline,
+				flightNumber,
+				departureAirport,
+				arrivalAirport,
+				departureTime,
+				arrivalTime
+			)
 		);
+		Product product = Mockito.spy(flight.getProduct());
 
+		Mockito.when(flight.getId()).thenReturn(1L);
+		Mockito.when(flight.getProduct()).thenReturn(product);
+		Mockito.when(product.getId()).thenReturn(1L);
+		Mockito.when(product.getCreatedAt()).thenReturn(Instant.now());
 		Mockito.when(
 			flightService.updateFlight(
 				flightId,

@@ -27,6 +27,7 @@ import org.springframework.web.context.WebApplicationContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import spring.webmvc.application.service.TicketService;
+import spring.webmvc.domain.model.entity.Product;
 import spring.webmvc.domain.model.entity.Ticket;
 import spring.webmvc.infrastructure.config.WebMvcTestConfig;
 import spring.webmvc.presentation.dto.request.TicketCreateRequest;
@@ -77,17 +78,24 @@ class TicketControllerTest {
 			duration,
 			ageLimit
 		);
-		Ticket ticket = Ticket.create(
-			name,
-			description,
-			price,
-			quantity,
-			place,
-			performanceTime,
-			duration,
-			ageLimit
+		Ticket ticket = Mockito.spy(
+			Ticket.create(
+				name,
+				description,
+				price,
+				quantity,
+				place,
+				performanceTime,
+				duration,
+				ageLimit
+			)
 		);
+		Product product = Mockito.spy(ticket.getProduct());
 
+		Mockito.when(ticket.getId()).thenReturn(1L);
+		Mockito.when(ticket.getProduct()).thenReturn(product);
+		Mockito.when(product.getId()).thenReturn(1L);
+		Mockito.when(product.getCreatedAt()).thenReturn(Instant.now());
 		Mockito.when(
 			ticketService.createTicket(
 				name,
@@ -165,17 +173,24 @@ class TicketControllerTest {
 			duration,
 			ageLimit
 		);
-		Ticket ticket = Ticket.create(
-			name,
-			description,
-			price,
-			quantity,
-			place,
-			performanceTime,
-			duration,
-			ageLimit
+		Ticket ticket = Mockito.spy(
+			Ticket.create(
+				name,
+				description,
+				price,
+				quantity,
+				place,
+				performanceTime,
+				duration,
+				ageLimit
+			)
 		);
+		Product product = Mockito.spy(ticket.getProduct());
 
+		Mockito.when(ticket.getId()).thenReturn(1L);
+		Mockito.when(ticket.getProduct()).thenReturn(product);
+		Mockito.when(product.getId()).thenReturn(1L);
+		Mockito.when(product.getCreatedAt()).thenReturn(Instant.now());
 		Mockito.when(
 			ticketService.updateTicket(
 				ticketId,

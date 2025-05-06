@@ -30,7 +30,7 @@ public class TicketStrategy implements ProductStrategy {
 		String cache = ticketCache.get(productId);
 
 		if (cache != null) {
-			jsonSupport.readValue(cache, TicketResult.class);
+			return jsonSupport.readValue(cache, TicketResult.class);
 		}
 
 		TicketResult ticketResult = ticketRepository.findByProductId(productId)

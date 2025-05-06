@@ -1,5 +1,6 @@
 package spring.webmvc.presentation.controller;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -62,13 +63,19 @@ class MemberControllerTest {
 		String name = "name";
 		String phone = "010-1234-1234";
 		LocalDate birthDate = LocalDate.now();
-		List<Long> roleIds = List.of(1L);
-		List<Long> permissionIds = List.of();
+		List<Long> roleIds = List.of();
+		List<Long> permissionIds = List.of(1L);
 
 		MemberCreateRequest request =
 			new MemberCreateRequest(account, password, name, phone, birthDate, roleIds, permissionIds);
 
 		Member member = Mockito.mock(Member.class);
+		Mockito.when(member.getId()).thenReturn(1L);
+		Mockito.when(member.getAccount()).thenReturn(account);
+		Mockito.when(member.getName()).thenReturn(name);
+		Mockito.when(member.getPhone()).thenReturn(phone);
+		Mockito.when(member.getBirthDate()).thenReturn(birthDate);
+		Mockito.when(member.getCreatedAt()).thenReturn(Instant.now());
 
 		Mockito.when(memberService.createMember(account, password, name, phone, birthDate, roleIds, permissionIds))
 			.thenReturn(member);
@@ -105,6 +112,12 @@ class MemberControllerTest {
 	@Test
 	void findMember() throws Exception {
 		Member member = Mockito.mock(Member.class);
+		Mockito.when(member.getId()).thenReturn(1L);
+		Mockito.when(member.getAccount()).thenReturn("account");
+		Mockito.when(member.getName()).thenReturn("name");
+		Mockito.when(member.getPhone()).thenReturn("010-1234-1234");
+		Mockito.when(member.getBirthDate()).thenReturn(LocalDate.now());
+		Mockito.when(member.getCreatedAt()).thenReturn(Instant.now());
 
 		Mockito.when(memberService.findMember()).thenReturn(member);
 
@@ -140,6 +153,12 @@ class MemberControllerTest {
 		MemberUpdateRequest request = new MemberUpdateRequest(password, name, phone, birthDate);
 
 		Member member = Mockito.mock(Member.class);
+		Mockito.when(member.getId()).thenReturn(1L);
+		Mockito.when(member.getAccount()).thenReturn("account");
+		Mockito.when(member.getName()).thenReturn(name);
+		Mockito.when(member.getPhone()).thenReturn(phone);
+		Mockito.when(member.getBirthDate()).thenReturn(birthDate);
+		Mockito.when(member.getCreatedAt()).thenReturn(Instant.now());
 
 		Mockito.when(memberService.updateMember(password, name, phone, birthDate)).thenReturn(member);
 

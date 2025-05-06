@@ -29,6 +29,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import spring.webmvc.application.service.AccommodationService;
 import spring.webmvc.domain.model.entity.Accommodation;
+import spring.webmvc.domain.model.entity.Product;
 import spring.webmvc.infrastructure.config.WebMvcTestConfig;
 import spring.webmvc.presentation.dto.request.AccommodationCreateRequest;
 import spring.webmvc.presentation.dto.request.AccommodationUpdateRequest;
@@ -76,15 +77,23 @@ class AccommodationControllerTest {
 			checkInTime,
 			checkOutTime
 		);
-		Accommodation accommodation = Accommodation.create(
-			name,
-			description,
-			price,
-			quantity,
-			place,
-			checkInTime,
-			checkOutTime
+		Accommodation accommodation = Mockito.spy(
+			Accommodation.create(
+				name,
+				description,
+				price,
+				quantity,
+				place,
+				checkInTime,
+				checkOutTime
+			)
 		);
+		Product product = Mockito.spy(accommodation.getProduct());
+
+		Mockito.when(accommodation.getId()).thenReturn(1L);
+		Mockito.when(accommodation.getProduct()).thenReturn(product);
+		Mockito.when(product.getId()).thenReturn(1L);
+		Mockito.when(product.getCreatedAt()).thenReturn(Instant.now());
 		Mockito.when(
 			accommodationService.createAccommodation(
 				name,
@@ -157,15 +166,23 @@ class AccommodationControllerTest {
 			checkInTime,
 			checkOutTime
 		);
-		Accommodation accommodation = Accommodation.create(
-			name,
-			description,
-			price,
-			quantity,
-			place,
-			checkInTime,
-			checkOutTime
+		Accommodation accommodation = Mockito.spy(
+			Accommodation.create(
+				name,
+				description,
+				price,
+				quantity,
+				place,
+				checkInTime,
+				checkOutTime
+			)
 		);
+		Product product = Mockito.spy(accommodation.getProduct());
+
+		Mockito.when(accommodation.getId()).thenReturn(1L);
+		Mockito.when(accommodation.getProduct()).thenReturn(product);
+		Mockito.when(product.getId()).thenReturn(1L);
+		Mockito.when(product.getCreatedAt()).thenReturn(Instant.now());
 		Mockito.when(
 			accommodationService.updateAccommodation(
 				accommodationId,
