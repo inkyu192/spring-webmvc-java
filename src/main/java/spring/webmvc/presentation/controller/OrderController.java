@@ -1,10 +1,7 @@
 package spring.webmvc.presentation.controller;
 
-import java.util.List;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.util.Pair;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
+import spring.webmvc.application.dto.command.OrderCreateCommand;
 import spring.webmvc.application.service.OrderService;
 import spring.webmvc.domain.model.enums.OrderStatus;
 import spring.webmvc.infrastructure.aspect.RequestLock;
@@ -38,11 +36,8 @@ public class OrderController {
 	@RequestLock
 	@ResponseStatus(HttpStatus.CREATED)
 	public OrderResponse createOrder(@RequestBody @Validated OrderCreateRequest orderCreateRequest) {
-		List<Pair<Long, Integer>> productQuantities = orderCreateRequest.products().stream()
-			.map(it -> Pair.of(it.productId(), it.quantity()))
-			.toList();
-
-		return new OrderResponse(orderService.createOrder(productQuantities));
+		OrderCreateCommand orderCreateCommand = new OrderCreateCommand(orderCreateRequest);
+		return new OrderResponse(orderService.createOrder(orderCreateCommand));
 	}
 
 	@GetMapping

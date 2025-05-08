@@ -13,7 +13,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.util.Pair;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
@@ -29,6 +28,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import spring.webmvc.application.dto.command.OrderCreateCommand;
+import spring.webmvc.application.dto.command.OrderProductCreateCommand;
 import spring.webmvc.application.service.OrderService;
 import spring.webmvc.domain.model.entity.Order;
 import spring.webmvc.domain.model.entity.OrderProduct;
@@ -61,7 +62,8 @@ class OrderControllerTest {
 		Long productId = 1L;
 		int quantity = 3;
 
-		List<Pair<Long, Integer>> productQuantities = List.of(Pair.of(productId, quantity));
+		OrderProductCreateCommand orderProductCreateCommand = new OrderProductCreateCommand(productId, quantity);
+		OrderCreateCommand orderCreateCommand = new OrderCreateCommand(List.of(orderProductCreateCommand));
 
 		Order order = Mockito.mock(Order.class);
 		Product product = Mockito.mock(Product.class);
@@ -75,7 +77,7 @@ class OrderControllerTest {
 		Mockito.when(orderProduct.getOrderPrice()).thenReturn(5000);
 		Mockito.when(orderProduct.getProduct()).thenReturn(product);
 		Mockito.when(order.getOrderProducts()).thenReturn(List.of(orderProduct));
-		Mockito.when(orderService.createOrder(productQuantities)).thenReturn(order);
+		Mockito.when(orderService.createOrder(orderCreateCommand)).thenReturn(order);
 
 		mockMvc.perform(
 				RestDocumentationRequestBuilders.post("/orders")

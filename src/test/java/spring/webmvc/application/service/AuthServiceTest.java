@@ -10,12 +10,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.util.Pair;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
+import spring.webmvc.application.dto.result.TokenResult;
 import spring.webmvc.domain.cache.TokenCache;
 import spring.webmvc.domain.model.entity.Member;
 import spring.webmvc.domain.repository.MemberRepository;
@@ -86,12 +86,12 @@ class AuthServiceTest {
 		Mockito.when(jwtProvider.createRefreshToken()).thenReturn(refreshToken);
 
 		// When
-		Pair<String, String> result = authService.login(account, password);
+		TokenResult result = authService.login(account, password);
 
 		// Then
 		Mockito.verify(tokenCache, Mockito.times(1)).set(Mockito.any(), Mockito.any());
-		Assertions.assertThat(result.getFirst()).isEqualTo(accessToken);
-		Assertions.assertThat(result.getSecond()).isEqualTo(refreshToken);
+		Assertions.assertThat(result.accessToken()).isEqualTo(accessToken);
+		Assertions.assertThat(result.refreshToken()).isEqualTo(refreshToken);
 	}
 
 	@Test
@@ -165,10 +165,10 @@ class AuthServiceTest {
 		Mockito.when(jwtProvider.createAccessToken(Mockito.any(), Mockito.any())).thenReturn(newAccessToken);
 
 		// When
-		Pair<String, String> result = authService.refreshToken(accessToken, refreshToken);
+		TokenResult result = authService.refreshToken(accessToken, refreshToken);
 
 		// Then
-		Assertions.assertThat(result.getFirst()).isNotEqualTo(accessToken);
-		Assertions.assertThat(result.getSecond()).isEqualTo(refreshToken);
+		Assertions.assertThat(result.accessToken()).isNotEqualTo(accessToken);
+		Assertions.assertThat(result.refreshToken()).isEqualTo(refreshToken);
 	}
 }
