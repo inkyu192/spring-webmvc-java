@@ -6,7 +6,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.util.Pair;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
@@ -20,6 +19,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import spring.webmvc.application.dto.result.TokenResult;
 import spring.webmvc.application.service.AuthService;
 import spring.webmvc.infrastructure.config.WebMvcTestConfig;
 
@@ -50,9 +50,9 @@ class AuthControllerTest {
 		String account = "test@gmail.com";
 		String password = "password";
 
-		Pair<String, String> pair = Pair.of(accessToken, refreshToken);
+		TokenResult tokenResult = new TokenResult(accessToken, refreshToken);
 
-		Mockito.when(authService.login(account, password)).thenReturn(pair);
+		Mockito.when(authService.login(account, password)).thenReturn(tokenResult);
 
 		mockMvc.perform(
 				RestDocumentationRequestBuilders.post("/auth/login")
@@ -84,10 +84,9 @@ class AuthControllerTest {
 		String accessToken = "accessToken";
 		String refreshToken = "refreshToken";
 
-		Pair<String, String> pair = Pair.of(accessToken, refreshToken);
+		TokenResult tokenResult = new TokenResult(accessToken, refreshToken);
 
-		Mockito.when(authService.refreshToken(accessToken, refreshToken))
-			.thenReturn(pair);
+		Mockito.when(authService.refreshToken(accessToken, refreshToken)).thenReturn(tokenResult);
 
 		mockMvc.perform(
 				RestDocumentationRequestBuilders.post("/auth/token/refresh")

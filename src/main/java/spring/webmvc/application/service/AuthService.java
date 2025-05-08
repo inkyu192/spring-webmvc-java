@@ -3,7 +3,6 @@ package spring.webmvc.application.service;
 import java.util.List;
 import java.util.stream.Stream;
 
-import org.springframework.data.util.Pair;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -12,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
+import spring.webmvc.application.dto.result.TokenResult;
 import spring.webmvc.domain.cache.TokenCache;
 import spring.webmvc.domain.model.entity.Member;
 import spring.webmvc.domain.model.entity.MemberPermission;
@@ -32,7 +32,7 @@ public class AuthService {
 	private final PasswordEncoder passwordEncoder;
 
 	@Transactional
-	public Pair<String, String> login(String account, String password) {
+	public TokenResult login(String account, String password) {
 		Member member = memberRepository.findByAccount(account)
 			.filter(it -> passwordEncoder.matches(password, it.getPassword()))
 			.orElseThrow(() -> new BadCredentialsException("잘못된 아이디 또는 비밀번호입니다."));
@@ -42,10 +42,10 @@ public class AuthService {
 
 		tokenCache.set(member.getId(), refreshToken);
 
-		return Pair.of(accessToken, refreshToken);
+		return new TokenResult(accessToken, refreshToken);
 	}
 
-	public Pair<String, String> refreshToken(String accessToken, String refreshToken) {
+	public TokenResult refreshToken(String accessToken, String refreshToken) {
 		Long memberId = extractMemberId(accessToken);
 		jwtProvider.validateRefreshToken(refreshToken);
 
@@ -56,7 +56,7 @@ public class AuthService {
 			.filter(refreshToken::equals)
 			.orElseThrow(() -> new BadCredentialsException("유효하지 않은 인증 정보입니다. 다시 로그인해 주세요."));
 
-		return Pair.of(jwtProvider.createAccessToken(member.getId(), getPermissions(member)), refreshToken);
+		return new TokenResult(jwtProvider.createAccessToken(member.getId(), getPermissions(member)), refreshToken);
 	}
 
 	private Long extractMemberId(String accessToken) {
