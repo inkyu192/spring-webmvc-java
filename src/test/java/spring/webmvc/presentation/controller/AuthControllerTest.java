@@ -50,12 +50,6 @@ class AuthControllerTest {
 		String account = "test@gmail.com";
 		String password = "password";
 
-		String request = """
-			{
-			  "account": "%s",
-			  "password": "%s"
-			}
-			""".formatted(account, password);
 		Pair<String, String> pair = Pair.of(accessToken, refreshToken);
 
 		Mockito.when(authService.login(account, password)).thenReturn(pair);
@@ -63,7 +57,12 @@ class AuthControllerTest {
 		mockMvc.perform(
 				RestDocumentationRequestBuilders.post("/auth/login")
 					.contentType(MediaType.APPLICATION_JSON)
-					.content(request)
+					.content("""
+						{
+						  "account": "%s",
+						  "password": "%s"
+						}
+						""".formatted(account, password))
 			)
 			.andExpect(MockMvcResultMatchers.status().isOk())
 			.andDo(
@@ -85,12 +84,6 @@ class AuthControllerTest {
 		String accessToken = "accessToken";
 		String refreshToken = "refreshToken";
 
-		String request = """
-			{
-			  "accessToken": "%s",
-			  "refreshToken": "%s"
-			}
-			""".formatted(accessToken, refreshToken);
 		Pair<String, String> pair = Pair.of(accessToken, refreshToken);
 
 		Mockito.when(authService.refreshToken(accessToken, refreshToken))
@@ -99,7 +92,12 @@ class AuthControllerTest {
 		mockMvc.perform(
 				RestDocumentationRequestBuilders.post("/auth/token/refresh")
 					.contentType(MediaType.APPLICATION_JSON)
-					.content(request)
+					.content("""
+						{
+						  "accessToken": "%s",
+						  "refreshToken": "%s"
+						}
+						""".formatted(accessToken, refreshToken))
 			)
 			.andExpect(MockMvcResultMatchers.status().isOk())
 			.andDo(
