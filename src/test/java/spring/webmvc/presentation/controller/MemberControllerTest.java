@@ -58,26 +58,6 @@ class MemberControllerTest {
 		List<Long> roleIds = List.of();
 		List<Long> permissionIds = List.of(1L);
 
-		String request = """
-			{
-			  "account": "%s",
-			  "password": "%s",
-			  "name": "%s",
-			  "phone": "%s",
-			  "birthDate": "%s",
-			  "roleIds": %s,
-			  "permissionIds": %s
-			}
-			""".formatted(
-			account,
-			password,
-			name,
-			phone,
-			birthDate.toString(),
-			roleIds.toString(),
-			permissionIds.toString()
-		);
-
 		Member member = Mockito.mock(Member.class);
 		Mockito.when(member.getId()).thenReturn(1L);
 		Mockito.when(member.getAccount()).thenReturn(account);
@@ -92,7 +72,25 @@ class MemberControllerTest {
 		mockMvc.perform(
 				RestDocumentationRequestBuilders.post("/members")
 					.contentType(MediaType.APPLICATION_JSON)
-					.content(request)
+					.content("""
+						{
+						  "account": "%s",
+						  "password": "%s",
+						  "name": "%s",
+						  "phone": "%s",
+						  "birthDate": "%s",
+						  "roleIds": %s,
+						  "permissionIds": %s
+						}
+						""".formatted(
+						account,
+						password,
+						name,
+						phone,
+						birthDate.toString(),
+						roleIds.toString(),
+						permissionIds.toString()
+					))
 			)
 			.andExpect(MockMvcResultMatchers.status().isCreated())
 			.andDo(
@@ -159,20 +157,6 @@ class MemberControllerTest {
 		String phone = "010-1234-1234";
 		LocalDate birthDate = LocalDate.now();
 
-		String request = """
-			{
-			  "password": "%s",
-			  "name": "%s",
-			  "phone": "%s",
-			  "birthDate": "%s"
-			}
-			""".formatted(
-			password,
-			name,
-			phone,
-			birthDate.toString()
-		);
-
 		Member member = Mockito.mock(Member.class);
 		Mockito.when(member.getId()).thenReturn(1L);
 		Mockito.when(member.getAccount()).thenReturn("account");
@@ -187,7 +171,19 @@ class MemberControllerTest {
 				RestDocumentationRequestBuilders.patch("/members")
 					.contentType(MediaType.APPLICATION_JSON)
 					.header("Authorization", "Bearer accessToken")
-					.content(request)
+					.content("""
+						{
+						  "password": "%s",
+						  "name": "%s",
+						  "phone": "%s",
+						  "birthDate": "%s"
+						}
+						""".formatted(
+						password,
+						name,
+						phone,
+						birthDate.toString()
+					))
 			)
 			.andExpect(MockMvcResultMatchers.status().isOk())
 			.andDo(

@@ -63,32 +63,6 @@ class FlightControllerTest {
 		Instant departureTime = Instant.now();
 		Instant arrivalTime = Instant.now().plus(1, ChronoUnit.HOURS);
 
-		String request = """
-			{
-			  "name": "%s",
-			  "description": "%s",
-			  "price": %d,
-			  "quantity": %d,
-			  "airline": "%s",
-			  "flightNumber": "%s",
-			  "departureAirport": "%s",
-			  "arrivalAirport": "%s",
-			  "departureTime": "%s",
-			  "arrivalTime": "%s"
-			}
-			""".formatted(
-			name,
-			description,
-			price,
-			quantity,
-			airline,
-			flightNumber,
-			departureAirport,
-			arrivalAirport,
-			departureTime.toString(),
-			arrivalTime.toString()
-		);
-
 		Flight flight = Mockito.spy(
 			Flight.create(
 				name,
@@ -128,7 +102,31 @@ class FlightControllerTest {
 		mockMvc.perform(
 				RestDocumentationRequestBuilders.post("/products/flights")
 					.contentType(MediaType.APPLICATION_JSON)
-					.content(request)
+					.content("""
+						{
+						  "name": "%s",
+						  "description": "%s",
+						  "price": %d,
+						  "quantity": %d,
+						  "airline": "%s",
+						  "flightNumber": "%s",
+						  "departureAirport": "%s",
+						  "arrivalAirport": "%s",
+						  "departureTime": "%s",
+						  "arrivalTime": "%s"
+						}
+						""".formatted(
+						name,
+						description,
+						price,
+						quantity,
+						airline,
+						flightNumber,
+						departureAirport,
+						arrivalAirport,
+						departureTime.toString(),
+						arrivalTime.toString()
+					))
 					.header("Authorization", "Bearer access-token")
 			)
 			.andExpect(MockMvcResultMatchers.status().isCreated())
@@ -184,31 +182,6 @@ class FlightControllerTest {
 		Instant departureTime = Instant.now();
 		Instant arrivalTime = Instant.now().plus(1, ChronoUnit.HOURS);
 
-		String request = """
-			{
-			  "name": "%s",
-			  "description": "%s",
-			  "price": %d,
-			  "quantity": %d,
-			  "airline": "%s",
-			  "flightNumber": "%s",
-			  "departureAirport": "%s",
-			  "arrivalAirport": "%s",
-			  "departureTime": "%s",
-			  "arrivalTime": "%s"
-			}
-			""".formatted(
-			name,
-			description,
-			price,
-			quantity,
-			airline,
-			flightNumber,
-			departureAirport,
-			arrivalAirport,
-			departureTime.toString(),
-			arrivalTime.toString()
-		);
 		Flight flight = Mockito.spy(
 			Flight.create(
 				name,
@@ -250,7 +223,31 @@ class FlightControllerTest {
 				RestDocumentationRequestBuilders.patch("/products/flights/{id}", flightId)
 					.contentType(MediaType.APPLICATION_JSON)
 					.header("Authorization", "Bearer access-token")
-					.content(request)
+					.content("""
+						{
+						  "name": "%s",
+						  "description": "%s",
+						  "price": %d,
+						  "quantity": %d,
+						  "airline": "%s",
+						  "flightNumber": "%s",
+						  "departureAirport": "%s",
+						  "arrivalAirport": "%s",
+						  "departureTime": "%s",
+						  "arrivalTime": "%s"
+						}
+						""".formatted(
+						name,
+						description,
+						price,
+						quantity,
+						airline,
+						flightNumber,
+						departureAirport,
+						arrivalAirport,
+						departureTime.toString(),
+						arrivalTime.toString()
+					))
 			)
 			.andExpect(MockMvcResultMatchers.status().isOk())
 			.andDo(

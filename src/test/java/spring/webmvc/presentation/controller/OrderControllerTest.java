@@ -61,17 +61,7 @@ class OrderControllerTest {
 		Long productId = 1L;
 		int quantity = 3;
 
-		String request = """
-			{
-			  "products": [
-			    {
-			      "productId": %d,
-			      "quantity": %d
-			    }
-			  ]
-			}
-			""".formatted(productId, quantity);
-		List<Pair<Long, Integer>> productQuantities = List.of(Pair.of(1L, 3));
+		List<Pair<Long, Integer>> productQuantities = List.of(Pair.of(productId, quantity));
 
 		Order order = Mockito.mock(Order.class);
 		Product product = Mockito.mock(Product.class);
@@ -91,7 +81,16 @@ class OrderControllerTest {
 				RestDocumentationRequestBuilders.post("/orders")
 					.contentType(MediaType.APPLICATION_JSON)
 					.header("Authorization", "Bearer access-token")
-					.content(request)
+					.content("""
+						{
+						  "products": [
+							{
+							  "productId": %d,
+							  "quantity": %d
+							}
+						  ]
+						}
+						""".formatted(productId, quantity))
 			)
 			.andExpect(MockMvcResultMatchers.status().isCreated())
 			.andDo(

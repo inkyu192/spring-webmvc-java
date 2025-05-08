@@ -60,27 +60,6 @@ class TicketControllerTest {
 		String duration = "duration";
 		String ageLimit = "ageLimit";
 
-		String request = """
-			{
-			  "name": "%s",
-			  "description": "%s",
-			  "price": %d,
-			  "quantity": %d,
-			  "place": "%s",
-			  "performanceTime": "%s",
-			  "duration": "%s",
-			  "ageLimit": "%s"
-			}
-			""".formatted(
-			name,
-			description,
-			price,
-			quantity,
-			place,
-			performanceTime.toString(),
-			duration,
-			ageLimit
-		);
 		Ticket ticket = Mockito.spy(
 			Ticket.create(
 				name,
@@ -116,7 +95,27 @@ class TicketControllerTest {
 		mockMvc.perform(
 				RestDocumentationRequestBuilders.post("/products/tickets")
 					.contentType(MediaType.APPLICATION_JSON)
-					.content(request)
+					.content("""
+						{
+						  "name": "%s",
+						  "description": "%s",
+						  "price": %d,
+						  "quantity": %d,
+						  "place": "%s",
+						  "performanceTime": "%s",
+						  "duration": "%s",
+						  "ageLimit": "%s"
+						}
+						""".formatted(
+						name,
+						description,
+						price,
+						quantity,
+						place,
+						performanceTime.toString(),
+						duration,
+						ageLimit
+					))
 					.header("Authorization", "Bearer access-token")
 			)
 			.andExpect(MockMvcResultMatchers.status().isCreated())
@@ -166,27 +165,6 @@ class TicketControllerTest {
 		String duration = "duration";
 		String ageLimit = "ageLimit";
 
-		String request = """
-			{
-			  "name": "%s",
-			  "description": "%s",
-			  "price": %d,
-			  "quantity": %d,
-			  "place": "%s",
-			  "performanceTime": "%s",
-			  "duration": "%s",
-			  "ageLimit": "%s"
-			}
-			""".formatted(
-			name,
-			description,
-			price,
-			quantity,
-			place,
-			performanceTime.toString(),
-			duration,
-			ageLimit
-		);
 		Ticket ticket = Mockito.spy(
 			Ticket.create(
 				name,
@@ -224,7 +202,27 @@ class TicketControllerTest {
 				RestDocumentationRequestBuilders.patch("/products/tickets/{id}", ticketId)
 					.contentType(MediaType.APPLICATION_JSON)
 					.header("Authorization", "Bearer access-token")
-					.content(request)
+					.content("""
+						{
+						  "name": "%s",
+						  "description": "%s",
+						  "price": %d,
+						  "quantity": %d,
+						  "place": "%s",
+						  "performanceTime": "%s",
+						  "duration": "%s",
+						  "ageLimit": "%s"
+						}
+						""".formatted(
+						name,
+						description,
+						price,
+						quantity,
+						place,
+						performanceTime.toString(),
+						duration,
+						ageLimit
+					))
 			)
 			.andExpect(MockMvcResultMatchers.status().isOk())
 			.andDo(

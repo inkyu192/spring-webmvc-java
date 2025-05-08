@@ -60,25 +60,6 @@ class AccommodationControllerTest {
 		Instant checkInTime = Instant.now();
 		Instant checkOutTime = Instant.now().plus(1, ChronoUnit.DAYS);
 
-		String request = """
-			{
-			  "name": "%s",
-			  "description": "%s",
-			  "price": %d,
-			  "quantity": %d,
-			  "place": "%s",
-			  "checkInTime": "%s",
-			  "checkOutTime": "%s"
-			}
-			""".formatted(
-			name,
-			description,
-			price,
-			quantity,
-			place,
-			checkInTime.toString(),
-			checkOutTime.toString()
-		);
 		Accommodation accommodation = Mockito.spy(
 			Accommodation.create(
 				name,
@@ -112,7 +93,25 @@ class AccommodationControllerTest {
 		mockMvc.perform(
 				RestDocumentationRequestBuilders.post("/products/accommodations")
 					.contentType(MediaType.APPLICATION_JSON)
-					.content(request)
+					.content("""
+						{
+						  "name": "%s",
+						  "description": "%s",
+						  "price": %d,
+						  "quantity": %d,
+						  "place": "%s",
+						  "checkInTime": "%s",
+						  "checkOutTime": "%s"
+						}
+						""".formatted(
+						name,
+						description,
+						price,
+						quantity,
+						place,
+						checkInTime.toString(),
+						checkOutTime.toString()
+					))
 					.header("Authorization", "Bearer access-token")
 			)
 			.andExpect(MockMvcResultMatchers.status().isCreated())
@@ -159,25 +158,6 @@ class AccommodationControllerTest {
 		Instant checkInTime = Instant.now();
 		Instant checkOutTime = Instant.now().plus(1, ChronoUnit.DAYS);
 
-		String request = """
-			{
-			  "name": "%s",
-			  "description": "%s",
-			  "price": %d,
-			  "quantity": %d,
-			  "place": "%s",
-			  "checkInTime": "%s",
-			  "checkOutTime": "%s"
-			}
-			""".formatted(
-			name,
-			description,
-			price,
-			quantity,
-			place,
-			checkInTime.toString(),
-			checkOutTime.toString()
-		);
 		Accommodation accommodation = Mockito.spy(
 			Accommodation.create(
 				name,
@@ -213,7 +193,25 @@ class AccommodationControllerTest {
 				RestDocumentationRequestBuilders.patch("/products/accommodations/{id}", accommodationId)
 					.contentType(MediaType.APPLICATION_JSON)
 					.header("Authorization", "Bearer access-token")
-					.content(request)
+					.content("""
+						{
+						  "name": "%s",
+						  "description": "%s",
+						  "price": %d,
+						  "quantity": %d,
+						  "place": "%s",
+						  "checkInTime": "%s",
+						  "checkOutTime": "%s"
+						}
+						""".formatted(
+						name,
+						description,
+						price,
+						quantity,
+						place,
+						checkInTime.toString(),
+						checkOutTime.toString()
+					))
 			)
 			.andExpect(MockMvcResultMatchers.status().isOk())
 			.andDo(
