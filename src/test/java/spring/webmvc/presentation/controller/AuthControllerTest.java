@@ -4,7 +4,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.util.Pair;
@@ -21,21 +20,13 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import spring.webmvc.application.service.AuthService;
 import spring.webmvc.infrastructure.config.WebMvcTestConfig;
-import spring.webmvc.presentation.dto.request.MemberLoginRequest;
-import spring.webmvc.presentation.dto.request.TokenRequest;
-import spring.webmvc.presentation.dto.response.TokenResponse;
 
 @WebMvcTest(AuthController.class)
 @Import(WebMvcTestConfig.class)
 @ExtendWith(RestDocumentationExtension.class)
 class AuthControllerTest {
-
-	@Autowired
-	private ObjectMapper objectMapper;
 
 	@MockitoBean
 	private AuthService authService;
@@ -59,7 +50,12 @@ class AuthControllerTest {
 		String account = "test@gmail.com";
 		String password = "password";
 
-		MemberLoginRequest request = new MemberLoginRequest(account, password);
+		String request = """
+			{
+			  "account": "%s",
+			  "password": "%s"
+			}
+			""".formatted(account, password);
 		Pair<String, String> pair = Pair.of(accessToken, refreshToken);
 
 		Mockito.when(authService.login(account, password)).thenReturn(pair);
@@ -67,7 +63,7 @@ class AuthControllerTest {
 		mockMvc.perform(
 				RestDocumentationRequestBuilders.post("/auth/login")
 					.contentType(MediaType.APPLICATION_JSON)
-					.content(objectMapper.writeValueAsString(request))
+					.content(request)
 			)
 			.andExpect(MockMvcResultMatchers.status().isOk())
 			.andDo(
@@ -89,7 +85,12 @@ class AuthControllerTest {
 		String accessToken = "accessToken";
 		String refreshToken = "refreshToken";
 
-		TokenRequest request = new TokenRequest(accessToken, refreshToken);
+		String request = """
+			{
+			  "accessToken": "%s",
+			  "refreshToken": "%s"
+			}
+			""".formatted(accessToken, refreshToken);
 		Pair<String, String> pair = Pair.of(accessToken, refreshToken);
 
 		Mockito.when(authService.refreshToken(accessToken, refreshToken))
@@ -98,7 +99,7 @@ class AuthControllerTest {
 		mockMvc.perform(
 				RestDocumentationRequestBuilders.post("/auth/token/refresh")
 					.contentType(MediaType.APPLICATION_JSON)
-					.content(objectMapper.writeValueAsString(request))
+					.content(request)
 			)
 			.andExpect(MockMvcResultMatchers.status().isOk())
 			.andDo(

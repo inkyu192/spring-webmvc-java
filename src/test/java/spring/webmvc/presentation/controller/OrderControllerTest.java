@@ -7,7 +7,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
@@ -30,24 +29,17 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import spring.webmvc.application.service.OrderService;
 import spring.webmvc.domain.model.entity.Order;
 import spring.webmvc.domain.model.entity.OrderProduct;
 import spring.webmvc.domain.model.entity.Product;
 import spring.webmvc.domain.model.enums.OrderStatus;
 import spring.webmvc.infrastructure.config.WebMvcTestConfig;
-import spring.webmvc.presentation.dto.request.OrderCreateRequest;
-import spring.webmvc.presentation.dto.request.OrderProductCreateRequest;
 
 @WebMvcTest(OrderController.class)
 @Import(WebMvcTestConfig.class)
 @ExtendWith(RestDocumentationExtension.class)
 class OrderControllerTest {
-
-	@Autowired
-	private ObjectMapper objectMapper;
 
 	@MockitoBean
 	private OrderService orderService;
@@ -66,9 +58,19 @@ class OrderControllerTest {
 
 	@Test
 	void createOrder() throws Exception {
-		OrderCreateRequest request = new OrderCreateRequest(
-			List.of(new OrderProductCreateRequest(1L, 3))
-		);
+		Long productId = 1L;
+		int quantity = 3;
+
+		String request = """
+			{
+			  "products": [
+			    {
+			      "productId": %d,
+			      "quantity": %d
+			    }
+			  ]
+			}
+			""".formatted(productId, quantity);
 		List<Pair<Long, Integer>> productQuantities = List.of(Pair.of(1L, 3));
 
 		Order order = Mockito.mock(Order.class);
@@ -89,7 +91,7 @@ class OrderControllerTest {
 				RestDocumentationRequestBuilders.post("/orders")
 					.contentType(MediaType.APPLICATION_JSON)
 					.header("Authorization", "Bearer access-token")
-					.content(objectMapper.writeValueAsString(request))
+					.content(request)
 			)
 			.andExpect(MockMvcResultMatchers.status().isCreated())
 			.andDo(

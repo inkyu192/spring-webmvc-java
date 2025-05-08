@@ -6,7 +6,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
@@ -24,22 +23,15 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import spring.webmvc.application.service.TicketService;
 import spring.webmvc.domain.model.entity.Product;
 import spring.webmvc.domain.model.entity.Ticket;
 import spring.webmvc.infrastructure.config.WebMvcTestConfig;
-import spring.webmvc.presentation.dto.request.TicketCreateRequest;
-import spring.webmvc.presentation.dto.request.TicketUpdateRequest;
 
 @WebMvcTest(TicketController.class)
 @Import(WebMvcTestConfig.class)
 @ExtendWith(RestDocumentationExtension.class)
 class TicketControllerTest {
-
-	@Autowired
-	private ObjectMapper objectMapper;
 
 	@MockitoBean
 	private TicketService ticketService;
@@ -68,13 +60,24 @@ class TicketControllerTest {
 		String duration = "duration";
 		String ageLimit = "ageLimit";
 
-		TicketCreateRequest request = new TicketCreateRequest(
+		String request = """
+			{
+			  "name": "%s",
+			  "description": "%s",
+			  "price": %d,
+			  "quantity": %d,
+			  "place": "%s",
+			  "performanceTime": "%s",
+			  "duration": "%s",
+			  "ageLimit": "%s"
+			}
+			""".formatted(
 			name,
 			description,
 			price,
 			quantity,
 			place,
-			performanceTime,
+			performanceTime.toString(),
 			duration,
 			ageLimit
 		);
@@ -113,7 +116,7 @@ class TicketControllerTest {
 		mockMvc.perform(
 				RestDocumentationRequestBuilders.post("/products/tickets")
 					.contentType(MediaType.APPLICATION_JSON)
-					.content(objectMapper.writeValueAsString(request))
+					.content(request)
 					.header("Authorization", "Bearer access-token")
 			)
 			.andExpect(MockMvcResultMatchers.status().isCreated())
@@ -163,13 +166,24 @@ class TicketControllerTest {
 		String duration = "duration";
 		String ageLimit = "ageLimit";
 
-		TicketUpdateRequest request = new TicketUpdateRequest(
+		String request = """
+			{
+			  "name": "%s",
+			  "description": "%s",
+			  "price": %d,
+			  "quantity": %d,
+			  "place": "%s",
+			  "performanceTime": "%s",
+			  "duration": "%s",
+			  "ageLimit": "%s"
+			}
+			""".formatted(
 			name,
 			description,
 			price,
 			quantity,
 			place,
-			performanceTime,
+			performanceTime.toString(),
 			duration,
 			ageLimit
 		);
@@ -210,7 +224,7 @@ class TicketControllerTest {
 				RestDocumentationRequestBuilders.patch("/products/tickets/{id}", ticketId)
 					.contentType(MediaType.APPLICATION_JSON)
 					.header("Authorization", "Bearer access-token")
-					.content(objectMapper.writeValueAsString(request))
+					.content(request)
 			)
 			.andExpect(MockMvcResultMatchers.status().isOk())
 			.andDo(
