@@ -7,7 +7,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
@@ -25,22 +24,15 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import spring.webmvc.application.service.FlightService;
 import spring.webmvc.domain.model.entity.Flight;
 import spring.webmvc.domain.model.entity.Product;
 import spring.webmvc.infrastructure.config.WebMvcTestConfig;
-import spring.webmvc.presentation.dto.request.FlightCreateRequest;
-import spring.webmvc.presentation.dto.request.FlightUpdateRequest;
 
 @WebMvcTest(FlightController.class)
 @Import(WebMvcTestConfig.class)
 @ExtendWith(RestDocumentationExtension.class)
 class FlightControllerTest {
-
-	@Autowired
-	private ObjectMapper objectMapper;
 
 	@MockitoBean
 	private FlightService flightService;
@@ -71,7 +63,20 @@ class FlightControllerTest {
 		Instant departureTime = Instant.now();
 		Instant arrivalTime = Instant.now().plus(1, ChronoUnit.HOURS);
 
-		FlightCreateRequest request = new FlightCreateRequest(
+		String request = """
+			{
+			  "name": "%s",
+			  "description": "%s",
+			  "price": %d,
+			  "quantity": %d,
+			  "airline": "%s",
+			  "flightNumber": "%s",
+			  "departureAirport": "%s",
+			  "arrivalAirport": "%s",
+			  "departureTime": "%s",
+			  "arrivalTime": "%s"
+			}
+			""".formatted(
 			name,
 			description,
 			price,
@@ -80,8 +85,8 @@ class FlightControllerTest {
 			flightNumber,
 			departureAirport,
 			arrivalAirport,
-			departureTime,
-			arrivalTime
+			departureTime.toString(),
+			arrivalTime.toString()
 		);
 
 		Flight flight = Mockito.spy(
@@ -123,7 +128,7 @@ class FlightControllerTest {
 		mockMvc.perform(
 				RestDocumentationRequestBuilders.post("/products/flights")
 					.contentType(MediaType.APPLICATION_JSON)
-					.content(objectMapper.writeValueAsString(request))
+					.content(request)
 					.header("Authorization", "Bearer access-token")
 			)
 			.andExpect(MockMvcResultMatchers.status().isCreated())
@@ -179,7 +184,20 @@ class FlightControllerTest {
 		Instant departureTime = Instant.now();
 		Instant arrivalTime = Instant.now().plus(1, ChronoUnit.HOURS);
 
-		FlightUpdateRequest request = new FlightUpdateRequest(
+		String request = """
+			{
+			  "name": "%s",
+			  "description": "%s",
+			  "price": %d,
+			  "quantity": %d,
+			  "airline": "%s",
+			  "flightNumber": "%s",
+			  "departureAirport": "%s",
+			  "arrivalAirport": "%s",
+			  "departureTime": "%s",
+			  "arrivalTime": "%s"
+			}
+			""".formatted(
 			name,
 			description,
 			price,
@@ -188,8 +206,8 @@ class FlightControllerTest {
 			flightNumber,
 			departureAirport,
 			arrivalAirport,
-			departureTime,
-			arrivalTime
+			departureTime.toString(),
+			arrivalTime.toString()
 		);
 		Flight flight = Mockito.spy(
 			Flight.create(
@@ -232,7 +250,7 @@ class FlightControllerTest {
 				RestDocumentationRequestBuilders.patch("/products/flights/{id}", flightId)
 					.contentType(MediaType.APPLICATION_JSON)
 					.header("Authorization", "Bearer access-token")
-					.content(objectMapper.writeValueAsString(request))
+					.content(request)
 			)
 			.andExpect(MockMvcResultMatchers.status().isOk())
 			.andDo(

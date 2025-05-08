@@ -7,7 +7,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
@@ -25,22 +24,15 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import spring.webmvc.application.service.AccommodationService;
 import spring.webmvc.domain.model.entity.Accommodation;
 import spring.webmvc.domain.model.entity.Product;
 import spring.webmvc.infrastructure.config.WebMvcTestConfig;
-import spring.webmvc.presentation.dto.request.AccommodationCreateRequest;
-import spring.webmvc.presentation.dto.request.AccommodationUpdateRequest;
 
 @WebMvcTest(AccommodationController.class)
 @Import(WebMvcTestConfig.class)
 @ExtendWith(RestDocumentationExtension.class)
 class AccommodationControllerTest {
-
-	@Autowired
-	private ObjectMapper objectMapper;
 
 	@MockitoBean
 	private AccommodationService accommodationService;
@@ -68,14 +60,24 @@ class AccommodationControllerTest {
 		Instant checkInTime = Instant.now();
 		Instant checkOutTime = Instant.now().plus(1, ChronoUnit.DAYS);
 
-		AccommodationCreateRequest request = new AccommodationCreateRequest(
+		String request = """
+			{
+			  "name": "%s",
+			  "description": "%s",
+			  "price": %d,
+			  "quantity": %d,
+			  "place": "%s",
+			  "checkInTime": "%s",
+			  "checkOutTime": "%s"
+			}
+			""".formatted(
 			name,
 			description,
 			price,
 			quantity,
 			place,
-			checkInTime,
-			checkOutTime
+			checkInTime.toString(),
+			checkOutTime.toString()
 		);
 		Accommodation accommodation = Mockito.spy(
 			Accommodation.create(
@@ -110,7 +112,7 @@ class AccommodationControllerTest {
 		mockMvc.perform(
 				RestDocumentationRequestBuilders.post("/products/accommodations")
 					.contentType(MediaType.APPLICATION_JSON)
-					.content(objectMapper.writeValueAsString(request))
+					.content(request)
 					.header("Authorization", "Bearer access-token")
 			)
 			.andExpect(MockMvcResultMatchers.status().isCreated())
@@ -157,14 +159,24 @@ class AccommodationControllerTest {
 		Instant checkInTime = Instant.now();
 		Instant checkOutTime = Instant.now().plus(1, ChronoUnit.DAYS);
 
-		AccommodationUpdateRequest request = new AccommodationUpdateRequest(
+		String request = """
+			{
+			  "name": "%s",
+			  "description": "%s",
+			  "price": %d,
+			  "quantity": %d,
+			  "place": "%s",
+			  "checkInTime": "%s",
+			  "checkOutTime": "%s"
+			}
+			""".formatted(
 			name,
 			description,
 			price,
 			quantity,
 			place,
-			checkInTime,
-			checkOutTime
+			checkInTime.toString(),
+			checkOutTime.toString()
 		);
 		Accommodation accommodation = Mockito.spy(
 			Accommodation.create(
@@ -201,7 +213,7 @@ class AccommodationControllerTest {
 				RestDocumentationRequestBuilders.patch("/products/accommodations/{id}", accommodationId)
 					.contentType(MediaType.APPLICATION_JSON)
 					.header("Authorization", "Bearer access-token")
-					.content(objectMapper.writeValueAsString(request))
+					.content(request)
 			)
 			.andExpect(MockMvcResultMatchers.status().isOk())
 			.andDo(
