@@ -1,6 +1,5 @@
 package spring.webmvc.application.service;
 
-import java.time.Instant;
 import java.util.List;
 
 import org.assertj.core.api.Assertions;
@@ -16,6 +15,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import spring.webmvc.application.dto.command.TicketCreateCommand;
 import spring.webmvc.application.dto.result.ProductResult;
 import spring.webmvc.application.dto.result.TicketResult;
 import spring.webmvc.application.strategy.ProductStrategy;
@@ -83,24 +83,44 @@ class ProductServiceTest {
 		// Given
 		Long productId = 1L;
 		Category category = Category.TICKET;
-		TicketResult ticketResult = new TicketResult(
-			productId,
-			"name",
-			"description",
-			1000,
-			10, Instant.now(),
-			1L,
-			"place",
-			Instant.now(),
-			"duration",
-			"ageLimit"
-		);
+
+		TicketResult ticketResult = Mockito.mock(TicketResult.class);
 
 		Mockito.when(productStrategy.supports(category)).thenReturn(true);
 		Mockito.when(productStrategy.findByProductId(productId)).thenReturn(ticketResult);
 
 		// When
 		ProductResult result = productService.findProduct(productId, category);
+
+		// Then
+		Assertions.assertThat(result.getName()).isEqualTo(ticketResult.getName());
+		Assertions.assertThat(result.getDescription()).isEqualTo(ticketResult.getDescription());
+		Assertions.assertThat(result.getPrice()).isEqualTo(ticketResult.getPrice());
+		Assertions.assertThat(result.getQuantity()).isEqualTo(ticketResult.getQuantity());
+		Assertions.assertThat(result).isInstanceOfSatisfying(TicketResult.class, ticket -> {
+			Assertions.assertThat(ticket.getPlace()).isEqualTo(ticketResult.getPlace());
+			Assertions.assertThat(ticket.getPerformanceTime()).isEqualTo(ticketResult.getPerformanceTime());
+			Assertions.assertThat(ticket.getDuration()).isEqualTo(ticketResult.getDuration());
+			Assertions.assertThat(ticket.getAgeLimit()).isEqualTo(ticketResult.getAgeLimit());
+		});
+	}
+
+	@Test
+	@DisplayName("createProduct: Product 저장 후 반환한다")
+	void createProduct() {
+		// Given
+		Category category = Category.TICKET;
+
+		TicketCreateCommand ticketCreateCommand = Mockito.mock(TicketCreateCommand.class);
+		Mockito.when(ticketCreateCommand.getCategory()).thenReturn(category);
+
+		TicketResult ticketResult = Mockito.mock(TicketResult.class);
+
+		Mockito.when(productStrategy.supports(category)).thenReturn(true);
+		Mockito.when(productStrategy.createProduct(ticketCreateCommand)).thenReturn(ticketResult);
+
+		// When
+		ProductResult result = productService.createProduct(ticketCreateCommand);
 
 		// Then
 		Assertions.assertThat(result.getName()).isEqualTo(ticketResult.getName());

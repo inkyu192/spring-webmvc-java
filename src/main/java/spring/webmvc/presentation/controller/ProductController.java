@@ -3,20 +3,33 @@ package spring.webmvc.presentation.controller;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
+import spring.webmvc.application.dto.command.AccommodationCreateCommand;
+import spring.webmvc.application.dto.command.FlightCreateCommand;
+import spring.webmvc.application.dto.command.ProductCreateCommand;
+import spring.webmvc.application.dto.command.TicketCreateCommand;
 import spring.webmvc.application.dto.result.AccommodationResult;
 import spring.webmvc.application.dto.result.FlightResult;
 import spring.webmvc.application.dto.result.ProductResult;
 import spring.webmvc.application.dto.result.TicketResult;
 import spring.webmvc.application.service.ProductService;
 import spring.webmvc.domain.model.enums.Category;
+import spring.webmvc.presentation.dto.request.AccommodationCreateRequest;
+import spring.webmvc.presentation.dto.request.FlightCreateRequest;
+import spring.webmvc.presentation.dto.request.TicketCreateRequest;
+import spring.webmvc.presentation.dto.request.ProductCreateRequest;
 import spring.webmvc.presentation.dto.response.AccommodationResponse;
 import spring.webmvc.presentation.dto.response.FlightResponse;
 import spring.webmvc.presentation.dto.response.ProductResponse;
@@ -42,7 +55,25 @@ public class ProductController {
 	@PreAuthorize("hasAuthority('PRODUCT_READER')")
 	public ProductResponse findProduct(@PathVariable Long id, @RequestParam Category category) {
 		ProductResult productResult = productService.findProduct(id, category);
+		return toProductResponse(productResult);
+	}
 
+	@PostMapping
+	@PreAuthorize("hasAuthority('PRODUCT_WRITER')")
+	@ResponseStatus(HttpStatus.CREATED)
+	public ProductResponse createProduct(@RequestBody @Validated ProductCreateRequest productCreateRequest) {
+		ProductCreateCommand productCreateCommand = switch (productCreateRequest.getCategory()) {
+			case TICKET -> new TicketCreateCommand((TicketCreateRequest)productCreateRequest);
+			case FLIGHT -> new FlightCreateCommand((FlightCreateRequest)productCreateRequest);
+			case ACCOMMODATION -> new AccommodationCreateCommand((AccommodationCreateRequest)productCreateRequest);
+		};
+
+		ProductResult productResult = productService.createProduct(productCreateCommand);
+
+		return toProductResponse(productResult);
+	}
+
+	private ProductResponse toProductResponse(ProductResult productResult) {
 		return switch (productResult.getCategory()) {
 			case TICKET -> new TicketResponse((TicketResult)productResult);
 			case FLIGHT -> new FlightResponse((FlightResult)productResult);

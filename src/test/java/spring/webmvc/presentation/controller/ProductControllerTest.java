@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.headers.HeaderDocumentation;
@@ -28,6 +29,9 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import spring.webmvc.application.dto.command.AccommodationCreateCommand;
+import spring.webmvc.application.dto.command.FlightCreateCommand;
+import spring.webmvc.application.dto.command.TicketCreateCommand;
 import spring.webmvc.application.dto.result.AccommodationResult;
 import spring.webmvc.application.dto.result.FlightResult;
 import spring.webmvc.application.dto.result.ProductResult;
@@ -60,11 +64,35 @@ class ProductControllerTest {
 	void findProducts() throws Exception {
 		Pageable pageable = PageRequest.of(0, 10);
 		String name = "name";
-		List<ProductResult> response = List.of(
-			new ProductResult(1L, Category.ACCOMMODATION, "name1", "description", 1000, 10, Instant.now()),
-			new ProductResult(2L, Category.FLIGHT, "name2", "description", 2000, 20, Instant.now()),
-			new ProductResult(3L, Category.TICKET, "name3", "description", 3000, 30, Instant.now())
-		);
+
+		ProductResult productResult1 = Mockito.mock(ProductResult.class);
+		Mockito.when(productResult1.getId()).thenReturn(1L);
+		Mockito.when(productResult1.getCategory()).thenReturn(Category.ACCOMMODATION);
+		Mockito.when(productResult1.getName()).thenReturn("name1");
+		Mockito.when(productResult1.getDescription()).thenReturn("description1");
+		Mockito.when(productResult1.getPrice()).thenReturn(1000);
+		Mockito.when(productResult1.getQuantity()).thenReturn(10);
+		Mockito.when(productResult1.getCreatedAt()).thenReturn(Instant.now());
+
+		ProductResult productResult2 = Mockito.mock(ProductResult.class);
+		Mockito.when(productResult2.getId()).thenReturn(2L);
+		Mockito.when(productResult2.getCategory()).thenReturn(Category.FLIGHT);
+		Mockito.when(productResult2.getName()).thenReturn("name2");
+		Mockito.when(productResult2.getDescription()).thenReturn("description2");
+		Mockito.when(productResult2.getPrice()).thenReturn(2000);
+		Mockito.when(productResult2.getQuantity()).thenReturn(20);
+		Mockito.when(productResult2.getCreatedAt()).thenReturn(Instant.now());
+
+		ProductResult productResult3 = Mockito.mock(ProductResult.class);
+		Mockito.when(productResult3.getId()).thenReturn(3L);
+		Mockito.when(productResult3.getCategory()).thenReturn(Category.TICKET);
+		Mockito.when(productResult3.getName()).thenReturn("name3");
+		Mockito.when(productResult3.getDescription()).thenReturn("description3");
+		Mockito.when(productResult3.getPrice()).thenReturn(3000);
+		Mockito.when(productResult3.getQuantity()).thenReturn(30);
+		Mockito.when(productResult3.getCreatedAt()).thenReturn(Instant.now());
+
+		List<ProductResult> response = List.of(productResult1, productResult2, productResult3);
 		Page<ProductResult> page = new PageImpl<>(response, pageable, response.size());
 
 		Mockito.when(productService.findProducts(pageable, name)).thenReturn(page);
@@ -130,18 +158,28 @@ class ProductControllerTest {
 		// Given
 		Long productId = 1L;
 		Category category = Category.TICKET;
-		TicketResult ticketResult = new TicketResult(
-			productId,
-			"name",
-			"description",
-			1000,
-			10, Instant.now(),
-			1L,
-			"place",
-			Instant.now(),
-			"duration",
-			"ageLimit"
-		);
+		String name = "name";
+		String description = "description";
+		int price = 1000;
+		int quantity = 5;
+		String place = "place";
+		Instant performanceTime = Instant.now();
+		String duration = "duration";
+		String ageLimit = "ageLimit";
+		Instant createdAt = Instant.now();
+
+		TicketResult ticketResult = Mockito.mock(TicketResult.class);
+		Mockito.when(ticketResult.getId()).thenReturn(productId);
+		Mockito.when(ticketResult.getCategory()).thenReturn(category);
+		Mockito.when(ticketResult.getName()).thenReturn(name);
+		Mockito.when(ticketResult.getDescription()).thenReturn(description);
+		Mockito.when(ticketResult.getPrice()).thenReturn(price);
+		Mockito.when(ticketResult.getQuantity()).thenReturn(quantity);
+		Mockito.when(ticketResult.getPlace()).thenReturn(place);
+		Mockito.when(ticketResult.getPerformanceTime()).thenReturn(performanceTime);
+		Mockito.when(ticketResult.getDuration()).thenReturn(duration);
+		Mockito.when(ticketResult.getAgeLimit()).thenReturn(ageLimit);
+		Mockito.when(ticketResult.getCreatedAt()).thenReturn(createdAt);
 
 		Mockito.when(productService.findProduct(productId, category)).thenReturn(ticketResult);
 
@@ -153,7 +191,7 @@ class ProductControllerTest {
 			)
 			.andExpect(MockMvcResultMatchers.status().isOk())
 			.andDo(
-				MockMvcRestDocumentation.document("product-ticket-get",
+				MockMvcRestDocumentation.document("ticket-get",
 					HeaderDocumentation.requestHeaders(
 						HeaderDocumentation.headerWithName("Authorization").description("액세스 토큰")
 					),
@@ -186,21 +224,32 @@ class ProductControllerTest {
 		// Given
 		Long productId = 1L;
 		Category category = Category.FLIGHT;
-		FlightResult flightResult = new FlightResult(
-			productId,
-			"name",
-			"description",
-			1000,
-			10,
-			Instant.now(),
-			1L,
-			"airline",
-			"flightNumber",
-			"departureAirport",
-			"arrivalAirport",
-			Instant.now(),
-			Instant.now().plus(1, ChronoUnit.DAYS)
-		);
+		String name = "name";
+		String description = "description";
+		int price = 1000;
+		int quantity = 5;
+		String airline = "airline";
+		String flightNumber = "flightNumber";
+		String departureAirport = "departureAirport";
+		String arrivalAirport = "arrivalAirport";
+		Instant departureTime = Instant.now();
+		Instant arrivalTime = Instant.now().plus(1, ChronoUnit.HOURS);
+		Instant createdAt = Instant.now();
+
+		FlightResult flightResult = Mockito.mock(FlightResult.class);
+		Mockito.when(flightResult.getId()).thenReturn(productId);
+		Mockito.when(flightResult.getCategory()).thenReturn(category);
+		Mockito.when(flightResult.getName()).thenReturn(name);
+		Mockito.when(flightResult.getDescription()).thenReturn(description);
+		Mockito.when(flightResult.getPrice()).thenReturn(price);
+		Mockito.when(flightResult.getQuantity()).thenReturn(quantity);
+		Mockito.when(flightResult.getAirline()).thenReturn(airline);
+		Mockito.when(flightResult.getFlightNumber()).thenReturn(flightNumber);
+		Mockito.when(flightResult.getDepartureAirport()).thenReturn(departureAirport);
+		Mockito.when(flightResult.getArrivalAirport()).thenReturn(arrivalAirport);
+		Mockito.when(flightResult.getDepartureTime()).thenReturn(departureTime);
+		Mockito.when(flightResult.getArrivalTime()).thenReturn(arrivalTime);
+		Mockito.when(flightResult.getCreatedAt()).thenReturn(createdAt);
 
 		Mockito.when(productService.findProduct(productId, category)).thenReturn(flightResult);
 
@@ -212,7 +261,7 @@ class ProductControllerTest {
 			)
 			.andExpect(MockMvcResultMatchers.status().isOk())
 			.andDo(
-				MockMvcRestDocumentation.document("product-flight-get",
+				MockMvcRestDocumentation.document("flight-get",
 					HeaderDocumentation.requestHeaders(
 						HeaderDocumentation.headerWithName("Authorization").description("액세스 토큰")
 					),
@@ -247,18 +296,26 @@ class ProductControllerTest {
 		// Given
 		Long productId = 1L;
 		Category category = Category.ACCOMMODATION;
-		AccommodationResult accommodationResult = new AccommodationResult(
-			productId,
-			"name",
-			"description",
-			1000,
-			10,
-			Instant.now(),
-			1L,
-			"place",
-			Instant.now(),
-			Instant.now().plus(1, ChronoUnit.DAYS)
-		);
+		String name = "name";
+		String description = "description";
+		int price = 1000;
+		int quantity = 5;
+		String place = "place";
+		Instant checkInTime = Instant.now();
+		Instant checkOutTime = Instant.now().plus(1, ChronoUnit.DAYS);
+		Instant createdAt = Instant.now();
+
+		AccommodationResult accommodationResult = Mockito.mock(AccommodationResult.class);
+		Mockito.when(accommodationResult.getId()).thenReturn(productId);
+		Mockito.when(accommodationResult.getCategory()).thenReturn(category);
+		Mockito.when(accommodationResult.getName()).thenReturn(name);
+		Mockito.when(accommodationResult.getDescription()).thenReturn(description);
+		Mockito.when(accommodationResult.getPrice()).thenReturn(price);
+		Mockito.when(accommodationResult.getQuantity()).thenReturn(quantity);
+		Mockito.when(accommodationResult.getPlace()).thenReturn(place);
+		Mockito.when(accommodationResult.getCheckInTime()).thenReturn(checkInTime);
+		Mockito.when(accommodationResult.getCheckOutTime()).thenReturn(checkOutTime);
+		Mockito.when(accommodationResult.getCreatedAt()).thenReturn(createdAt);
 
 		Mockito.when(productService.findProduct(productId, category)).thenReturn(accommodationResult);
 
@@ -270,7 +327,7 @@ class ProductControllerTest {
 			)
 			.andExpect(MockMvcResultMatchers.status().isOk())
 			.andDo(
-				MockMvcRestDocumentation.document("product-accommodation-get",
+				MockMvcRestDocumentation.document("accommodation-get",
 					HeaderDocumentation.requestHeaders(
 						HeaderDocumentation.headerWithName("Authorization").description("액세스 토큰")
 					),
@@ -284,6 +341,295 @@ class ProductControllerTest {
 						PayloadDocumentation.fieldWithPath("id").description("아이디"),
 						PayloadDocumentation.fieldWithPath("category").description("카테고리"),
 						PayloadDocumentation.fieldWithPath("name").description("티켓명"),
+						PayloadDocumentation.fieldWithPath("description").description("설명"),
+						PayloadDocumentation.fieldWithPath("price").description("가격"),
+						PayloadDocumentation.fieldWithPath("quantity").description("수량"),
+						PayloadDocumentation.fieldWithPath("createdAt").description("생성일시"),
+						PayloadDocumentation.fieldWithPath("accommodationId").description("숙소아이디"),
+						PayloadDocumentation.fieldWithPath("place").description("장소"),
+						PayloadDocumentation.fieldWithPath("checkInTime").description("체크인 시간"),
+						PayloadDocumentation.fieldWithPath("checkOutTime").description("체크아웃 시간")
+					)
+				)
+			);
+	}
+
+	@Test
+	void createTicket() throws Exception {
+		// Given
+		Long productId = 1L;
+		Category category = Category.TICKET;
+		String name = "name";
+		String description = "description";
+		int price = 1000;
+		int quantity = 5;
+		String place = "place";
+		Instant performanceTime = Instant.now();
+		String duration = "duration";
+		String ageLimit = "ageLimit";
+		Instant createdAt = Instant.now();
+
+		TicketResult ticketResult = Mockito.mock(TicketResult.class);
+		Mockito.when(ticketResult.getId()).thenReturn(productId);
+		Mockito.when(ticketResult.getCategory()).thenReturn(category);
+		Mockito.when(ticketResult.getName()).thenReturn(name);
+		Mockito.when(ticketResult.getDescription()).thenReturn(description);
+		Mockito.when(ticketResult.getPrice()).thenReturn(price);
+		Mockito.when(ticketResult.getQuantity()).thenReturn(quantity);
+		Mockito.when(ticketResult.getPlace()).thenReturn(place);
+		Mockito.when(ticketResult.getPerformanceTime()).thenReturn(performanceTime);
+		Mockito.when(ticketResult.getDuration()).thenReturn(duration);
+		Mockito.when(ticketResult.getAgeLimit()).thenReturn(ageLimit);
+		Mockito.when(ticketResult.getCreatedAt()).thenReturn(createdAt);
+
+		Mockito.when(productService.createProduct(Mockito.any(TicketCreateCommand.class))).thenReturn(ticketResult);
+
+		// When & Then
+		mockMvc.perform(
+				RestDocumentationRequestBuilders.post("/products")
+					.contentType(MediaType.APPLICATION_JSON)
+					.content("""
+						{
+						  "category": "%s",
+						  "name": "%s",
+						  "description": "%s",
+						  "price": %d,
+						  "quantity": %d,
+						  "place": "%s",
+						  "performanceTime": "%s",
+						  "duration": "%s",
+						  "ageLimit": "%s"
+						}
+						""".formatted(
+						category,
+						name,
+						description,
+						price,
+						quantity,
+						place,
+						performanceTime.toString(),
+						duration,
+						ageLimit
+					))
+					.header("Authorization", "Bearer access-token")
+			)
+			.andExpect(MockMvcResultMatchers.status().isCreated())
+			.andDo(
+				MockMvcRestDocumentation.document("ticket-create",
+					HeaderDocumentation.requestHeaders(
+						HeaderDocumentation.headerWithName("Authorization").description("액세스 토큰")
+					),
+					PayloadDocumentation.requestFields(
+						PayloadDocumentation.fieldWithPath("category").description("카테고리"),
+						PayloadDocumentation.fieldWithPath("name").description("티켓명"),
+						PayloadDocumentation.fieldWithPath("description").description("설명"),
+						PayloadDocumentation.fieldWithPath("price").description("가격"),
+						PayloadDocumentation.fieldWithPath("quantity").description("수량"),
+						PayloadDocumentation.fieldWithPath("place").description("장소"),
+						PayloadDocumentation.fieldWithPath("performanceTime").description("공연 시간"),
+						PayloadDocumentation.fieldWithPath("duration").description("공연 시간"),
+						PayloadDocumentation.fieldWithPath("ageLimit").description("관람 연령")
+					),
+					PayloadDocumentation.responseFields(
+						PayloadDocumentation.fieldWithPath("id").description("아이디"),
+						PayloadDocumentation.fieldWithPath("category").description("카테고리"),
+						PayloadDocumentation.fieldWithPath("name").description("티켓명"),
+						PayloadDocumentation.fieldWithPath("description").description("설명"),
+						PayloadDocumentation.fieldWithPath("price").description("가격"),
+						PayloadDocumentation.fieldWithPath("quantity").description("수량"),
+						PayloadDocumentation.fieldWithPath("createdAt").description("생성일시"),
+						PayloadDocumentation.fieldWithPath("ticketId").description("티켓아이디"),
+						PayloadDocumentation.fieldWithPath("place").description("장소"),
+						PayloadDocumentation.fieldWithPath("performanceTime").description("공연 시간"),
+						PayloadDocumentation.fieldWithPath("duration").description("공연 시간"),
+						PayloadDocumentation.fieldWithPath("ageLimit").description("관람 연령")
+					)
+				)
+			);
+	}
+
+	@Test
+	void createFlight() throws Exception {
+		// Given
+		Long productId = 1L;
+		Category category = Category.FLIGHT;
+		String name = "name";
+		String description = "description";
+		int price = 1000;
+		int quantity = 5;
+		String airline = "airline";
+		String flightNumber = "flightNumber";
+		String departureAirport = "departureAirport";
+		String arrivalAirport = "arrivalAirport";
+		Instant departureTime = Instant.now();
+		Instant arrivalTime = Instant.now().plus(1, ChronoUnit.HOURS);
+		Instant createdAt = Instant.now();
+
+		FlightResult flightResult = Mockito.mock(FlightResult.class);
+		Mockito.when(flightResult.getId()).thenReturn(productId);
+		Mockito.when(flightResult.getCategory()).thenReturn(category);
+		Mockito.when(flightResult.getName()).thenReturn(name);
+		Mockito.when(flightResult.getDescription()).thenReturn(description);
+		Mockito.when(flightResult.getPrice()).thenReturn(price);
+		Mockito.when(flightResult.getQuantity()).thenReturn(quantity);
+		Mockito.when(flightResult.getAirline()).thenReturn(airline);
+		Mockito.when(flightResult.getFlightNumber()).thenReturn(flightNumber);
+		Mockito.when(flightResult.getDepartureAirport()).thenReturn(departureAirport);
+		Mockito.when(flightResult.getArrivalAirport()).thenReturn(arrivalAirport);
+		Mockito.when(flightResult.getDepartureTime()).thenReturn(departureTime);
+		Mockito.when(flightResult.getArrivalTime()).thenReturn(arrivalTime);
+		Mockito.when(flightResult.getCreatedAt()).thenReturn(createdAt);
+
+		Mockito.when(productService.createProduct(Mockito.any(FlightCreateCommand.class))).thenReturn(flightResult);
+
+		// When & Then
+		mockMvc.perform(
+				RestDocumentationRequestBuilders.post("/products")
+					.contentType(MediaType.APPLICATION_JSON)
+					.content("""
+						{
+						  "category": "%s",
+						  "name": "%s",
+						  "description": "%s",
+						  "price": %d,
+						  "quantity": %d,
+						  "airline": "%s",
+						  "flightNumber": "%s",
+						  "departureAirport": "%s",
+						  "arrivalAirport": "%s",
+						  "departureTime": "%s",
+						  "arrivalTime": "%s"
+						}
+						""".formatted(
+						category,
+						name,
+						description,
+						price,
+						quantity,
+						airline,
+						flightNumber,
+						departureAirport,
+						arrivalAirport,
+						departureTime.toString(),
+						arrivalTime.toString()
+					))
+					.header("Authorization", "Bearer access-token")
+			)
+			.andExpect(MockMvcResultMatchers.status().isCreated())
+			.andDo(
+				MockMvcRestDocumentation.document("flight-create",
+					HeaderDocumentation.requestHeaders(
+						HeaderDocumentation.headerWithName("Authorization").description("액세스 토큰")
+					),
+					PayloadDocumentation.requestFields(
+						PayloadDocumentation.fieldWithPath("category").description("카테고리"),
+						PayloadDocumentation.fieldWithPath("name").description("항공편명"),
+						PayloadDocumentation.fieldWithPath("description").description("설명"),
+						PayloadDocumentation.fieldWithPath("price").description("가격"),
+						PayloadDocumentation.fieldWithPath("quantity").description("수량"),
+						PayloadDocumentation.fieldWithPath("airline").description("항공사"),
+						PayloadDocumentation.fieldWithPath("flightNumber").description("항공편 ID"),
+						PayloadDocumentation.fieldWithPath("departureAirport").description("출발 공항"),
+						PayloadDocumentation.fieldWithPath("arrivalAirport").description("도착 공항"),
+						PayloadDocumentation.fieldWithPath("departureTime").description("출발 시간"),
+						PayloadDocumentation.fieldWithPath("arrivalTime").description("도착 시간")
+					),
+					PayloadDocumentation.responseFields(
+						PayloadDocumentation.fieldWithPath("id").description("아이디"),
+						PayloadDocumentation.fieldWithPath("category").description("카테고리"),
+						PayloadDocumentation.fieldWithPath("name").description("항공편명"),
+						PayloadDocumentation.fieldWithPath("description").description("설명"),
+						PayloadDocumentation.fieldWithPath("price").description("가격"),
+						PayloadDocumentation.fieldWithPath("quantity").description("수량"),
+						PayloadDocumentation.fieldWithPath("createdAt").description("생성일시"),
+						PayloadDocumentation.fieldWithPath("flightId").description("항공아이디"),
+						PayloadDocumentation.fieldWithPath("airline").description("항공사"),
+						PayloadDocumentation.fieldWithPath("flightNumber").description("항공편 ID"),
+						PayloadDocumentation.fieldWithPath("departureAirport").description("출발 공항"),
+						PayloadDocumentation.fieldWithPath("arrivalAirport").description("도착 공항"),
+						PayloadDocumentation.fieldWithPath("departureTime").description("출발 시간"),
+						PayloadDocumentation.fieldWithPath("arrivalTime").description("도착 시간")
+					)
+				)
+			);
+	}
+
+	@Test
+	void createAccommodation() throws Exception {
+		// Given
+		Long productId = 1L;
+		Category category = Category.ACCOMMODATION;
+		String name = "name";
+		String description = "description";
+		int price = 1000;
+		int quantity = 5;
+		String place = "place";
+		Instant checkInTime = Instant.now();
+		Instant checkOutTime = Instant.now().plus(1, ChronoUnit.DAYS);
+		Instant createdAt = Instant.now();
+
+		AccommodationResult accommodationResult = Mockito.mock(AccommodationResult.class);
+		Mockito.when(accommodationResult.getId()).thenReturn(productId);
+		Mockito.when(accommodationResult.getCategory()).thenReturn(category);
+		Mockito.when(accommodationResult.getName()).thenReturn(name);
+		Mockito.when(accommodationResult.getDescription()).thenReturn(description);
+		Mockito.when(accommodationResult.getPrice()).thenReturn(price);
+		Mockito.when(accommodationResult.getQuantity()).thenReturn(quantity);
+		Mockito.when(accommodationResult.getPlace()).thenReturn(place);
+		Mockito.when(accommodationResult.getCheckInTime()).thenReturn(checkInTime);
+		Mockito.when(accommodationResult.getCheckOutTime()).thenReturn(checkOutTime);
+		Mockito.when(accommodationResult.getCreatedAt()).thenReturn(createdAt);
+
+		Mockito.when(productService.createProduct(Mockito.any(AccommodationCreateCommand.class)))
+			.thenReturn(accommodationResult);
+
+		// When & Then
+		mockMvc.perform(
+				RestDocumentationRequestBuilders.post("/products")
+					.contentType(MediaType.APPLICATION_JSON)
+					.content("""
+						{
+						  "category": "%s",
+						  "name": "%s",
+						  "description": "%s",
+						  "price": %d,
+						  "quantity": %d,
+						  "place": "%s",
+						  "checkInTime": "%s",
+						  "checkOutTime": "%s"
+						}
+						""".formatted(
+						category,
+						name,
+						description,
+						price,
+						quantity,
+						place,
+						checkInTime.toString(),
+						checkOutTime.toString()
+					))
+					.header("Authorization", "Bearer access-token")
+			)
+			.andExpect(MockMvcResultMatchers.status().isCreated())
+			.andDo(
+				MockMvcRestDocumentation.document("accommodation-create",
+					HeaderDocumentation.requestHeaders(
+						HeaderDocumentation.headerWithName("Authorization").description("액세스 토큰")
+					),
+					PayloadDocumentation.requestFields(
+						PayloadDocumentation.fieldWithPath("category").description("카테고리"),
+						PayloadDocumentation.fieldWithPath("name").description("숙소명"),
+						PayloadDocumentation.fieldWithPath("description").description("설명"),
+						PayloadDocumentation.fieldWithPath("price").description("가격"),
+						PayloadDocumentation.fieldWithPath("quantity").description("수량"),
+						PayloadDocumentation.fieldWithPath("place").description("장소"),
+						PayloadDocumentation.fieldWithPath("checkInTime").description("체크인 시간"),
+						PayloadDocumentation.fieldWithPath("checkOutTime").description("체크아웃 시간")
+					),
+					PayloadDocumentation.responseFields(
+						PayloadDocumentation.fieldWithPath("id").description("아이디"),
+						PayloadDocumentation.fieldWithPath("category").description("카테고리"),
+						PayloadDocumentation.fieldWithPath("name").description("숙소명"),
 						PayloadDocumentation.fieldWithPath("description").description("설명"),
 						PayloadDocumentation.fieldWithPath("price").description("가격"),
 						PayloadDocumentation.fieldWithPath("quantity").description("수량"),

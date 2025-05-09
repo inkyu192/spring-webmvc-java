@@ -18,35 +18,6 @@ public class FlightService {
 	private final FlightRepository flightRepository;
 
 	@Transactional
-	public Flight createFlight(
-		String name,
-		String description,
-		int price,
-		int quantity,
-		String airline,
-		String flightNumber,
-		String departureAirport,
-		String arrivalAirport,
-		Instant departureTime,
-		Instant arrivalTime
-	) {
-		return flightRepository.save(
-			Flight.create(
-				name,
-				description,
-				price,
-				quantity,
-				airline,
-				flightNumber,
-				departureAirport,
-				arrivalAirport,
-				departureTime,
-				arrivalTime
-			)
-		);
-	}
-
-	@Transactional
 	public Flight updateFlight(
 		Long id,
 		String name,

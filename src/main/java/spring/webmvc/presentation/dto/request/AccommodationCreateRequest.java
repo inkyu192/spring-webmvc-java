@@ -1,26 +1,34 @@
 package spring.webmvc.presentation.dto.request;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-
 import java.time.Instant;
 
-public record AccommodationCreateRequest(
-    @NotBlank
-    String name,
-    @NotBlank
-    String description,
-    @Min(100)
-    int price,
-    @Max(9999)
-    int quantity,
-    @NotBlank
-    String place,
-    @NotNull
-    Instant checkInTime,
-    @NotNull
-    Instant checkOutTime
-) {
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import spring.webmvc.domain.model.enums.Category;
+
+@Getter
+public class AccommodationCreateRequest extends ProductCreateRequest {
+	@NotBlank
+	private final String place;
+	@NotNull
+	private final Instant checkInTime;
+	@NotNull
+	private final Instant checkOutTime;
+
+	public AccommodationCreateRequest(
+		Category category,
+		String name,
+		String description,
+		int price,
+		int quantity,
+		String place,
+		Instant checkInTime,
+		Instant checkOutTime
+	) {
+		super(category, name, description, price, quantity);
+		this.place = place;
+		this.checkInTime = checkInTime;
+		this.checkOutTime = checkOutTime;
+	}
 }

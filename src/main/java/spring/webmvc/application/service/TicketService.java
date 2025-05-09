@@ -18,31 +18,6 @@ public class TicketService {
 	private final TicketRepository ticketRepository;
 
 	@Transactional
-	public Ticket createTicket(
-		String name,
-		String description,
-		int price,
-		int quantity,
-		String place,
-		Instant performanceTime,
-		String duration,
-		String ageLimit
-	) {
-		return ticketRepository.save(
-			Ticket.create(
-				name,
-				description,
-				price,
-				quantity,
-				place,
-				performanceTime,
-				duration,
-				ageLimit
-			)
-		);
-	}
-
-	@Transactional
 	public Ticket updateTicket(
 		Long id,
 		String name,
