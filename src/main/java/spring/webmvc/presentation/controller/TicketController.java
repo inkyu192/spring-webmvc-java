@@ -6,7 +6,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import spring.webmvc.application.service.TicketService;
-import spring.webmvc.presentation.dto.request.TicketCreateRequest;
 import spring.webmvc.presentation.dto.request.TicketUpdateRequest;
 import spring.webmvc.presentation.dto.response.TicketResponse;
 
@@ -24,26 +22,6 @@ import spring.webmvc.presentation.dto.response.TicketResponse;
 public class TicketController {
 
 	private final TicketService ticketService;
-
-	@PostMapping
-	@PreAuthorize("hasAuthority('PRODUCT_WRITER')")
-	@ResponseStatus(HttpStatus.CREATED)
-	public TicketResponse createTicket(
-		@RequestBody @Validated TicketCreateRequest ticketCreateRequest
-	) {
-		return new TicketResponse(
-			ticketService.createTicket(
-				ticketCreateRequest.name(),
-				ticketCreateRequest.description(),
-				ticketCreateRequest.price(),
-				ticketCreateRequest.quantity(),
-				ticketCreateRequest.place(),
-				ticketCreateRequest.performanceTime(),
-				ticketCreateRequest.duration(),
-				ticketCreateRequest.ageLimit()
-			)
-		);
-	}
 
 	@PatchMapping("/{id}")
 	@PreAuthorize("hasAuthority('PRODUCT_WRITER')")

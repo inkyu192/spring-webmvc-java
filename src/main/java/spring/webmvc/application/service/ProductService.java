@@ -8,10 +8,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import spring.webmvc.application.dto.command.ProductCreateCommand;
 import spring.webmvc.application.dto.result.ProductResult;
 import spring.webmvc.application.strategy.ProductStrategy;
 import spring.webmvc.domain.model.enums.Category;
 import spring.webmvc.domain.repository.ProductRepository;
+import spring.webmvc.presentation.exception.StrategyNotImplementedException;
 
 @Service
 @Transactional(readOnly = true)
@@ -26,11 +28,22 @@ public class ProductService {
 	}
 
 	public ProductResult findProduct(Long id, Category category) {
-		ProductStrategy productStrategy = productStrategies.stream()
-			.filter(it -> it.supports(category))
-			.findFirst()
-			.orElseThrow(IllegalStateException::new);
+		ProductStrategy productStrategy = getStrategy(category);
 
 		return productStrategy.findByProductId(id);
+	}
+
+	@Transactional
+	public ProductResult createProduct(ProductCreateCommand command) {
+		ProductStrategy productStrategy = getStrategy(command.getCategory());
+
+		return productStrategy.createProduct(command);
+	}
+
+	private ProductStrategy getStrategy(Category category) {
+		return productStrategies.stream()
+			.filter(it -> it.supports(category))
+			.findFirst()
+			.orElseThrow(() -> new StrategyNotImplementedException(ProductStrategy.class, category));
 	}
 }

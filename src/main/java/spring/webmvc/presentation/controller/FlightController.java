@@ -6,7 +6,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import spring.webmvc.application.service.FlightService;
-import spring.webmvc.presentation.dto.request.FlightCreateRequest;
 import spring.webmvc.presentation.dto.request.FlightUpdateRequest;
 import spring.webmvc.presentation.dto.response.FlightResponse;
 
@@ -24,28 +22,6 @@ import spring.webmvc.presentation.dto.response.FlightResponse;
 public class FlightController {
 
 	private final FlightService flightService;
-
-	@PostMapping
-	@PreAuthorize("hasAuthority('PRODUCT_WRITER')")
-	@ResponseStatus(HttpStatus.CREATED)
-	public FlightResponse createFlight(
-		@RequestBody @Validated FlightCreateRequest flightCreateRequest
-	) {
-		return new FlightResponse(
-			flightService.createFlight(
-				flightCreateRequest.name(),
-				flightCreateRequest.description(),
-				flightCreateRequest.price(),
-				flightCreateRequest.quantity(),
-				flightCreateRequest.airline(),
-				flightCreateRequest.flightNumber(),
-				flightCreateRequest.departureAirport(),
-				flightCreateRequest.arrivalAirport(),
-				flightCreateRequest.departureTime(),
-				flightCreateRequest.arrivalTime()
-			)
-		);
-	}
 
 	@PatchMapping("/{id}")
 	@PreAuthorize("hasAuthority('PRODUCT_WRITER')")

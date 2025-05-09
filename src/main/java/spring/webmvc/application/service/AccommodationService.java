@@ -18,29 +18,6 @@ public class AccommodationService {
 	private final AccommodationRepository accommodationRepository;
 
 	@Transactional
-	public Accommodation createAccommodation(
-		String name,
-		String description,
-		int price,
-		int quantity,
-		String place,
-		Instant checkTime,
-		Instant checkOutTime
-	) {
-		return accommodationRepository.save(
-			Accommodation.create(
-				name,
-				description,
-				price,
-				quantity,
-				place,
-				checkTime,
-				checkOutTime
-			)
-		);
-	}
-
-	@Transactional
 	public Accommodation updateAccommodation(
 		Long id,
 		String name,

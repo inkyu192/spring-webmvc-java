@@ -26,55 +26,6 @@ class TicketServiceTest {
 	private TicketRepository ticketRepository;
 
 	@Test
-	@DisplayName("createTicket: Ticket 저장 후 반환한다")
-	void createTicket() {
-		// Given
-		String name = "name";
-		String description = "description";
-		int price = 1000;
-		int quantity = 5;
-		String place = "place";
-		Instant performanceTime = Instant.now();
-		String duration = "duration";
-		String ageLimit = "ageLimit";
-
-		Ticket ticket = Ticket.create(
-			name,
-			description,
-			price,
-			quantity,
-			place,
-			performanceTime,
-			duration,
-			ageLimit
-		);
-
-		Mockito.when(ticketRepository.save(Mockito.any(Ticket.class))).thenReturn(ticket);
-
-		// When
-		Ticket result = ticketService.createTicket(
-			name,
-			description,
-			price,
-			quantity,
-			place,
-			performanceTime,
-			duration,
-			ageLimit
-		);
-
-		// Then
-		Assertions.assertThat(result.getProduct().getName()).isEqualTo(name);
-		Assertions.assertThat(result.getProduct().getDescription()).isEqualTo(description);
-		Assertions.assertThat(result.getProduct().getPrice()).isEqualTo(price);
-		Assertions.assertThat(result.getProduct().getQuantity()).isEqualTo(quantity);
-		Assertions.assertThat(result.getPlace()).isEqualTo(place);
-		Assertions.assertThat(result.getPerformanceTime()).isEqualTo(performanceTime);
-		Assertions.assertThat(result.getDuration()).isEqualTo(duration);
-		Assertions.assertThat(result.getAgeLimit()).isEqualTo(ageLimit);
-	}
-
-	@Test
 	@DisplayName("updateTicket: Ticket 없을 경우 EntityNotFoundException 발생한다")
 	void updateTicketCase1() {
 		// Given

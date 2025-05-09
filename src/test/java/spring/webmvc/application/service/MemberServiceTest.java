@@ -23,7 +23,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import spring.webmvc.domain.model.entity.Member;
 import spring.webmvc.domain.repository.MemberRepository;
-import spring.webmvc.domain.repository.PermissionRepository;
 import spring.webmvc.domain.repository.RoleRepository;
 import spring.webmvc.presentation.exception.EntityNotFoundException;
 

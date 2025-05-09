@@ -27,63 +27,6 @@ class FlightServiceTest {
 	private FlightRepository flightRepository;
 
 	@Test
-	@DisplayName("createFlight: Flight 저장 후 반환한다")
-	void createFlight() {
-		// Given
-		String name = "name";
-		String description = "description";
-		int price = 1000;
-		int quantity = 5;
-		String airline = "airline";
-		String flightNumber = "flightNumber";
-		String departureAirport = "departureAirport";
-		String arrivalAirport = "arrivalAirport";
-		Instant departureTime = Instant.now();
-		Instant arrivalTime = Instant.now().plus(1, ChronoUnit.HOURS);
-
-		Flight flight = Flight.create(
-			name,
-			description,
-			price,
-			quantity,
-			airline,
-			flightNumber,
-			departureAirport,
-			arrivalAirport,
-			departureTime,
-			arrivalTime
-		);
-
-		Mockito.when(flightRepository.save(Mockito.any(Flight.class))).thenReturn(flight);
-
-		// When
-		Flight result = flightService.createFlight(
-			name,
-			description,
-			price,
-			quantity,
-			airline,
-			flightNumber,
-			departureAirport,
-			arrivalAirport,
-			departureTime,
-			arrivalTime
-		);
-
-		// Then
-		Assertions.assertThat(result.getProduct().getName()).isEqualTo(name);
-		Assertions.assertThat(result.getProduct().getDescription()).isEqualTo(description);
-		Assertions.assertThat(result.getProduct().getPrice()).isEqualTo(price);
-		Assertions.assertThat(result.getProduct().getQuantity()).isEqualTo(quantity);
-		Assertions.assertThat(result.getAirline()).isEqualTo(airline);
-		Assertions.assertThat(result.getFlightNumber()).isEqualTo(flightNumber);
-		Assertions.assertThat(result.getDepartureAirport()).isEqualTo(departureAirport);
-		Assertions.assertThat(result.getArrivalAirport()).isEqualTo(arrivalAirport);
-		Assertions.assertThat(result.getDepartureTime()).isEqualTo(departureTime);
-		Assertions.assertThat(result.getArrivalTime()).isEqualTo(arrivalTime);
-	}
-
-	@Test
 	@DisplayName("updateFlight: Flight 없을 경우 EntityNotFoundException 발생한다")
 	void updateFlightCase1() {
 		// Given

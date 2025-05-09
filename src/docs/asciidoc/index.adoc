@@ -178,41 +178,65 @@ include::{snippets}/product-list/response-fields.adoc[]
 
 === 상세 조회
 
+==== 티켓
+
 **HTTP Request**
-include::{snippets}/product-ticket-get/http-request.adoc[]
+include::{snippets}/ticket-get/http-request.adoc[]
 
 **Request Headers**
-include::{snippets}/product-ticket-get/request-headers.adoc[]
+include::{snippets}/ticket-get/request-headers.adoc[]
 
 **Path Parameters**
-include::{snippets}/product-ticket-get/path-parameters.adoc[]
+include::{snippets}/ticket-get/path-parameters.adoc[]
 
 **Query Parameters**
-include::{snippets}/product-ticket-get/query-parameters.adoc[]
-
-==== 티켓 응답
+include::{snippets}/ticket-get/query-parameters.adoc[]
 
 **HTTP Response**
-include::{snippets}/product-ticket-get/http-response.adoc[]
+include::{snippets}/ticket-get/http-response.adoc[]
 
 **Response Fields**
-include::{snippets}/product-ticket-get/response-fields.adoc[]
+include::{snippets}/ticket-get/response-fields.adoc[]
 
-==== 숙소 응답
+==== 숙박
+
+**HTTP Request**
+include::{snippets}/accommodation-get/http-request.adoc[]
+
+**Request Headers**
+include::{snippets}/accommodation-get/request-headers.adoc[]
+
+**Path Parameters**
+include::{snippets}/accommodation-get/path-parameters.adoc[]
+
+**Query Parameters**
+include::{snippets}/accommodation-get/query-parameters.adoc[]
 
 **HTTP Response**
-include::{snippets}/product-accommodation-get/http-response.adoc[]
+include::{snippets}/accommodation-get/http-response.adoc[]
 
 **Response Fields**
-include::{snippets}/product-accommodation-get/response-fields.adoc[]
+include::{snippets}/accommodation-get/response-fields.adoc[]
 
-==== 항공권 응답
+==== 항공권
+
+**HTTP Request**
+include::{snippets}/flight-get/http-request.adoc[]
+
+**Request Headers**
+include::{snippets}/flight-get/request-headers.adoc[]
+
+**Path Parameters**
+include::{snippets}/flight-get/path-parameters.adoc[]
+
+**Query Parameters**
+include::{snippets}/flight-get/query-parameters.adoc[]
 
 **HTTP Response**
-include::{snippets}/product-flight-get/http-response.adoc[]
+include::{snippets}/flight-get/http-response.adoc[]
 
 **Response Fields**
-include::{snippets}/product-flight-get/response-fields.adoc[]
+include::{snippets}/flight-get/response-fields.adoc[]
 
 **HTTP Status Codes**
 [cols="1,3", options="header"]
@@ -224,9 +248,9 @@ include::{snippets}/product-flight-get/response-fields.adoc[]
 | 404 | <<NOT_FOUND>>
 |===
 
-=== 티켓
+=== 생성
 
-==== 생성
+==== 티켓
 
 **HTTP Request**
 include::{snippets}/ticket-create/http-request.adoc[]
@@ -251,6 +275,60 @@ include::{snippets}/ticket-create/response-fields.adoc[]
 | 401 | <<UNAUTHORIZED>>
 | 403 | <<FORBIDDEN>>
 |===
+
+==== 숙박
+
+**HTTP Request**
+include::{snippets}/accommodation-create/http-request.adoc[]
+
+**Request Headers**
+include::{snippets}/accommodation-create/request-headers.adoc[]
+
+**Request Fields**
+include::{snippets}/accommodation-create/request-fields.adoc[]
+
+**HTTP Response**
+include::{snippets}/accommodation-create/http-response.adoc[]
+
+**Response Fields**
+include::{snippets}/accommodation-create/response-fields.adoc[]
+
+**HTTP Status Codes**
+[cols="1,3", options="header"]
+|===
+| Code | Name
+| 201 | <<CREATED>>
+| 401 | <<UNAUTHORIZED>>
+| 403 | <<FORBIDDEN>>
+|===
+
+==== 항공권
+
+**HTTP Request**
+include::{snippets}/flight-create/http-request.adoc[]
+
+**Request Headers**
+include::{snippets}/flight-create/request-headers.adoc[]
+
+**Request Fields**
+include::{snippets}/flight-create/request-fields.adoc[]
+
+**HTTP Response**
+include::{snippets}/flight-create/http-response.adoc[]
+
+**Response Fields**
+include::{snippets}/flight-create/response-fields.adoc[]
+
+**HTTP Status Codes**
+[cols="1,3", options="header"]
+|===
+| Code | Name
+| 201 | <<CREATED>>
+| 401 | <<UNAUTHORIZED>>
+| 403 | <<FORBIDDEN>>
+|===
+
+=== 티켓
 
 ==== 수정
 
@@ -308,32 +386,6 @@ include::{snippets}/ticket-delete/http-response.adoc[]
 
 === 숙박
 
-==== 생성
-
-**HTTP Request**
-include::{snippets}/accommodation-create/http-request.adoc[]
-
-**Request Headers**
-include::{snippets}/accommodation-create/request-headers.adoc[]
-
-**Request Fields**
-include::{snippets}/accommodation-create/request-fields.adoc[]
-
-**HTTP Response**
-include::{snippets}/accommodation-create/http-response.adoc[]
-
-**Response Fields**
-include::{snippets}/accommodation-create/response-fields.adoc[]
-
-**HTTP Status Codes**
-[cols="1,3", options="header"]
-|===
-| Code | Name
-| 201 | <<CREATED>>
-| 401 | <<UNAUTHORIZED>>
-| 403 | <<FORBIDDEN>>
-|===
-
 ==== 수정
 
 **HTTP Request**
@@ -389,32 +441,6 @@ include::{snippets}/accommodation-delete/http-response.adoc[]
 |===
 
 === 항공권
-
-==== 생성
-
-**HTTP Request**
-include::{snippets}/flight-create/http-request.adoc[]
-
-**Request Headers**
-include::{snippets}/flight-create/request-headers.adoc[]
-
-**Request Fields**
-include::{snippets}/flight-create/request-fields.adoc[]
-
-**HTTP Response**
-include::{snippets}/flight-create/http-response.adoc[]
-
-**Response Fields**
-include::{snippets}/flight-create/response-fields.adoc[]
-
-**HTTP Status Codes**
-[cols="1,3", options="header"]
-|===
-| Code | Name
-| 201 | <<CREATED>>
-| 401 | <<UNAUTHORIZED>>
-| 403 | <<FORBIDDEN>>
-|===
 
 ==== 수정
 

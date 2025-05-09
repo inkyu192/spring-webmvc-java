@@ -2,23 +2,29 @@ package spring.webmvc.application.strategy;
 
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import spring.webmvc.application.dto.command.ProductCreateCommand;
+import spring.webmvc.application.dto.command.TicketCreateCommand;
 import spring.webmvc.application.dto.result.ProductResult;
 import spring.webmvc.application.dto.result.TicketResult;
 import spring.webmvc.domain.cache.TicketCache;
 import spring.webmvc.domain.model.entity.Ticket;
 import spring.webmvc.domain.model.enums.Category;
 import spring.webmvc.domain.repository.TicketRepository;
-import spring.webmvc.infrastructure.common.JsonSupport;
 import spring.webmvc.presentation.exception.EntityNotFoundException;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class TicketStrategy implements ProductStrategy {
 
 	private final TicketCache ticketCache;
 	private final TicketRepository ticketRepository;
-	private final JsonSupport jsonSupport;
+	private final ObjectMapper objectMapper;
 
 	@Override
 	public boolean supports(Category category) {
@@ -30,15 +36,43 @@ public class TicketStrategy implements ProductStrategy {
 		String cache = ticketCache.get(productId);
 
 		if (cache != null) {
-			return jsonSupport.readValue(cache, TicketResult.class);
+			try {
+				return objectMapper.readValue(cache, TicketResult.class);
+			} catch (JsonProcessingException e) {
+				log.warn("Failed to deserialize cache for productId={}: {}", productId, e.getMessage());
+			}
 		}
 
 		TicketResult ticketResult = ticketRepository.findByProductId(productId)
 			.map(TicketResult::new)
 			.orElseThrow(() -> new EntityNotFoundException(Ticket.class, productId));
 
-		ticketCache.set(productId, jsonSupport.writeValueAsString(ticketResult));
+		try {
+			ticketCache.set(productId, objectMapper.writeValueAsString(ticketResult));
+		} catch (JsonProcessingException e) {
+			log.warn("Failed to serialize ticket cache for productId={}: {}", productId, e.getMessage());
+		}
 
 		return ticketResult;
+	}
+
+	@Override
+	public ProductResult createProduct(ProductCreateCommand productCreateCommand) {
+		TicketCreateCommand ticketCreateCommand = (TicketCreateCommand)productCreateCommand;
+
+		Ticket ticket = ticketRepository.save(
+			Ticket.create(
+				ticketCreateCommand.getName(),
+				ticketCreateCommand.getDescription(),
+				ticketCreateCommand.getPrice(),
+				ticketCreateCommand.getQuantity(),
+				ticketCreateCommand.getPlace(),
+				ticketCreateCommand.getPerformanceTime(),
+				ticketCreateCommand.getDuration(),
+				ticketCreateCommand.getAgeLimit()
+			)
+		);
+
+		return new TicketResult(ticket);
 	}
 }

@@ -27,51 +27,6 @@ class AccommodationServiceTest {
 	private AccommodationRepository accommodationRepository;
 
 	@Test
-	@DisplayName("createAccommodation: Accommodation 저장 후 반환한다")
-	void createAccommodation() {
-		// Given
-		String name = "name";
-		String description = "description";
-		int price = 1000;
-		int quantity = 5;
-		String place = "place";
-		Instant checkInTime = Instant.now();
-		Instant checkOutTime = Instant.now().plus(1, ChronoUnit.DAYS);
-
-		Accommodation accommodation = Accommodation.create(
-			name,
-			description,
-			price,
-			quantity,
-			place,
-			checkInTime,
-			checkOutTime
-		);
-
-		Mockito.when(accommodationRepository.save(Mockito.any(Accommodation.class))).thenReturn(accommodation);
-
-		// When
-		Accommodation result = accommodationService.createAccommodation(
-			name,
-			description,
-			price,
-			quantity,
-			place,
-			checkInTime,
-			checkOutTime
-		);
-
-		// Then
-		Assertions.assertThat(result.getProduct().getName()).isEqualTo(name);
-		Assertions.assertThat(result.getProduct().getDescription()).isEqualTo(description);
-		Assertions.assertThat(result.getProduct().getPrice()).isEqualTo(price);
-		Assertions.assertThat(result.getProduct().getQuantity()).isEqualTo(quantity);
-		Assertions.assertThat(result.getPlace()).isEqualTo(place);
-		Assertions.assertThat(result.getCheckInTime()).isEqualTo(checkInTime);
-		Assertions.assertThat(result.getCheckOutTime()).isEqualTo(checkOutTime);
-	}
-
-	@Test
 	@DisplayName("updateAccommodation: Accommodation 없을 경우 EntityNotFoundException 발생한다")
 	void updateAccommodationCase1() {
 		// Given
