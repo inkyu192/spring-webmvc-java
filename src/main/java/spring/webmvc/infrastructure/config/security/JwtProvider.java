@@ -21,9 +21,9 @@ public class JwtProvider {
 	private final long refreshTokenExpirationTime;
 
 	public JwtProvider(JwtProperties jwtProperties) {
-		accessTokenKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtProperties.getAccessToken().getKey()));
+		accessTokenKey = Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(jwtProperties.getAccessToken().getKey()));
 		accessTokenExpirationTime = jwtProperties.getAccessToken().getExpiration().toMillis();
-		refreshTokenKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtProperties.getRefreshToken().getKey()));
+		refreshTokenKey = Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(jwtProperties.getRefreshToken().getKey()));
 		refreshTokenExpirationTime = jwtProperties.getRefreshToken().getExpiration().toMillis();
 	}
 
