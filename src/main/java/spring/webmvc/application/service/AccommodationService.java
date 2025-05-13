@@ -1,7 +1,5 @@
 package spring.webmvc.application.service;
 
-import java.time.Instant;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,33 +14,6 @@ import spring.webmvc.presentation.exception.EntityNotFoundException;
 public class AccommodationService {
 
 	private final AccommodationRepository accommodationRepository;
-
-	@Transactional
-	public Accommodation updateAccommodation(
-		Long id,
-		String name,
-		String description,
-		int price,
-		int quantity,
-		String place,
-		Instant checkTime,
-		Instant checkOutTime
-	) {
-		Accommodation accommodation = accommodationRepository.findById(id)
-			.orElseThrow(() -> new EntityNotFoundException(Accommodation.class, id));
-
-		accommodation.update(
-			name,
-			description,
-			price,
-			quantity,
-			place,
-			checkTime,
-			checkOutTime
-		);
-
-		return accommodation;
-	}
 
 	@Transactional
 	public void deleteAccommodation(Long id) {

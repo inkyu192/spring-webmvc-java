@@ -2,27 +2,37 @@ package spring.webmvc.presentation.dto.request;
 
 import java.time.Instant;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import spring.webmvc.domain.model.enums.Category;
 
-public record TicketUpdateRequest(
+@Getter
+public class TicketUpdateRequest extends ProductUpdateRequest {
     @NotBlank
-    String name,
-    @NotBlank
-    String description,
-    @Min(100)
-    int price,
-    @Max(9999)
-    int quantity,
-    @NotBlank
-    String place,
+    private final String place;
     @NotNull
-    Instant performanceTime,
+    private final Instant performanceTime;
     @NotBlank
-    String duration,
+    private final String duration;
     @NotBlank
-    String ageLimit
-) {
+    private final String ageLimit;
+
+    public TicketUpdateRequest(
+        Category category,
+        String name,
+        String description,
+        int price,
+        int quantity,
+        String place,
+        Instant performanceTime,
+        String duration,
+        String ageLimit
+    ) {
+        super(category, name, description, price, quantity);
+        this.place = place;
+        this.performanceTime = performanceTime;
+        this.duration = duration;
+        this.ageLimit = ageLimit;
+    }
 }

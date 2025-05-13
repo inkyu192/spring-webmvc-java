@@ -1,6 +1,7 @@
 package spring.webmvc.application.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import spring.webmvc.application.dto.command.TicketCreateCommand;
+import spring.webmvc.application.dto.command.TicketUpdateCommand;
 import spring.webmvc.application.dto.result.ProductResult;
 import spring.webmvc.application.dto.result.TicketResult;
 import spring.webmvc.application.strategy.ProductStrategy;
@@ -121,6 +123,55 @@ class ProductServiceTest {
 
 		// When
 		ProductResult result = productService.createProduct(ticketCreateCommand);
+
+		// Then
+		Assertions.assertThat(result.getName()).isEqualTo(ticketResult.getName());
+		Assertions.assertThat(result.getDescription()).isEqualTo(ticketResult.getDescription());
+		Assertions.assertThat(result.getPrice()).isEqualTo(ticketResult.getPrice());
+		Assertions.assertThat(result.getQuantity()).isEqualTo(ticketResult.getQuantity());
+		Assertions.assertThat(result).isInstanceOfSatisfying(TicketResult.class, ticket -> {
+			Assertions.assertThat(ticket.getPlace()).isEqualTo(ticketResult.getPlace());
+			Assertions.assertThat(ticket.getPerformanceTime()).isEqualTo(ticketResult.getPerformanceTime());
+			Assertions.assertThat(ticket.getDuration()).isEqualTo(ticketResult.getDuration());
+			Assertions.assertThat(ticket.getAgeLimit()).isEqualTo(ticketResult.getAgeLimit());
+		});
+	}
+
+	@Test
+	@DisplayName("updateProduct: Product 없을 경우 EntityNotFoundException 발생한다")
+	void updateProductCase1() {
+		// Given
+		Long productId = 1L;
+
+		TicketUpdateCommand ticketUpdateCommand = Mockito.mock(TicketUpdateCommand.class);
+
+		Mockito.when(productRepository.findById(productId)).thenReturn(Optional.empty());
+
+		// When & Then
+		Assertions.assertThatThrownBy(() -> productService.updateProduct(productId, ticketUpdateCommand))
+			.isInstanceOf(EntityNotFoundException.class);
+	}
+
+	@Test
+	@DisplayName("updateProduct: Product 있을 경우 수정 후 반환한다")
+	void updateProductCase2() {
+		// Given
+		Long productId = 1L;
+		Category category = Category.TICKET;
+
+		TicketUpdateCommand ticketUpdateCommand = Mockito.mock(TicketUpdateCommand.class);
+		Mockito.when(ticketUpdateCommand.getCategory()).thenReturn(category);
+
+		Product product = Mockito.mock(Product.class);
+
+		TicketResult ticketResult = Mockito.mock(TicketResult.class);
+
+		Mockito.when(productRepository.findById(productId)).thenReturn(Optional.of(product));
+		Mockito.when(productStrategy.supports(category)).thenReturn(true);
+		Mockito.when(productStrategy.updateProduct(productId, ticketUpdateCommand)).thenReturn(ticketResult);
+
+		// When
+		ProductResult result = productService.updateProduct(productId, ticketUpdateCommand);
 
 		// Then
 		Assertions.assertThat(result.getName()).isEqualTo(ticketResult.getName());

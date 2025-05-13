@@ -8,7 +8,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import spring.webmvc.application.dto.command.AccommodationCreateCommand;
+import spring.webmvc.application.dto.command.AccommodationUpdateCommand;
 import spring.webmvc.application.dto.command.ProductCreateCommand;
+import spring.webmvc.application.dto.command.ProductUpdateCommand;
 import spring.webmvc.application.dto.result.AccommodationResult;
 import spring.webmvc.application.dto.result.ProductResult;
 import spring.webmvc.domain.cache.AccommodationCache;
@@ -70,6 +72,26 @@ public class AccommodationStrategy implements ProductStrategy {
 				accommodationCreateCommand.getCheckInTime(),
 				accommodationCreateCommand.getCheckOutTime()
 			)
+		);
+
+		return new AccommodationResult(accommodation);
+	}
+
+	@Override
+	public ProductResult updateProduct(Long productId, ProductUpdateCommand productUpdateCommand) {
+		AccommodationUpdateCommand accommodationUpdateCommand = (AccommodationUpdateCommand)productUpdateCommand;
+
+		Accommodation accommodation = accommodationRepository.findByProductId(productId)
+			.orElseThrow(() -> new EntityNotFoundException(Accommodation.class, productId));
+
+		accommodation.update(
+			accommodationUpdateCommand.getName(),
+			accommodationUpdateCommand.getDescription(),
+			accommodationUpdateCommand.getPrice(),
+			accommodationUpdateCommand.getQuantity(),
+			accommodationUpdateCommand.getPlace(),
+			accommodationUpdateCommand.getCheckInTime(),
+			accommodationUpdateCommand.getCheckOutTime()
 		);
 
 		return new AccommodationResult(accommodation);

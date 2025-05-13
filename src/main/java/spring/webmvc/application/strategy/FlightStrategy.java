@@ -8,7 +8,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import spring.webmvc.application.dto.command.FlightCreateCommand;
+import spring.webmvc.application.dto.command.FlightUpdateCommand;
 import spring.webmvc.application.dto.command.ProductCreateCommand;
+import spring.webmvc.application.dto.command.ProductUpdateCommand;
 import spring.webmvc.application.dto.result.FlightResult;
 import spring.webmvc.application.dto.result.ProductResult;
 import spring.webmvc.domain.cache.FlightCache;
@@ -73,6 +75,29 @@ public class FlightStrategy implements ProductStrategy {
 				flightCreateCommand.getDepartureTime(),
 				flightCreateCommand.getArrivalTime()
 			)
+		);
+
+		return new FlightResult(flight);
+	}
+
+	@Override
+	public ProductResult updateProduct(Long productId, ProductUpdateCommand productUpdateCommand) {
+		FlightUpdateCommand flightUpdateCommand = (FlightUpdateCommand)productUpdateCommand;
+
+		Flight flight = flightRepository.findByProductId(productId)
+			.orElseThrow(() -> new EntityNotFoundException(Flight.class, productId));
+
+		flight.update(
+			flightUpdateCommand.getName(),
+			flightUpdateCommand.getDescription(),
+			flightUpdateCommand.getPrice(),
+			flightUpdateCommand.getQuantity(),
+			flightUpdateCommand.getAirline(),
+			flightUpdateCommand.getFlightNumber(),
+			flightUpdateCommand.getDepartureAirport(),
+			flightUpdateCommand.getArrivalAirport(),
+			flightUpdateCommand.getDepartureTime(),
+			flightUpdateCommand.getArrivalTime()
 		);
 
 		return new FlightResult(flight);
