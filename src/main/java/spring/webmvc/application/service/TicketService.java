@@ -1,7 +1,5 @@
 package spring.webmvc.application.service;
 
-import java.time.Instant;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,35 +14,6 @@ import spring.webmvc.presentation.exception.EntityNotFoundException;
 public class TicketService {
 
 	private final TicketRepository ticketRepository;
-
-	@Transactional
-	public Ticket updateTicket(
-		Long id,
-		String name,
-		String description,
-		int price,
-		int quantity,
-		String place,
-		Instant performanceTime,
-		String duration,
-		String ageLimit
-	) {
-		Ticket ticket = ticketRepository.findById(id)
-			.orElseThrow(() -> new EntityNotFoundException(Ticket.class, id));
-
-		ticket.update(
-			name,
-			description,
-			price,
-			quantity,
-			place,
-			performanceTime,
-			duration,
-			ageLimit
-		);
-
-		return ticket;
-	}
 
 	@Transactional
 	public void deleteTicket(Long id) {

@@ -9,10 +9,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import spring.webmvc.application.dto.command.ProductCreateCommand;
+import spring.webmvc.application.dto.command.ProductUpdateCommand;
 import spring.webmvc.application.dto.result.ProductResult;
 import spring.webmvc.application.strategy.ProductStrategy;
+import spring.webmvc.domain.model.entity.Product;
 import spring.webmvc.domain.model.enums.Category;
 import spring.webmvc.domain.repository.ProductRepository;
+import spring.webmvc.presentation.exception.EntityNotFoundException;
 import spring.webmvc.presentation.exception.StrategyNotImplementedException;
 
 @Service
@@ -38,6 +41,16 @@ public class ProductService {
 		ProductStrategy productStrategy = getStrategy(command.getCategory());
 
 		return productStrategy.createProduct(command);
+	}
+
+	@Transactional
+	public ProductResult updateProduct(Long productId, ProductUpdateCommand command) {
+		productRepository.findById(productId)
+			.orElseThrow(() -> new EntityNotFoundException(Product.class, productId));
+
+		ProductStrategy productStrategy = getStrategy(command.getCategory());
+
+		return productStrategy.updateProduct(productId, command);
 	}
 
 	private ProductStrategy getStrategy(Category category) {
