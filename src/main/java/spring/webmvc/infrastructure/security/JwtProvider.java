@@ -1,4 +1,4 @@
-package spring.webmvc.infrastructure.config.security;
+package spring.webmvc.infrastructure.security;
 
 import java.util.Date;
 import java.util.List;
@@ -11,6 +11,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import spring.webmvc.infrastructure.properties.JwtProperties;
 
 @Component
 public class JwtProvider {

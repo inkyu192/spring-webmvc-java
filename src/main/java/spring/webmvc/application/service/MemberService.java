@@ -17,7 +17,7 @@ import spring.webmvc.domain.model.entity.Member;
 import spring.webmvc.domain.model.entity.Role;
 import spring.webmvc.domain.repository.MemberRepository;
 import spring.webmvc.domain.repository.RoleRepository;
-import spring.webmvc.infrastructure.util.SecurityContextUtil;
+import spring.webmvc.infrastructure.security.SecurityContextUtil;
 import spring.webmvc.presentation.exception.DuplicateEntityException;
 import spring.webmvc.presentation.exception.EntityNotFoundException;
 

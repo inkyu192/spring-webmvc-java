@@ -1,13 +1,11 @@
-package spring.webmvc.infrastructure.config.security;
+package spring.webmvc.infrastructure.properties;
 
 import java.util.List;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 
 @Getter
 @RequiredArgsConstructor

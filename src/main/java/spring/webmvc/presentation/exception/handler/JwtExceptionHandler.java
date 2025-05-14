@@ -13,9 +13,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import spring.webmvc.infrastructure.logging.HttpLogFilter;
-import spring.webmvc.infrastructure.common.UriFactory;
 import spring.webmvc.infrastructure.common.ResponseWriter;
+import spring.webmvc.infrastructure.common.UriFactory;
 
 @Slf4j
 @Component
@@ -36,7 +35,7 @@ public class JwtExceptionHandler extends OncePerRequestFilter {
 		} catch (JwtException e) {
 			handleException(HttpStatus.UNAUTHORIZED, e.getMessage());
 		} catch (Exception e) {
-			log.error("[{}]", request.getAttribute(HttpLogFilter.TRANSACTION_ID), e);
+			log.error("Unexpected error occurred: {}", e.getMessage(), e);
 			handleException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
 		}
 	}
