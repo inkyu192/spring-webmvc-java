@@ -6,4 +6,6 @@ import spring.webmvc.domain.model.entity.Permission;
 
 public interface PermissionRepository {
 	List<Permission> findAllById(Iterable<Long> ids);
+
+	Permission save(Permission permission);
 }

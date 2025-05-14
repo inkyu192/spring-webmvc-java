@@ -1,7 +1,11 @@
 package spring.webmvc.infrastructure.util;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 public final class SecurityContextUtil {
@@ -39,5 +43,11 @@ public final class SecurityContextUtil {
 		} catch (NumberFormatException e) {
 			return null;
 		}
+	}
+
+	public static Set<String> getAuthorities() {
+		return SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
+			.map(GrantedAuthority::getAuthority)
+			.collect(Collectors.toSet());
 	}
 }

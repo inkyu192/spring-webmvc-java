@@ -21,6 +21,11 @@ public class RoleRepositoryAdapter implements RoleRepository {
 	}
 
 	@Override
+	public List<Role> saveAll(Iterable<Role> roles) {
+		return jpaRepository.saveAll(roles);
+	}
+
+	@Override
 	public List<Role> findAllById(Iterable<Long> ids) {
 		return jpaRepository.findAllById(ids);
 	}
