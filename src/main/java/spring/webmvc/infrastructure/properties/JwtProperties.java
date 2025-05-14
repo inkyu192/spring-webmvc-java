@@ -1,4 +1,4 @@
-package spring.webmvc.infrastructure.config.security;
+package spring.webmvc.infrastructure.properties;
 
 import java.time.Duration;
 
@@ -17,7 +17,7 @@ public class JwtProperties {
 
 	@Getter
 	@RequiredArgsConstructor
-	static class TokenProperties {
+	public static class TokenProperties {
 		private final String key;
 		private final Duration expiration;
 	}

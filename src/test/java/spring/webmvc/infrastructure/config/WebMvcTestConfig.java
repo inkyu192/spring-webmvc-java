@@ -4,7 +4,8 @@ import org.mockito.Mockito;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 
-import spring.webmvc.infrastructure.config.security.JwtProvider;
+import spring.webmvc.infrastructure.logging.HttpLog;
+import spring.webmvc.infrastructure.security.JwtProvider;
 import spring.webmvc.infrastructure.common.UriFactory;
 import spring.webmvc.infrastructure.common.ResponseWriter;
 
@@ -24,5 +25,10 @@ public class WebMvcTestConfig {
 	@Bean
 	public UriFactory problemDetailUtil() {
 		return Mockito.mock(UriFactory.class);
+	}
+
+	@Bean
+	public HttpLog httpLog() {
+		return Mockito.mock(HttpLog.class);
 	}
 }

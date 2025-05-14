@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 import spring.webmvc.application.dto.result.MenuResult;
 import spring.webmvc.domain.model.entity.Menu;
 import spring.webmvc.domain.repository.MenuRepository;
-import spring.webmvc.infrastructure.util.SecurityContextUtil;
+import spring.webmvc.infrastructure.security.SecurityContextUtil;
 import spring.webmvc.presentation.exception.EntityNotFoundException;
 
 @Service

@@ -1,4 +1,4 @@
-package spring.webmvc.infrastructure.util;
+package spring.webmvc.infrastructure.security;
 
 import java.util.Set;
 import java.util.stream.Collectors;

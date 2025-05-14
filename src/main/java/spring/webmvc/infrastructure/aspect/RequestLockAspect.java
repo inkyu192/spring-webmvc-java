@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import spring.webmvc.application.service.RequestLockService;
-import spring.webmvc.infrastructure.util.SecurityContextUtil;
+import spring.webmvc.infrastructure.security.SecurityContextUtil;
 
 @Aspect
 @Component

@@ -1,4 +1,4 @@
-package spring.webmvc.infrastructure.config.redis;
+package spring.webmvc.infrastructure.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

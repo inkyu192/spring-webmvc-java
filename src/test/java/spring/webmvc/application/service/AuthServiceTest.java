@@ -19,7 +19,7 @@ import spring.webmvc.application.dto.result.TokenResult;
 import spring.webmvc.domain.cache.TokenCache;
 import spring.webmvc.domain.model.entity.Member;
 import spring.webmvc.domain.repository.MemberRepository;
-import spring.webmvc.infrastructure.config.security.JwtProvider;
+import spring.webmvc.infrastructure.security.JwtProvider;
 
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
