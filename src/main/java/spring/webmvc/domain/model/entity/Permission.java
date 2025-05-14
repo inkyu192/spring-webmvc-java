@@ -16,4 +16,10 @@ public class Permission extends BaseTime {
 	@GeneratedValue
 	private Long id;
 	private String name;
+
+	public static Permission of(String name) {
+		Permission permission = new Permission();
+		permission.name = name;
+		return permission;
+	}
 }
