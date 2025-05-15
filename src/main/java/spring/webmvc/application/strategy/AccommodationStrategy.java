@@ -96,4 +96,12 @@ public class AccommodationStrategy implements ProductStrategy {
 
 		return new AccommodationResult(accommodation);
 	}
+
+	@Override
+	public void deleteProduct(Long productId) {
+		Accommodation accommodation = accommodationRepository.findByProductId(productId)
+			.orElseThrow(() -> new EntityNotFoundException(Accommodation.class, productId));
+
+		accommodationRepository.delete(accommodation);
+	}
 }

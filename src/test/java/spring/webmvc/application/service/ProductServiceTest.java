@@ -185,4 +185,36 @@ class ProductServiceTest {
 			Assertions.assertThat(ticket.getAgeLimit()).isEqualTo(ticketResult.getAgeLimit());
 		});
 	}
+
+	@Test
+	@DisplayName("deleteProduct: Product 없을 경우 EntityNotFoundException 발생한다")
+	void deleteProductCase1() {
+		// Given
+		Category category = Category.TICKET;
+		Long productId = 1L;
+
+		Mockito.when(productRepository.findById(productId)).thenReturn(Optional.empty());
+
+		// When & Then
+		Assertions.assertThatThrownBy(() -> productService.deleteProduct(category, productId))
+			.isInstanceOf(EntityNotFoundException.class);
+	}
+
+	@Test
+	@DisplayName("deleteProduct: Product 있을 경우 삭제한다")
+	void deleteProductCase2() {
+		// Given
+		Category category = Category.TICKET;
+		Long productId = 1L;
+
+		Product product = Mockito.mock(Product.class);
+
+		Mockito.when(productRepository.findById(productId)).thenReturn(Optional.of(product));
+		Mockito.when(productStrategy.supports(category)).thenReturn(true);
+		Mockito.doNothing().when(productStrategy).deleteProduct(productId);
+
+		productService.deleteProduct(category, productId);
+
+		Mockito.verify(productStrategy, Mockito.times(1)).deleteProduct(productId);
+	}
 }

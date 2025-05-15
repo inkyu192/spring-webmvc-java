@@ -44,13 +44,23 @@ public class ProductService {
 	}
 
 	@Transactional
-	public ProductResult updateProduct(Long productId, ProductUpdateCommand command) {
-		productRepository.findById(productId)
-			.orElseThrow(() -> new EntityNotFoundException(Product.class, productId));
+	public ProductResult updateProduct(Long id, ProductUpdateCommand command) {
+		productRepository.findById(id)
+			.orElseThrow(() -> new EntityNotFoundException(Product.class, id));
 
 		ProductStrategy productStrategy = getStrategy(command.getCategory());
 
-		return productStrategy.updateProduct(productId, command);
+		return productStrategy.updateProduct(id, command);
+	}
+
+	@Transactional
+	public void deleteProduct(Category category, Long id) {
+		productRepository.findById(id)
+			.orElseThrow(() -> new EntityNotFoundException(Product.class, id));
+
+		ProductStrategy productStrategy = getStrategy(category);
+
+		productStrategy.deleteProduct(id);
 	}
 
 	private ProductStrategy getStrategy(Category category) {

@@ -102,4 +102,12 @@ public class FlightStrategy implements ProductStrategy {
 
 		return new FlightResult(flight);
 	}
+
+	@Override
+	public void deleteProduct(Long productId) {
+		Flight flight = flightRepository.findByProductId(productId)
+			.orElseThrow(() -> new EntityNotFoundException(Flight.class, productId));
+
+		flightRepository.delete(flight);
+	}
 }

@@ -42,7 +42,6 @@ import spring.webmvc.application.dto.result.TicketResult;
 import spring.webmvc.application.service.ProductService;
 import spring.webmvc.domain.model.enums.Category;
 import spring.webmvc.infrastructure.config.WebMvcTestConfig;
-import spring.webmvc.presentation.dto.request.AccommodationUpdateRequest;
 
 @WebMvcTest(ProductController.class)
 @Import(WebMvcTestConfig.class)
@@ -933,6 +932,81 @@ class ProductControllerTest {
 						PayloadDocumentation.fieldWithPath("place").description("장소"),
 						PayloadDocumentation.fieldWithPath("checkInTime").description("체크인 시간"),
 						PayloadDocumentation.fieldWithPath("checkOutTime").description("체크아웃 시간")
+					)
+				)
+			);
+	}
+
+	@Test
+	void deleteTicket() throws Exception {
+		// Given
+		Long productId = 1L;
+		Category category = Category.TICKET;
+
+		Mockito.doNothing().when(productService).deleteProduct(category, productId);
+
+		// When & Then
+		mockMvc.perform(
+				RestDocumentationRequestBuilders.delete("/products/{id}", productId)
+					.param("category", category.toString())
+					.contentType(MediaType.APPLICATION_JSON)
+					.header("Authorization", "Bearer access-token")
+			)
+			.andExpect(MockMvcResultMatchers.status().isNoContent())
+			.andDo(
+				MockMvcRestDocumentation.document("ticket-delete",
+					HeaderDocumentation.requestHeaders(
+						HeaderDocumentation.headerWithName("Authorization").description("액세스 토큰")
+					)
+				)
+			);
+	}
+
+	@Test
+	void deleteFlight() throws Exception {
+		// Given
+		Long productId = 1L;
+		Category category = Category.FLIGHT;
+
+		Mockito.doNothing().when(productService).deleteProduct(category, productId);
+
+		// When & Then
+		mockMvc.perform(
+				RestDocumentationRequestBuilders.delete("/products/{id}", productId)
+					.param("category", category.toString())
+					.contentType(MediaType.APPLICATION_JSON)
+					.header("Authorization", "Bearer access-token")
+			)
+			.andExpect(MockMvcResultMatchers.status().isNoContent())
+			.andDo(
+				MockMvcRestDocumentation.document("flight-delete",
+					HeaderDocumentation.requestHeaders(
+						HeaderDocumentation.headerWithName("Authorization").description("액세스 토큰")
+					)
+				)
+			);
+	}
+
+	@Test
+	void deleteAccommodation() throws Exception {
+		// Given
+		Long productId = 1L;
+		Category category = Category.ACCOMMODATION;
+
+		Mockito.doNothing().when(productService).deleteProduct(category, productId);
+
+		// When & Then
+		mockMvc.perform(
+				RestDocumentationRequestBuilders.delete("/products/{id}", productId)
+					.param("category", category.toString())
+					.contentType(MediaType.APPLICATION_JSON)
+					.header("Authorization", "Bearer access-token")
+			)
+			.andExpect(MockMvcResultMatchers.status().isNoContent())
+			.andDo(
+				MockMvcRestDocumentation.document("accommodation-delete",
+					HeaderDocumentation.requestHeaders(
+						HeaderDocumentation.headerWithName("Authorization").description("액세스 토큰")
 					)
 				)
 			);

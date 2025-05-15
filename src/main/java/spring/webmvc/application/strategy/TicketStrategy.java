@@ -98,4 +98,12 @@ public class TicketStrategy implements ProductStrategy {
 
 		return new TicketResult(ticket);
 	}
+
+	@Override
+	public void deleteProduct(Long productId) {
+		Ticket ticket = ticketRepository.findByProductId(productId)
+			.orElseThrow(() -> new EntityNotFoundException(Ticket.class, productId));
+
+		ticketRepository.delete(ticket);
+	}
 }
