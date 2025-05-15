@@ -91,7 +91,7 @@ class JwtAuthenticationFilterTest {
 		String token = "valid.jwt.token";
 		Claims claims = Mockito.mock(Claims.class);
 		Long memberId = 1L;
-		List<String> permissions = List.of("ITEM_READ");
+		List<String> permissions = List.of("PRODUCT_READER");
 
 		Mockito.when(jwtProvider.parseAccessToken(token)).thenReturn(claims);
 		Mockito.when(claims.get("memberId", Long.class)).thenReturn(memberId);
