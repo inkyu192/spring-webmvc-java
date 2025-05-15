@@ -32,7 +32,7 @@ public class MenuService {
 		}
 
 		if (parent != null) {
-			menu.setParent(parent);
+			menu.updateParent(parent);
 		}
 
 		permissionService.addPermission(permissionIds, menu::addPermission);

@@ -78,15 +78,15 @@ public class DataInitializer implements ApplicationRunner {
 
 		Menu permissionManage = Menu.create("권한 관리", "/permissions");
 		permissionManage.addPermission(permissionReader);
-		permissionManage.setParent(settings);
+		permissionManage.updateParent(settings);
 
 		Menu menuManage = Menu.create("메뉴 관리", "/menus");
 		menuManage.addPermission(menuReader);
-		menuManage.setParent(settings);
+		menuManage.updateParent(settings);
 
 		Menu roleManage = Menu.create("역할 관리", "/roles");
 		roleManage.addPermission(roleReader);
-		roleManage.setParent(settings);
+		roleManage.updateParent(settings);
 
 		menuRepository.saveAll(
 			List.of(

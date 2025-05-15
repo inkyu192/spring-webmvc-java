@@ -31,7 +31,7 @@ public class Menu extends BaseTime {
 	@JoinColumn(name = "parent_id")
 	private Menu parent;
 
-	@OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "parent")
 	private List<Menu> children = new ArrayList<>();
 
 	@OneToMany(mappedBy = "menu", cascade = CascadeType.ALL)
@@ -54,7 +54,7 @@ public class Menu extends BaseTime {
 		return menu;
 	}
 
-	public void setParent(Menu parent) {
+	public void updateParent(Menu parent) {
 		this.parent = parent;
 		parent.children.add(this);
 	}
