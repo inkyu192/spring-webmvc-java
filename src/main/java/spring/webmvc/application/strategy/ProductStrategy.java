@@ -13,4 +13,6 @@ public interface ProductStrategy {
 	ProductResult createProduct(ProductCreateCommand productCreateCommand);
 
 	ProductResult updateProduct(Long productId, ProductUpdateCommand productUpdateCommand);
+
+	void deleteProduct(Long productId);
 }
