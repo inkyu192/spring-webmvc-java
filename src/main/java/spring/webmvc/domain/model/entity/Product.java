@@ -21,13 +21,13 @@ public class Product extends BaseCreator {
 	private Long id;
 	private String name;
 	private String description;
-	private int price;
-	private int quantity;
+	private long price;
+	private long quantity;
 
 	@Enumerated(EnumType.STRING)
 	private Category category;
 
-	public static Product create(String name, String description, int price, int quantity, Category category) {
+	public static Product create(String name, String description, long price, long quantity, Category category) {
 		Product product = new Product();
 		product.name = name;
 		product.description = description;
@@ -37,24 +37,18 @@ public class Product extends BaseCreator {
 		return product;
 	}
 
-	public void update(String name, String description, int price, int quantity) {
+	public void update(String name, String description, long price, long quantity) {
 		this.name = name;
 		this.description = description;
 		this.price = price;
 		this.quantity = quantity;
 	}
 
-	public void removeQuantity(int quantity) {
-		int differenceQuantity = this.quantity - quantity;
-
-		if (differenceQuantity < 0) {
-			throw new InsufficientQuantityException(name, quantity, this.quantity);
-		}
-
-		this.quantity = differenceQuantity;
+	public void removeQuantity(long quantity) {
+		this.quantity -= quantity;
 	}
 
-	public void addQuantity(int quantity) {
+	public void addQuantity(long quantity) {
 		this.quantity += quantity;
 	}
 }

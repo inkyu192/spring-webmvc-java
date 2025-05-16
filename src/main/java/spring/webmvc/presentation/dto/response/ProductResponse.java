@@ -13,8 +13,8 @@ public class ProductResponse {
 	private final Category category;
 	private final String name;
 	private final String description;
-	private final int price;
-	private final int quantity;
+	private final long price;
+	private final long quantity;
 	private final Instant createdAt;
 
 	public ProductResponse(ProductResult productResult) {

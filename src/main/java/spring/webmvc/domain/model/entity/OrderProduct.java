@@ -31,10 +31,10 @@ public class OrderProduct {
 	@JoinColumn(name = "order_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
 	private Order order;
 
-	private int orderPrice;
-	private int quantity;
+	private long orderPrice;
+	private long quantity;
 
-	public static OrderProduct create(Order order, Product product, int quantity) {
+	public static OrderProduct create(Order order, Product product, long quantity) {
 		OrderProduct orderProduct = new OrderProduct();
 
 		orderProduct.order = order;

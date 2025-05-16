@@ -18,7 +18,7 @@ import spring.webmvc.domain.model.entity.MemberPermission;
 import spring.webmvc.domain.model.entity.Permission;
 import spring.webmvc.domain.model.entity.RolePermission;
 import spring.webmvc.domain.repository.MemberRepository;
-import spring.webmvc.infrastructure.cache.CacheKey;
+import spring.webmvc.domain.cache.CacheKey;
 import spring.webmvc.infrastructure.security.JwtProvider;
 import spring.webmvc.presentation.exception.EntityNotFoundException;
 
@@ -58,7 +58,7 @@ public class AuthService {
 			throw new BadCredentialsException("유효하지 않은 인증 정보입니다. 다시 로그인해 주세요.");
 		}
 
-		return new TokenResult(jwtProvider.createAccessToken(member.getId(), getPermissions(member)), refreshToken);
+		return new TokenResult(jwtProvider.createAccessToken(memberId, getPermissions(member)), refreshToken);
 	}
 
 	private Long extractMemberId(String accessToken) {

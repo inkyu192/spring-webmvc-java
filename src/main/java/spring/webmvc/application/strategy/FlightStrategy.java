@@ -17,7 +17,7 @@ import spring.webmvc.domain.cache.KeyValueCache;
 import spring.webmvc.domain.model.entity.Flight;
 import spring.webmvc.domain.model.enums.Category;
 import spring.webmvc.domain.repository.FlightRepository;
-import spring.webmvc.infrastructure.cache.CacheKey;
+import spring.webmvc.domain.cache.CacheKey;
 import spring.webmvc.presentation.exception.EntityNotFoundException;
 
 @Slf4j

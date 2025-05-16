@@ -17,7 +17,7 @@ import spring.webmvc.domain.cache.KeyValueCache;
 import spring.webmvc.domain.model.entity.Accommodation;
 import spring.webmvc.domain.model.enums.Category;
 import spring.webmvc.domain.repository.AccommodationRepository;
-import spring.webmvc.infrastructure.cache.CacheKey;
+import spring.webmvc.domain.cache.CacheKey;
 import spring.webmvc.presentation.exception.EntityNotFoundException;
 
 @Slf4j
