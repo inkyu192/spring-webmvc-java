@@ -73,8 +73,8 @@ class OrderControllerTest {
 		Mockito.when(order.getOrderedAt()).thenReturn(Instant.now());
 		Mockito.when(order.getStatus()).thenReturn(OrderStatus.ORDER);
 		Mockito.when(product.getName()).thenReturn("name");
-		Mockito.when(orderProduct.getQuantity()).thenReturn(3);
-		Mockito.when(orderProduct.getOrderPrice()).thenReturn(5000);
+		Mockito.when(orderProduct.getQuantity()).thenReturn(3L);
+		Mockito.when(orderProduct.getOrderPrice()).thenReturn(5000L);
 		Mockito.when(orderProduct.getProduct()).thenReturn(product);
 		Mockito.when(order.getOrderProducts()).thenReturn(List.of(orderProduct));
 		Mockito.when(orderService.createOrder(orderCreateCommand)).thenReturn(order);
@@ -133,8 +133,8 @@ class OrderControllerTest {
 		Mockito.when(order.getOrderedAt()).thenReturn(Instant.now());
 		Mockito.when(order.getStatus()).thenReturn(OrderStatus.ORDER);
 		Mockito.when(product.getName()).thenReturn("name");
-		Mockito.when(orderProduct.getQuantity()).thenReturn(3);
-		Mockito.when(orderProduct.getOrderPrice()).thenReturn(5000);
+		Mockito.when(orderProduct.getQuantity()).thenReturn(3L);
+		Mockito.when(orderProduct.getOrderPrice()).thenReturn(5000L);
 		Mockito.when(orderProduct.getProduct()).thenReturn(product);
 		Mockito.when(order.getOrderProducts()).thenReturn(List.of(orderProduct));
 		Mockito.when(orderService.findOrders(pageable, orderStatus)).thenReturn(page);
@@ -207,8 +207,8 @@ class OrderControllerTest {
 		Mockito.when(order.getOrderedAt()).thenReturn(Instant.now());
 		Mockito.when(order.getStatus()).thenReturn(OrderStatus.ORDER);
 		Mockito.when(product.getName()).thenReturn("name");
-		Mockito.when(orderProduct.getQuantity()).thenReturn(3);
-		Mockito.when(orderProduct.getOrderPrice()).thenReturn(5000);
+		Mockito.when(orderProduct.getQuantity()).thenReturn(3L);
+		Mockito.when(orderProduct.getOrderPrice()).thenReturn(5000L);
 		Mockito.when(orderProduct.getProduct()).thenReturn(product);
 		Mockito.when(order.getOrderProducts()).thenReturn(List.of(orderProduct));
 		Mockito.when(orderService.findOrder(orderId)).thenReturn(order);
@@ -250,8 +250,8 @@ class OrderControllerTest {
 		Mockito.when(order.getOrderedAt()).thenReturn(Instant.now());
 		Mockito.when(order.getStatus()).thenReturn(OrderStatus.ORDER);
 		Mockito.when(product.getName()).thenReturn("name");
-		Mockito.when(orderProduct.getQuantity()).thenReturn(3);
-		Mockito.when(orderProduct.getOrderPrice()).thenReturn(5000);
+		Mockito.when(orderProduct.getQuantity()).thenReturn(3L);
+		Mockito.when(orderProduct.getOrderPrice()).thenReturn(5000L);
 		Mockito.when(orderProduct.getProduct()).thenReturn(product);
 		Mockito.when(order.getOrderProducts()).thenReturn(List.of(orderProduct));
 		Mockito.when(orderService.cancelOrder(orderId)).thenReturn(order);

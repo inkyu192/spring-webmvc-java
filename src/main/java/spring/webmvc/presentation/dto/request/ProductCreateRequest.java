@@ -31,7 +31,7 @@ public class ProductCreateRequest {
 	@NotBlank
 	private final String description;
 	@Min(100)
-	private final int price;
+	private final long price;
 	@Max(9999)
-	private final int quantity;
+	private final long quantity;
 }

@@ -35,8 +35,8 @@ public class Accommodation {
 	public static Accommodation create(
 		String name,
 		String description,
-		int price,
-		int quantity,
+		long price,
+		long quantity,
 		String place,
 		Instant checkInTime,
 		Instant checkOutTime
@@ -54,8 +54,8 @@ public class Accommodation {
 	public void update(
 		String name,
 		String description,
-		int price,
-		int quantity,
+		long price,
+		long quantity,
 		String place,
 		Instant checkInTime,
 		Instant checkOutTime

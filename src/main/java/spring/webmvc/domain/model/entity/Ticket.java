@@ -36,8 +36,8 @@ public class Ticket {
 	public static Ticket create(
 		String name,
 		String description,
-		int price,
-		int quantity,
+		long price,
+		long quantity,
 		String place,
 		Instant performanceTime,
 		String duration,
@@ -57,8 +57,8 @@ public class Ticket {
 	public void update(
 		String name,
 		String description,
-		int price,
-		int quantity,
+		long price,
+		long quantity,
 		String place,
 		Instant performanceTime,
 		String duration,

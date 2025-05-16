@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import spring.webmvc.application.dto.command.OrderCreateCommand;
 import spring.webmvc.application.dto.command.OrderProductCreateCommand;
+import spring.webmvc.domain.cache.CacheKey;
+import spring.webmvc.domain.cache.KeyValueCache;
 import spring.webmvc.domain.model.entity.Member;
 import spring.webmvc.domain.model.entity.Order;
 import spring.webmvc.domain.model.entity.Product;
@@ -20,12 +22,14 @@ import spring.webmvc.domain.repository.OrderRepository;
 import spring.webmvc.domain.repository.ProductRepository;
 import spring.webmvc.infrastructure.security.SecurityContextUtil;
 import spring.webmvc.presentation.exception.EntityNotFoundException;
+import spring.webmvc.presentation.exception.InsufficientQuantityException;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class OrderService {
 
+	private final KeyValueCache keyValueCache;
 	private final MemberRepository memberRepository;
 	private final ProductRepository productRepository;
 	private final OrderRepository orderRepository;
@@ -33,11 +37,8 @@ public class OrderService {
 	@Transactional
 	public Order createOrder(OrderCreateCommand orderCreateCommand) {
 		Long memberId = SecurityContextUtil.getMemberId();
-
 		Member member = memberRepository.findById(memberId)
 			.orElseThrow(() -> new EntityNotFoundException(Member.class, memberId));
-
-		Order order = Order.create(member);
 
 		Map<Long, Product> productMap = productRepository.findAllById(
 				orderCreateCommand.products().stream()
@@ -47,17 +48,42 @@ public class OrderService {
 			.stream()
 			.collect(Collectors.toMap(Product::getId, product -> product));
 
+		Order order = Order.create(member);
+
 		for (OrderProductCreateCommand orderProductCreateCommand : orderCreateCommand.products()) {
 			Product product = productMap.get(orderProductCreateCommand.productId());
+			int quantity = orderProductCreateCommand.quantity();
 
 			if (product == null) {
 				throw new EntityNotFoundException(Product.class, orderProductCreateCommand.productId());
 			}
 
-			order.addProduct(product, orderProductCreateCommand.quantity());
+			String key = CacheKey.PRODUCT_STOCK.generate(product.getId());
+			Long stock = keyValueCache.decrement(key, quantity);
+
+			if (stock == null || stock < 0) {
+				if (stock != null) {
+					keyValueCache.increment(key, quantity);
+				}
+				throw new InsufficientQuantityException(
+					product.getName(),
+					quantity,
+					Long.parseLong(keyValueCache.get(key))
+				);
+			}
+
+			order.addProduct(product, quantity);
 		}
 
-		return orderRepository.save(order);
+		try {
+			return orderRepository.save(order);
+		} catch (Exception e) {
+			for (OrderProductCreateCommand orderProductCreateCommand : orderCreateCommand.products()) {
+				String key = CacheKey.PRODUCT_STOCK.generate(orderProductCreateCommand.productId());
+				keyValueCache.increment(key, orderProductCreateCommand.quantity());
+			}
+			throw e;
+		}
 	}
 
 	public Page<Order> findOrders(Pageable pageable, OrderStatus orderStatus) {

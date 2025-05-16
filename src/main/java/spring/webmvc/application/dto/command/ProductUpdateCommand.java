@@ -10,6 +10,6 @@ public class ProductUpdateCommand {
 	private final Category category;
 	private final String name;
 	private final String description;
-	private final int price;
-	private final int quantity;
+	private final long price;
+	private final long quantity;
 }

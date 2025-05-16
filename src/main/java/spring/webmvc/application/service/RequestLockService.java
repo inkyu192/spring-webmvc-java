@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import spring.webmvc.domain.cache.KeyValueCache;
-import spring.webmvc.infrastructure.cache.CacheKey;
+import spring.webmvc.domain.cache.CacheKey;
 import spring.webmvc.presentation.exception.DuplicateRequestException;
 
 @Service

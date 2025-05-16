@@ -38,8 +38,8 @@ public class Flight {
 	public static Flight create(
 		String name,
 		String description,
-		int price,
-		int quantity,
+		long price,
+		long quantity,
 		String airline,
 		String flightNumber,
 		String departureAirport,
@@ -63,8 +63,8 @@ public class Flight {
 	public void update(
 		String name,
 		String description,
-		int price,
-		int quantity,
+		long price,
+		long quantity,
 		String airline,
 		String flightNumber,
 		String departureAirport,

@@ -12,7 +12,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import spring.webmvc.domain.cache.KeyValueCache;
-import spring.webmvc.infrastructure.cache.CacheKey;
+import spring.webmvc.domain.cache.CacheKey;
 import spring.webmvc.presentation.exception.DuplicateRequestException;
 
 @ExtendWith(MockitoExtension.class)

@@ -4,8 +4,8 @@ import spring.webmvc.domain.model.entity.OrderProduct;
 
 public record OrderProductResponse(
 	String name,
-	int price,
-	int quantity
+	long price,
+	long quantity
 ) {
 	public OrderProductResponse(OrderProduct orderProduct) {
 		this(

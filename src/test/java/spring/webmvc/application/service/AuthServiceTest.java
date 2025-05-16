@@ -19,7 +19,7 @@ import spring.webmvc.application.dto.result.TokenResult;
 import spring.webmvc.domain.cache.KeyValueCache;
 import spring.webmvc.domain.model.entity.Member;
 import spring.webmvc.domain.repository.MemberRepository;
-import spring.webmvc.infrastructure.cache.CacheKey;
+import spring.webmvc.domain.cache.CacheKey;
 import spring.webmvc.infrastructure.security.JwtProvider;
 
 @ExtendWith(MockitoExtension.class)

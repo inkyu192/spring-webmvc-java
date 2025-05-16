@@ -17,7 +17,7 @@ import spring.webmvc.domain.cache.KeyValueCache;
 import spring.webmvc.domain.model.entity.Ticket;
 import spring.webmvc.domain.model.enums.Category;
 import spring.webmvc.domain.repository.TicketRepository;
-import spring.webmvc.infrastructure.cache.CacheKey;
+import spring.webmvc.domain.cache.CacheKey;
 import spring.webmvc.presentation.exception.EntityNotFoundException;
 
 @Slf4j
@@ -77,6 +77,9 @@ public class TicketStrategy implements ProductStrategy {
 			)
 		);
 
+		String key = CacheKey.PRODUCT_STOCK.generate(ticket.getProduct());
+		keyValueCache.set(key, String.valueOf(ticket.getProduct().getQuantity()));
+
 		return new TicketResult(ticket);
 	}
 
@@ -98,6 +101,9 @@ public class TicketStrategy implements ProductStrategy {
 			ticketUpdateCommand.getAgeLimit()
 		);
 
+		String key = CacheKey.PRODUCT_STOCK.generate(ticket.getProduct());
+		keyValueCache.set(key, String.valueOf(ticket.getProduct().getQuantity()));
+
 		return new TicketResult(ticket);
 	}
 
@@ -107,5 +113,8 @@ public class TicketStrategy implements ProductStrategy {
 			.orElseThrow(() -> new EntityNotFoundException(Ticket.class, productId));
 
 		ticketRepository.delete(ticket);
+
+		String stockKey = CacheKey.PRODUCT_STOCK.generate(ticket.getId());
+		keyValueCache.delete(stockKey);
 	}
 }

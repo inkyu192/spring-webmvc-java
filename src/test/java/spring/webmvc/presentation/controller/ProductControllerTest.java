@@ -73,8 +73,8 @@ class ProductControllerTest {
 		Mockito.when(productResult1.getCategory()).thenReturn(Category.ACCOMMODATION);
 		Mockito.when(productResult1.getName()).thenReturn("name1");
 		Mockito.when(productResult1.getDescription()).thenReturn("description1");
-		Mockito.when(productResult1.getPrice()).thenReturn(1000);
-		Mockito.when(productResult1.getQuantity()).thenReturn(10);
+		Mockito.when(productResult1.getPrice()).thenReturn(1000L);
+		Mockito.when(productResult1.getQuantity()).thenReturn(10L);
 		Mockito.when(productResult1.getCreatedAt()).thenReturn(Instant.now());
 
 		ProductResult productResult2 = Mockito.mock(ProductResult.class);
@@ -82,8 +82,8 @@ class ProductControllerTest {
 		Mockito.when(productResult2.getCategory()).thenReturn(Category.FLIGHT);
 		Mockito.when(productResult2.getName()).thenReturn("name2");
 		Mockito.when(productResult2.getDescription()).thenReturn("description2");
-		Mockito.when(productResult2.getPrice()).thenReturn(2000);
-		Mockito.when(productResult2.getQuantity()).thenReturn(20);
+		Mockito.when(productResult2.getPrice()).thenReturn(2000L);
+		Mockito.when(productResult2.getQuantity()).thenReturn(20L);
 		Mockito.when(productResult2.getCreatedAt()).thenReturn(Instant.now());
 
 		ProductResult productResult3 = Mockito.mock(ProductResult.class);
@@ -91,8 +91,8 @@ class ProductControllerTest {
 		Mockito.when(productResult3.getCategory()).thenReturn(Category.TICKET);
 		Mockito.when(productResult3.getName()).thenReturn("name3");
 		Mockito.when(productResult3.getDescription()).thenReturn("description3");
-		Mockito.when(productResult3.getPrice()).thenReturn(3000);
-		Mockito.when(productResult3.getQuantity()).thenReturn(30);
+		Mockito.when(productResult3.getPrice()).thenReturn(3000L);
+		Mockito.when(productResult3.getQuantity()).thenReturn(30L);
 		Mockito.when(productResult3.getCreatedAt()).thenReturn(Instant.now());
 
 		List<ProductResult> response = List.of(productResult1, productResult2, productResult3);
@@ -163,8 +163,8 @@ class ProductControllerTest {
 		Category category = Category.TICKET;
 		String name = "name";
 		String description = "description";
-		int price = 1000;
-		int quantity = 5;
+		long price = 1000L;
+		long quantity = 5L;
 		String place = "place";
 		Instant performanceTime = Instant.now();
 		String duration = "duration";
@@ -229,8 +229,8 @@ class ProductControllerTest {
 		Category category = Category.FLIGHT;
 		String name = "name";
 		String description = "description";
-		int price = 1000;
-		int quantity = 5;
+		long price = 1000;
+		long quantity = 5;
 		String airline = "airline";
 		String flightNumber = "flightNumber";
 		String departureAirport = "departureAirport";
@@ -301,8 +301,8 @@ class ProductControllerTest {
 		Category category = Category.ACCOMMODATION;
 		String name = "name";
 		String description = "description";
-		int price = 1000;
-		int quantity = 5;
+		long price = 1000;
+		long quantity = 5;
 		String place = "place";
 		Instant checkInTime = Instant.now();
 		Instant checkOutTime = Instant.now().plus(1, ChronoUnit.DAYS);
@@ -364,8 +364,8 @@ class ProductControllerTest {
 		Category category = Category.TICKET;
 		String name = "name";
 		String description = "description";
-		int price = 1000;
-		int quantity = 5;
+		long price = 1000;
+		long quantity = 5;
 		String place = "place";
 		Instant performanceTime = Instant.now();
 		String duration = "duration";
@@ -458,8 +458,8 @@ class ProductControllerTest {
 		Category category = Category.FLIGHT;
 		String name = "name";
 		String description = "description";
-		int price = 1000;
-		int quantity = 5;
+		long price = 1000;
+		long quantity = 5;
 		String airline = "airline";
 		String flightNumber = "flightNumber";
 		String departureAirport = "departureAirport";
@@ -564,8 +564,8 @@ class ProductControllerTest {
 		Category category = Category.ACCOMMODATION;
 		String name = "name";
 		String description = "description";
-		int price = 1000;
-		int quantity = 5;
+		long price = 1000;
+		long quantity = 5;
 		String place = "place";
 		Instant checkInTime = Instant.now();
 		Instant checkOutTime = Instant.now().plus(1, ChronoUnit.DAYS);
@@ -653,8 +653,8 @@ class ProductControllerTest {
 		Category category = Category.TICKET;
 		String name = "name";
 		String description = "description";
-		int price = 1000;
-		int quantity = 5;
+		long price = 1000;
+		long quantity = 5;
 		String place = "place";
 		Instant performanceTime = Instant.now();
 		String duration = "duration";
@@ -748,8 +748,8 @@ class ProductControllerTest {
 		Category category = Category.FLIGHT;
 		String name = "name";
 		String description = "description";
-		int price = 1000;
-		int quantity = 5;
+		long price = 1000;
+		long quantity = 5;
 		String airline = "airline";
 		String flightNumber = "flightNumber";
 		String departureAirport = "departureAirport";
@@ -855,8 +855,8 @@ class ProductControllerTest {
 		Category category = Category.ACCOMMODATION;
 		String name = "name";
 		String description = "description";
-		int price = 1000;
-		int quantity = 5;
+		long price = 1000;
+		long quantity = 5;
 		String place = "place";
 		Instant checkInTime = Instant.now();
 		Instant checkOutTime = Instant.now().plus(1, ChronoUnit.DAYS);
