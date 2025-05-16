@@ -12,12 +12,13 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import spring.webmvc.application.dto.result.TokenResult;
-import spring.webmvc.domain.cache.TokenCache;
+import spring.webmvc.domain.cache.KeyValueCache;
 import spring.webmvc.domain.model.entity.Member;
 import spring.webmvc.domain.model.entity.MemberPermission;
 import spring.webmvc.domain.model.entity.Permission;
 import spring.webmvc.domain.model.entity.RolePermission;
 import spring.webmvc.domain.repository.MemberRepository;
+import spring.webmvc.infrastructure.cache.CacheKey;
 import spring.webmvc.infrastructure.security.JwtProvider;
 import spring.webmvc.presentation.exception.EntityNotFoundException;
 
@@ -27,7 +28,7 @@ import spring.webmvc.presentation.exception.EntityNotFoundException;
 public class AuthService {
 
 	private final JwtProvider jwtProvider;
-	private final TokenCache tokenCache;
+	private final KeyValueCache keyValueCache;
 	private final MemberRepository memberRepository;
 	private final PasswordEncoder passwordEncoder;
 
@@ -40,7 +41,8 @@ public class AuthService {
 		String accessToken = jwtProvider.createAccessToken(member.getId(), getPermissions(member));
 		String refreshToken = jwtProvider.createRefreshToken();
 
-		tokenCache.set(member.getId(), refreshToken);
+		String key = CacheKey.REFRESH_TOKEN.generate(member.getId());
+		keyValueCache.set(key, refreshToken, CacheKey.REFRESH_TOKEN.getTimeout());
 
 		return new TokenResult(accessToken, refreshToken);
 	}
@@ -52,9 +54,9 @@ public class AuthService {
 		Member member = memberRepository.findById(memberId)
 			.orElseThrow(() -> new EntityNotFoundException(Member.class, memberId));
 
-		tokenCache.get(memberId)
-			.filter(refreshToken::equals)
-			.orElseThrow(() -> new BadCredentialsException("유효하지 않은 인증 정보입니다. 다시 로그인해 주세요."));
+		if (!keyValueCache.get(CacheKey.REFRESH_TOKEN.generate(memberId)).equals(refreshToken)) {
+			throw new BadCredentialsException("유효하지 않은 인증 정보입니다. 다시 로그인해 주세요.");
+		}
 
 		return new TokenResult(jwtProvider.createAccessToken(member.getId(), getPermissions(member)), refreshToken);
 	}

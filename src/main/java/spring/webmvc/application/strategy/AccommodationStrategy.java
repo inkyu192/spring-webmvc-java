@@ -13,10 +13,11 @@ import spring.webmvc.application.dto.command.ProductCreateCommand;
 import spring.webmvc.application.dto.command.ProductUpdateCommand;
 import spring.webmvc.application.dto.result.AccommodationResult;
 import spring.webmvc.application.dto.result.ProductResult;
-import spring.webmvc.domain.cache.AccommodationCache;
+import spring.webmvc.domain.cache.KeyValueCache;
 import spring.webmvc.domain.model.entity.Accommodation;
 import spring.webmvc.domain.model.enums.Category;
 import spring.webmvc.domain.repository.AccommodationRepository;
+import spring.webmvc.infrastructure.cache.CacheKey;
 import spring.webmvc.presentation.exception.EntityNotFoundException;
 
 @Slf4j
@@ -24,7 +25,7 @@ import spring.webmvc.presentation.exception.EntityNotFoundException;
 @RequiredArgsConstructor
 public class AccommodationStrategy implements ProductStrategy {
 
-	private final AccommodationCache accommodationCache;
+	private final KeyValueCache keyValueCache;
 	private final AccommodationRepository accommodationRepository;
 	private final ObjectMapper objectMapper;
 
@@ -35,7 +36,8 @@ public class AccommodationStrategy implements ProductStrategy {
 
 	@Override
 	public ProductResult findByProductId(Long productId) {
-		String cache = accommodationCache.get(productId);
+		String key = CacheKey.PRODUCT.generate(productId);
+		String cache = keyValueCache.get(key);
 
 		if (cache != null) {
 			try {
@@ -50,7 +52,7 @@ public class AccommodationStrategy implements ProductStrategy {
 			.orElseThrow(() -> new EntityNotFoundException(Accommodation.class, productId));
 
 		try {
-			accommodationCache.set(productId, objectMapper.writeValueAsString(accommodationResult));
+			keyValueCache.set(key, objectMapper.writeValueAsString(accommodationResult), CacheKey.PRODUCT.getTimeout());
 		} catch (JsonProcessingException e) {
 			log.warn("Failed to serialize ticket cache for productId={}: {}", productId, e.getMessage());
 		}

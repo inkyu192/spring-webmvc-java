@@ -13,10 +13,11 @@ import spring.webmvc.application.dto.command.TicketCreateCommand;
 import spring.webmvc.application.dto.command.TicketUpdateCommand;
 import spring.webmvc.application.dto.result.ProductResult;
 import spring.webmvc.application.dto.result.TicketResult;
-import spring.webmvc.domain.cache.TicketCache;
+import spring.webmvc.domain.cache.KeyValueCache;
 import spring.webmvc.domain.model.entity.Ticket;
 import spring.webmvc.domain.model.enums.Category;
 import spring.webmvc.domain.repository.TicketRepository;
+import spring.webmvc.infrastructure.cache.CacheKey;
 import spring.webmvc.presentation.exception.EntityNotFoundException;
 
 @Slf4j
@@ -24,7 +25,7 @@ import spring.webmvc.presentation.exception.EntityNotFoundException;
 @RequiredArgsConstructor
 public class TicketStrategy implements ProductStrategy {
 
-	private final TicketCache ticketCache;
+	private final KeyValueCache keyValueCache;
 	private final TicketRepository ticketRepository;
 	private final ObjectMapper objectMapper;
 
@@ -35,7 +36,8 @@ public class TicketStrategy implements ProductStrategy {
 
 	@Override
 	public ProductResult findByProductId(Long productId) {
-		String cache = ticketCache.get(productId);
+		String key = CacheKey.PRODUCT.generate(productId);
+		String cache = keyValueCache.get(key);
 
 		if (cache != null) {
 			try {
@@ -50,7 +52,7 @@ public class TicketStrategy implements ProductStrategy {
 			.orElseThrow(() -> new EntityNotFoundException(Ticket.class, productId));
 
 		try {
-			ticketCache.set(productId, objectMapper.writeValueAsString(ticketResult));
+			keyValueCache.set(key, objectMapper.writeValueAsString(ticketResult), CacheKey.PRODUCT.getTimeout());
 		} catch (JsonProcessingException e) {
 			log.warn("Failed to serialize ticket cache for productId={}: {}", productId, e.getMessage());
 		}

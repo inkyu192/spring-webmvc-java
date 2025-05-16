@@ -13,10 +13,11 @@ import spring.webmvc.application.dto.command.ProductCreateCommand;
 import spring.webmvc.application.dto.command.ProductUpdateCommand;
 import spring.webmvc.application.dto.result.FlightResult;
 import spring.webmvc.application.dto.result.ProductResult;
-import spring.webmvc.domain.cache.FlightCache;
+import spring.webmvc.domain.cache.KeyValueCache;
 import spring.webmvc.domain.model.entity.Flight;
 import spring.webmvc.domain.model.enums.Category;
 import spring.webmvc.domain.repository.FlightRepository;
+import spring.webmvc.infrastructure.cache.CacheKey;
 import spring.webmvc.presentation.exception.EntityNotFoundException;
 
 @Slf4j
@@ -24,7 +25,7 @@ import spring.webmvc.presentation.exception.EntityNotFoundException;
 @RequiredArgsConstructor
 public class FlightStrategy implements ProductStrategy {
 
-	private final FlightCache flightCache;
+	private final KeyValueCache keyValueCache;
 	private final FlightRepository flightRepository;
 	private final ObjectMapper objectMapper;
 
@@ -35,7 +36,8 @@ public class FlightStrategy implements ProductStrategy {
 
 	@Override
 	public ProductResult findByProductId(Long productId) {
-		String cache = flightCache.get(productId);
+		String key = CacheKey.PRODUCT.generate(productId);
+		String cache = keyValueCache.get(key);
 
 		if (cache != null) {
 			try {
@@ -50,7 +52,7 @@ public class FlightStrategy implements ProductStrategy {
 			.orElseThrow(() -> new EntityNotFoundException(Flight.class, productId));
 
 		try {
-			flightCache.set(productId, objectMapper.writeValueAsString(flightResult));
+			keyValueCache.set(key, objectMapper.writeValueAsString(flightResult), CacheKey.PRODUCT.getTimeout());
 		} catch (JsonProcessingException e) {
 			log.warn("Failed to serialize ticket cache for productId={}: {}", productId, e.getMessage());
 		}
