@@ -28,7 +28,7 @@ class RedisKeyValueCacheTest {
 
     @BeforeEach
     void beforeEach() {
-        redisTemplate.getConnectionFactory().getConnection().serverCommands();
+        redisTemplate.getConnectionFactory().getConnection().serverCommands().flushAll();
     }
 
     @Test
