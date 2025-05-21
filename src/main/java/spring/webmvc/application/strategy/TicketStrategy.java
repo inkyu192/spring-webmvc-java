@@ -77,7 +77,7 @@ public class TicketStrategy implements ProductStrategy {
 			)
 		);
 
-		String key = CacheKey.PRODUCT_STOCK.generate(ticket.getProduct());
+		String key = CacheKey.PRODUCT_STOCK.generate(ticket.getProduct().getId());
 		keyValueCache.set(key, String.valueOf(ticket.getProduct().getQuantity()));
 
 		return new TicketResult(ticket);
@@ -101,7 +101,7 @@ public class TicketStrategy implements ProductStrategy {
 			ticketUpdateCommand.getAgeLimit()
 		);
 
-		String key = CacheKey.PRODUCT_STOCK.generate(ticket.getProduct());
+		String key = CacheKey.PRODUCT_STOCK.generate(productId);
 		keyValueCache.set(key, String.valueOf(ticket.getProduct().getQuantity()));
 
 		return new TicketResult(ticket);
@@ -112,9 +112,9 @@ public class TicketStrategy implements ProductStrategy {
 		Ticket ticket = ticketRepository.findByProductId(productId)
 			.orElseThrow(() -> new EntityNotFoundException(Ticket.class, productId));
 
-		ticketRepository.delete(ticket);
+		String key = CacheKey.PRODUCT_STOCK.generate(productId);
+		keyValueCache.delete(key);
 
-		String stockKey = CacheKey.PRODUCT_STOCK.generate(ticket.getId());
-		keyValueCache.delete(stockKey);
+		ticketRepository.delete(ticket);
 	}
 }
