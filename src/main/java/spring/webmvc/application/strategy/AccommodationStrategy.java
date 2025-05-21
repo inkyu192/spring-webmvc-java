@@ -76,6 +76,9 @@ public class AccommodationStrategy implements ProductStrategy {
 			)
 		);
 
+		String key = CacheKey.PRODUCT_STOCK.generate(accommodation.getProduct().getId());
+		keyValueCache.set(key, String.valueOf(accommodation.getProduct().getQuantity()));
+
 		return new AccommodationResult(accommodation);
 	}
 
@@ -96,6 +99,9 @@ public class AccommodationStrategy implements ProductStrategy {
 			accommodationUpdateCommand.getCheckOutTime()
 		);
 
+		String key = CacheKey.PRODUCT_STOCK.generate(productId);
+		keyValueCache.set(key, String.valueOf(accommodation.getProduct().getQuantity()));
+
 		return new AccommodationResult(accommodation);
 	}
 
@@ -103,6 +109,9 @@ public class AccommodationStrategy implements ProductStrategy {
 	public void deleteProduct(Long productId) {
 		Accommodation accommodation = accommodationRepository.findByProductId(productId)
 			.orElseThrow(() -> new EntityNotFoundException(Accommodation.class, productId));
+
+		String key = CacheKey.PRODUCT_STOCK.generate(productId);
+		keyValueCache.delete(key);
 
 		accommodationRepository.delete(accommodation);
 	}
