@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 import spring.webmvc.application.dto.command.OrderCreateCommand;
 import spring.webmvc.application.dto.command.OrderProductCreateCommand;
 import spring.webmvc.domain.cache.CacheKey;
-import spring.webmvc.domain.cache.KeyValueCache;
+import spring.webmvc.domain.cache.ValueCache;
 import spring.webmvc.domain.model.entity.Member;
 import spring.webmvc.domain.model.entity.Order;
 import spring.webmvc.domain.model.entity.Product;
@@ -29,7 +29,7 @@ import spring.webmvc.presentation.exception.InsufficientQuantityException;
 @RequiredArgsConstructor
 public class OrderService {
 
-	private final KeyValueCache keyValueCache;
+	private final ValueCache valueCache;
 	private final MemberRepository memberRepository;
 	private final ProductRepository productRepository;
 	private final OrderRepository orderRepository;
@@ -59,17 +59,13 @@ public class OrderService {
 			}
 
 			String key = CacheKey.PRODUCT_STOCK.generate(product.getId());
-			Long stock = keyValueCache.decrement(key, quantity);
+			Long stock = valueCache.decrement(key, quantity);
 
 			if (stock == null || stock < 0) {
 				if (stock != null) {
-					keyValueCache.increment(key, quantity);
+					valueCache.increment(key, quantity);
 				}
-				throw new InsufficientQuantityException(
-					product.getName(),
-					quantity,
-					Long.parseLong(keyValueCache.get(key))
-				);
+				throw new InsufficientQuantityException(product.getName(), quantity, valueCache.get(key, Long.class));
 			}
 
 			order.addProduct(product, quantity);
@@ -80,7 +76,7 @@ public class OrderService {
 		} catch (Exception e) {
 			for (OrderProductCreateCommand orderProductCreateCommand : orderCreateCommand.products()) {
 				String key = CacheKey.PRODUCT_STOCK.generate(orderProductCreateCommand.productId());
-				keyValueCache.increment(key, orderProductCreateCommand.quantity());
+				valueCache.increment(key, orderProductCreateCommand.quantity());
 			}
 			throw e;
 		}

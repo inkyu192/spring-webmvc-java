@@ -12,7 +12,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import spring.webmvc.application.dto.result.TokenResult;
-import spring.webmvc.domain.cache.KeyValueCache;
+import spring.webmvc.domain.cache.ValueCache;
 import spring.webmvc.domain.model.entity.Member;
 import spring.webmvc.domain.model.entity.MemberPermission;
 import spring.webmvc.domain.model.entity.Permission;
@@ -28,7 +28,7 @@ import spring.webmvc.presentation.exception.EntityNotFoundException;
 public class AuthService {
 
 	private final JwtProvider jwtProvider;
-	private final KeyValueCache keyValueCache;
+	private final ValueCache valueCache;
 	private final MemberRepository memberRepository;
 	private final PasswordEncoder passwordEncoder;
 
@@ -42,7 +42,7 @@ public class AuthService {
 		String refreshToken = jwtProvider.createRefreshToken();
 
 		String key = CacheKey.REFRESH_TOKEN.generate(member.getId());
-		keyValueCache.set(key, refreshToken, CacheKey.REFRESH_TOKEN.getTimeout());
+		valueCache.set(key, refreshToken, CacheKey.REFRESH_TOKEN.getTimeout());
 
 		return new TokenResult(accessToken, refreshToken);
 	}
@@ -54,7 +54,7 @@ public class AuthService {
 		Member member = memberRepository.findById(memberId)
 			.orElseThrow(() -> new EntityNotFoundException(Member.class, memberId));
 
-		if (!keyValueCache.get(CacheKey.REFRESH_TOKEN.generate(memberId)).equals(refreshToken)) {
+		if (!valueCache.get(CacheKey.REFRESH_TOKEN.generate(memberId)).equals(refreshToken)) {
 			throw new BadCredentialsException("유효하지 않은 인증 정보입니다. 다시 로그인해 주세요.");
 		}
 

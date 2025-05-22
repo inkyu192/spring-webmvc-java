@@ -2,9 +2,6 @@ package spring.webmvc.application.strategy;
 
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import spring.webmvc.application.dto.command.AccommodationCreateCommand;
@@ -13,11 +10,11 @@ import spring.webmvc.application.dto.command.ProductCreateCommand;
 import spring.webmvc.application.dto.command.ProductUpdateCommand;
 import spring.webmvc.application.dto.result.AccommodationResult;
 import spring.webmvc.application.dto.result.ProductResult;
-import spring.webmvc.domain.cache.KeyValueCache;
+import spring.webmvc.domain.cache.CacheKey;
+import spring.webmvc.domain.cache.ValueCache;
 import spring.webmvc.domain.model.entity.Accommodation;
 import spring.webmvc.domain.model.enums.Category;
 import spring.webmvc.domain.repository.AccommodationRepository;
-import spring.webmvc.domain.cache.CacheKey;
 import spring.webmvc.presentation.exception.EntityNotFoundException;
 
 @Slf4j
@@ -25,9 +22,8 @@ import spring.webmvc.presentation.exception.EntityNotFoundException;
 @RequiredArgsConstructor
 public class AccommodationStrategy implements ProductStrategy {
 
-	private final KeyValueCache keyValueCache;
+	private final ValueCache valueCache;
 	private final AccommodationRepository accommodationRepository;
-	private final ObjectMapper objectMapper;
 
 	@Override
 	public boolean supports(Category category) {
@@ -37,25 +33,17 @@ public class AccommodationStrategy implements ProductStrategy {
 	@Override
 	public ProductResult findByProductId(Long productId) {
 		String key = CacheKey.PRODUCT.generate(productId);
-		String cache = keyValueCache.get(key);
+		AccommodationResult cache = valueCache.get(key, AccommodationResult.class);
 
 		if (cache != null) {
-			try {
-				return objectMapper.readValue(cache, AccommodationResult.class);
-			} catch (JsonProcessingException e) {
-				log.warn("Failed to deserialize cache for productId={}: {}", productId, e.getMessage());
-			}
+			return cache;
 		}
 
 		AccommodationResult accommodationResult = accommodationRepository.findByProductId(productId)
 			.map(AccommodationResult::new)
 			.orElseThrow(() -> new EntityNotFoundException(Accommodation.class, productId));
 
-		try {
-			keyValueCache.set(key, objectMapper.writeValueAsString(accommodationResult), CacheKey.PRODUCT.getTimeout());
-		} catch (JsonProcessingException e) {
-			log.warn("Failed to serialize ticket cache for productId={}: {}", productId, e.getMessage());
-		}
+		valueCache.set(key, accommodationResult, CacheKey.PRODUCT.getTimeout());
 
 		return accommodationResult;
 	}
@@ -77,7 +65,7 @@ public class AccommodationStrategy implements ProductStrategy {
 		);
 
 		String key = CacheKey.PRODUCT_STOCK.generate(accommodation.getProduct().getId());
-		keyValueCache.set(key, String.valueOf(accommodation.getProduct().getQuantity()));
+		valueCache.set(key, accommodation.getProduct().getQuantity());
 
 		return new AccommodationResult(accommodation);
 	}
@@ -100,7 +88,7 @@ public class AccommodationStrategy implements ProductStrategy {
 		);
 
 		String key = CacheKey.PRODUCT_STOCK.generate(productId);
-		keyValueCache.set(key, String.valueOf(accommodation.getProduct().getQuantity()));
+		valueCache.set(key, accommodation.getProduct().getQuantity());
 
 		return new AccommodationResult(accommodation);
 	}
@@ -111,7 +99,7 @@ public class AccommodationStrategy implements ProductStrategy {
 			.orElseThrow(() -> new EntityNotFoundException(Accommodation.class, productId));
 
 		String key = CacheKey.PRODUCT_STOCK.generate(productId);
-		keyValueCache.delete(key);
+		valueCache.delete(key);
 
 		accommodationRepository.delete(accommodation);
 	}

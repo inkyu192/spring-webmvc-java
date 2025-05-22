@@ -2,9 +2,6 @@ package spring.webmvc.application.strategy;
 
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import spring.webmvc.application.dto.command.FlightCreateCommand;
@@ -13,11 +10,11 @@ import spring.webmvc.application.dto.command.ProductCreateCommand;
 import spring.webmvc.application.dto.command.ProductUpdateCommand;
 import spring.webmvc.application.dto.result.FlightResult;
 import spring.webmvc.application.dto.result.ProductResult;
-import spring.webmvc.domain.cache.KeyValueCache;
+import spring.webmvc.domain.cache.CacheKey;
+import spring.webmvc.domain.cache.ValueCache;
 import spring.webmvc.domain.model.entity.Flight;
 import spring.webmvc.domain.model.enums.Category;
 import spring.webmvc.domain.repository.FlightRepository;
-import spring.webmvc.domain.cache.CacheKey;
 import spring.webmvc.presentation.exception.EntityNotFoundException;
 
 @Slf4j
@@ -25,9 +22,8 @@ import spring.webmvc.presentation.exception.EntityNotFoundException;
 @RequiredArgsConstructor
 public class FlightStrategy implements ProductStrategy {
 
-	private final KeyValueCache keyValueCache;
+	private final ValueCache valueCache;
 	private final FlightRepository flightRepository;
-	private final ObjectMapper objectMapper;
 
 	@Override
 	public boolean supports(Category category) {
@@ -37,25 +33,17 @@ public class FlightStrategy implements ProductStrategy {
 	@Override
 	public ProductResult findByProductId(Long productId) {
 		String key = CacheKey.PRODUCT.generate(productId);
-		String cache = keyValueCache.get(key);
+		FlightResult cache = valueCache.get(key, FlightResult.class);
 
 		if (cache != null) {
-			try {
-				return objectMapper.readValue(cache, FlightResult.class);
-			} catch (JsonProcessingException e) {
-				log.warn("Failed to deserialize cache for productId={}: {}", productId, e.getMessage());
-			}
+			return cache;
 		}
 
 		FlightResult flightResult = flightRepository.findByProductId(productId)
 			.map(FlightResult::new)
 			.orElseThrow(() -> new EntityNotFoundException(Flight.class, productId));
 
-		try {
-			keyValueCache.set(key, objectMapper.writeValueAsString(flightResult), CacheKey.PRODUCT.getTimeout());
-		} catch (JsonProcessingException e) {
-			log.warn("Failed to serialize ticket cache for productId={}: {}", productId, e.getMessage());
-		}
+		valueCache.set(key, flightResult, CacheKey.PRODUCT.getTimeout());
 
 		return flightResult;
 	}
@@ -80,7 +68,7 @@ public class FlightStrategy implements ProductStrategy {
 		);
 
 		String key = CacheKey.PRODUCT_STOCK.generate(flight.getProduct().getId());
-		keyValueCache.set(key, String.valueOf(flight.getProduct().getQuantity()));
+		valueCache.set(key, flight.getProduct().getQuantity());
 
 		return new FlightResult(flight);
 	}
@@ -106,7 +94,7 @@ public class FlightStrategy implements ProductStrategy {
 		);
 
 		String key = CacheKey.PRODUCT_STOCK.generate(productId);
-		keyValueCache.set(key, String.valueOf(flight.getProduct().getQuantity()));
+		valueCache.set(key, flight.getProduct().getQuantity());
 
 		return new FlightResult(flight);
 	}
@@ -117,7 +105,7 @@ public class FlightStrategy implements ProductStrategy {
 			.orElseThrow(() -> new EntityNotFoundException(Flight.class, productId));
 
 		String key = CacheKey.PRODUCT_STOCK.generate(productId);
-		keyValueCache.delete(key);
+		valueCache.delete(key);
 
 		flightRepository.delete(flight);
 	}

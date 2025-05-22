@@ -3,7 +3,7 @@ package spring.webmvc.application.service;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
-import spring.webmvc.domain.cache.KeyValueCache;
+import spring.webmvc.domain.cache.ValueCache;
 import spring.webmvc.domain.cache.CacheKey;
 import spring.webmvc.presentation.exception.DuplicateRequestException;
 
@@ -11,12 +11,12 @@ import spring.webmvc.presentation.exception.DuplicateRequestException;
 @RequiredArgsConstructor
 public class RequestLockService {
 
-	private final KeyValueCache keyValueCache;
+	private final ValueCache valueCache;
 
 	public void validate(Long memberId, String method, String uri) {
 		String key = CacheKey.REQUEST_LOCK.generate(memberId, method, uri);
 
-		if (!keyValueCache.setIfAbsent(key, "1", CacheKey.REQUEST_LOCK.getTimeout())) {
+		if (!valueCache.setIfAbsent(key, "1", CacheKey.REQUEST_LOCK.getTimeout())) {
 			throw new DuplicateRequestException(memberId, method, uri);
 		}
 	}

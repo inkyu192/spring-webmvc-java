@@ -11,18 +11,20 @@ import org.springframework.boot.test.autoconfigure.data.redis.DataRedisTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.core.RedisTemplate;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import spring.webmvc.infrastructure.config.RedisTestContainerConfig;
 
 @DataRedisTest
 @Import(RedisTestContainerConfig.class)
-class RedisKeyValueCacheTest {
+class RedisValueCacheTest {
 
-	private final RedisKeyValueCache redisKeyValueCache;
+	private final RedisValueCache redisKeyValueCache;
 	private final RedisTemplate<String, String> redisTemplate;
 
 	@Autowired
-	public RedisKeyValueCacheTest(RedisTemplate<String, String> redisTemplate) {
-		this.redisKeyValueCache = new RedisKeyValueCache(redisTemplate);
+	public RedisValueCacheTest(RedisTemplate<String, String> redisTemplate) {
+		this.redisKeyValueCache = new RedisValueCache(redisTemplate, new ObjectMapper());
 		this.redisTemplate = redisTemplate;
 	}
 
