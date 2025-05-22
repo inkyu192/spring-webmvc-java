@@ -2,12 +2,14 @@ package spring.webmvc.domain.cache;
 
 import java.time.Duration;
 
-public interface KeyValueCache {
+public interface ValueCache {
 	String get(String key);
 
-	void set(String key, String value);
+	<T> T get(String key, Class<T> clazz);
 
-	void set(String key, String value, Duration timeout);
+	<T> void set(String key, T value);
+
+	<T> void set(String key, T value, Duration timeout);
 
 	boolean setIfAbsent(String key, String value, Duration timeout);
 

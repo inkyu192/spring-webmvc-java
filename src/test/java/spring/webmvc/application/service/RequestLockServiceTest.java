@@ -11,7 +11,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import spring.webmvc.domain.cache.KeyValueCache;
+import spring.webmvc.domain.cache.ValueCache;
 import spring.webmvc.domain.cache.CacheKey;
 import spring.webmvc.presentation.exception.DuplicateRequestException;
 
@@ -22,7 +22,7 @@ class RequestLockServiceTest {
 	private RequestLockService requestLockService;
 
 	@Mock
-	private KeyValueCache keyValueCache;
+	private ValueCache valueCache;
 
 	@Test
 	@DisplayName("validate: RequestLock 없을 경우 저장한다")
@@ -36,13 +36,13 @@ class RequestLockServiceTest {
 		String value = "1";
 		Duration timeout = CacheKey.REQUEST_LOCK.getTimeout();
 
-		Mockito.when(keyValueCache.setIfAbsent(key, value, timeout)).thenReturn(true);
+		Mockito.when(valueCache.setIfAbsent(key, value, timeout)).thenReturn(true);
 
 		// When
 		requestLockService.validate(memberId, method, uri);
 
 		// Then
-		Mockito.verify(keyValueCache, Mockito.times(1)).setIfAbsent(key, value, timeout);
+		Mockito.verify(valueCache, Mockito.times(1)).setIfAbsent(key, value, timeout);
 	}
 
 	@Test
@@ -57,7 +57,7 @@ class RequestLockServiceTest {
 		String value = "1";
 		Duration timeout = CacheKey.REQUEST_LOCK.getTimeout();
 
-		Mockito.when(keyValueCache.setIfAbsent(key, value, timeout)).thenReturn(false);
+		Mockito.when(valueCache.setIfAbsent(key, value, timeout)).thenReturn(false);
 
 		// When & Then
 		Assertions.assertThatThrownBy(() -> requestLockService.validate(memberId, method, uri))

@@ -2,9 +2,6 @@ package spring.webmvc.application.strategy;
 
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import spring.webmvc.application.dto.command.ProductCreateCommand;
@@ -13,11 +10,11 @@ import spring.webmvc.application.dto.command.TicketCreateCommand;
 import spring.webmvc.application.dto.command.TicketUpdateCommand;
 import spring.webmvc.application.dto.result.ProductResult;
 import spring.webmvc.application.dto.result.TicketResult;
-import spring.webmvc.domain.cache.KeyValueCache;
+import spring.webmvc.domain.cache.CacheKey;
+import spring.webmvc.domain.cache.ValueCache;
 import spring.webmvc.domain.model.entity.Ticket;
 import spring.webmvc.domain.model.enums.Category;
 import spring.webmvc.domain.repository.TicketRepository;
-import spring.webmvc.domain.cache.CacheKey;
 import spring.webmvc.presentation.exception.EntityNotFoundException;
 
 @Slf4j
@@ -25,9 +22,8 @@ import spring.webmvc.presentation.exception.EntityNotFoundException;
 @RequiredArgsConstructor
 public class TicketStrategy implements ProductStrategy {
 
-	private final KeyValueCache keyValueCache;
+	private final ValueCache valueCache;
 	private final TicketRepository ticketRepository;
-	private final ObjectMapper objectMapper;
 
 	@Override
 	public boolean supports(Category category) {
@@ -37,25 +33,17 @@ public class TicketStrategy implements ProductStrategy {
 	@Override
 	public ProductResult findByProductId(Long productId) {
 		String key = CacheKey.PRODUCT.generate(productId);
-		String cache = keyValueCache.get(key);
+		TicketResult cache = valueCache.get(key, TicketResult.class);
 
 		if (cache != null) {
-			try {
-				return objectMapper.readValue(cache, TicketResult.class);
-			} catch (JsonProcessingException e) {
-				log.warn("Failed to deserialize cache for productId={}: {}", productId, e.getMessage());
-			}
+			return cache;
 		}
 
 		TicketResult ticketResult = ticketRepository.findByProductId(productId)
 			.map(TicketResult::new)
 			.orElseThrow(() -> new EntityNotFoundException(Ticket.class, productId));
 
-		try {
-			keyValueCache.set(key, objectMapper.writeValueAsString(ticketResult), CacheKey.PRODUCT.getTimeout());
-		} catch (JsonProcessingException e) {
-			log.warn("Failed to serialize ticket cache for productId={}: {}", productId, e.getMessage());
-		}
+		valueCache.set(key, ticketResult, CacheKey.PRODUCT.getTimeout());
 
 		return ticketResult;
 	}
@@ -78,7 +66,7 @@ public class TicketStrategy implements ProductStrategy {
 		);
 
 		String key = CacheKey.PRODUCT_STOCK.generate(ticket.getProduct().getId());
-		keyValueCache.set(key, String.valueOf(ticket.getProduct().getQuantity()));
+		valueCache.set(key, ticket.getProduct().getQuantity());
 
 		return new TicketResult(ticket);
 	}
@@ -102,7 +90,7 @@ public class TicketStrategy implements ProductStrategy {
 		);
 
 		String key = CacheKey.PRODUCT_STOCK.generate(productId);
-		keyValueCache.set(key, String.valueOf(ticket.getProduct().getQuantity()));
+		valueCache.set(key, ticket.getProduct().getQuantity());
 
 		return new TicketResult(ticket);
 	}
@@ -113,7 +101,7 @@ public class TicketStrategy implements ProductStrategy {
 			.orElseThrow(() -> new EntityNotFoundException(Ticket.class, productId));
 
 		String key = CacheKey.PRODUCT_STOCK.generate(productId);
-		keyValueCache.delete(key);
+		valueCache.delete(key);
 
 		ticketRepository.delete(ticket);
 	}
