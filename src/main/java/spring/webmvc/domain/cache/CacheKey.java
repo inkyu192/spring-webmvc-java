@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 public enum CacheKey {
 	PRODUCT("product:%d", Duration.ofHours(1)),
 	PRODUCT_STOCK("product:%d:stock", null),
+	CURATION("curation:%d", Duration.ofHours(1)),
+	CURATION_PRODUCTS("curation:%d:products", Duration.ofHours(1)),
 	REFRESH_TOKEN("member:%s:token:refresh", Duration.ofDays(7)),
 	REQUEST_LOCK("request-lock:%d:%s:%s", Duration.ofSeconds(1));
 

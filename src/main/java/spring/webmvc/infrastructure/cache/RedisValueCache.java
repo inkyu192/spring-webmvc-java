@@ -28,12 +28,7 @@ public class RedisValueCache implements ValueCache {
 	@Override
 	public <T> T get(String key, Class<T> clazz) {
 		String value = redisTemplate.opsForValue().get(key);
-
-		if (value == null) {
-			return null;
-		}
-
-		return deserialize(key, value, clazz);
+		return value != null ? deserialize(key, value, clazz) : null;
 	}
 
 	@Override
@@ -45,14 +40,12 @@ public class RedisValueCache implements ValueCache {
 	public <T> void set(String key, T value, Duration timeout) {
 		String stringValue = serialize(key, value);
 
-		if (stringValue == null) {
-			return;
-		}
-
-		if (timeout == null) {
-			redisTemplate.opsForValue().set(key, stringValue);
-		} else {
-			redisTemplate.opsForValue().set(key, stringValue, timeout);
+		if (stringValue != null) {
+			if (timeout == null) {
+				redisTemplate.opsForValue().set(key, stringValue);
+			} else {
+				redisTemplate.opsForValue().set(key, stringValue, timeout);
+			}
 		}
 	}
 
@@ -85,20 +78,20 @@ public class RedisValueCache implements ValueCache {
 		try {
 			return objectMapper.writeValueAsString(value);
 		} catch (JsonProcessingException e) {
-			log.warn("Failed to serialize cache for key={}, value={}: {}", key, value, e.getMessage());
+			log.warn("Failed to serialize value for key={}, value={}: {}", key, value, e.getMessage());
 			return null;
 		}
 	}
 
 	private <T> T deserialize(String key, String value, Class<T> clazz) {
-		try {
-			if (clazz == String.class) {
-				return clazz.cast(value);
-			}
+		if (clazz == String.class) {
+			return clazz.cast(value);
+		}
 
+		try {
 			return objectMapper.readValue(value, clazz);
 		} catch (JsonProcessingException e) {
-			log.warn("Failed to deserialize cache for key={}, value={}: {}", key, value, e.getMessage());
+			log.warn("Failed to deserialize value for key={}, value={}: {}", key, value, e.getMessage());
 			return null;
 		}
 	}
