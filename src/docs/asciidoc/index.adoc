@@ -494,6 +494,69 @@ include::{snippets}/flight-delete/http-response.adoc[]
 | 404 | <<NOT_FOUND>>
 |===
 
+== 큐레이션
+
+=== 생성
+
+**HTTP Request**
+include::{snippets}/curation-create/http-request.adoc[]
+
+**Request Headers**
+include::{snippets}/curation-create/request-headers.adoc[]
+
+**Request Fields**
+include::{snippets}/curation-create/request-fields.adoc[]
+
+**HTTP Response**
+include::{snippets}/curation-create/http-response.adoc[]
+
+**Response Fields**
+include::{snippets}/curation-create/response-fields.adoc[]
+
+**HTTP Status Codes**
+[cols="1,3", options="header"]
+|===
+| Code | Name
+| 201 | <<CREATED>>
+| 400 | <<BAD_REQUEST>>
+|===
+
+=== 목록 조회
+
+**HTTP Request**
+include::{snippets}/curation-list/http-request.adoc[]
+
+**HTTP Response**
+include::{snippets}/curation-list/http-response.adoc[]
+
+**Response Fields**
+include::{snippets}/curation-list/response-fields.adoc[]
+
+**HTTP Status Codes**
+[cols="1,3", options="header"]
+|===
+| Code | Name
+| 200 | <<OK>>
+|===
+
+=== 상품 조회
+
+**HTTP Request**
+include::{snippets}/curation-product/http-request.adoc[]
+
+**HTTP Response**
+include::{snippets}/curation-product/http-response.adoc[]
+
+**Response Fields**
+include::{snippets}/curation-product/response-fields.adoc[]
+
+**HTTP Status Codes**
+[cols="1,3", options="header"]
+|===
+| Code | Name
+| 200 | <<OK>>
+|===
+
 == 주문
 
 === 생성

@@ -39,7 +39,7 @@ class RedisValueCacheTest {
 		// Given
 		String key = "testKey";
 		String value = "testValue";
-		Duration duration = Duration.ofMillis(1);
+		Duration duration = Duration.ofMillis(100);
 
 		redisTemplate.opsForValue().set(key, value);
 
@@ -56,7 +56,7 @@ class RedisValueCacheTest {
 		// Given
 		String key = "testKey";
 		String value = "testValue";
-		Duration duration = Duration.ofMillis(1);
+		Duration duration = Duration.ofMillis(100);
 
 		// When
 		boolean result = redisKeyValueCache.setIfAbsent(key, value, duration);
@@ -115,7 +115,7 @@ class RedisValueCacheTest {
 		// Given
 		String key = "testKey";
 		String value = "testValue";
-		Duration duration = Duration.ofMillis(1);
+		Duration duration = Duration.ofMillis(100);
 
 		// When
 		redisKeyValueCache.set(key, value, duration);

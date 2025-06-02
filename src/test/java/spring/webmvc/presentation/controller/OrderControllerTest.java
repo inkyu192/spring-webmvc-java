@@ -87,7 +87,7 @@ class OrderControllerTest {
 						{
 						  "products": [
 							{
-							  "productId": %d,
+							  "id": %d,
 							  "quantity": %d
 							}
 						  ]
@@ -101,7 +101,7 @@ class OrderControllerTest {
 						HeaderDocumentation.headerWithName("Authorization").description("액세스 토큰")
 					),
 					PayloadDocumentation.requestFields(
-						PayloadDocumentation.fieldWithPath("products[].productId").description("상품아이디"),
+						PayloadDocumentation.fieldWithPath("products[].id").description("상품아이디"),
 						PayloadDocumentation.fieldWithPath("products[].quantity").description("주문수량")
 					),
 					PayloadDocumentation.responseFields(

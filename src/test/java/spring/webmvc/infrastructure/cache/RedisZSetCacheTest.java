@@ -36,7 +36,7 @@ class RedisZSetCacheTest {
 
 	@Test
 	@DisplayName("add: key, value, score 저장한다")
-	void addCase1() {
+	void add() {
 		// Given
 		String key = "testKey";
 		String value = "testValue";
@@ -51,21 +51,38 @@ class RedisZSetCacheTest {
 	}
 
 	@Test
-	@DisplayName("add: key, value, score, duration 저장한다")
-	void addCase2() throws InterruptedException {
+	@DisplayName("expire: duration 지나면 key 사라진다")
+	void expire() throws InterruptedException {
 		// Given
 		String key = "testKey";
 		String value = "testValue";
 		double score = 1.0;
-		Duration duration = Duration.ofMillis(1);
+		Duration duration = Duration.ofMillis(100);
+		redisTemplate.opsForZSet().add(key, value, score);
 
 		// When
-		redisZSetCache.add(key, value, score, duration);
+		redisZSetCache.expire(key, duration);
 
 		// Then
 		Assertions.assertThat(redisTemplate.opsForZSet().range(key, 0, -1)).contains(value);
 		Thread.sleep(duration);
 		Assertions.assertThat(redisTemplate.opsForZSet().range(key, 0, -1)).isEmpty();
+	}
+
+	@Test
+	@DisplayName("size: 저장된 요소 개수 반환한다")
+	void size() {
+		// Given
+		String key = "testKey";
+		redisTemplate.opsForZSet().add(key, "value1", 1.0);
+		redisTemplate.opsForZSet().add(key, "value2", 2.0);
+		redisTemplate.opsForZSet().add(key, "value3", 3.0);
+
+		// When
+		Long size = redisZSetCache.size(key);
+
+		// Then
+		Assertions.assertThat(size).isEqualTo(3L);
 	}
 
 	@Test

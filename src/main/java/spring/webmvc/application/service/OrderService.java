@@ -42,7 +42,7 @@ public class OrderService {
 
 		Map<Long, Product> productMap = productRepository.findAllById(
 				orderCreateCommand.products().stream()
-					.map(OrderProductCreateCommand::productId)
+					.map(OrderProductCreateCommand::id)
 					.toList()
 			)
 			.stream()
@@ -51,11 +51,11 @@ public class OrderService {
 		Order order = Order.create(member);
 
 		for (OrderProductCreateCommand orderProductCreateCommand : orderCreateCommand.products()) {
-			Product product = productMap.get(orderProductCreateCommand.productId());
+			Product product = productMap.get(orderProductCreateCommand.id());
 			int quantity = orderProductCreateCommand.quantity();
 
 			if (product == null) {
-				throw new EntityNotFoundException(Product.class, orderProductCreateCommand.productId());
+				throw new EntityNotFoundException(Product.class, orderProductCreateCommand.id());
 			}
 
 			String key = CacheKey.PRODUCT_STOCK.generate(product.getId());
@@ -75,7 +75,7 @@ public class OrderService {
 			return orderRepository.save(order);
 		} catch (Exception e) {
 			for (OrderProductCreateCommand orderProductCreateCommand : orderCreateCommand.products()) {
-				String key = CacheKey.PRODUCT_STOCK.generate(orderProductCreateCommand.productId());
+				String key = CacheKey.PRODUCT_STOCK.generate(orderProductCreateCommand.id());
 				valueCache.increment(key, orderProductCreateCommand.quantity());
 			}
 			throw e;
