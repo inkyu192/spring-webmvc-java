@@ -1,12 +1,11 @@
 package spring.webmvc.presentation.dto.request;
 
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
-public record OrderProductCreateRequest(
+public record CurationProductCreateRequest(
 	@NotNull
 	Long id,
-	@Min(1)
-	int quantity
+	@NotNull
+	Integer sortOrder
 ) {
 }

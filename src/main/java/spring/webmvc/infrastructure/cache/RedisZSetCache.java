@@ -35,13 +35,13 @@ public class RedisZSetCache implements ZSetCache {
 	}
 
 	@Override
-	public <T> void add(String key, T value, double score, Duration duration) {
-		String stringValue = serialize(key, value);
+	public Boolean expire(String key, Duration duration) {
+		return redisTemplate.expire(key, duration);
+	}
 
-		if (stringValue != null) {
-			redisTemplate.opsForZSet().add(key, stringValue, score);
-			redisTemplate.expire(key, duration);
-		}
+	@Override
+	public Long size(String key) {
+		return redisTemplate.opsForZSet().size(key);
 	}
 
 	@Override
