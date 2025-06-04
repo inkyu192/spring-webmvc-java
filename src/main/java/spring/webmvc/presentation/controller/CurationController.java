@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import spring.webmvc.application.command.CurationCreateCommand;
+import spring.webmvc.application.dto.command.CurationCreateCommand;
 import spring.webmvc.application.service.CurationService;
 import spring.webmvc.presentation.dto.request.CurationCreateRequest;
 import spring.webmvc.presentation.dto.response.CurationResponse;

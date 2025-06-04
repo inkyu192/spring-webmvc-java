@@ -1,4 +1,4 @@
-package spring.webmvc.application.command;
+package spring.webmvc.application.dto.command;
 
 import java.util.List;
 
