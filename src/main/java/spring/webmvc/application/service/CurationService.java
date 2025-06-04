@@ -14,8 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import lombok.RequiredArgsConstructor;
-import spring.webmvc.application.command.CurationCreateCommand;
-import spring.webmvc.application.command.CurationProductCreateCommand;
+import spring.webmvc.application.dto.command.CurationCreateCommand;
+import spring.webmvc.application.dto.command.CurationProductCreateCommand;
 import spring.webmvc.application.dto.result.CurationResult;
 import spring.webmvc.application.dto.result.ProductResult;
 import spring.webmvc.domain.cache.CacheKey;
