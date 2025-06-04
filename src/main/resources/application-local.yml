@@ -8,3 +8,6 @@ spring:
     redis:
       host: localhost
       port: 6379
+    mongodb:
+      uri: mongodb://localhost:27017/my_db
+      auto-index-creation: true

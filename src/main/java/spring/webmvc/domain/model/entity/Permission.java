@@ -17,7 +17,7 @@ public class Permission extends BaseTime {
 	private Long id;
 	private String name;
 
-	public static Permission of(String name) {
+	public static Permission create(String name) {
 		Permission permission = new Permission();
 		permission.name = name;
 		return permission;

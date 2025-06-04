@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import lombok.RequiredArgsConstructor;
 import spring.webmvc.domain.model.entity.Permission;
 import spring.webmvc.domain.repository.PermissionRepository;
-import spring.webmvc.infrastructure.persistence.PermissionJpaRepository;
+import spring.webmvc.infrastructure.persistence.jpa.PermissionJpaRepository;
 
 @Component
 @RequiredArgsConstructor

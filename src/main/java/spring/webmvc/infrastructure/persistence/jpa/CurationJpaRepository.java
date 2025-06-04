@@ -1,4 +1,4 @@
-package spring.webmvc.infrastructure.persistence;
+package spring.webmvc.infrastructure.persistence.jpa;
 
 import java.util.List;
 

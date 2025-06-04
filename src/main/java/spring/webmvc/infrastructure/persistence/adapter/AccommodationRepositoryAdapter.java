@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import lombok.RequiredArgsConstructor;
 import spring.webmvc.domain.model.entity.Accommodation;
 import spring.webmvc.domain.repository.AccommodationRepository;
-import spring.webmvc.infrastructure.persistence.AccommodationJpaRepository;
+import spring.webmvc.infrastructure.persistence.jpa.AccommodationJpaRepository;
 
 @Component
 @RequiredArgsConstructor

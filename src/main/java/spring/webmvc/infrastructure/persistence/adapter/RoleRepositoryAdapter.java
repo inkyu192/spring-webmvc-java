@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import lombok.RequiredArgsConstructor;
 import spring.webmvc.domain.model.entity.Role;
 import spring.webmvc.domain.repository.RoleRepository;
-import spring.webmvc.infrastructure.persistence.RoleJpaRepository;
+import spring.webmvc.infrastructure.persistence.jpa.RoleJpaRepository;
 
 @Component
 @RequiredArgsConstructor

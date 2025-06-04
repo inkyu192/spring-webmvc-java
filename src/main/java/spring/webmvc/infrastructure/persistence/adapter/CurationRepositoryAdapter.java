@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import lombok.RequiredArgsConstructor;
 import spring.webmvc.domain.model.entity.Curation;
 import spring.webmvc.domain.repository.CurationRepository;
-import spring.webmvc.infrastructure.persistence.CurationJpaRepository;
+import spring.webmvc.infrastructure.persistence.jpa.CurationJpaRepository;
 
 @Component
 @RequiredArgsConstructor
