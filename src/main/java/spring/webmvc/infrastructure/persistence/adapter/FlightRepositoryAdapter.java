@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import lombok.RequiredArgsConstructor;
 import spring.webmvc.domain.model.entity.Flight;
 import spring.webmvc.domain.repository.FlightRepository;
-import spring.webmvc.infrastructure.persistence.FlightJpaRepository;
+import spring.webmvc.infrastructure.persistence.jpa.FlightJpaRepository;
 
 @Component
 @RequiredArgsConstructor

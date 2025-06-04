@@ -1,4 +1,4 @@
-package spring.webmvc.infrastructure.persistence;
+package spring.webmvc.infrastructure.persistence.querydsl;
 
 import java.util.List;
 
@@ -18,6 +18,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import spring.webmvc.domain.model.entity.Product;
 import spring.webmvc.domain.model.enums.Category;
 import spring.webmvc.infrastructure.config.DataJpaTestConfig;
+import spring.webmvc.infrastructure.persistence.jpa.ProductJpaRepository;
 
 @DataJpaTest
 @Import(DataJpaTestConfig.class)

@@ -1,4 +1,4 @@
-package spring.webmvc.infrastructure.persistence;
+package spring.webmvc.infrastructure.persistence.querydsl;
 
 import static spring.webmvc.domain.model.entity.QCurationProduct.*;
 

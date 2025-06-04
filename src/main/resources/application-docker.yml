@@ -8,3 +8,6 @@ spring:
     redis:
       host: redis-container
       port: 6379
+    mongodb:
+      uri: mongodb://mongodb-container:27017/my_db
+      auto-index-creation: true

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import lombok.RequiredArgsConstructor;
 import spring.webmvc.domain.model.entity.Member;
 import spring.webmvc.domain.repository.MemberRepository;
-import spring.webmvc.infrastructure.persistence.MemberJpaRepository;
+import spring.webmvc.infrastructure.persistence.jpa.MemberJpaRepository;
 
 @Component
 @RequiredArgsConstructor

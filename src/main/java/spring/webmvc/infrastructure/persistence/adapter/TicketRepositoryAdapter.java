@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import lombok.RequiredArgsConstructor;
 import spring.webmvc.domain.model.entity.Ticket;
 import spring.webmvc.domain.repository.TicketRepository;
-import spring.webmvc.infrastructure.persistence.TicketJpaRepository;
+import spring.webmvc.infrastructure.persistence.jpa.TicketJpaRepository;
 
 @Component
 @RequiredArgsConstructor

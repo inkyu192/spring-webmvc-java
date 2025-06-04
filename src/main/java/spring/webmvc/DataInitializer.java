@@ -27,16 +27,16 @@ public class DataInitializer implements ApplicationRunner {
 	@Override
 	public void run(ApplicationArguments args) {
 		// 권한 생성
-		Permission productReader = permissionRepository.save(Permission.of("PRODUCT_READER"));
-		Permission productWriter = permissionRepository.save(Permission.of("PRODUCT_WRITER"));
-		Permission orderReader = permissionRepository.save(Permission.of("ORDER_READER"));
-		Permission orderWriter = permissionRepository.save(Permission.of("ORDER_WRITER"));
-		Permission permissionReader = permissionRepository.save(Permission.of("PERMISSION_READER"));
-		Permission permissionWriter = permissionRepository.save(Permission.of("PERMISSION_WRITER"));
-		Permission menuReader = permissionRepository.save(Permission.of("MENU_READER"));
-		Permission menuWriter = permissionRepository.save(Permission.of("MENU_WRITER"));
-		Permission roleReader = permissionRepository.save(Permission.of("ROLE_READER"));
-		Permission roleWriter = permissionRepository.save(Permission.of("ROLE_WRITER"));
+		Permission productReader = permissionRepository.save(Permission.create("PRODUCT_READER"));
+		Permission productWriter = permissionRepository.save(Permission.create("PRODUCT_WRITER"));
+		Permission orderReader = permissionRepository.save(Permission.create("ORDER_READER"));
+		Permission orderWriter = permissionRepository.save(Permission.create("ORDER_WRITER"));
+		Permission permissionReader = permissionRepository.save(Permission.create("PERMISSION_READER"));
+		Permission permissionWriter = permissionRepository.save(Permission.create("PERMISSION_WRITER"));
+		Permission menuReader = permissionRepository.save(Permission.create("MENU_READER"));
+		Permission menuWriter = permissionRepository.save(Permission.create("MENU_WRITER"));
+		Permission roleReader = permissionRepository.save(Permission.create("ROLE_READER"));
+		Permission roleWriter = permissionRepository.save(Permission.create("ROLE_WRITER"));
 
 		// 역할 생성
 		Role roleViewer = Role.create("ROLE_VIEWER");

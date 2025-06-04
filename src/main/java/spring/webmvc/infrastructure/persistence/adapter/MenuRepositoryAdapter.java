@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import lombok.RequiredArgsConstructor;
 import spring.webmvc.domain.model.entity.Menu;
 import spring.webmvc.domain.repository.MenuRepository;
-import spring.webmvc.infrastructure.persistence.MenuJpaRepository;
+import spring.webmvc.infrastructure.persistence.jpa.MenuJpaRepository;
 
 @Component
 @RequiredArgsConstructor
