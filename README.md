@@ -1,7 +1,7 @@
 ## 개발 환경
 - **Language:** Java
 - **Library / Framework:** Spring Web MVC, Spring Data JPA, Querydsl, Spring REST Docs
-- **Database:** PostgreSQL, Redis
+- **Database:** PostgreSQL, Redis, MongoDB
 - **Test:** JUnit 5, Mockito, Testcontainers
 - **Infrastructure**: Docker, Docker Compose, LocalStack
 
@@ -29,6 +29,14 @@ services:
     image: redis:latest
     ports:
       - "6379:6379"
+    networks:
+      - application-network
+
+  mongodb:
+    container_name: mongodb-container
+    image: mongo:latest
+    ports:
+      - "27017:27017"
     networks:
       - application-network
 
