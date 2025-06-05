@@ -41,6 +41,7 @@ dependencies {
     testImplementation 'org.testcontainers:postgresql'
     testImplementation 'org.testcontainers:testcontainers'
     testImplementation 'org.testcontainers:localstack'
+    testImplementation 'org.testcontainers:mongodb'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
     implementation 'com.querydsl:querydsl-jpa:5.1.0:jakarta'

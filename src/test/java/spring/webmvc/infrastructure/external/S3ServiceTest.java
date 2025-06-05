@@ -18,7 +18,7 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
-import spring.webmvc.infrastructure.config.LocalStackTestConfig;
+import spring.webmvc.infrastructure.config.LocalStackTestContainerConfig;
 
 class S3ServiceTest {
 
@@ -30,13 +30,13 @@ class S3ServiceTest {
 	static void init() {
 		s3Client = S3Client.builder()
 			.endpointOverride(
-				LocalStackTestConfig.LOCAL_STACK_CONTAINER.getEndpointOverride(LocalStackContainer.Service.S3))
-			.region(Region.of(LocalStackTestConfig.LOCAL_STACK_CONTAINER.getRegion()))
+				LocalStackTestContainerConfig.LOCAL_STACK_CONTAINER.getEndpointOverride(LocalStackContainer.Service.S3))
+			.region(Region.of(LocalStackTestContainerConfig.LOCAL_STACK_CONTAINER.getRegion()))
 			.credentialsProvider(
 				StaticCredentialsProvider.create(
 					AwsBasicCredentials.create(
-						LocalStackTestConfig.LOCAL_STACK_CONTAINER.getAccessKey(),
-						LocalStackTestConfig.LOCAL_STACK_CONTAINER.getSecretKey()
+						LocalStackTestContainerConfig.LOCAL_STACK_CONTAINER.getAccessKey(),
+						LocalStackTestContainerConfig.LOCAL_STACK_CONTAINER.getSecretKey()
 					)
 				)
 			)
