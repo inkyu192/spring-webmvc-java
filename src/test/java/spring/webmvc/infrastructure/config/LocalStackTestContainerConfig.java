@@ -1,12 +1,14 @@
 package spring.webmvc.infrastructure.config;
 
+import org.springframework.boot.test.context.TestConfiguration;
 import org.testcontainers.containers.localstack.LocalStackContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
 @Testcontainers
-public class LocalStackTestConfig {
+@TestConfiguration
+public class LocalStackTestContainerConfig {
 
 	@Container
 	public static final LocalStackContainer LOCAL_STACK_CONTAINER =

@@ -18,10 +18,11 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import spring.webmvc.domain.model.entity.Product;
 import spring.webmvc.domain.model.enums.Category;
 import spring.webmvc.infrastructure.config.DataJpaTestConfig;
+import spring.webmvc.infrastructure.config.QuerydslTestConfig;
 import spring.webmvc.infrastructure.persistence.jpa.ProductJpaRepository;
 
 @DataJpaTest
-@Import(DataJpaTestConfig.class)
+@Import({DataJpaTestConfig.class, QuerydslTestConfig.class})
 class ProductQuerydslRepositoryTest {
 
 	@Autowired
