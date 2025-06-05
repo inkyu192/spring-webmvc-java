@@ -25,25 +25,32 @@ public class HttpLog {
 		long startTime,
 		long endTime
 	) {
+		String request = "\n %s %s (%.3f s)"
+			.formatted(
+				requestWrapper.getMethod(),
+				requestWrapper.getRequestURI(),
+				(endTime - startTime) / 1000.0
+			);
+
+		String clientIp = "\n %s".formatted(requestWrapper.getRemoteAddr());
+
 		String message = """
-			\n|>> REQUEST: %s %s (%.3f s)
-			|>> CLIENT_IP: %s
-			|>> REQUEST_HEADER: %s
-			|>> REQUEST_PARAMETER: %s
-			|>> REQUEST_BODY: %s
-			|>> RESPONSE_BODY: %s
+			[REQUEST] %s
+			[CLIENT_IP] %s
+			[REQUEST_HEADER] %s
+			[REQUEST_PARAMETER] %s
+			[REQUEST_BODY] %s
+			[RESPONSE_BODY] %s
 			""".formatted(
-			requestWrapper.getMethod(),
-			requestWrapper.getRequestURI(),
-			(endTime - startTime) / 1000.0,
-			requestWrapper.getRemoteAddr(),
+			request,
+			clientIp,
 			extractHeaders(requestWrapper),
 			extractParameters(requestWrapper),
 			readBody(requestWrapper.getContentAsByteArray()),
 			readBody(responseWrapper.getContentAsByteArray())
 		);
 
-		log.info(message);
+		log.info("\n%s".formatted(message));
 	}
 
 	private String extractHeaders(ContentCachingRequestWrapper request) {
@@ -77,7 +84,7 @@ public class HttpLog {
 		String body = new String(content, StandardCharsets.UTF_8);
 		try {
 			Object json = objectMapper.readValue(body, Object.class);
-			return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(json);
+			return "\n %s".formatted(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(json));
 		} catch (Exception e) {
 			return body;
 		}

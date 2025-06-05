@@ -21,6 +21,7 @@ public class Notification {
 	private String title;
 	private String message;
 	private String url;
+	private boolean isRead;
 
 	@Indexed(expireAfter = "1d")
 	private Instant createdAt;
@@ -32,6 +33,7 @@ public class Notification {
 		notification.title = title;
 		notification.message = message;
 		notification.url = url;
+		notification.isRead = false;
 		notification.createdAt = Instant.now();
 
 		return notification;
