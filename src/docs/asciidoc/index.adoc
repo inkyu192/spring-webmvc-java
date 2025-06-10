@@ -6,6 +6,28 @@
 :toclevels: 3
 :sectnums:
 
+== 파일
+
+=== 업로드
+
+**HTTP Request**
+include::{snippets}/file-upload/http-request.adoc[]
+
+**HTTP Response**
+include::{snippets}/login/http-response.adoc[]
+
+**Response Fields**
+include::{snippets}/login/response-fields.adoc[]
+
+**HTTP Status Codes**
+[cols="1,3", options="header"]
+|===
+| Code | Name
+| 201 | <<CREATED>>
+| 400 | <<BAD_REQUEST>>
+| 401 | <<UNAUTHORIZED>>
+|===
+
 == 인증
 
 === 로그인
