@@ -171,8 +171,8 @@ class CurationControllerTest {
 		// When & Then
 		mockMvc.perform(
 				RestDocumentationRequestBuilders.get("/curations/{id}", curationId)
-					.param("page", String.valueOf(pageable.getPageNumber()))
-					.param("size", String.valueOf(pageable.getPageSize()))
+					.queryParam("page", String.valueOf(pageable.getPageNumber()))
+					.queryParam("size", String.valueOf(pageable.getPageSize()))
 			)
 			.andExpect(MockMvcResultMatchers.status().isOk())
 			.andDo(
