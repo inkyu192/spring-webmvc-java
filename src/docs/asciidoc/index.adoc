@@ -13,6 +13,12 @@
 **HTTP Request**
 include::{snippets}/file-upload/http-request.adoc[]
 
+**Request Headers**
+include::{snippets}/file-upload/request-headers.adoc[]
+
+**Request Parts**
+include::{snippets}/file-upload/request-parts.adoc[]
+
 **HTTP Response**
 include::{snippets}/login/http-response.adoc[]
 
