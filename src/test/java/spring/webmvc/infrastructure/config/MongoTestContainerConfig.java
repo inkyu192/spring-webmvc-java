@@ -35,7 +35,7 @@ public class MongoTestContainerConfig {
 	}
 
 	@Bean
-	public MongoTemplate mongoTemplate() {
-		return new MongoTemplate(mongoClient(), "test-db");
+	public MongoTemplate mongoTemplate(MongoClient mongoClient) {
+		return new MongoTemplate(mongoClient, "test-db");
 	}
 }

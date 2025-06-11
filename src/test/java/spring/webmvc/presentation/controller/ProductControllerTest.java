@@ -104,9 +104,9 @@ class ProductControllerTest {
 		mockMvc.perform(
 				RestDocumentationRequestBuilders.get("/products")
 					.header("Authorization", "Bearer access-token")
-					.param("page", String.valueOf(pageable.getPageNumber()))
-					.param("size", String.valueOf(pageable.getPageSize()))
-					.param("name", name)
+					.queryParam("page", String.valueOf(pageable.getPageNumber()))
+					.queryParam("size", String.valueOf(pageable.getPageSize()))
+					.queryParam("name", name)
 			)
 			.andExpect(MockMvcResultMatchers.status().isOk())
 			.andDo(
@@ -948,7 +948,7 @@ class ProductControllerTest {
 		// When & Then
 		mockMvc.perform(
 				RestDocumentationRequestBuilders.delete("/products/{id}", productId)
-					.param("category", category.toString())
+					.queryParam("category", category.toString())
 					.contentType(MediaType.APPLICATION_JSON)
 					.header("Authorization", "Bearer access-token")
 			)
@@ -957,6 +957,9 @@ class ProductControllerTest {
 				MockMvcRestDocumentation.document("ticket-delete",
 					HeaderDocumentation.requestHeaders(
 						HeaderDocumentation.headerWithName("Authorization").description("액세스 토큰")
+					),
+					RequestDocumentation.queryParameters(
+						RequestDocumentation.parameterWithName("category").description("카테고리")
 					)
 				)
 			);
@@ -973,7 +976,7 @@ class ProductControllerTest {
 		// When & Then
 		mockMvc.perform(
 				RestDocumentationRequestBuilders.delete("/products/{id}", productId)
-					.param("category", category.toString())
+					.queryParam("category", category.toString())
 					.contentType(MediaType.APPLICATION_JSON)
 					.header("Authorization", "Bearer access-token")
 			)
@@ -982,6 +985,9 @@ class ProductControllerTest {
 				MockMvcRestDocumentation.document("flight-delete",
 					HeaderDocumentation.requestHeaders(
 						HeaderDocumentation.headerWithName("Authorization").description("액세스 토큰")
+					),
+					RequestDocumentation.queryParameters(
+						RequestDocumentation.parameterWithName("category").description("카테고리")
 					)
 				)
 			);
@@ -998,7 +1004,7 @@ class ProductControllerTest {
 		// When & Then
 		mockMvc.perform(
 				RestDocumentationRequestBuilders.delete("/products/{id}", productId)
-					.param("category", category.toString())
+					.queryParam("category", category.toString())
 					.contentType(MediaType.APPLICATION_JSON)
 					.header("Authorization", "Bearer access-token")
 			)
@@ -1007,6 +1013,9 @@ class ProductControllerTest {
 				MockMvcRestDocumentation.document("accommodation-delete",
 					HeaderDocumentation.requestHeaders(
 						HeaderDocumentation.headerWithName("Authorization").description("액세스 토큰")
+					),
+					RequestDocumentation.queryParameters(
+						RequestDocumentation.parameterWithName("category").description("카테고리")
 					)
 				)
 			);
