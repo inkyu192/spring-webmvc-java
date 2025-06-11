@@ -1,5 +1,7 @@
 package spring.webmvc.presentation.controller;
 
+import java.nio.charset.StandardCharsets;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -9,6 +11,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.headers.HeaderDocumentation;
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.operation.preprocess.Preprocessors;
@@ -53,6 +56,13 @@ class FileControllerTest {
 			"test-image-content".getBytes()
 		);
 
+		MockMultipartFile data = new MockMultipartFile(
+			"data",
+			"",
+			"application/json",
+			"{\"type\": \"PROFILE\"}".getBytes(StandardCharsets.UTF_8)
+		);
+
 		String key = "profile/20240610/uuid.jpg";
 		Mockito.when(s3Service.putObject("my-bucket", "profile", file)).thenReturn(key);
 
@@ -60,14 +70,18 @@ class FileControllerTest {
 		mockMvc.perform(
 				RestDocumentationRequestBuilders.multipart("/files")
 					.file(file)
-					.param("type", "PROFILE")
+					.file(data)
 					.header("Authorization", "Bearer access-token")
 			)
 			.andExpect(MockMvcResultMatchers.status().isOk())
 			.andDo(
 				MockMvcRestDocumentation.document("file-upload",
+					HeaderDocumentation.requestHeaders(
+						HeaderDocumentation.headerWithName("Authorization").description("액세스 토큰")
+					),
 					RequestDocumentation.requestParts(
-						RequestDocumentation.partWithName("file").description("파일")
+						RequestDocumentation.partWithName("file").description("파일"),
+						RequestDocumentation.partWithName("data").description("데이터")
 					),
 					PayloadDocumentation.responseFields(
 						PayloadDocumentation.fieldWithPath("key").description("키")
