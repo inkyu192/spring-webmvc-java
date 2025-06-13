@@ -10,7 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import lombok.RequiredArgsConstructor;
 import spring.webmvc.infrastructure.common.FileUtil;
 import spring.webmvc.infrastructure.external.S3Service;
-import spring.webmvc.presentation.dto.response.FileRequest;
+import spring.webmvc.presentation.dto.request.FileUploadRequest;
 import spring.webmvc.presentation.dto.response.FileResponse;
 
 @RestController
@@ -22,7 +22,7 @@ public class FileController {
 
 	@PostMapping
 	@PreAuthorize("isAuthenticated()")
-	public FileResponse uploadFile(@RequestPart MultipartFile file, @RequestPart FileRequest data) {
+	public FileResponse uploadFile(@RequestPart MultipartFile file, @RequestPart FileUploadRequest data) {
 		FileUtil.validate(data.type(), file);
 
 		String key = s3Service.putObject("my-bucket", data.type().getDirectory(), file);
