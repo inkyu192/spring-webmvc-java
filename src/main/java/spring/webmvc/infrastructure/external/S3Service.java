@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,8 +14,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.CopyObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
+import spring.webmvc.infrastructure.common.FileType;
 import spring.webmvc.infrastructure.common.FileUtil;
 import spring.webmvc.presentation.exception.AwsIntegrationException;
 
@@ -25,9 +28,12 @@ public class S3Service {
 
 	private final S3Client s3Client;
 
-	public String putObject(String bucket, String directory, MultipartFile file) {
+	@Value("${aws.s3.bucket}")
+	private String bucket;
+
+	public String putObject(FileType fileType, MultipartFile file) {
 		String filename = file.getOriginalFilename();
-		String key = generateKey(directory, filename);
+		String key = generateKey(filename, fileType.getDirectory());
 		String contentType = URLConnection.guessContentTypeFromName(filename);
 
 		PutObjectRequest request = PutObjectRequest.builder()
@@ -46,11 +52,37 @@ public class S3Service {
 		return key;
 	}
 
-	private String generateKey(String directory, String filename) {
+	public void copyObject(String sourceKey, FileType destinationType) {
+		String destinationKey = replaceDirectory(sourceKey, destinationType.getDirectory());
+
+		CopyObjectRequest copyRequest = CopyObjectRequest.builder()
+			.sourceBucket(bucket)
+			.sourceKey(sourceKey)
+			.destinationBucket(bucket)
+			.destinationKey(destinationKey)
+			.build();
+
+		try {
+			s3Client.copyObject(copyRequest);
+		} catch (S3Exception e) {
+			log.error("Failed to copy object to S3", e);
+			throw new AwsIntegrationException("S3", e);
+		}
+	}
+
+	private String generateKey(String filename, String directory) {
 		String extension = FileUtil.extractExtension(filename);
 		String localDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 		String uuid = UUID.randomUUID().toString();
 
 		return String.format("%s/%s/%s.%s", directory, localDate, uuid, extension);
+	}
+
+	private String replaceDirectory(String sourceKey, String destinationDirectory) {
+		String[] parts = sourceKey.split("/", 2);
+		if (parts.length != 2) {
+			throw new IllegalArgumentException("Invalid sourceKey format: " + sourceKey);
+		}
+		return destinationDirectory + "/" + parts[1];
 	}
 }

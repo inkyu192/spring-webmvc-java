@@ -18,6 +18,7 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
+import spring.webmvc.infrastructure.common.FileType;
 import spring.webmvc.infrastructure.config.LocalStackTestContainerConfig;
 
 class S3ServiceTest {
@@ -50,7 +51,6 @@ class S3ServiceTest {
 	@DisplayName("putObject: MultipartFile S3 업로드 후 key 반환한다")
 	void putObject() throws Exception {
 		// Given
-		String directory = "directory";
 		String filename = "file.txt";
 		String content = "content";
 
@@ -59,7 +59,7 @@ class S3ServiceTest {
 		);
 
 		// When
-		String key = s3Service.putObject(BUCKET, directory, multipartFile);
+		String key = s3Service.putObject(FileType.TEMP, multipartFile);
 
 		// Then
 		ResponseInputStream<GetObjectResponse> response = s3Client.getObject(
