@@ -25,7 +25,7 @@ public class FileController {
 	public FileResponse uploadFile(@RequestPart MultipartFile file, @RequestPart FileUploadRequest data) {
 		FileUtil.validate(data.type(), file);
 
-		String key = s3Service.putObject("my-bucket", data.type().getDirectory(), file);
+		String key = s3Service.putObject(data.type(), file);
 		return new FileResponse(key);
 	}
 }

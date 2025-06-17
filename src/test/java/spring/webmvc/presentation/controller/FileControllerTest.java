@@ -23,6 +23,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import spring.webmvc.infrastructure.common.FileType;
 import spring.webmvc.infrastructure.config.WebMvcTestConfig;
 import spring.webmvc.infrastructure.external.S3Service;
 
@@ -64,7 +65,7 @@ class FileControllerTest {
 		);
 
 		String key = "profile/20240610/uuid.jpg";
-		Mockito.when(s3Service.putObject("my-bucket", "profile", file)).thenReturn(key);
+		Mockito.when(s3Service.putObject(FileType.TEMP, file)).thenReturn(key);
 
 		// When & Then
 		mockMvc.perform(
