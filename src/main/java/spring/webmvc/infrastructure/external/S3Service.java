@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -23,13 +22,15 @@ import spring.webmvc.presentation.exception.AwsIntegrationException;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class S3Service {
 
 	private final S3Client s3Client;
+	private final String bucket;
 
-	@Value("${aws.s3.bucket}")
-	private String bucket;
+	public S3Service(S3Client s3Client, @Value("${aws.s3.bucket}") String bucket) {
+		this.s3Client = s3Client;
+		this.bucket = bucket;
+	}
 
 	public String putObject(FileType fileType, MultipartFile file) {
 		String filename = file.getOriginalFilename();
