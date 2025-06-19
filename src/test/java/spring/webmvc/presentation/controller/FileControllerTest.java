@@ -61,7 +61,7 @@ class FileControllerTest {
 			"data",
 			"",
 			"application/json",
-			"{\"type\": \"PROFILE\"}".getBytes(StandardCharsets.UTF_8)
+			"{\"type\": \"TEMP\"}".getBytes(StandardCharsets.UTF_8)
 		);
 
 		String key = "profile/20240610/uuid.jpg";

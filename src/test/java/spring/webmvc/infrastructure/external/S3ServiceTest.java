@@ -100,8 +100,6 @@ class S3ServiceTest {
 				.build()
 		);
 
-		String result = new String(response.readAllBytes(), StandardCharsets.UTF_8);
-
-		Assertions.assertThat(result).isEqualTo(content);
+		Assertions.assertThat(new String(response.readAllBytes(), StandardCharsets.UTF_8)).isEqualTo(content);
 	}
 }
