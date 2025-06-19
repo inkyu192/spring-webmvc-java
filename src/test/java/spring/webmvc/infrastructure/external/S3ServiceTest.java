@@ -44,7 +44,7 @@ class S3ServiceTest {
 			.build();
 
 		s3Client.createBucket(CreateBucketRequest.builder().bucket(BUCKET).build());
-		s3Service = new S3Service(s3Client);
+		s3Service = new S3Service(s3Client, BUCKET);
 	}
 
 	@Test
@@ -66,6 +66,37 @@ class S3ServiceTest {
 			GetObjectRequest.builder()
 				.bucket(BUCKET)
 				.key(key)
+				.build()
+		);
+
+		String result = new String(response.readAllBytes(), StandardCharsets.UTF_8);
+
+		Assertions.assertThat(result).isEqualTo(content);
+	}
+
+	@Test
+	@DisplayName("copyObject: S3 객체를 복사한다")
+	void copyObject() throws Exception {
+		// Given
+		String filename = "file.txt";
+		String content = "content";
+
+		MockMultipartFile multipartFile = new MockMultipartFile(
+			filename, filename, MediaType.TEXT_PLAIN_VALUE, content.getBytes(StandardCharsets.UTF_8)
+		);
+
+		String sourceKey = s3Service.putObject(FileType.TEMP, multipartFile);
+
+		// When
+		s3Service.copyObject(sourceKey, FileType.PROFILE);
+
+		// Then
+		String destinationKey = sourceKey.replaceFirst(FileType.TEMP.getDirectory(), FileType.PROFILE.getDirectory());
+
+		ResponseInputStream<GetObjectResponse> response = s3Client.getObject(
+			GetObjectRequest.builder()
+				.bucket(BUCKET)
+				.key(destinationKey)
 				.build()
 		);
 
