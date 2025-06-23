@@ -15,8 +15,8 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import lombok.SneakyThrows;
-import spring.webmvc.infrastructure.security.JwtAuthenticationFilter;
 import spring.webmvc.infrastructure.properties.CorsProperties;
+import spring.webmvc.infrastructure.security.JwtAuthenticationFilter;
 import spring.webmvc.presentation.exception.handler.AccessDeniedExceptionHandler;
 import spring.webmvc.presentation.exception.handler.AuthenticationExceptionHandler;
 import spring.webmvc.presentation.exception.handler.JwtExceptionHandler;
@@ -58,6 +58,7 @@ public class SecurityConfig {
 	private CorsConfigurationSource createCorsConfig(CorsProperties corsProperties) {
 		CorsConfiguration config = new CorsConfiguration();
 		config.setAllowedOrigins(corsProperties.getAllowedOrigins());
+		config.setAllowedOriginPatterns(corsProperties.getAllowedOriginPatterns());
 		config.setAllowedMethods(corsProperties.getAllowedMethods());
 		config.setAllowedHeaders(corsProperties.getAllowedHeaders());
 		config.setAllowCredentials(true);

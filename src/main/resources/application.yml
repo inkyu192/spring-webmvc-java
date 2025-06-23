@@ -32,6 +32,8 @@ crypto:
 cors:
   allowed-origins:
     - "http://localhost:3000"
+  allowed-origin-patterns:
+    - "http://localhost:*"
   allowed-methods:
     - "HEAD"
     - "GET"

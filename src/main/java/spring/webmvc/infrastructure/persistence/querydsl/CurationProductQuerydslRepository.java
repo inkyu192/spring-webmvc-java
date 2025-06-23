@@ -42,7 +42,7 @@ public class CurationProductQuerydslRepository {
 		return new PageImpl<>(content, pageable, count);
 	}
 
-	private static BooleanExpression eqCurationId(Long curationId) {
+	private BooleanExpression eqCurationId(Long curationId) {
 		if (curationId == null) {
 			return null;
 		}
