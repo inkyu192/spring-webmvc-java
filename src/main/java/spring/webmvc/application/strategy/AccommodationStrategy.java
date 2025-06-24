@@ -32,8 +32,11 @@ public class AccommodationStrategy implements ProductStrategy {
 
 	@Override
 	public ProductResult findByProductId(Long productId) {
-		String key = CacheKey.PRODUCT.generate(productId);
-		AccommodationResult cache = valueCache.get(key, AccommodationResult.class);
+		String productKey = CacheKey.PRODUCT.generate(productId);
+		AccommodationResult cache = valueCache.get(productKey, AccommodationResult.class);
+
+		String viewCountKey = CacheKey.PRODUCT_VIEW_COUNT.generate(productId);
+		valueCache.increment(viewCountKey, 1);
 
 		if (cache != null) {
 			return cache;
@@ -43,7 +46,7 @@ public class AccommodationStrategy implements ProductStrategy {
 			.map(AccommodationResult::new)
 			.orElseThrow(() -> new EntityNotFoundException(Accommodation.class, productId));
 
-		valueCache.set(key, accommodationResult, CacheKey.PRODUCT.getTimeout());
+		valueCache.set(productKey, accommodationResult, CacheKey.PRODUCT.getTimeout());
 
 		return accommodationResult;
 	}
