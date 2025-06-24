@@ -32,11 +32,8 @@ public class AccommodationStrategy implements ProductStrategy {
 
 	@Override
 	public ProductResult findByProductId(Long productId) {
-		String productKey = CacheKey.PRODUCT.generate(productId);
-		AccommodationResult cache = valueCache.get(productKey, AccommodationResult.class);
-
-		String viewCountKey = CacheKey.PRODUCT_VIEW_COUNT.generate(productId);
-		valueCache.increment(viewCountKey, 1);
+		String key = CacheKey.ACCOMMODATION.generate(productId);
+		AccommodationResult cache = valueCache.get(key, AccommodationResult.class);
 
 		if (cache != null) {
 			return cache;
@@ -46,7 +43,7 @@ public class AccommodationStrategy implements ProductStrategy {
 			.map(AccommodationResult::new)
 			.orElseThrow(() -> new EntityNotFoundException(Accommodation.class, productId));
 
-		valueCache.set(productKey, accommodationResult, CacheKey.PRODUCT.getTimeout());
+		valueCache.set(key, accommodationResult, CacheKey.ACCOMMODATION.getTimeout());
 
 		return accommodationResult;
 	}
@@ -66,9 +63,6 @@ public class AccommodationStrategy implements ProductStrategy {
 				accommodationCreateCommand.getCheckOutTime()
 			)
 		);
-
-		String key = CacheKey.PRODUCT_STOCK.generate(accommodation.getProduct().getId());
-		valueCache.set(key, accommodation.getProduct().getQuantity());
 
 		return new AccommodationResult(accommodation);
 	}
@@ -90,9 +84,6 @@ public class AccommodationStrategy implements ProductStrategy {
 			accommodationUpdateCommand.getCheckOutTime()
 		);
 
-		String key = CacheKey.PRODUCT_STOCK.generate(productId);
-		valueCache.set(key, accommodation.getProduct().getQuantity());
-
 		return new AccommodationResult(accommodation);
 	}
 
@@ -101,9 +92,9 @@ public class AccommodationStrategy implements ProductStrategy {
 		Accommodation accommodation = accommodationRepository.findByProductId(productId)
 			.orElseThrow(() -> new EntityNotFoundException(Accommodation.class, productId));
 
-		String key = CacheKey.PRODUCT_STOCK.generate(productId);
-		valueCache.delete(key);
-
 		accommodationRepository.delete(accommodation);
+
+		String key = CacheKey.ACCOMMODATION.generate(productId);
+		valueCache.delete(key);
 	}
 }

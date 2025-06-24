@@ -1,7 +1,6 @@
 package spring.webmvc.application.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,6 +20,7 @@ import spring.webmvc.application.dto.command.TicketUpdateCommand;
 import spring.webmvc.application.dto.result.ProductResult;
 import spring.webmvc.application.dto.result.TicketResult;
 import spring.webmvc.application.strategy.ProductStrategy;
+import spring.webmvc.domain.cache.ValueCache;
 import spring.webmvc.domain.model.entity.Product;
 import spring.webmvc.domain.model.enums.Category;
 import spring.webmvc.domain.repository.ProductRepository;
@@ -37,9 +37,12 @@ class ProductServiceTest {
 	@Mock
 	private ProductStrategy productStrategy;
 
+	@Mock
+	private ValueCache valueCache;
+
 	@BeforeEach
 	void setUp() {
-		productService = new ProductService(productRepository, List.of(productStrategy));
+		productService = new ProductService(valueCache, productRepository, List.of(productStrategy));
 	}
 
 	@Test
@@ -138,23 +141,8 @@ class ProductServiceTest {
 	}
 
 	@Test
-	@DisplayName("updateProduct: Product 없을 경우 EntityNotFoundException 발생한다")
-	void updateProductCase1() {
-		// Given
-		Long productId = 1L;
-
-		TicketUpdateCommand ticketUpdateCommand = Mockito.mock(TicketUpdateCommand.class);
-
-		Mockito.when(productRepository.findById(productId)).thenReturn(Optional.empty());
-
-		// When & Then
-		Assertions.assertThatThrownBy(() -> productService.updateProduct(productId, ticketUpdateCommand))
-			.isInstanceOf(EntityNotFoundException.class);
-	}
-
-	@Test
-	@DisplayName("updateProduct: Product 있을 경우 수정 후 반환한다")
-	void updateProductCase2() {
+	@DisplayName("updateProduct: Product 수정 후 반환한다")
+	void updateProduct() {
 		// Given
 		Long productId = 1L;
 		Category category = Category.TICKET;
@@ -162,11 +150,8 @@ class ProductServiceTest {
 		TicketUpdateCommand ticketUpdateCommand = Mockito.mock(TicketUpdateCommand.class);
 		Mockito.when(ticketUpdateCommand.getCategory()).thenReturn(category);
 
-		Product product = Mockito.mock(Product.class);
-
 		TicketResult ticketResult = Mockito.mock(TicketResult.class);
 
-		Mockito.when(productRepository.findById(productId)).thenReturn(Optional.of(product));
 		Mockito.when(productStrategy.supports(category)).thenReturn(true);
 		Mockito.when(productStrategy.updateProduct(productId, ticketUpdateCommand)).thenReturn(ticketResult);
 
@@ -187,29 +172,12 @@ class ProductServiceTest {
 	}
 
 	@Test
-	@DisplayName("deleteProduct: Product 없을 경우 EntityNotFoundException 발생한다")
-	void deleteProductCase1() {
+	@DisplayName("deleteProduct: Product 삭제한다")
+	void deleteProduct() {
 		// Given
 		Category category = Category.TICKET;
 		Long productId = 1L;
 
-		Mockito.when(productRepository.findById(productId)).thenReturn(Optional.empty());
-
-		// When & Then
-		Assertions.assertThatThrownBy(() -> productService.deleteProduct(category, productId))
-			.isInstanceOf(EntityNotFoundException.class);
-	}
-
-	@Test
-	@DisplayName("deleteProduct: Product 있을 경우 삭제한다")
-	void deleteProductCase2() {
-		// Given
-		Category category = Category.TICKET;
-		Long productId = 1L;
-
-		Product product = Mockito.mock(Product.class);
-
-		Mockito.when(productRepository.findById(productId)).thenReturn(Optional.of(product));
 		Mockito.when(productStrategy.supports(category)).thenReturn(true);
 		Mockito.doNothing().when(productStrategy).deleteProduct(productId);
 

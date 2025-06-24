@@ -12,10 +12,10 @@ import spring.webmvc.application.dto.command.ProductCreateCommand;
 import spring.webmvc.application.dto.command.ProductUpdateCommand;
 import spring.webmvc.application.dto.result.ProductResult;
 import spring.webmvc.application.strategy.ProductStrategy;
-import spring.webmvc.domain.model.entity.Product;
+import spring.webmvc.domain.cache.CacheKey;
+import spring.webmvc.domain.cache.ValueCache;
 import spring.webmvc.domain.model.enums.Category;
 import spring.webmvc.domain.repository.ProductRepository;
-import spring.webmvc.presentation.exception.EntityNotFoundException;
 import spring.webmvc.presentation.exception.StrategyNotImplementedException;
 
 @Service
@@ -23,6 +23,7 @@ import spring.webmvc.presentation.exception.StrategyNotImplementedException;
 @RequiredArgsConstructor
 public class ProductService {
 
+	private final ValueCache valueCache;
 	private final ProductRepository productRepository;
 	private final List<ProductStrategy> productStrategies;
 
@@ -32,35 +33,43 @@ public class ProductService {
 
 	public ProductResult findProduct(Long id, Category category) {
 		ProductStrategy productStrategy = getStrategy(category);
+		ProductResult productResult = productStrategy.findByProductId(id);
 
-		return productStrategy.findByProductId(id);
+		String key = CacheKey.PRODUCT_VIEW_COUNT.generate(id);
+		valueCache.increment(key, 1);
+
+		return productResult;
 	}
 
 	@Transactional
 	public ProductResult createProduct(ProductCreateCommand command) {
 		ProductStrategy productStrategy = getStrategy(command.getCategory());
+		ProductResult productResult = productStrategy.createProduct(command);
 
-		return productStrategy.createProduct(command);
+		String key = CacheKey.PRODUCT_STOCK.generate(productResult.getId());
+		valueCache.set(key, productResult.getQuantity());
+
+		return productResult;
 	}
 
 	@Transactional
 	public ProductResult updateProduct(Long id, ProductUpdateCommand command) {
-		productRepository.findById(id)
-			.orElseThrow(() -> new EntityNotFoundException(Product.class, id));
-
 		ProductStrategy productStrategy = getStrategy(command.getCategory());
+		ProductResult productResult = productStrategy.updateProduct(id, command);
 
-		return productStrategy.updateProduct(id, command);
+		String key = CacheKey.PRODUCT_STOCK.generate(id);
+		valueCache.set(key, productResult.getQuantity());
+
+		return productResult;
 	}
 
 	@Transactional
 	public void deleteProduct(Category category, Long id) {
-		productRepository.findById(id)
-			.orElseThrow(() -> new EntityNotFoundException(Product.class, id));
-
 		ProductStrategy productStrategy = getStrategy(category);
-
 		productStrategy.deleteProduct(id);
+
+		String key = CacheKey.PRODUCT_STOCK.generate(id);
+		valueCache.delete(key);
 	}
 
 	private ProductStrategy getStrategy(Category category) {
