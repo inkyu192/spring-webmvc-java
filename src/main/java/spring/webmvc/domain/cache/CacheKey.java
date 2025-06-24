@@ -7,7 +7,9 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum CacheKey {
-	PRODUCT("product:%d", Duration.ofHours(1)),
+	FLIGHT("flight:%d", Duration.ofHours(1)),
+	ACCOMMODATION("accommodation:%d", Duration.ofHours(1)),
+	TICKET("ticket:%d", Duration.ofHours(1)),
 	PRODUCT_STOCK("product:%d:stock", null),
 	PRODUCT_VIEW_COUNT("product:%d:view-count", Duration.ofDays(1)),
 	CURATION("curation", Duration.ofHours(1)),
