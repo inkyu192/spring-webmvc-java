@@ -32,8 +32,11 @@ public class TicketStrategy implements ProductStrategy {
 
 	@Override
 	public ProductResult findByProductId(Long productId) {
-		String key = CacheKey.PRODUCT.generate(productId);
-		TicketResult cache = valueCache.get(key, TicketResult.class);
+		String productKey = CacheKey.PRODUCT.generate(productId);
+		TicketResult cache = valueCache.get(productKey, TicketResult.class);
+
+		String viewCountKey = CacheKey.PRODUCT_VIEW_COUNT.generate(productId);
+		valueCache.increment(viewCountKey, 1);
 
 		if (cache != null) {
 			return cache;
@@ -43,7 +46,7 @@ public class TicketStrategy implements ProductStrategy {
 			.map(TicketResult::new)
 			.orElseThrow(() -> new EntityNotFoundException(Ticket.class, productId));
 
-		valueCache.set(key, ticketResult, CacheKey.PRODUCT.getTimeout());
+		valueCache.set(productKey, ticketResult, CacheKey.PRODUCT.getTimeout());
 
 		return ticketResult;
 	}

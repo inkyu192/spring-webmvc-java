@@ -32,8 +32,11 @@ public class FlightStrategy implements ProductStrategy {
 
 	@Override
 	public ProductResult findByProductId(Long productId) {
-		String key = CacheKey.PRODUCT.generate(productId);
-		FlightResult cache = valueCache.get(key, FlightResult.class);
+		String productKey = CacheKey.PRODUCT.generate(productId);
+		FlightResult cache = valueCache.get(productKey, FlightResult.class);
+
+		String viewCountKey = CacheKey.PRODUCT_VIEW_COUNT.generate(productId);
+		valueCache.increment(viewCountKey, 1);
 
 		if (cache != null) {
 			return cache;
@@ -43,7 +46,7 @@ public class FlightStrategy implements ProductStrategy {
 			.map(FlightResult::new)
 			.orElseThrow(() -> new EntityNotFoundException(Flight.class, productId));
 
-		valueCache.set(key, flightResult, CacheKey.PRODUCT.getTimeout());
+		valueCache.set(productKey, flightResult, CacheKey.PRODUCT.getTimeout());
 
 		return flightResult;
 	}
