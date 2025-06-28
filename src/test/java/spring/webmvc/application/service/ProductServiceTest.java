@@ -1,6 +1,7 @@
 package spring.webmvc.application.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,6 +36,9 @@ class ProductServiceTest {
 	private ProductRepository productRepository;
 
 	@Mock
+	private Map<Category, ProductStrategy> productStrategyMap;
+
+	@Mock
 	private ProductStrategy productStrategy;
 
 	@Mock
@@ -42,7 +46,7 @@ class ProductServiceTest {
 
 	@BeforeEach
 	void setUp() {
-		productService = new ProductService(valueCache, productRepository, List.of(productStrategy));
+		productService = new ProductService(valueCache, productRepository, productStrategyMap);
 	}
 
 	@Test
@@ -74,7 +78,7 @@ class ProductServiceTest {
 		Long productId = 1L;
 		Category category = Category.TICKET;
 
-		Mockito.when(productStrategy.supports(category)).thenReturn(true);
+		Mockito.when(productStrategyMap.get(category)).thenReturn(productStrategy);
 		Mockito.when(productStrategy.findByProductId(productId)).thenThrow(EntityNotFoundException.class);
 
 		// When & Then
@@ -91,7 +95,7 @@ class ProductServiceTest {
 
 		TicketResult ticketResult = Mockito.mock(TicketResult.class);
 
-		Mockito.when(productStrategy.supports(category)).thenReturn(true);
+		Mockito.when(productStrategyMap.get(category)).thenReturn(productStrategy);
 		Mockito.when(productStrategy.findByProductId(productId)).thenReturn(ticketResult);
 
 		// When
@@ -121,7 +125,7 @@ class ProductServiceTest {
 
 		TicketResult ticketResult = Mockito.mock(TicketResult.class);
 
-		Mockito.when(productStrategy.supports(category)).thenReturn(true);
+		Mockito.when(productStrategyMap.get(category)).thenReturn(productStrategy);
 		Mockito.when(productStrategy.createProduct(ticketCreateCommand)).thenReturn(ticketResult);
 
 		// When
@@ -152,7 +156,7 @@ class ProductServiceTest {
 
 		TicketResult ticketResult = Mockito.mock(TicketResult.class);
 
-		Mockito.when(productStrategy.supports(category)).thenReturn(true);
+		Mockito.when(productStrategyMap.get(category)).thenReturn(productStrategy);
 		Mockito.when(productStrategy.updateProduct(productId, ticketUpdateCommand)).thenReturn(ticketResult);
 
 		// When
@@ -178,7 +182,7 @@ class ProductServiceTest {
 		Category category = Category.TICKET;
 		Long productId = 1L;
 
-		Mockito.when(productStrategy.supports(category)).thenReturn(true);
+		Mockito.when(productStrategyMap.get(category)).thenReturn(productStrategy);
 		Mockito.doNothing().when(productStrategy).deleteProduct(productId);
 
 		productService.deleteProduct(category, productId);
