@@ -26,8 +26,8 @@ public class FlightStrategy implements ProductStrategy {
 	private final FlightRepository flightRepository;
 
 	@Override
-	public boolean supports(Category category) {
-		return category == Category.FLIGHT;
+	public Category getCategory() {
+		return Category.FLIGHT;
 	}
 
 	@Override

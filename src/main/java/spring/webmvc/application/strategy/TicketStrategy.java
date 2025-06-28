@@ -26,8 +26,8 @@ public class TicketStrategy implements ProductStrategy {
 	private final TicketRepository ticketRepository;
 
 	@Override
-	public boolean supports(Category category) {
-		return category == Category.TICKET;
+	public Category getCategory() {
+		return Category.TICKET;
 	}
 
 	@Override

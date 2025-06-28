@@ -26,8 +26,8 @@ public class AccommodationStrategy implements ProductStrategy {
 	private final AccommodationRepository accommodationRepository;
 
 	@Override
-	public boolean supports(Category category) {
-		return category == Category.ACCOMMODATION;
+	public Category getCategory() {
+		return Category.ACCOMMODATION;
 	}
 
 	@Override

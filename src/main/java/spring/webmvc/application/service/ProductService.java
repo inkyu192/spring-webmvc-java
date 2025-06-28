@@ -1,6 +1,6 @@
 package spring.webmvc.application.service;
 
-import java.util.List;
+import java.util.Map;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,7 +16,6 @@ import spring.webmvc.domain.cache.CacheKey;
 import spring.webmvc.domain.cache.ValueCache;
 import spring.webmvc.domain.model.enums.Category;
 import spring.webmvc.domain.repository.ProductRepository;
-import spring.webmvc.presentation.exception.StrategyNotImplementedException;
 
 @Service
 @Transactional(readOnly = true)
@@ -25,14 +24,14 @@ public class ProductService {
 
 	private final ValueCache valueCache;
 	private final ProductRepository productRepository;
-	private final List<ProductStrategy> productStrategies;
+	private final Map<Category, ProductStrategy> productStrategyMap;
 
 	public Page<ProductResult> findProducts(Pageable pageable, String name) {
 		return productRepository.findAll(pageable, name).map(ProductResult::new);
 	}
 
 	public ProductResult findProduct(Long id, Category category) {
-		ProductStrategy productStrategy = getStrategy(category);
+		ProductStrategy productStrategy = productStrategyMap.get(category);
 		ProductResult productResult = productStrategy.findByProductId(id);
 
 		String key = CacheKey.PRODUCT_VIEW_COUNT.generate(id);
@@ -43,7 +42,7 @@ public class ProductService {
 
 	@Transactional
 	public ProductResult createProduct(ProductCreateCommand command) {
-		ProductStrategy productStrategy = getStrategy(command.getCategory());
+		ProductStrategy productStrategy = productStrategyMap.get(command.getCategory());
 		ProductResult productResult = productStrategy.createProduct(command);
 
 		String key = CacheKey.PRODUCT_STOCK.generate(productResult.getId());
@@ -54,7 +53,7 @@ public class ProductService {
 
 	@Transactional
 	public ProductResult updateProduct(Long id, ProductUpdateCommand command) {
-		ProductStrategy productStrategy = getStrategy(command.getCategory());
+		ProductStrategy productStrategy = productStrategyMap.get(command.getCategory());
 		ProductResult productResult = productStrategy.updateProduct(id, command);
 
 		String key = CacheKey.PRODUCT_STOCK.generate(id);
@@ -65,17 +64,10 @@ public class ProductService {
 
 	@Transactional
 	public void deleteProduct(Category category, Long id) {
-		ProductStrategy productStrategy = getStrategy(category);
+		ProductStrategy productStrategy = productStrategyMap.get(category);
 		productStrategy.deleteProduct(id);
 
 		String key = CacheKey.PRODUCT_STOCK.generate(id);
 		valueCache.delete(key);
-	}
-
-	private ProductStrategy getStrategy(Category category) {
-		return productStrategies.stream()
-			.filter(it -> it.supports(category))
-			.findFirst()
-			.orElseThrow(() -> new StrategyNotImplementedException(ProductStrategy.class, category));
 	}
 }
