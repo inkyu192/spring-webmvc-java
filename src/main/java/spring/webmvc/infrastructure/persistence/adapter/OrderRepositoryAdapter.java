@@ -11,7 +11,7 @@ import spring.webmvc.domain.model.entity.Order;
 import spring.webmvc.domain.model.enums.OrderStatus;
 import spring.webmvc.domain.repository.OrderRepository;
 import spring.webmvc.infrastructure.persistence.jpa.OrderJpaRepository;
-import spring.webmvc.infrastructure.persistence.querydsl.OrderQuerydslRepository;
+import spring.webmvc.infrastructure.persistence.jpa.OrderQuerydslRepository;
 
 @Component
 @RequiredArgsConstructor
