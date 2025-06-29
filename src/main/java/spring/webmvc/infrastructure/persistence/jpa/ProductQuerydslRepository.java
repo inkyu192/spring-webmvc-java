@@ -1,4 +1,4 @@
-package spring.webmvc.infrastructure.persistence.querydsl;
+package spring.webmvc.infrastructure.persistence.jpa;
 
 import static spring.webmvc.domain.model.entity.QOrderProduct.*;
 import static spring.webmvc.domain.model.entity.QProduct.*;

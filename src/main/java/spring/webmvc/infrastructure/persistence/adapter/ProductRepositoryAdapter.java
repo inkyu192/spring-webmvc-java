@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 import spring.webmvc.domain.model.entity.Product;
 import spring.webmvc.domain.repository.ProductRepository;
 import spring.webmvc.infrastructure.persistence.jpa.ProductJpaRepository;
-import spring.webmvc.infrastructure.persistence.querydsl.ProductQuerydslRepository;
+import spring.webmvc.infrastructure.persistence.jpa.ProductQuerydslRepository;
 
 @Component
 @RequiredArgsConstructor
