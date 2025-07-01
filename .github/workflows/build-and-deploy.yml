@@ -1,4 +1,4 @@
-name: Test and Deploy to ECR
+name: Build and Deploy to ECR
 
 on:
   push:
@@ -36,6 +36,11 @@ jobs:
       - name: Build and push Docker image
         if: success()
         run: |
-          IMAGE=${{ steps.login-ecr.outputs.registry }}/spring-webmvc-java:$(git rev-parse --short HEAD)
+          # Private ECR
+          # IMAGE=${{ steps.login-ecr.outputs.registry }}/spring-webmvc-java:$(git rev-parse --short HEAD)
+
+          # Public ECR
+          IMAGE=public.ecr.aws/g0h3t1b1/spring-webmvc-java:$(git rev-parse --short HEAD)
+               
           docker build -t $IMAGE .
           docker push $IMAGE
