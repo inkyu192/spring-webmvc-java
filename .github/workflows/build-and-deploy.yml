@@ -28,7 +28,7 @@ jobs:
         if: success()
         uses: aws-actions/configure-aws-credentials@v4.1.0
         with:
-          aws-region: ap-northeast-2
+          aws-region: us-east-1
           role-to-assume: arn:aws:iam::287732982808:role/GitHubActionsOIDCRole
           role-session-name: github-actions-${{ github.run_id }}
 
