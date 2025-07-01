@@ -32,15 +32,15 @@ jobs:
         if: success()
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
+        with:
+          registry-type: public
 
       - name: Build and push Docker image
         if: success()
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: spring-webmvc-java
+          IMAGE_TAG: ${{ github.sha }}
         run: |
-          # Private ECR
-          # IMAGE=${{ steps.login-ecr.outputs.registry }}/spring-webmvc-java:$(git rev-parse --short HEAD)
-
-          # Public ECR
-          IMAGE=public.ecr.aws/g0h3t1b1/spring-webmvc-java:$(git rev-parse --short HEAD)
-               
-          docker build -t $IMAGE .
-          docker push $IMAGE
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
