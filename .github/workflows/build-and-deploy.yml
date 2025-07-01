@@ -4,6 +4,10 @@ on:
   push:
     branches: [ main ]
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -36,6 +40,7 @@ jobs:
           registry-type: public
 
       - name: Build, tag, and push docker image to Amazon ECR Public
+        if: success()
         env:
           REGISTRY: ${{ steps.login-ecr-public.outputs.registry }}
           REGISTRY_ALIAS: g0h3t1b1
