@@ -19,28 +19,28 @@ jobs:
 
       - name: Run tests
         run: ./gradlew test
-
-      - name: Configure AWS credentials
+        
+      - name: Configure AWS Credentials
         if: success()
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v4.1.0
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-northeast-2
+          role-to-assume: arn:aws:iam::287732982808:role/GitHubActionsOIDCRole
+          role-session-name: github-actions-${{ github.run_id }}
 
-      - name: Login to Amazon ECR
+      - name: Login to Amazon ECR Public
         if: success()
-        id: login-ecr
+        id: login-ecr-public
         uses: aws-actions/amazon-ecr-login@v2
         with:
           registry-type: public
 
-      - name: Build and push Docker image
-        if: success()
+      - name: Build, tag, and push docker image to Amazon ECR Public
         env:
-          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REGISTRY: ${{ steps.login-ecr-public.outputs.registry }}
+          REGISTRY_ALIAS: g0h3t1b1
           REPOSITORY: spring-webmvc-java
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
-          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          docker build -t $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG .
+          docker push $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
