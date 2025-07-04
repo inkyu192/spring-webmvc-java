@@ -38,13 +38,18 @@ jobs:
         with:
           registry-type: public
 
-      - name: Build, tag, and push docker image to Amazon ECR Public
+      - name: Build and push docker image to Amazon ECR Public
         if: success()
         env:
           REGISTRY: ${{ steps.login-ecr-public.outputs.registry }}
           REGISTRY_ALIAS: g0h3t1b1
-          REPOSITORY: spring-webmvc-java
+          REPOSITORY: spring-webmvc-kotlin
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build -t $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG .
+          ./gradlew bootBuildImage \
+            -Pregistry=$REGISTRY \
+            -PrepositoryAlias=$REGISTRY_ALIAS \
+            -Prepository=$REPOSITORY \
+            -PimageTag=$IMAGE_TAG
+
           docker push $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
