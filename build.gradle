@@ -80,3 +80,11 @@ tasks.register('copyAsciidoc', Copy) {
 build {
     dependsOn copyAsciidoc
 }
+
+bootBuildImage {
+    def props = ['registry', 'repositoryAlias', 'repository', 'imageTag']
+    if (props.every { project.hasProperty(it) }) {
+        def (registry, repositoryAlias, repository, imageTag) = props.collect { project.property(it) }
+        imageName = "${registry}/${repositoryAlias}/${repository}:${imageTag}"
+    }
+}
