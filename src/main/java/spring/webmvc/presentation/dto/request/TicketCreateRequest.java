@@ -5,6 +5,7 @@ import java.time.Instant;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import spring.webmvc.application.dto.command.TicketCreateCommand;
 import spring.webmvc.domain.model.enums.Category;
 
 @Getter
@@ -22,8 +23,8 @@ public class TicketCreateRequest extends ProductCreateRequest {
 		Category category,
 		String name,
 		String description,
-		int price,
-		int quantity,
+		long price,
+		long quantity,
 		String place,
 		Instant performanceTime,
 		String duration,
@@ -34,5 +35,20 @@ public class TicketCreateRequest extends ProductCreateRequest {
 		this.performanceTime = performanceTime;
 		this.duration = duration;
 		this.ageLimit = ageLimit;
+	}
+
+	@Override
+	public TicketCreateCommand toCommand() {
+		return new TicketCreateCommand(
+			category,
+			name,
+			description,
+			price,
+			quantity,
+			place,
+			performanceTime,
+			duration,
+			ageLimit
+		);
 	}
 }

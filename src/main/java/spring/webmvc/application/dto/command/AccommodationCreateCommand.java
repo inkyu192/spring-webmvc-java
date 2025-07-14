@@ -3,7 +3,7 @@ package spring.webmvc.application.dto.command;
 import java.time.Instant;
 
 import lombok.Getter;
-import spring.webmvc.presentation.dto.request.AccommodationCreateRequest;
+import spring.webmvc.domain.model.enums.Category;
 
 @Getter
 public class AccommodationCreateCommand extends ProductCreateCommand {
@@ -11,16 +11,19 @@ public class AccommodationCreateCommand extends ProductCreateCommand {
 	private final Instant checkInTime;
 	private final Instant checkOutTime;
 
-	public AccommodationCreateCommand(AccommodationCreateRequest accommodationCreateRequest) {
-		super(
-			accommodationCreateRequest.getCategory(),
-			accommodationCreateRequest.getName(),
-			accommodationCreateRequest.getDescription(),
-			accommodationCreateRequest.getPrice(),
-			accommodationCreateRequest.getQuantity()
-		);
-		place = accommodationCreateRequest.getPlace();
-		checkInTime = accommodationCreateRequest.getCheckInTime();
-		checkOutTime = accommodationCreateRequest.getCheckOutTime();
+	public AccommodationCreateCommand(
+		Category category,
+		String name,
+		String description,
+		long price,
+		long quantity,
+		String place,
+		Instant checkInTime,
+		Instant checkOutTime
+	) {
+		super(category, name, description, price, quantity);
+		this.place = place;
+		this.checkInTime = checkInTime;
+		this.checkOutTime = checkOutTime;
 	}
 }

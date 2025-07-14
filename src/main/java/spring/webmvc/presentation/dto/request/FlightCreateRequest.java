@@ -5,6 +5,7 @@ import java.time.Instant;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import spring.webmvc.application.dto.command.FlightCreateCommand;
 import spring.webmvc.domain.model.enums.Category;
 
 @Getter
@@ -26,8 +27,8 @@ public class FlightCreateRequest extends ProductCreateRequest {
 		Category category,
 		String name,
 		String description,
-		int price,
-		int quantity,
+		long price,
+		long quantity,
 		String airline,
 		String flightNumber,
 		String departureAirport,
@@ -42,5 +43,22 @@ public class FlightCreateRequest extends ProductCreateRequest {
 		this.arrivalAirport = arrivalAirport;
 		this.departureTime = departureTime;
 		this.arrivalTime = arrivalTime;
+	}
+
+	@Override
+	public FlightCreateCommand toCommand() {
+		return new FlightCreateCommand(
+			category,
+			name,
+			description,
+			price,
+			quantity,
+			airline,
+			flightNumber,
+			departureAirport,
+			arrivalAirport,
+			departureTime,
+			arrivalTime
+		);
 	}
 }

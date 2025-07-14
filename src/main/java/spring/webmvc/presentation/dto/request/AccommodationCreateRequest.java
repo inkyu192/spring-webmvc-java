@@ -5,6 +5,7 @@ import java.time.Instant;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import spring.webmvc.application.dto.command.AccommodationCreateCommand;
 import spring.webmvc.domain.model.enums.Category;
 
 @Getter
@@ -20,8 +21,8 @@ public class AccommodationCreateRequest extends ProductCreateRequest {
 		Category category,
 		String name,
 		String description,
-		int price,
-		int quantity,
+		long price,
+		long quantity,
 		String place,
 		Instant checkInTime,
 		Instant checkOutTime
@@ -30,5 +31,19 @@ public class AccommodationCreateRequest extends ProductCreateRequest {
 		this.place = place;
 		this.checkInTime = checkInTime;
 		this.checkOutTime = checkOutTime;
+	}
+
+	@Override
+	public AccommodationCreateCommand toCommand() {
+		return new AccommodationCreateCommand(
+			category,
+			name,
+			description,
+			price,
+			quantity,
+			place,
+			checkInTime,
+			checkOutTime
+		);
 	}
 }
