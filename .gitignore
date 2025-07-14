@@ -38,6 +38,3 @@ out/
 
 ### Spring REST Docs ###
 /src/main/resources/static/docs/
-
-### SDKMAN ###
-.sdkmanrc
