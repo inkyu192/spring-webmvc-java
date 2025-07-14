@@ -72,14 +72,8 @@ public class ProductController {
 	@PreAuthorize("hasAuthority('PRODUCT_WRITER')")
 	@ResponseStatus(HttpStatus.CREATED)
 	public ProductResponse createProduct(@RequestBody @Validated ProductCreateRequest productCreateRequest) {
-		ProductCreateCommand productCreateCommand = switch (productCreateRequest.getCategory()) {
-			case TICKET -> new TicketCreateCommand((TicketCreateRequest)productCreateRequest);
-			case FLIGHT -> new FlightCreateCommand((FlightCreateRequest)productCreateRequest);
-			case ACCOMMODATION -> new AccommodationCreateCommand((AccommodationCreateRequest)productCreateRequest);
-		};
-
-		ProductResult productResult = productService.createProduct(productCreateCommand);
-
+		ProductCreateCommand command = productCreateRequest.toCommand();
+		ProductResult productResult = productService.createProduct(command);
 		return toProductResponse(productResult);
 	}
 
