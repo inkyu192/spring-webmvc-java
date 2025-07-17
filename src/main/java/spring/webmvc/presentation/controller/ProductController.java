@@ -18,28 +18,16 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
-import spring.webmvc.application.dto.command.AccommodationCreateCommand;
-import spring.webmvc.application.dto.command.AccommodationUpdateCommand;
-import spring.webmvc.application.dto.command.FlightCreateCommand;
-import spring.webmvc.application.dto.command.FlightUpdateCommand;
 import spring.webmvc.application.dto.command.ProductCreateCommand;
 import spring.webmvc.application.dto.command.ProductUpdateCommand;
-import spring.webmvc.application.dto.command.TicketCreateCommand;
-import spring.webmvc.application.dto.command.TicketUpdateCommand;
 import spring.webmvc.application.dto.result.AccommodationResult;
 import spring.webmvc.application.dto.result.FlightResult;
 import spring.webmvc.application.dto.result.ProductResult;
 import spring.webmvc.application.dto.result.TicketResult;
 import spring.webmvc.application.service.ProductService;
 import spring.webmvc.domain.model.enums.Category;
-import spring.webmvc.presentation.dto.request.AccommodationCreateRequest;
-import spring.webmvc.presentation.dto.request.AccommodationUpdateRequest;
-import spring.webmvc.presentation.dto.request.FlightCreateRequest;
-import spring.webmvc.presentation.dto.request.FlightUpdateRequest;
 import spring.webmvc.presentation.dto.request.ProductCreateRequest;
 import spring.webmvc.presentation.dto.request.ProductUpdateRequest;
-import spring.webmvc.presentation.dto.request.TicketCreateRequest;
-import spring.webmvc.presentation.dto.request.TicketUpdateRequest;
 import spring.webmvc.presentation.dto.response.AccommodationResponse;
 import spring.webmvc.presentation.dto.response.FlightResponse;
 import spring.webmvc.presentation.dto.response.ProductResponse;
@@ -83,14 +71,8 @@ public class ProductController {
 		@PathVariable Long id,
 		@RequestBody @Validated ProductUpdateRequest productUpdateRequest
 	) {
-		ProductUpdateCommand productUpdateCommand = switch (productUpdateRequest.getCategory()) {
-			case TICKET -> new TicketUpdateCommand((TicketUpdateRequest)productUpdateRequest);
-			case FLIGHT -> new FlightUpdateCommand((FlightUpdateRequest)productUpdateRequest);
-			case ACCOMMODATION -> new AccommodationUpdateCommand((AccommodationUpdateRequest)productUpdateRequest);
-		};
-
+		ProductUpdateCommand productUpdateCommand = productUpdateRequest.toCommand();
 		ProductResult productResult = productService.updateProduct(id, productUpdateCommand);
-
 		return toProductResponse(productResult);
 	}
 

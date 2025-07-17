@@ -9,6 +9,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import spring.webmvc.application.dto.command.ProductUpdateCommand;
 import spring.webmvc.domain.model.enums.Category;
 
 @JsonTypeInfo(
@@ -23,15 +24,17 @@ import spring.webmvc.domain.model.enums.Category;
 })
 @Getter
 @RequiredArgsConstructor
-public class ProductUpdateRequest {
+public abstract class ProductUpdateRequest {
 	@NotNull
-	private final Category category;
+	protected final Category category;
 	@NotBlank
-	private final String name;
+	protected final String name;
 	@NotBlank
-	private final String description;
+	protected final String description;
 	@Min(100)
-	private final long price;
+	protected final long price;
 	@Max(9999)
-	private final long quantity;
+	protected final long quantity;
+
+	public abstract ProductUpdateCommand toCommand();
 }
