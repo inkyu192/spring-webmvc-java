@@ -3,7 +3,7 @@ package spring.webmvc.application.dto.command;
 import java.time.Instant;
 
 import lombok.Getter;
-import spring.webmvc.presentation.dto.request.FlightUpdateRequest;
+import spring.webmvc.domain.model.enums.Category;
 
 @Getter
 public class FlightUpdateCommand extends ProductUpdateCommand {
@@ -14,19 +14,25 @@ public class FlightUpdateCommand extends ProductUpdateCommand {
 	private final Instant departureTime;
 	private final Instant arrivalTime;
 
-	public FlightUpdateCommand(FlightUpdateRequest flightUpdateRequest) {
-		super(
-			flightUpdateRequest.getCategory(),
-			flightUpdateRequest.getName(),
-			flightUpdateRequest.getDescription(),
-			flightUpdateRequest.getPrice(),
-			flightUpdateRequest.getQuantity()
-		);
-		airline = flightUpdateRequest.getAirline();
-		flightNumber = flightUpdateRequest.getFlightNumber();
-		departureAirport = flightUpdateRequest.getDepartureAirport();
-		arrivalAirport = flightUpdateRequest.getArrivalAirport();
-		departureTime = flightUpdateRequest.getDepartureTime();
-		arrivalTime = flightUpdateRequest.getArrivalTime();
+	public FlightUpdateCommand(
+		Category category,
+		String name,
+		String description,
+		long price,
+		long quantity,
+		String airline,
+		String flightNumber,
+		String departureAirport,
+		String arrivalAirport,
+		Instant departureTime,
+		Instant arrivalTime
+	) {
+		super(category, name, description, price, quantity);
+		this.airline = airline;
+		this.flightNumber = flightNumber;
+		this.departureAirport = departureAirport;
+		this.arrivalAirport = arrivalAirport;
+		this.departureTime = departureTime;
+		this.arrivalTime = arrivalTime;
 	}
 }

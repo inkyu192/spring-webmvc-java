@@ -5,6 +5,8 @@ import java.time.Instant;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import spring.webmvc.application.dto.command.AccommodationUpdateCommand;
+import spring.webmvc.application.dto.command.ProductUpdateCommand;
 import spring.webmvc.domain.model.enums.Category;
 
 @Getter
@@ -30,5 +32,19 @@ public class AccommodationUpdateRequest extends ProductUpdateRequest {
 		this.place = place;
 		this.checkInTime = checkInTime;
 		this.checkOutTime = checkOutTime;
+	}
+
+	@Override
+	public ProductUpdateCommand toCommand() {
+		return new AccommodationUpdateCommand(
+			category,
+			name,
+			description,
+			price,
+			quantity,
+			place,
+			checkInTime,
+			checkOutTime
+		);
 	}
 }

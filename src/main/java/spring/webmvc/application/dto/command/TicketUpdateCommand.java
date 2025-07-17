@@ -4,7 +4,6 @@ import java.time.Instant;
 
 import lombok.Getter;
 import spring.webmvc.domain.model.enums.Category;
-import spring.webmvc.presentation.dto.request.TicketUpdateRequest;
 
 @Getter
 public class TicketUpdateCommand extends ProductUpdateCommand {
@@ -13,17 +12,21 @@ public class TicketUpdateCommand extends ProductUpdateCommand {
 	private final String duration;
 	private final String ageLimit;
 
-	public TicketUpdateCommand(TicketUpdateRequest ticketUpdateRequest) {
-		super(
-			Category.TICKET,
-			ticketUpdateRequest.getName(),
-			ticketUpdateRequest.getDescription(),
-			ticketUpdateRequest.getPrice(),
-			ticketUpdateRequest.getQuantity()
-		);
-		this.place = ticketUpdateRequest.getPlace();
-		this.performanceTime = ticketUpdateRequest.getPerformanceTime();
-		this.duration = ticketUpdateRequest.getDuration();
-		this.ageLimit = ticketUpdateRequest.getAgeLimit();
+	public TicketUpdateCommand(
+		Category category,
+		String name,
+		String description,
+		long price,
+		long quantity,
+		String place,
+		Instant performanceTime,
+		String duration,
+		String ageLimit
+	) {
+		super(category, name, description, price, quantity);
+		this.place = place;
+		this.performanceTime = performanceTime;
+		this.duration = duration;
+		this.ageLimit = ageLimit;
 	}
 }

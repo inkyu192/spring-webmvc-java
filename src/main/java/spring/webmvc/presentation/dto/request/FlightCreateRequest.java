@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import spring.webmvc.application.dto.command.FlightCreateCommand;
+import spring.webmvc.application.dto.command.ProductCreateCommand;
 import spring.webmvc.domain.model.enums.Category;
 
 @Getter
@@ -46,7 +47,7 @@ public class FlightCreateRequest extends ProductCreateRequest {
 	}
 
 	@Override
-	public FlightCreateCommand toCommand() {
+	public ProductCreateCommand toCommand() {
 		return new FlightCreateCommand(
 			category,
 			name,
