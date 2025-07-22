@@ -1,6 +1,7 @@
 package spring.webmvc.presentation.dto.request;
 
 import jakarta.validation.constraints.NotNull;
+import spring.webmvc.application.dto.command.CurationProductCreateCommand;
 
 public record CurationProductCreateRequest(
 	@NotNull
@@ -8,4 +9,7 @@ public record CurationProductCreateRequest(
 	@NotNull
 	Integer sortOrder
 ) {
+	public CurationProductCreateCommand toCommand() {
+		return new CurationProductCreateCommand(id, sortOrder);
+	}
 }
