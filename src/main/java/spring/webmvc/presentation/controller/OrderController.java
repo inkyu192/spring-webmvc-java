@@ -36,7 +36,7 @@ public class OrderController {
 	@RequestLock
 	@ResponseStatus(HttpStatus.CREATED)
 	public OrderResponse createOrder(@RequestBody @Validated OrderCreateRequest orderCreateRequest) {
-		OrderCreateCommand orderCreateCommand = new OrderCreateCommand(orderCreateRequest);
+		OrderCreateCommand orderCreateCommand = orderCreateRequest.toCommand();
 		return new OrderResponse(orderService.createOrder(orderCreateCommand));
 	}
 
