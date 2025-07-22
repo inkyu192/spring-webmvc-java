@@ -34,7 +34,7 @@ public class CurationController {
 	@PreAuthorize("isAuthenticated()")
 	@ResponseStatus(HttpStatus.CREATED)
 	public CurationResponse createCuration(@Valid @RequestBody CurationCreateRequest request) {
-		CurationCreateCommand command = new CurationCreateCommand(request);
+		CurationCreateCommand command = request.toCommand();
 		return new CurationResponse(curationService.createCuration(command));
 	}
 
