@@ -26,6 +26,8 @@ import org.springframework.web.context.WebApplicationContext;
 
 import spring.webmvc.application.service.MemberService;
 import spring.webmvc.domain.model.entity.Member;
+import spring.webmvc.domain.model.vo.Email;
+import spring.webmvc.domain.model.vo.Phone;
 import spring.webmvc.infrastructure.config.WebMvcTestConfig;
 
 @WebMvcTest(MemberController.class)
@@ -50,7 +52,7 @@ class MemberControllerTest {
 
 	@Test
 	void createMember() throws Exception {
-		String account = "test@gmail.com";
+		String email = "test@gmail.com";
 		String password = "password";
 		String name = "name";
 		String phone = "010-1234-1234";
@@ -60,13 +62,13 @@ class MemberControllerTest {
 
 		Member member = Mockito.mock(Member.class);
 		Mockito.when(member.getId()).thenReturn(1L);
-		Mockito.when(member.getAccount()).thenReturn(account);
+		Mockito.when(member.getEmail()).thenReturn(Email.create(email));
 		Mockito.when(member.getName()).thenReturn(name);
-		Mockito.when(member.getPhone()).thenReturn(phone);
+		Mockito.when(member.getPhone()).thenReturn(Phone.create(phone));
 		Mockito.when(member.getBirthDate()).thenReturn(birthDate);
 		Mockito.when(member.getCreatedAt()).thenReturn(Instant.now());
 
-		Mockito.when(memberService.createMember(account, password, name, phone, birthDate, roleIds, permissionIds))
+		Mockito.when(memberService.createMember(email, password, name, phone, birthDate, roleIds, permissionIds))
 			.thenReturn(member);
 
 		mockMvc.perform(
@@ -74,7 +76,7 @@ class MemberControllerTest {
 					.contentType(MediaType.APPLICATION_JSON)
 					.content("""
 						{
-						  "account": "%s",
+						  "email": "%s",
 						  "password": "%s",
 						  "name": "%s",
 						  "phone": "%s",
@@ -83,7 +85,7 @@ class MemberControllerTest {
 						  "permissionIds": %s
 						}
 						""".formatted(
-						account,
+						email,
 						password,
 						name,
 						phone,
@@ -96,7 +98,7 @@ class MemberControllerTest {
 			.andDo(
 				MockMvcRestDocumentation.document("member-create",
 					PayloadDocumentation.requestFields(
-						PayloadDocumentation.fieldWithPath("account").description("계정"),
+						PayloadDocumentation.fieldWithPath("email").description("계정"),
 						PayloadDocumentation.fieldWithPath("password").description("패스워드"),
 						PayloadDocumentation.fieldWithPath("name").description("회원명"),
 						PayloadDocumentation.fieldWithPath("phone").description("번호"),
@@ -106,7 +108,7 @@ class MemberControllerTest {
 					),
 					PayloadDocumentation.responseFields(
 						PayloadDocumentation.fieldWithPath("id").description("아이디"),
-						PayloadDocumentation.fieldWithPath("account").description("계정"),
+						PayloadDocumentation.fieldWithPath("email").description("계정"),
 						PayloadDocumentation.fieldWithPath("name").description("회원명"),
 						PayloadDocumentation.fieldWithPath("phone").description("번호"),
 						PayloadDocumentation.fieldWithPath("birthDate").description("생년월일"),
@@ -120,9 +122,9 @@ class MemberControllerTest {
 	void findMember() throws Exception {
 		Member member = Mockito.mock(Member.class);
 		Mockito.when(member.getId()).thenReturn(1L);
-		Mockito.when(member.getAccount()).thenReturn("account");
+		Mockito.when(member.getEmail()).thenReturn(Email.create("test@gmail.com"));
 		Mockito.when(member.getName()).thenReturn("name");
-		Mockito.when(member.getPhone()).thenReturn("010-1234-1234");
+		Mockito.when(member.getPhone()).thenReturn(Phone.create("010-1234-1234"));
 		Mockito.when(member.getBirthDate()).thenReturn(LocalDate.now());
 		Mockito.when(member.getCreatedAt()).thenReturn(Instant.now());
 
@@ -140,7 +142,7 @@ class MemberControllerTest {
 					),
 					PayloadDocumentation.responseFields(
 						PayloadDocumentation.fieldWithPath("id").description("아이디"),
-						PayloadDocumentation.fieldWithPath("account").description("계정"),
+						PayloadDocumentation.fieldWithPath("email").description("계정"),
 						PayloadDocumentation.fieldWithPath("name").description("회원명"),
 						PayloadDocumentation.fieldWithPath("phone").description("번호"),
 						PayloadDocumentation.fieldWithPath("birthDate").description("생년월일"),
@@ -159,9 +161,9 @@ class MemberControllerTest {
 
 		Member member = Mockito.mock(Member.class);
 		Mockito.when(member.getId()).thenReturn(1L);
-		Mockito.when(member.getAccount()).thenReturn("account");
+		Mockito.when(member.getEmail()).thenReturn(Email.create("test@gmail.com"));
 		Mockito.when(member.getName()).thenReturn(name);
-		Mockito.when(member.getPhone()).thenReturn(phone);
+		Mockito.when(member.getPhone()).thenReturn(Phone.create(phone));
 		Mockito.when(member.getBirthDate()).thenReturn(birthDate);
 		Mockito.when(member.getCreatedAt()).thenReturn(Instant.now());
 
@@ -199,7 +201,7 @@ class MemberControllerTest {
 					),
 					PayloadDocumentation.responseFields(
 						PayloadDocumentation.fieldWithPath("id").description("아이디"),
-						PayloadDocumentation.fieldWithPath("account").description("계정"),
+						PayloadDocumentation.fieldWithPath("email").description("계정"),
 						PayloadDocumentation.fieldWithPath("name").description("회원명"),
 						PayloadDocumentation.fieldWithPath("phone").description("번호"),
 						PayloadDocumentation.fieldWithPath("birthDate").description("생년월일"),

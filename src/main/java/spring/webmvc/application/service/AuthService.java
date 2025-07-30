@@ -17,6 +17,7 @@ import spring.webmvc.domain.model.entity.Member;
 import spring.webmvc.domain.model.entity.MemberPermission;
 import spring.webmvc.domain.model.entity.Permission;
 import spring.webmvc.domain.model.entity.RolePermission;
+import spring.webmvc.domain.model.vo.Email;
 import spring.webmvc.domain.repository.MemberRepository;
 import spring.webmvc.domain.cache.CacheKey;
 import spring.webmvc.infrastructure.security.JwtProvider;
@@ -33,8 +34,8 @@ public class AuthService {
 	private final PasswordEncoder passwordEncoder;
 
 	@Transactional
-	public TokenResult login(String account, String password) {
-		Member member = memberRepository.findByAccount(account)
+	public TokenResult login(String email, String password) {
+		Member member = memberRepository.findByEmail(Email.create(email))
 			.filter(it -> passwordEncoder.matches(password, it.getPassword()))
 			.orElseThrow(() -> new BadCredentialsException("잘못된 아이디 또는 비밀번호입니다."));
 

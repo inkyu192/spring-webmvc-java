@@ -59,7 +59,7 @@ class AuthControllerTest {
 					.contentType(MediaType.APPLICATION_JSON)
 					.content("""
 						{
-						  "account": "%s",
+						  "email": "%s",
 						  "password": "%s"
 						}
 						""".formatted(account, password))
@@ -68,7 +68,7 @@ class AuthControllerTest {
 			.andDo(
 				MockMvcRestDocumentation.document("login",
 					PayloadDocumentation.requestFields(
-						PayloadDocumentation.fieldWithPath("account").description("계정"),
+						PayloadDocumentation.fieldWithPath("email").description("계정"),
 						PayloadDocumentation.fieldWithPath("password").description("패스워드")
 					),
 					PayloadDocumentation.responseFields(

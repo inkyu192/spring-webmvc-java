@@ -7,7 +7,7 @@ import spring.webmvc.domain.model.entity.Member;
 
 public record MemberResponse(
 	Long id,
-	String account,
+	String email,
 	String name,
 	String phone,
 	LocalDate birthDate,
@@ -16,9 +16,9 @@ public record MemberResponse(
 	public MemberResponse(Member member) {
 		this(
 			member.getId(),
-			member.getAccount(),
+			member.getEmail().getValue(),
 			member.getName(),
-			member.getPhone(),
+			member.getPhone().getValue(),
 			member.getBirthDate(),
 			member.getCreatedAt()
 		);
