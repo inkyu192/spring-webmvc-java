@@ -41,7 +41,7 @@ public class MemberController {
 
 		return new MemberResponse(
 			memberService.createMember(
-				memberCreateRequest.account(),
+				memberCreateRequest.email(),
 				memberCreateRequest.password(),
 				memberCreateRequest.name(),
 				memberCreateRequest.phone(),

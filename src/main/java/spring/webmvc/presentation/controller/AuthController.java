@@ -22,7 +22,7 @@ public class AuthController {
 
 	@PostMapping("/login")
 	public TokenResponse login(@RequestBody @Validated MemberLoginRequest memberLoginRequest) {
-		TokenResult tokenResult = authService.login(memberLoginRequest.account(), memberLoginRequest.password());
+		TokenResult tokenResult = authService.login(memberLoginRequest.email(), memberLoginRequest.password());
 		return new TokenResponse(tokenResult);
 	}
 

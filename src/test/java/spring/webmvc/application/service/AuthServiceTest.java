@@ -18,6 +18,7 @@ import io.jsonwebtoken.JwtException;
 import spring.webmvc.application.dto.result.TokenResult;
 import spring.webmvc.domain.cache.ValueCache;
 import spring.webmvc.domain.model.entity.Member;
+import spring.webmvc.domain.model.vo.Email;
 import spring.webmvc.domain.repository.MemberRepository;
 import spring.webmvc.domain.cache.CacheKey;
 import spring.webmvc.infrastructure.security.JwtProvider;
@@ -44,13 +45,13 @@ class AuthServiceTest {
 	@DisplayName("login: Member 엔티티 없을 경우 BadCredentialsException 발생한다")
 	void loginCase1() {
 		// Given
-		String account = "account";
+		String email = "test@gmail.com";
 		String password = "password";
 
-		Mockito.when(memberRepository.findByAccount(account)).thenReturn(Optional.empty());
+		Mockito.when(memberRepository.findByEmail(Email.create(email))).thenReturn(Optional.empty());
 
 		// When & Then
-		Assertions.assertThatThrownBy(() -> authService.login(account, password))
+		Assertions.assertThatThrownBy(() -> authService.login(email, password))
 			.isInstanceOf(BadCredentialsException.class);
 	}
 
@@ -58,15 +59,15 @@ class AuthServiceTest {
 	@DisplayName("login: 비밀번호가 일치하지 않을 경우 BadCredentialsException 발생한다")
 	void loginCase2() {
 		// Given
-		String account = "account";
+		String email = "test@gmail.com";
 		String fakePassword = "fakePassword";
 		Member member = Mockito.mock(Member.class);
 
-		Mockito.when(memberRepository.findByAccount(account)).thenReturn(Optional.of(member));
+		Mockito.when(memberRepository.findByEmail(Email.create(email))).thenReturn(Optional.of(member));
 		Mockito.when(passwordEncoder.matches(fakePassword, member.getPassword())).thenReturn(false);
 
 		// When & Then
-		Assertions.assertThatThrownBy(() -> authService.login(account, fakePassword))
+		Assertions.assertThatThrownBy(() -> authService.login(email, fakePassword))
 			.isInstanceOf(BadCredentialsException.class);
 	}
 
@@ -74,20 +75,20 @@ class AuthServiceTest {
 	@DisplayName("login: 유효성 검사 성공할 경우 Token 저장 후 반환한다")
 	void loginCase3() {
 		// Given
-		String account = "account";
+		String email = "test@gmail.com";
 		String password = "password";
 		String accessToken = "accessToken";
 		String refreshToken = "refreshToken";
 
 		Member member = Mockito.mock(Member.class);
 
-		Mockito.when(memberRepository.findByAccount(account)).thenReturn(Optional.of(member));
+		Mockito.when(memberRepository.findByEmail(Email.create(email))).thenReturn(Optional.of(member));
 		Mockito.when(passwordEncoder.matches(Mockito.any(), Mockito.any())).thenReturn(true);
 		Mockito.when(jwtProvider.createAccessToken(Mockito.any(), Mockito.any())).thenReturn(accessToken);
 		Mockito.when(jwtProvider.createRefreshToken()).thenReturn(refreshToken);
 
 		// When
-		TokenResult result = authService.login(account, password);
+		TokenResult result = authService.login(email, password);
 
 		// Then
 		Mockito.verify(valueCache, Mockito.times(1)).set(Mockito.any(), Mockito.any(), Mockito.any());

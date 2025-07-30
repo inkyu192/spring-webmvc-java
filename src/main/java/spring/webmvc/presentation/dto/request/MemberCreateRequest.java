@@ -11,7 +11,7 @@ import jakarta.validation.constraints.Pattern;
 public record MemberCreateRequest(
 	@NotBlank
 	@Email
-	String account,
+	String email,
 	@NotBlank
 	String password,
 	@NotBlank

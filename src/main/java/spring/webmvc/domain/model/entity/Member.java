@@ -9,6 +9,7 @@ import org.springframework.util.StringUtils;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Convert;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -17,6 +18,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import spring.webmvc.domain.converter.CryptoAttributeConverter;
+import spring.webmvc.domain.model.vo.Email;
+import spring.webmvc.domain.model.vo.Phone;
 
 @Entity
 @Getter
@@ -27,15 +30,15 @@ public class Member extends BaseTime {
 	@GeneratedValue
 	private Long id;
 
-	@Convert(converter = CryptoAttributeConverter.class)
-	private String account;
+	@Embedded
+	private Email email;
 	private String password;
 
 	@Convert(converter = CryptoAttributeConverter.class)
 	private String name;
 
-	@Convert(converter = CryptoAttributeConverter.class)
-	private String phone;
+	@Embedded
+	private Phone phone;
 
 	private LocalDate birthDate;
 
@@ -54,7 +57,7 @@ public class Member extends BaseTime {
 	}
 
 	public static Member create(
-		String account,
+		String email,
 		String password,
 		String name,
 		String phone,
@@ -62,10 +65,10 @@ public class Member extends BaseTime {
 	) {
 		Member member = new Member();
 
-		member.account = account;
+		member.email = Email.create(email);
 		member.password = password;
 		member.name = name;
-		member.phone = phone;
+		member.phone = Phone.create(phone);
 		member.birthDate = birthDate;
 
 		return member;
@@ -89,7 +92,7 @@ public class Member extends BaseTime {
 		}
 
 		if (StringUtils.hasText(phone)) {
-			this.phone = phone;
+			this.phone = Phone.create(phone);
 		}
 
 		if (birthDate != null) {

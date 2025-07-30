@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
 import spring.webmvc.domain.model.entity.Member;
+import spring.webmvc.domain.model.vo.Email;
 import spring.webmvc.domain.repository.MemberRepository;
 import spring.webmvc.infrastructure.persistence.jpa.MemberJpaRepository;
 
@@ -21,13 +22,13 @@ public class MemberRepositoryAdapter implements MemberRepository {
 	}
 
 	@Override
-	public Optional<Member> findByAccount(String account) {
-		return jpaRepository.findByAccount(account);
+	public Optional<Member> findByEmail(Email email) {
+		return jpaRepository.findByEmail(email);
 	}
 
 	@Override
-	public boolean existsByAccount(String account) {
-		return jpaRepository.existsByAccount(account);
+	public boolean existsByEmail(Email email) {
+		return jpaRepository.existsByEmail(email);
 	}
 
 	@Override

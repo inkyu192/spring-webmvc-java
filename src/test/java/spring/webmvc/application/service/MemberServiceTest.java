@@ -22,6 +22,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import spring.webmvc.domain.model.entity.Member;
+import spring.webmvc.domain.model.vo.Email;
+import spring.webmvc.domain.model.vo.Phone;
 import spring.webmvc.domain.repository.MemberRepository;
 import spring.webmvc.domain.repository.RoleRepository;
 import spring.webmvc.presentation.exception.EntityNotFoundException;
@@ -81,9 +83,9 @@ class MemberServiceTest {
 
 		Member member = Mockito.mock(Member.class);
 		Mockito.when(member.getId()).thenReturn(memberId);
-		Mockito.when(member.getAccount()).thenReturn("test@gmail.com");
+		Mockito.when(member.getEmail()).thenReturn(Email.create("test@gmail.com"));
 		Mockito.when(member.getName()).thenReturn("name");
-		Mockito.when(member.getPhone()).thenReturn("010-1234-1234");
+		Mockito.when(member.getPhone()).thenReturn(Phone.create("010-1234-1234"));
 		Mockito.when(member.getBirthDate()).thenReturn(LocalDate.now());
 		Mockito.when(member.getCreatedAt()).thenReturn(Instant.now());
 
@@ -92,7 +94,7 @@ class MemberServiceTest {
 		Member result = memberService.findMember();
 
 		Assertions.assertThat(result.getId()).isEqualTo(member.getId());
-		Assertions.assertThat(result.getAccount()).isEqualTo(member.getAccount());
+		Assertions.assertThat(result.getEmail()).isEqualTo(member.getEmail());
 		Assertions.assertThat(result.getName()).isEqualTo(member.getName());
 		Assertions.assertThat(result.getPhone()).isEqualTo(member.getPhone());
 		Assertions.assertThat(result.getBirthDate()).isEqualTo(member.getBirthDate());

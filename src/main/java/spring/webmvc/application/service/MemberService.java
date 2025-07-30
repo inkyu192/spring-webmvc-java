@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import spring.webmvc.application.event.NotificationEvent;
 import spring.webmvc.domain.model.entity.Member;
 import spring.webmvc.domain.model.entity.Role;
+import spring.webmvc.domain.model.vo.Email;
 import spring.webmvc.domain.repository.MemberRepository;
 import spring.webmvc.domain.repository.RoleRepository;
 import spring.webmvc.infrastructure.security.SecurityContextUtil;
@@ -34,7 +35,7 @@ public class MemberService {
 
 	@Transactional
 	public Member createMember(
-		String account,
+		String email,
 		String password,
 		String name,
 		String phone,
@@ -42,11 +43,11 @@ public class MemberService {
 		List<Long> roleIds,
 		List<Long> permissionIds
 	) {
-		if (memberRepository.existsByAccount(account)) {
-			throw new DuplicateEntityException(Member.class, account);
+		if (memberRepository.existsByEmail(Email.create(email))) {
+			throw new DuplicateEntityException(Member.class, email);
 		}
 
-		Member member = Member.create(account, passwordEncoder.encode(password), name, phone, birthDate);
+		Member member = Member.create(email, passwordEncoder.encode(password), name, phone, birthDate);
 
 		if (!ObjectUtils.isEmpty(roleIds)) {
 			Map<Long, Role> roleMap = roleRepository.findAllById(roleIds).stream()
