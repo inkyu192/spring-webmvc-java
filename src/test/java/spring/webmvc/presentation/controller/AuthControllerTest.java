@@ -47,12 +47,12 @@ class AuthControllerTest {
 	void login() throws Exception {
 		String accessToken = "accessToken";
 		String refreshToken = "refreshToken";
-		String account = "test@gmail.com";
+		String email = "test@gmail.com";
 		String password = "password";
 
 		TokenResult tokenResult = new TokenResult(accessToken, refreshToken);
 
-		Mockito.when(authService.login(account, password)).thenReturn(tokenResult);
+		Mockito.when(authService.login(email, password)).thenReturn(tokenResult);
 
 		mockMvc.perform(
 				RestDocumentationRequestBuilders.post("/auth/login")
@@ -62,7 +62,7 @@ class AuthControllerTest {
 						  "email": "%s",
 						  "password": "%s"
 						}
-						""".formatted(account, password))
+						""".formatted(email, password))
 			)
 			.andExpect(MockMvcResultMatchers.status().isOk())
 			.andDo(
