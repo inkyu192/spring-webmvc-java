@@ -8,4 +8,6 @@ public interface PermissionRepository {
 	List<Permission> findAllById(Iterable<Long> ids);
 
 	Permission save(Permission permission);
+
+	List<Permission> saveAll(Iterable<Permission> permissions);
 }

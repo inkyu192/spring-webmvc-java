@@ -35,14 +35,14 @@ public class Menu extends BaseTime {
 	private List<Menu> children = new ArrayList<>();
 
 	@OneToMany(mappedBy = "menu", cascade = CascadeType.ALL)
-	private List<MenuPermission> menuPermissions = new ArrayList<>();
+	private List<PermissionMenu> permissionMenus = new ArrayList<>();
 
 	public List<Menu> getChildren() {
 		return Collections.unmodifiableList(children);
 	}
 
-	public List<MenuPermission> getMenuPermissions() {
-		return Collections.unmodifiableList(menuPermissions);
+	public List<PermissionMenu> getPermissionMenus() {
+		return Collections.unmodifiableList(permissionMenus);
 	}
 
 	public static Menu create(String name, String path) {
@@ -54,12 +54,15 @@ public class Menu extends BaseTime {
 		return menu;
 	}
 
-	public void updateParent(Menu parent) {
-		this.parent = parent;
-		parent.children.add(this);
+	public static Menu create(String name, String path, Menu parent) {
+		Menu menu = create(name, path);
+
+		menu.parent = parent;
+
+		return menu;
 	}
 
 	public void addPermission(Permission permission) {
-		menuPermissions.add(MenuPermission.create(this, permission));
+		permissionMenus.add(PermissionMenu.create(this, permission));
 	}
 }

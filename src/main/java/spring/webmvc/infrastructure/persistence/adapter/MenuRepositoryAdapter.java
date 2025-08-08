@@ -22,8 +22,13 @@ public class MenuRepositoryAdapter implements MenuRepository {
 	}
 
 	@Override
-	public List<Menu> findAllByPermissionNameIn(Iterable<String> permissions) {
-		return jpaRepository.findAllByPermissionNameIn(permissions);
+	public List<Menu> findRootMenus(Iterable<String> permissions) {
+		return jpaRepository.findRootMenus(permissions);
+	}
+
+	@Override
+	public List<Menu> findChildMenus(Iterable<String> permissions, Long parentId) {
+		return jpaRepository.findChildMenus(permissions, parentId);
 	}
 
 	@Override

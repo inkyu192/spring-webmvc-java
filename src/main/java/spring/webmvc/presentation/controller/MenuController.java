@@ -31,8 +31,7 @@ public class MenuController {
 			menuService.createMenu(
 				menuCreateRequest.parentId(),
 				menuCreateRequest.name(),
-				menuCreateRequest.path(),
-				menuCreateRequest.permissionIds()
+				menuCreateRequest.path()
 			)
 		);
 	}

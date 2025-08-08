@@ -26,17 +26,60 @@ public class DataInitializer implements ApplicationRunner {
 
 	@Override
 	public void run(ApplicationArguments args) {
+		// 메뉴 생성
+		Menu product = Menu.create("상품 관리", "/products");
+		Menu order = Menu.create("주문 관리", "/orders");
+		Menu settings = Menu.create("설정", null);
+		Menu permissionManage = Menu.create("권한 관리", "/permissions", settings);
+		Menu menuManage = Menu.create("메뉴 관리", "/menus", settings);
+		Menu roleManage = Menu.create("역할 관리", "/roles", settings);
+
+		menuRepository.saveAll(
+			List.of(
+				product,
+				order,
+				settings,
+				permissionManage,
+				menuManage,
+				roleManage
+			)
+		);
+
+
 		// 권한 생성
 		Permission productReader = permissionRepository.save(Permission.create("PRODUCT_READER"));
+		productReader.addMenu(product);
 		Permission productWriter = permissionRepository.save(Permission.create("PRODUCT_WRITER"));
 		Permission orderReader = permissionRepository.save(Permission.create("ORDER_READER"));
+		orderReader.addMenu(order);
 		Permission orderWriter = permissionRepository.save(Permission.create("ORDER_WRITER"));
 		Permission permissionReader = permissionRepository.save(Permission.create("PERMISSION_READER"));
+		permissionReader.addMenu(settings);
+		permissionReader.addMenu(permissionManage);
 		Permission permissionWriter = permissionRepository.save(Permission.create("PERMISSION_WRITER"));
 		Permission menuReader = permissionRepository.save(Permission.create("MENU_READER"));
+		menuReader.addMenu(settings);
+		menuReader.addMenu(menuManage);
 		Permission menuWriter = permissionRepository.save(Permission.create("MENU_WRITER"));
 		Permission roleReader = permissionRepository.save(Permission.create("ROLE_READER"));
+		roleReader.addMenu(settings);
+		roleReader.addMenu(roleManage);
 		Permission roleWriter = permissionRepository.save(Permission.create("ROLE_WRITER"));
+
+		permissionRepository.saveAll(
+			List.of(
+				productReader,
+				productWriter,
+				orderReader,
+				orderWriter,
+				permissionReader,
+				permissionWriter,
+				menuReader,
+				menuWriter,
+				roleReader,
+				roleWriter
+			)
+		);
 
 		// 역할 생성
 		Role roleViewer = Role.create("ROLE_VIEWER");
@@ -63,40 +106,5 @@ public class DataInitializer implements ApplicationRunner {
 		roleAdmin.addPermission(roleWriter);
 
 		roleRepository.saveAll(List.of(roleViewer, roleProductManager, roleAdmin));
-
-		// 메뉴 생성
-		Menu product = Menu.create("상품 관리", "/products");
-		product.addPermission(productReader);
-
-		Menu order = Menu.create("주문 관리", "/orders");
-		order.addPermission(orderReader);
-
-		Menu settings = Menu.create("설정", null);
-		settings.addPermission(permissionReader);
-		settings.addPermission(menuReader);
-		settings.addPermission(roleReader);
-
-		Menu permissionManage = Menu.create("권한 관리", "/permissions");
-		permissionManage.addPermission(permissionReader);
-		permissionManage.updateParent(settings);
-
-		Menu menuManage = Menu.create("메뉴 관리", "/menus");
-		menuManage.addPermission(menuReader);
-		menuManage.updateParent(settings);
-
-		Menu roleManage = Menu.create("역할 관리", "/roles");
-		roleManage.addPermission(roleReader);
-		roleManage.updateParent(settings);
-
-		menuRepository.saveAll(
-			List.of(
-				product,
-				order,
-				settings,
-				permissionManage,
-				menuManage,
-				roleManage
-			)
-		);
 	}
 }

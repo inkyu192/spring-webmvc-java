@@ -10,11 +10,22 @@ import spring.webmvc.domain.model.entity.Menu;
 public interface MenuJpaRepository extends JpaRepository<Menu, Long> {
 
 	@Query("""
-		select m
-		from Menu m
-		left join m.menuPermissions mp
-		left join mp.permission p
-		where p.name in (:permissions)
-	""")
-	List<Menu> findAllByPermissionNameIn(Iterable<String> permissions);
+			select m
+			from Menu m
+			left join m.permissionMenus mp
+			left join mp.permission p
+			where p.name in (:permissions)
+			and m.parent is null
+		""")
+	List<Menu> findRootMenus(Iterable<String> permissions);
+
+	@Query("""
+			select m
+			from Menu m
+			left join m.permissionMenus mp
+			left join mp.permission p
+			where p.name in (:permissions)
+			and m.parent.id = :parentId
+		""")
+	List<Menu> findChildMenus(Iterable<String> permissions, Long parentId);
 }
