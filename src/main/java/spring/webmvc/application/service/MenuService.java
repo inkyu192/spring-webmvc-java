@@ -19,33 +19,44 @@ import spring.webmvc.presentation.exception.EntityNotFoundException;
 public class MenuService {
 
 	private final MenuRepository menuRepository;
-	private final PermissionService permissionService;
 
 	@Transactional
-	public MenuResult createMenu(Long parentId, String name, String path, List<Long> permissionIds) {
-		Menu menu = Menu.create(name, path);
+	public MenuResult createMenu(Long parentId, String name, String path) {
+		Menu menu;
 
-		Menu parent = null;
-		if (parentId != null) {
-			parent = menuRepository.findById(parentId)
+		if (parentId == null) {
+			menu = Menu.create(name, path);
+		} else {
+			Menu parent = menuRepository.findById(parentId)
 				.orElseThrow(() -> new EntityNotFoundException(Menu.class, parentId));
+
+			menu = Menu.create(name, path, parent);
 		}
 
-		if (parent != null) {
-			menu.updateParent(parent);
-		}
+		menuRepository.save(menu);
 
-		permissionService.addPermission(permissionIds, menu::addPermission);
-
-		return new MenuResult(menuRepository.save(menu));
+		return mapToMenuResult(menu);
 	}
 
 	public List<MenuResult> findMenus() {
 		Set<String> permissions = SecurityContextUtil.getAuthorities();
 
-		return menuRepository.findAllByPermissionNameIn(permissions).stream()
-			.filter(menu -> menu.getParent() == null)
-			.map(MenuResult::new)
+		return menuRepository.findRootMenus(permissions).stream()
+			.map(this::mapToMenuResult)
 			.toList();
+	}
+
+	private MenuResult mapToMenuResult(Menu menu) {
+		Set<String> permissions = SecurityContextUtil.getAuthorities();
+		List<Menu> childMenus = menuRepository.findChildMenus(permissions, menu.getId());
+
+		return new MenuResult(
+			menu.getId(),
+			menu.getName(),
+			menu.getPath(),
+			childMenus.stream()
+				.map(this::mapToMenuResult)
+				.toList()
+		);
 	}
 }

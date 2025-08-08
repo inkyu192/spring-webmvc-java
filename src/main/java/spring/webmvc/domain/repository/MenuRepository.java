@@ -8,7 +8,9 @@ import spring.webmvc.domain.model.entity.Menu;
 public interface MenuRepository {
 	Optional<Menu> findById(Long id);
 
-	List<Menu> findAllByPermissionNameIn(Iterable<String> permissions);
+	List<Menu> findRootMenus(Iterable<String> permissions);
+
+	List<Menu> findChildMenus(Iterable<String> permissions, Long parentId);
 
 	Menu save(Menu menu);
 

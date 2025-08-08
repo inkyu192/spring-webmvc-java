@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MenuPermission {
+public class PermissionMenu {
 
 	@Id
 	@GeneratedValue
@@ -29,12 +29,12 @@ public class MenuPermission {
 	@JoinColumn(name = "permission_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
 	private Permission permission;
 
-	public static MenuPermission create(Menu menu, Permission permission) {
-		MenuPermission menuPermission = new MenuPermission();
+	public static PermissionMenu create(Menu menu, Permission permission) {
+		PermissionMenu permissionMenu = new PermissionMenu();
 
-		menuPermission.menu = menu;
-		menuPermission.permission = permission;
+		permissionMenu.menu = menu;
+		permissionMenu.permission = permission;
 
-		return menuPermission;
+		return permissionMenu;
 	}
 }

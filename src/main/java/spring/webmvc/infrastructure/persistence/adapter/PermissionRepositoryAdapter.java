@@ -24,4 +24,9 @@ public class PermissionRepositoryAdapter implements PermissionRepository {
 	public Permission save(Permission permission) {
 		return jpaRepository.save(permission);
 	}
+
+	@Override
+	public List<Permission> saveAll(Iterable<Permission> permissions) {
+		return jpaRepository.saveAll(permissions);
+	}
 }
