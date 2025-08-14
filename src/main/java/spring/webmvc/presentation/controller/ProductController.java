@@ -1,8 +1,5 @@
 package spring.webmvc.presentation.controller;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -25,11 +22,14 @@ import spring.webmvc.application.dto.result.FlightResult;
 import spring.webmvc.application.dto.result.ProductResult;
 import spring.webmvc.application.dto.result.TicketResult;
 import spring.webmvc.application.service.ProductService;
+import spring.webmvc.domain.model.entity.Product;
 import spring.webmvc.domain.model.enums.Category;
+import spring.webmvc.infrastructure.persistence.dto.CursorPage;
 import spring.webmvc.presentation.dto.request.ProductCreateRequest;
 import spring.webmvc.presentation.dto.request.ProductUpdateRequest;
 import spring.webmvc.presentation.dto.response.AccommodationResponse;
 import spring.webmvc.presentation.dto.response.FlightResponse;
+import spring.webmvc.presentation.dto.response.ProductPageResponse;
 import spring.webmvc.presentation.dto.response.ProductResponse;
 import spring.webmvc.presentation.dto.response.TicketResponse;
 
@@ -42,11 +42,14 @@ public class ProductController {
 
 	@GetMapping
 	@PreAuthorize("hasAuthority('PRODUCT_READER')")
-	public Page<ProductResponse> findProducts(
-		@PageableDefault Pageable pageable,
+	public ProductPageResponse findProducts(
+		@RequestParam(required = false, defaultValue = "10") int size,
+		@RequestParam(required = false) Long nextCursorId,
 		@RequestParam(required = false) String name
 	) {
-		return productService.findProducts(pageable, name).map(ProductResponse::new);
+		CursorPage<Product> result = productService.findProducts(nextCursorId, size, name);
+
+		return new ProductPageResponse(result);
 	}
 
 	@GetMapping("/{id}")

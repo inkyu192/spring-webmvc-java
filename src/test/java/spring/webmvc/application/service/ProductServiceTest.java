@@ -25,6 +25,7 @@ import spring.webmvc.domain.cache.ValueCache;
 import spring.webmvc.domain.model.entity.Product;
 import spring.webmvc.domain.model.enums.Category;
 import spring.webmvc.domain.repository.ProductRepository;
+import spring.webmvc.infrastructure.persistence.dto.CursorPage;
 import spring.webmvc.presentation.exception.EntityNotFoundException;
 
 @ExtendWith(MockitoExtension.class)
@@ -53,22 +54,23 @@ class ProductServiceTest {
 	@DisplayName("findProducts: Product 조회 후 반환한다")
 	void findProducts() {
 		// Given
-		Pageable pageable = PageRequest.of(0, 10);
+		Long nextCursorId = null;
+		int size = 10;
 		String name = "name";
 		List<Product> products = List.of(
 			Product.create("name1", "description", 1000, 10, Category.ACCOMMODATION),
 			Product.create("name2", "description", 2000, 20, Category.FLIGHT),
 			Product.create("name3", "description", 3000, 30, Category.TICKET)
 		);
-		Page<Product> page = new PageImpl<>(products, pageable, products.size());
+		CursorPage<Product> page = new CursorPage<>(products, size, false, null);
 
-		Mockito.when(productRepository.findAll(pageable, name)).thenReturn(page);
+		Mockito.when(productRepository.findAll(nextCursorId, size, name)).thenReturn(page);
 
 		// When
-		Page<ProductResult> result = productService.findProducts(pageable, name);
+		CursorPage<Product> result = productService.findProducts(nextCursorId, size, name);
 
 		// Then
-		Assertions.assertThat(result.getContent()).hasSize(products.size());
+		Assertions.assertThat(result.content()).hasSize(products.size());
 	}
 
 	@Test

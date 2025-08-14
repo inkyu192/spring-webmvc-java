@@ -9,7 +9,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import spring.webmvc.domain.model.enums.Category;
-import spring.webmvc.presentation.exception.InsufficientQuantityException;
 
 @Entity
 @Getter
