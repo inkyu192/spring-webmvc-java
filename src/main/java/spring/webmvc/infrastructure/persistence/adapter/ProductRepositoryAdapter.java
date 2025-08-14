@@ -3,13 +3,12 @@ package spring.webmvc.infrastructure.persistence.adapter;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
 import spring.webmvc.domain.model.entity.Product;
 import spring.webmvc.domain.repository.ProductRepository;
+import spring.webmvc.infrastructure.persistence.dto.CursorPage;
 import spring.webmvc.infrastructure.persistence.jpa.ProductJpaRepository;
 import spring.webmvc.infrastructure.persistence.jpa.ProductQuerydslRepository;
 
@@ -26,8 +25,8 @@ public class ProductRepositoryAdapter implements ProductRepository {
 	}
 
 	@Override
-	public Page<Product> findAll(Pageable pageable, String name) {
-		return querydslRepository.findAll(pageable, name);
+	public CursorPage<Product> findAll(Long nextCursorId, int size, String name) {
+		return querydslRepository.findAll(nextCursorId, size, name);
 	}
 
 	@Override
