@@ -1,4 +1,4 @@
-package spring.webmvc.infrastructure.aspect;
+package spring.webmvc.application.aspect;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
