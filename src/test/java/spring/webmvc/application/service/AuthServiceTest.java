@@ -16,11 +16,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import spring.webmvc.application.dto.result.TokenResult;
-import spring.webmvc.domain.cache.ValueCache;
 import spring.webmvc.domain.model.entity.Member;
 import spring.webmvc.domain.model.vo.Email;
 import spring.webmvc.domain.repository.MemberRepository;
-import spring.webmvc.domain.cache.CacheKey;
+import spring.webmvc.domain.repository.TokenCacheRepository;
 import spring.webmvc.infrastructure.security.JwtProvider;
 
 @ExtendWith(MockitoExtension.class)
@@ -39,7 +38,7 @@ class AuthServiceTest {
 	private PasswordEncoder passwordEncoder;
 
 	@Mock
-	private ValueCache valueCache;
+	private TokenCacheRepository tokenCacheRepository;
 
 	@Test
 	@DisplayName("login: Member 엔티티 없을 경우 BadCredentialsException 발생한다")
@@ -91,7 +90,7 @@ class AuthServiceTest {
 		TokenResult result = authService.login(email, password);
 
 		// Then
-		Mockito.verify(valueCache, Mockito.times(1)).set(Mockito.any(), Mockito.any(), Mockito.any());
+		Mockito.verify(tokenCacheRepository, Mockito.times(1)).setRefreshToken(Mockito.any(), Mockito.any());
 		Assertions.assertThat(result.accessToken()).isEqualTo(accessToken);
 		Assertions.assertThat(result.refreshToken()).isEqualTo(refreshToken);
 	}
@@ -141,7 +140,7 @@ class AuthServiceTest {
 
 		Mockito.when(jwtProvider.parseAccessToken(accessToken)).thenReturn(claims);
 		Mockito.when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
-		Mockito.when(valueCache.get(CacheKey.REFRESH_TOKEN.generate(memberId))).thenReturn(refreshToken);
+		Mockito.when(tokenCacheRepository.getRefreshToken(memberId)).thenReturn(refreshToken);
 		Mockito.when(claims.get("memberId")).thenReturn(memberId);
 
 		// When & Then
@@ -164,7 +163,7 @@ class AuthServiceTest {
 		Mockito.when(jwtProvider.parseAccessToken(accessToken)).thenReturn(claims);
 		Mockito.when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
 		Mockito.when(claims.get("memberId")).thenReturn(memberId);
-		Mockito.when(valueCache.get(CacheKey.REFRESH_TOKEN.generate(memberId))).thenReturn(refreshToken);
+		Mockito.when(tokenCacheRepository.getRefreshToken(memberId)).thenReturn(refreshToken);
 		Mockito.when(jwtProvider.createAccessToken(Mockito.any(), Mockito.any())).thenReturn(newAccessToken);
 
 		// When
