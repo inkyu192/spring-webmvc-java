@@ -12,14 +12,13 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import spring.webmvc.application.dto.result.TokenResult;
-import spring.webmvc.domain.cache.ValueCache;
 import spring.webmvc.domain.model.entity.Member;
 import spring.webmvc.domain.model.entity.MemberPermission;
 import spring.webmvc.domain.model.entity.Permission;
 import spring.webmvc.domain.model.entity.RolePermission;
 import spring.webmvc.domain.model.vo.Email;
 import spring.webmvc.domain.repository.MemberRepository;
-import spring.webmvc.domain.cache.CacheKey;
+import spring.webmvc.domain.repository.TokenCacheRepository;
 import spring.webmvc.infrastructure.security.JwtProvider;
 import spring.webmvc.presentation.exception.EntityNotFoundException;
 
@@ -29,7 +28,7 @@ import spring.webmvc.presentation.exception.EntityNotFoundException;
 public class AuthService {
 
 	private final JwtProvider jwtProvider;
-	private final ValueCache valueCache;
+	private final TokenCacheRepository tokenCacheRepository;
 	private final MemberRepository memberRepository;
 	private final PasswordEncoder passwordEncoder;
 
@@ -42,8 +41,7 @@ public class AuthService {
 		String accessToken = jwtProvider.createAccessToken(member.getId(), getPermissions(member));
 		String refreshToken = jwtProvider.createRefreshToken();
 
-		String key = CacheKey.REFRESH_TOKEN.generate(member.getId());
-		valueCache.set(key, refreshToken, CacheKey.REFRESH_TOKEN.getTimeout());
+		tokenCacheRepository.setRefreshToken(member.getId(), refreshToken);
 
 		return new TokenResult(accessToken, refreshToken);
 	}
@@ -55,7 +53,7 @@ public class AuthService {
 		Member member = memberRepository.findById(memberId)
 			.orElseThrow(() -> new EntityNotFoundException(Member.class, memberId));
 
-		if (!valueCache.get(CacheKey.REFRESH_TOKEN.generate(memberId)).equals(refreshToken)) {
+		if (!tokenCacheRepository.getRefreshToken(memberId).equals(refreshToken)) {
 			throw new BadCredentialsException("유효하지 않은 인증 정보입니다. 다시 로그인해 주세요.");
 		}
 
