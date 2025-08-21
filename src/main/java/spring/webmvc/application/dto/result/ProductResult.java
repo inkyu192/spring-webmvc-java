@@ -2,8 +2,6 @@ package spring.webmvc.application.dto.result;
 
 import java.time.Instant;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-
 import lombok.Getter;
 import spring.webmvc.domain.model.cache.ProductCache;
 import spring.webmvc.domain.model.entity.Product;
