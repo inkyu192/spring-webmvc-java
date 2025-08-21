@@ -1,12 +1,11 @@
 package spring.webmvc.infrastructure.persistence.adapter;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
 import spring.webmvc.domain.model.entity.CurationProduct;
 import spring.webmvc.domain.repository.CurationProductRepository;
+import spring.webmvc.infrastructure.persistence.dto.CursorPage;
 import spring.webmvc.infrastructure.persistence.jpa.CurationProductQuerydslRepository;
 
 @Component
@@ -16,7 +15,7 @@ public class CurationProductRepositoryAdapter implements CurationProductReposito
 	private final CurationProductQuerydslRepository querydslRepository;
 
 	@Override
-	public Page<CurationProduct> findAllByCurationId(Pageable pageable, Long curationId) {
-		return querydslRepository.findAllByCurationId(pageable, curationId);
+	public CursorPage<CurationProduct> findAll(Long curationId, Long cursorId, Integer size) {
+		return querydslRepository.findAll(curationId, cursorId, size);
 	}
 }

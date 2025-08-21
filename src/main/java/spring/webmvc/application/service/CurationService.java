@@ -1,14 +1,7 @@
 package spring.webmvc.application.service;
 
-import java.time.Duration;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
@@ -16,15 +9,19 @@ import org.springframework.util.ObjectUtils;
 import lombok.RequiredArgsConstructor;
 import spring.webmvc.application.dto.command.CurationCreateCommand;
 import spring.webmvc.application.dto.command.CurationProductCreateCommand;
+import spring.webmvc.application.dto.result.CurationProductResult;
 import spring.webmvc.application.dto.result.CurationResult;
-import spring.webmvc.application.dto.result.ProductResult;
-import spring.webmvc.domain.cache.CacheKey;
-import spring.webmvc.domain.cache.ZSetCache;
+import spring.webmvc.domain.model.cache.CurationCache;
+import spring.webmvc.domain.model.cache.CurationProductCache;
 import spring.webmvc.domain.model.entity.Curation;
+import spring.webmvc.domain.model.entity.CurationProduct;
 import spring.webmvc.domain.model.entity.Product;
+import spring.webmvc.domain.repository.CurationCacheRepository;
 import spring.webmvc.domain.repository.CurationProductRepository;
 import spring.webmvc.domain.repository.CurationRepository;
 import spring.webmvc.domain.repository.ProductRepository;
+import spring.webmvc.domain.service.CurationDomainService;
+import spring.webmvc.infrastructure.persistence.dto.CursorPage;
 import spring.webmvc.presentation.exception.EntityNotFoundException;
 
 @Service
@@ -32,86 +29,70 @@ import spring.webmvc.presentation.exception.EntityNotFoundException;
 @RequiredArgsConstructor
 public class CurationService {
 
+	private final CurationDomainService curationDomainService;
 	private final CurationRepository curationRepository;
 	private final CurationProductRepository curationProductRepository;
 	private final ProductRepository productRepository;
-	private final ZSetCache zSetCache;
+	private final CurationCacheRepository curationCacheRepository;
 
 	@Transactional
-	public CurationResult createCuration(CurationCreateCommand command) {
-		Map<Long, Product> productMap = productRepository.findAllById(
-				command.products().stream()
-					.map(CurationProductCreateCommand::productId)
-					.toList()
-			)
-			.stream()
-			.collect(Collectors.toMap(Product::getId, product -> product));
+	public Long createCuration(CurationCreateCommand command) {
+		List<Long> requestProductIds = command.products().stream()
+			.map(CurationProductCreateCommand::productId)
+			.toList();
+		List<Product> products = productRepository.findAllById(requestProductIds);
 
-		Curation curation = Curation.create(
-			command.title(),
-			command.isExposed(),
-			command.sortOrder()
+		Curation curation = curationRepository.save(
+			curationDomainService.createCuration(
+				command.title(),
+				command.isExposed(),
+				command.sortOrder(),
+				requestProductIds,
+				products
+			)
 		);
 
-		for (CurationProductCreateCommand productCommand : command.products()) {
-			Product product = productMap.get(productCommand.productId());
+		curationCacheRepository.deleteAll();
 
-			if (product == null) {
-				throw new EntityNotFoundException(Product.class, productCommand.productId());
-			}
-
-			curation.addProduct(product, productCommand.sortOrder());
-		}
-
-		curationRepository.save(curation);
-
-		return new CurationResult(curation);
+		return curation.getId();
 	}
 
 	public List<CurationResult> findCurations() {
-		String key = CacheKey.CURATION.generate();
-		Set<CurationResult> cache = zSetCache.range(key, 0, -1, CurationResult.class);
-
-		if (!ObjectUtils.isEmpty(cache)) {
-			return cache.stream().toList();
+		List<CurationCache> cached = curationCacheRepository.getCurations();
+		if (!ObjectUtils.isEmpty(cached)) {
+			return cached.stream().map(CurationResult::new).toList();
 		}
 
-		List<CurationResult> result = curationRepository.findExposed().stream()
-			.map(curation -> {
-				CurationResult curationResult = new CurationResult(curation);
-				zSetCache.add(key, curationResult, curation.getSortOrder());
-				return curationResult;
-			})
-			.toList();
+		List<Curation> curations = curationRepository.findExposed();
 
-		zSetCache.expire(key, Duration.ofHours(1));
+		curationCacheRepository.setCurations(
+			curations.stream().map(curationDomainService::createCurationCache).toList()
+		);
 
-		return result;
+		return curations.stream().map(CurationResult::new).toList();
 	}
 
-	public Page<ProductResult> findCurationProduct(Pageable pageable, Long id) {
-		String key = CacheKey.CURATION_PRODUCT.generate(id);
-
-		long start = pageable.getOffset();
-		long end = start + pageable.getPageSize() - 1;
-
-		Long size = zSetCache.size(key);
-		long cacheCount = size != null ? size : 0L;
-		Set<ProductResult> cacheContent = zSetCache.range(key, start, end, ProductResult.class);
-
-		if (!ObjectUtils.isEmpty(cacheContent)) {
-			return new PageImpl<>(cacheContent.stream().toList(), pageable, cacheCount);
+	public CurationProductResult findCurationProduct(Long curationId, Long cursorId, Integer size) {
+		CurationProductCache cached = curationCacheRepository.getCurationProducts(curationId, cursorId, size);
+		if (!ObjectUtils.isEmpty(cached)) {
+			return new CurationProductResult(cached);
 		}
 
-		Page<ProductResult> result = curationProductRepository.findAllByCurationId(pageable, id)
-			.map(curationProduct -> {
-				ProductResult productResult = new ProductResult(curationProduct.getProduct());
-				zSetCache.add(key, productResult, curationProduct.getSortOrder());
-				return productResult;
-			});
+		Curation curation = curationRepository.findById(curationId)
+			.orElseThrow(() -> new EntityNotFoundException(Curation.class, curationId));
 
-		zSetCache.expire(key, Duration.ofHours(1));
+		CursorPage<CurationProduct> curationProductPage = curationProductRepository.findAll(curationId, cursorId, size);
 
-		return result;
+		curationCacheRepository.setCurationProducts(
+			curationId,
+			cursorId,
+			size,
+			curationDomainService.createCurationProductCache(
+				curation,
+				curationProductPage.map(CurationProduct::getProduct)
+			)
+		);
+
+		return new CurationProductResult(curation, curationProductPage.map(CurationProduct::getProduct));
 	}
 }

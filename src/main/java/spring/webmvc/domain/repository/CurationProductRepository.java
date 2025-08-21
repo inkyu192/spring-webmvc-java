@@ -1,10 +1,8 @@
 package spring.webmvc.domain.repository;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-
 import spring.webmvc.domain.model.entity.CurationProduct;
+import spring.webmvc.infrastructure.persistence.dto.CursorPage;
 
 public interface CurationProductRepository {
-	Page<CurationProduct> findAllByCurationId(Pageable pageable, Long curationId);
+	CursorPage<CurationProduct> findAll(Long curationId, Long cursorId, Integer size);
 }

@@ -42,7 +42,7 @@ public class Curation extends BaseCreator {
 		return curation;
 	}
 
-	public void addProduct(Product product, int sortOrder) {
-		curationProducts.add(CurationProduct.create(this, product, sortOrder));
+	public void addProduct(CurationProduct curationProduct) {
+		curationProducts.add(curationProduct);
 	}
 }
