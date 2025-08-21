@@ -29,14 +29,11 @@ public class CurationProduct {
 	@JoinColumn(name = "product_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
 	private Product product;
 
-	private long sortOrder;
-
-	public static CurationProduct create(Curation curation, Product product, long sortOrder) {
+	public static CurationProduct create(Curation curation, Product product) {
 		CurationProduct curationProduct = new CurationProduct();
 
 		curationProduct.curation = curation;
 		curationProduct.product = product;
-		curationProduct.sortOrder = sortOrder;
 
 		return curationProduct;
 	}

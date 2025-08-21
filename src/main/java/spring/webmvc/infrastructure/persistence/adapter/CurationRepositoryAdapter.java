@@ -1,6 +1,7 @@
 package spring.webmvc.infrastructure.persistence.adapter;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
@@ -14,6 +15,11 @@ import spring.webmvc.infrastructure.persistence.jpa.CurationJpaRepository;
 public class CurationRepositoryAdapter implements CurationRepository {
 
 	private final CurationJpaRepository jpaRepository;
+
+	@Override
+	public Optional<Curation> findById(Long id) {
+		return jpaRepository.findById(id);
+	}
 
 	@Override
 	public List<Curation> findExposed() {

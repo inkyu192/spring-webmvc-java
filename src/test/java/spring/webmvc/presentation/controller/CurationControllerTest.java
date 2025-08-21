@@ -1,6 +1,5 @@
 package spring.webmvc.presentation.controller;
 
-import java.time.Instant;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -9,10 +8,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
@@ -29,11 +24,14 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import spring.webmvc.application.dto.command.CurationCreateCommand;
+import spring.webmvc.application.dto.result.CurationProductResult;
 import spring.webmvc.application.dto.result.CurationResult;
-import spring.webmvc.application.dto.result.ProductResult;
 import spring.webmvc.application.service.CurationService;
+import spring.webmvc.domain.model.entity.Curation;
+import spring.webmvc.domain.model.entity.Product;
 import spring.webmvc.domain.model.enums.Category;
 import spring.webmvc.infrastructure.config.WebMvcTestConfig;
+import spring.webmvc.infrastructure.persistence.dto.CursorPage;
 
 @WebMvcTest(CurationController.class)
 @Import(WebMvcTestConfig.class)
@@ -45,6 +43,11 @@ class CurationControllerTest {
 
 	private MockMvc mockMvc;
 
+	private Curation curation1;
+	private Curation curation2;
+	private Product product1;
+	private Product product2;
+
 	@BeforeEach
 	public void setUp(RestDocumentationContextProvider restDocumentation, WebApplicationContext webApplicationContext) {
 		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
@@ -53,20 +56,19 @@ class CurationControllerTest {
 				.withRequestDefaults(Preprocessors.prettyPrint())
 				.withResponseDefaults(Preprocessors.prettyPrint()))
 			.build();
+
+		curation1 = Curation.create("Curation 1", true, 1L);
+		curation2 = Curation.create("Curation 2", true, 2L);
+		product1 = Product.create("Product 1", "Description 1", 1000L, 10L, Category.ACCOMMODATION);
+		product2 = Product.create("Product 2", "Description 2", 2000L, 20L, Category.FLIGHT);
 	}
 
 	@Test
 	void createCuration() throws Exception {
 		// Given
 		Long id = 1L;
-		String title = "Test Curation";
 
-		CurationResult curationResult = Mockito.mock(CurationResult.class);
-		Mockito.when(curationResult.id()).thenReturn(id);
-		Mockito.when(curationResult.title()).thenReturn(title);
-
-		Mockito.when(curationService.createCuration(Mockito.any(CurationCreateCommand.class)))
-			.thenReturn(curationResult);
+		Mockito.when(curationService.createCuration(Mockito.any(CurationCreateCommand.class))).thenReturn(id);
 
 		// When & Then
 		mockMvc.perform(
@@ -74,7 +76,7 @@ class CurationControllerTest {
 					.contentType(MediaType.APPLICATION_JSON)
 					.content("""
 						{
-						  "title": "%s",
+						  "title": "인기상품",
 						  "isExposed": true,
 						  "sortOrder": 1,
 						  "products": [
@@ -84,7 +86,7 @@ class CurationControllerTest {
 						    }
 						  ]
 						}
-						""".formatted(title))
+						""")
 					.header("Authorization", "Bearer access-token")
 			)
 			.andExpect(MockMvcResultMatchers.status().isCreated())
@@ -97,13 +99,11 @@ class CurationControllerTest {
 						PayloadDocumentation.fieldWithPath("title").description("큐레이션 제목"),
 						PayloadDocumentation.fieldWithPath("isExposed").description("노출 여부"),
 						PayloadDocumentation.fieldWithPath("sortOrder").description("정렬 순서"),
-						PayloadDocumentation.fieldWithPath("products").description("상품 목록"),
 						PayloadDocumentation.fieldWithPath("products[].id").description("상품 ID"),
 						PayloadDocumentation.fieldWithPath("products[].sortOrder").description("상품 정렬 순서")
 					),
 					PayloadDocumentation.responseFields(
-						PayloadDocumentation.fieldWithPath("id").description("큐레이션 ID"),
-						PayloadDocumentation.fieldWithPath("title").description("큐레이션 제목")
+						PayloadDocumentation.fieldWithPath("id").description("큐레이션 ID")
 					)
 				)
 			);
@@ -112,17 +112,12 @@ class CurationControllerTest {
 	@Test
 	void findCurations() throws Exception {
 		// Given
-		CurationResult curationResult1 = Mockito.mock(CurationResult.class);
-		Mockito.when(curationResult1.id()).thenReturn(1L);
-		Mockito.when(curationResult1.title()).thenReturn("Curation 1");
+		CurationResult curationResult1 = new CurationResult(curation1);
+		CurationResult curationResult2 = new CurationResult(curation2);
 
-		CurationResult curationResult2 = Mockito.mock(CurationResult.class);
-		Mockito.when(curationResult2.id()).thenReturn(2L);
-		Mockito.when(curationResult2.title()).thenReturn("Curation 2");
+		List<CurationResult> result = List.of(curationResult1, curationResult2);
 
-		List<CurationResult> curationResults = List.of(curationResult1, curationResult2);
-
-		Mockito.when(curationService.findCurations()).thenReturn(curationResults);
+		Mockito.when(curationService.findCurations()).thenReturn(result);
 
 		// When & Then
 		mockMvc.perform(
@@ -132,8 +127,9 @@ class CurationControllerTest {
 			.andDo(
 				MockMvcRestDocumentation.document("curation-list",
 					PayloadDocumentation.responseFields(
-						PayloadDocumentation.fieldWithPath("[].id").description("큐레이션 ID"),
-						PayloadDocumentation.fieldWithPath("[].title").description("큐레이션 제목")
+						PayloadDocumentation.fieldWithPath("count").description("큐레이션 개수"),
+						PayloadDocumentation.fieldWithPath("curations[].id").description("큐레이션 ID"),
+						PayloadDocumentation.fieldWithPath("curations[].title").description("큐레이션 제목")
 					)
 				)
 			);
@@ -143,36 +139,18 @@ class CurationControllerTest {
 	void findCurationProduct() throws Exception {
 		// Given
 		Long curationId = 1L;
-		Pageable pageable = PageRequest.of(0, 10);
+		Integer size = 10;
+		Long cursorId = null;
 
-		ProductResult productResult1 = Mockito.mock(ProductResult.class);
-		Mockito.when(productResult1.getId()).thenReturn(1L);
-		Mockito.when(productResult1.getCategory()).thenReturn(Category.ACCOMMODATION);
-		Mockito.when(productResult1.getName()).thenReturn("Product 1");
-		Mockito.when(productResult1.getDescription()).thenReturn("Description 1");
-		Mockito.when(productResult1.getPrice()).thenReturn(1000L);
-		Mockito.when(productResult1.getQuantity()).thenReturn(10L);
-		Mockito.when(productResult1.getCreatedAt()).thenReturn(Instant.now());
+		CursorPage<Product> cursorPage = new CursorPage<>(List.of(product1, product2), size, false, null);
+		CurationProductResult curationProductResult = new CurationProductResult(curation1, cursorPage);
 
-		ProductResult productResult2 = Mockito.mock(ProductResult.class);
-		Mockito.when(productResult2.getId()).thenReturn(2L);
-		Mockito.when(productResult2.getCategory()).thenReturn(Category.FLIGHT);
-		Mockito.when(productResult2.getName()).thenReturn("Product 2");
-		Mockito.when(productResult2.getDescription()).thenReturn("Description 2");
-		Mockito.when(productResult2.getPrice()).thenReturn(2000L);
-		Mockito.when(productResult2.getQuantity()).thenReturn(20L);
-		Mockito.when(productResult2.getCreatedAt()).thenReturn(Instant.now());
-
-		List<ProductResult> products = List.of(productResult1, productResult2);
-		Page<ProductResult> productPage = new PageImpl<>(products, pageable, products.size());
-
-		Mockito.when(curationService.findCurationProduct(pageable, curationId)).thenReturn(productPage);
+		Mockito.when(curationService.findCurationProduct(curationId, cursorId, size)).thenReturn(curationProductResult);
 
 		// When & Then
 		mockMvc.perform(
 				RestDocumentationRequestBuilders.get("/curations/{id}", curationId)
-					.queryParam("page", String.valueOf(pageable.getPageNumber()))
-					.queryParam("size", String.valueOf(pageable.getPageSize()))
+					.queryParam("size", String.valueOf(size))
 			)
 			.andExpect(MockMvcResultMatchers.status().isOk())
 			.andDo(
@@ -181,41 +159,22 @@ class CurationControllerTest {
 						RequestDocumentation.parameterWithName("id").description("큐레이션 ID")
 					),
 					RequestDocumentation.queryParameters(
-						RequestDocumentation.parameterWithName("page").description("페이지 번호").optional(),
-						RequestDocumentation.parameterWithName("size").description("페이지 크기").optional()
+						RequestDocumentation.parameterWithName("size").description("페이지 크기").optional(),
+						RequestDocumentation.parameterWithName("cursorId").description("커서 ID").optional()
 					),
 					PayloadDocumentation.responseFields(
-						PayloadDocumentation.fieldWithPath("content[].id").description("상품 ID"),
-						PayloadDocumentation.fieldWithPath("content[].category").description("카테고리"),
-						PayloadDocumentation.fieldWithPath("content[].name").description("상품명"),
-						PayloadDocumentation.fieldWithPath("content[].description").description("설명"),
-						PayloadDocumentation.fieldWithPath("content[].price").description("가격"),
-						PayloadDocumentation.fieldWithPath("content[].quantity").description("수량"),
-						PayloadDocumentation.fieldWithPath("content[].createdAt").description("생성일시"),
-
-						PayloadDocumentation.fieldWithPath("pageable.pageNumber").description("현재 페이지 번호"),
-						PayloadDocumentation.fieldWithPath("pageable.pageSize").description("페이지 크기"),
-						PayloadDocumentation.fieldWithPath("pageable.offset").description("정렬 정보"),
-						PayloadDocumentation.fieldWithPath("pageable.paged").description("정렬 정보"),
-						PayloadDocumentation.fieldWithPath("pageable.unpaged").description("정렬 정보"),
-
-						PayloadDocumentation.fieldWithPath("pageable.sort.empty").description("정렬이 비어있는지 여부"),
-						PayloadDocumentation.fieldWithPath("pageable.sort.sorted").description("정렬되었는지 여부"),
-						PayloadDocumentation.fieldWithPath("pageable.sort.unsorted").description("정렬되지 않았는지 여부"),
-
-						PayloadDocumentation.fieldWithPath("last").description("마지막 페이지 여부"),
-						PayloadDocumentation.fieldWithPath("totalPages").description("전체 페이지 수"),
-						PayloadDocumentation.fieldWithPath("totalElements").description("전체 아이템 수"),
-						PayloadDocumentation.fieldWithPath("first").description("첫 페이지 여부"),
-						PayloadDocumentation.fieldWithPath("size").description("페이지 크기"),
-						PayloadDocumentation.fieldWithPath("number").description("현재 페이지 번호"),
-
-						PayloadDocumentation.fieldWithPath("sort.empty").description("정렬이 비어있는지 여부"),
-						PayloadDocumentation.fieldWithPath("sort.sorted").description("정렬되었는지 여부"),
-						PayloadDocumentation.fieldWithPath("sort.unsorted").description("정렬되지 않았는지 여부"),
-
-						PayloadDocumentation.fieldWithPath("numberOfElements").description("현재 페이지의 아이템 수"),
-						PayloadDocumentation.fieldWithPath("empty").description("빈 페이지 여부")
+						PayloadDocumentation.fieldWithPath("id").description("큐레이션 ID"),
+						PayloadDocumentation.fieldWithPath("title").description("큐레이션 제목"),
+						PayloadDocumentation.fieldWithPath("page.size").description("페이지 크기"),
+						PayloadDocumentation.fieldWithPath("page.hasNext").description("다음 페이지 존재 여부"),
+						PayloadDocumentation.fieldWithPath("page.nextCursorId").description("다음 커서 ID"),
+						PayloadDocumentation.fieldWithPath("products[].id").description("상품 ID"),
+						PayloadDocumentation.fieldWithPath("products[].category").description("카테고리"),
+						PayloadDocumentation.fieldWithPath("products[].name").description("상품명"),
+						PayloadDocumentation.fieldWithPath("products[].description").description("설명"),
+						PayloadDocumentation.fieldWithPath("products[].price").description("가격"),
+						PayloadDocumentation.fieldWithPath("products[].quantity").description("수량"),
+						PayloadDocumentation.fieldWithPath("products[].createdAt").description("생성일시")
 					)
 				)
 			);

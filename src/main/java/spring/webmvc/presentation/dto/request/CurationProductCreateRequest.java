@@ -5,11 +5,9 @@ import spring.webmvc.application.dto.command.CurationProductCreateCommand;
 
 public record CurationProductCreateRequest(
 	@NotNull
-	Long id,
-	@NotNull
-	Integer sortOrder
+	Long id
 ) {
 	public CurationProductCreateCommand toCommand() {
-		return new CurationProductCreateCommand(id, sortOrder);
+		return new CurationProductCreateCommand(id);
 	}
 }
