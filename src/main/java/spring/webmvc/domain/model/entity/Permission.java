@@ -23,7 +23,7 @@ public class Permission extends BaseTime {
 	private Long id;
 	private String name;
 
-	@OneToMany(mappedBy = "permission", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "permission", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<PermissionMenu> permissionMenus = new ArrayList<>();
 
 	public List<PermissionMenu> getPermissionMenus() {

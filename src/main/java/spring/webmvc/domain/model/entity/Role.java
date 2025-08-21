@@ -23,7 +23,7 @@ public class Role extends BaseTime {
 	private Long id;
 	private String name;
 
-	@OneToMany(mappedBy = "role", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "role", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<RolePermission> rolePermissions = new ArrayList<>();
 
 	public List<RolePermission> getRolePermissions() {

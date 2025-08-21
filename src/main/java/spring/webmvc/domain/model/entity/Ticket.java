@@ -29,7 +29,7 @@ public class Ticket {
 	private String duration;
 	private String ageLimit;
 
-	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "product_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
 	private Product product;
 
