@@ -34,7 +34,7 @@ public class Menu extends BaseTime {
 	@OneToMany(mappedBy = "parent")
 	private List<Menu> children = new ArrayList<>();
 
-	@OneToMany(mappedBy = "menu", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "menu", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<PermissionMenu> permissionMenus = new ArrayList<>();
 
 	public List<Menu> getChildren() {

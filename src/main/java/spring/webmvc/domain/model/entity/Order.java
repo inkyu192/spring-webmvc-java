@@ -38,7 +38,7 @@ public class Order extends BaseTime {
 	@JoinColumn(name = "member_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
 	private Member member;
 
-	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<OrderProduct> orderProducts = new ArrayList<>();
 
 	private Instant orderedAt;

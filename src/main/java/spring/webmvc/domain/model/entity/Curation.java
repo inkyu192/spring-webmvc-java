@@ -25,7 +25,7 @@ public class Curation extends BaseCreator {
 	private boolean isExposed;
 	private long sortOrder;
 
-	@OneToMany(mappedBy = "curation", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "curation", cascade = CascadeType.ALL, orphanRemoval = true)
 	private final List<CurationProduct> curationProducts = new ArrayList<>();
 
 	public List<CurationProduct> getCurationProducts() {

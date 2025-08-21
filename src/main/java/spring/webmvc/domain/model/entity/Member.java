@@ -42,10 +42,10 @@ public class Member extends BaseTime {
 
 	private LocalDate birthDate;
 
-	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<MemberRole> memberRoles = new ArrayList<>();
 
-	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<MemberPermission> memberPermissions = new ArrayList<>();
 
 	public List<MemberRole> getMemberRoles() {
