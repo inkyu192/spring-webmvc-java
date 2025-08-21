@@ -19,8 +19,8 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import spring.webmvc.infrastructure.common.UriFactory;
 import spring.webmvc.infrastructure.common.ResponseWriter;
+import spring.webmvc.infrastructure.common.UriFactory;
 import spring.webmvc.presentation.exception.handler.JwtExceptionHandler;
 
 @ExtendWith(MockitoExtension.class)

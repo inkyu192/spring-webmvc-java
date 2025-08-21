@@ -4,10 +4,10 @@ import org.mockito.Mockito;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 
+import spring.webmvc.infrastructure.common.ResponseWriter;
+import spring.webmvc.infrastructure.common.UriFactory;
 import spring.webmvc.infrastructure.logging.HttpLog;
 import spring.webmvc.infrastructure.security.JwtProvider;
-import spring.webmvc.infrastructure.common.UriFactory;
-import spring.webmvc.infrastructure.common.ResponseWriter;
 
 @TestConfiguration
 public class WebMvcTestConfig {

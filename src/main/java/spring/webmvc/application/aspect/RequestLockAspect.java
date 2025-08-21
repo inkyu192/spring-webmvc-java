@@ -10,8 +10,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import spring.webmvc.domain.repository.LockCacheRepository;
 import spring.webmvc.application.exception.DuplicateRequestException;
+import spring.webmvc.domain.repository.RequestLockCacheRepository;
 
 @Aspect
 @Component
@@ -19,7 +19,7 @@ import spring.webmvc.application.exception.DuplicateRequestException;
 public class RequestLockAspect {
 
 	private final HttpServletRequest httpServletRequest;
-	private final LockCacheRepository lockCacheRepository;
+	private final RequestLockCacheRepository requestLockCacheRepository;
 	private final ObjectMapper objectMapper;
 
 	@Pointcut("@annotation(spring.webmvc.application.aspect.RequestLock)")
@@ -31,7 +31,7 @@ public class RequestLockAspect {
 		String uri = httpServletRequest.getRequestURI();
 		String method = httpServletRequest.getMethod();
 
-		Boolean isSuccess = lockCacheRepository.tryLock(
+		Boolean isSuccess = requestLockCacheRepository.tryLock(
 			method,
 			uri,
 			objectMapper.writeValueAsString(joinPoint.getArgs())
