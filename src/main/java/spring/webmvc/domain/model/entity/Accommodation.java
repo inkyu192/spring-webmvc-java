@@ -3,10 +3,8 @@ package spring.webmvc.domain.model.entity;
 import java.time.Instant;
 
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.ConstraintMode;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -29,7 +27,7 @@ public class Accommodation {
 	private Instant checkOutTime;
 
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(name = "product_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+	@JoinColumn(name = "product_id")
 	private Product product;
 
 	public static Accommodation create(

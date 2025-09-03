@@ -6,12 +6,10 @@ import java.util.Collections;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.ConstraintMode;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -35,7 +33,7 @@ public class Order extends BaseTime {
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "member_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+	@JoinColumn(name = "member_id")
 	private Member member;
 
 	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)

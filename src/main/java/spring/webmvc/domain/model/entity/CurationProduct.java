@@ -1,9 +1,7 @@
 package spring.webmvc.domain.model.entity;
 
-import jakarta.persistence.ConstraintMode;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -22,11 +20,11 @@ public class CurationProduct {
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "curation_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+	@JoinColumn(name = "curation_id")
 	private Curation curation;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "product_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+	@JoinColumn(name = "product_id")
 	private Product product;
 
 	public static CurationProduct create(Curation curation, Product product) {

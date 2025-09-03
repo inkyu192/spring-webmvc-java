@@ -1,9 +1,7 @@
 package spring.webmvc.domain.model.entity;
 
-import jakarta.persistence.ConstraintMode;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -22,11 +20,11 @@ public class PermissionMenu {
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "menu_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+	@JoinColumn(name = "menu_id")
 	private Menu menu;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "permission_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+	@JoinColumn(name = "permission_id")
 	private Permission permission;
 
 	public static PermissionMenu create(Menu menu, Permission permission) {
