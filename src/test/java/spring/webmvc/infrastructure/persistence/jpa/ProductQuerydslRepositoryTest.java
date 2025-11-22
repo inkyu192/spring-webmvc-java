@@ -1,17 +1,19 @@
 package spring.webmvc.infrastructure.persistence.jpa;
 
-import com.querydsl.jpa.impl.JPAQueryFactory;
-import jakarta.persistence.EntityManager;
+import static org.assertj.core.api.Assertions.*;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import com.querydsl.jpa.impl.JPAQueryFactory;
+
+import jakarta.persistence.EntityManager;
 import spring.webmvc.domain.model.entity.Product;
 import spring.webmvc.domain.model.enums.Category;
 import spring.webmvc.infrastructure.config.RepositoryTest;
 import spring.webmvc.infrastructure.persistence.dto.CursorPage;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @RepositoryTest
 class ProductQuerydslRepositoryTest {

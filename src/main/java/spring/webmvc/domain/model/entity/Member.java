@@ -11,13 +11,17 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import spring.webmvc.domain.converter.CryptoAttributeConverter;
+import spring.webmvc.domain.model.enums.MemberType;
 import spring.webmvc.domain.model.vo.Email;
 import spring.webmvc.domain.model.vo.Phone;
 
@@ -27,7 +31,7 @@ import spring.webmvc.domain.model.vo.Phone;
 public class Member extends BaseTime {
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@Embedded
@@ -41,6 +45,9 @@ public class Member extends BaseTime {
 	private Phone phone;
 
 	private LocalDate birthDate;
+
+	@Enumerated(EnumType.STRING)
+	private MemberType memberType;
 
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<MemberRole> memberRoles = new ArrayList<>();

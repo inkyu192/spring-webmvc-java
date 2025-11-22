@@ -1,14 +1,15 @@
 package spring.webmvc.infrastructure.persistence.jpa;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import spring.webmvc.domain.model.entity.Permission;
 import spring.webmvc.infrastructure.config.RepositoryTest;
-
-import java.util.List;
-import java.util.Optional;
 
 @RepositoryTest
 class PermissionJpaRepositoryTest {
