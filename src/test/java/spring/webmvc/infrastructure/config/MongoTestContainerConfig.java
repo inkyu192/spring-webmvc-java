@@ -20,7 +20,7 @@ public class MongoTestContainerConfig {
 	private static final int MONGO_PORT = 27017;
 
 	@Container
-	private static final MongoDBContainer mongoDBContainer = new MongoDBContainer("mongo:latest")
+	private static final MongoDBContainer mongoDBContainer = new MongoDBContainer("mongo:7.0")
 		.withExposedPorts(MONGO_PORT)
 		.waitingFor(Wait.forListeningPort())
 		.withStartupTimeout(Duration.ofSeconds(60));

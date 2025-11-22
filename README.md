@@ -1,48 +1,49 @@
 ## 개발 환경
 - **Language:** Java
 - **Library / Framework:** Spring Web MVC, Spring Data JPA, Querydsl, Spring REST Docs
-- **Database:** PostgreSQL, Redis, MongoDB
+- **Database:** MySQL, Redis, MongoDB
 - **Test:** JUnit 5, Mockito, Testcontainers
 - **Infrastructure**: Docker, Docker Compose, LocalStack
 
 ---
 
 ## 환경 설정
-`docker-compose.yml`을 사용하여 PostgreSQL, Redis, LocalStack 실행할 수 있습니다.
+`docker-compose.yml`을 사용하여 MySQL, Redis, LocalStack 실행할 수 있습니다.
 
 ```yaml
 services:
-  postgres:
-    container_name: postgres-container
-    image: postgres:latest
+  mysql:
+    container_name: mysql
+    image: mysql:8.4.7
     environment:
-      POSTGRES_DB: my_db
-      POSTGRES_USER: my_user
-      POSTGRES_PASSWORD: my_password
+      MYSQL_DATABASE: my_db
+      MYSQL_USER: my_user
+      MYSQL_PASSWORD: my_password
+      MYSQL_ROOT_PASSWORD: root_password
     ports:
-      - "5432:5432"
+      - "3306:3306"
     networks:
       - application-network
 
   redis:
-    container_name: redis-container
-    image: redis:latest
+    container_name: redis
+    image: redis:7.4.7
     ports:
       - "6379:6379"
     networks:
       - application-network
 
   mongodb:
-    container_name: mongodb-container
-    image: mongo:latest
+    container_name: mongodb
+    image: mongo:7.0
     ports:
       - "27017:27017"
     networks:
       - application-network
 
   localstack:
-    container_name: localstack-container
-    image: localstack/localstack:latest
+    container_name: localstack
+    image: localstack/localstack:3.8.1
     ports:
       - "4566:4566"
     environment:

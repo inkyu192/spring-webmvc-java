@@ -12,7 +12,7 @@ public class LocalStackTestContainerConfig {
 
 	@Container
 	public static final LocalStackContainer LOCAL_STACK_CONTAINER =
-		new LocalStackContainer(DockerImageName.parse("localstack/localstack:latest"))
+		new LocalStackContainer(DockerImageName.parse("localstack/localstack:3.8.1"))
 			.withServices(
 				LocalStackContainer.Service.S3
 			)
