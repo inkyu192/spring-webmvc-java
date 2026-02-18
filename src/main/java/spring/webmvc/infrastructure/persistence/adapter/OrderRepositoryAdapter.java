@@ -1,5 +1,6 @@
 package spring.webmvc.infrastructure.persistence.adapter;
 
+import java.time.Instant;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -10,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import spring.webmvc.domain.model.entity.Order;
 import spring.webmvc.domain.model.enums.OrderStatus;
 import spring.webmvc.domain.repository.OrderRepository;
+import spring.webmvc.infrastructure.persistence.dto.CursorPage;
 import spring.webmvc.infrastructure.persistence.jpa.OrderJpaRepository;
 import spring.webmvc.infrastructure.persistence.jpa.OrderQuerydslRepository;
 
@@ -21,13 +23,35 @@ public class OrderRepositoryAdapter implements OrderRepository {
 	private final OrderQuerydslRepository querydslRepository;
 
 	@Override
-	public Page<Order> findAll(Pageable pageable, Long memberId, OrderStatus orderStatus) {
-		return querydslRepository.findAll(pageable, memberId, orderStatus);
+	public Page<Order> findAllWithOffsetPage(
+		Pageable pageable,
+		Long userId,
+		OrderStatus orderStatus,
+		Instant orderedFrom,
+		Instant orderedTo
+	) {
+		return querydslRepository.findAllWithOffsetPage(pageable, userId, orderStatus, orderedFrom, orderedTo);
 	}
 
 	@Override
-	public Optional<Order> findByIdAndMemberId(Long id, Long memberId) {
-		return jpaRepository.findByIdAndMemberId(id, memberId);
+	public CursorPage<Order> findAllWithCursorPage(
+		Long cursorId,
+		Long userId,
+		OrderStatus orderStatus,
+		Instant orderedFrom,
+		Instant orderedTo
+	) {
+		return querydslRepository.findAllWithCursorPage(cursorId, userId, orderStatus, orderedFrom, orderedTo);
+	}
+
+	@Override
+	public Optional<Order> findById(Long id) {
+		return jpaRepository.findById(id);
+	}
+
+	@Override
+	public Optional<Order> findByIdAndUserId(Long id, Long userId) {
+		return jpaRepository.findByIdAndUserId(id, userId);
 	}
 
 	@Override

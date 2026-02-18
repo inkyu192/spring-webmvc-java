@@ -29,6 +29,9 @@ public class RedisTestContainerConfig {
 
 	@Bean
 	public RedisConnectionFactory redisConnectionFactory() {
-		return new LettuceConnectionFactory(redisContainer.getHost(), redisContainer.getMappedPort(REDIS_PORT));
+		return new LettuceConnectionFactory(
+			redisContainer.getHost(),
+			redisContainer.getMappedPort(REDIS_PORT)
+		);
 	}
 }

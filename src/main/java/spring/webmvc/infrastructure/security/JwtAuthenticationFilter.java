@@ -9,7 +9,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import io.jsonwebtoken.Claims;
@@ -17,24 +16,27 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
+import lombok.NonNull;
 
 @Component
-@RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private final JwtProvider jwtProvider;
 
+	public JwtAuthenticationFilter(JwtProvider jwtProvider) {
+		this.jwtProvider = jwtProvider;
+	}
+
 	@Override
 	protected void doFilterInternal(
-		HttpServletRequest request,
-		HttpServletResponse response,
-		FilterChain filterChain
+		@NonNull HttpServletRequest request,
+		@NonNull HttpServletResponse response,
+		@NonNull FilterChain filterChain
 	) throws ServletException, IOException {
 		String token = extractToken(request);
-
-		if (StringUtils.hasText(token)) {
-			SecurityContextHolder.getContext().setAuthentication(createAuthentication(token));
+		if (token != null) {
+			Authentication authentication = createAuthentication(token);
+			SecurityContextHolder.getContext().setAuthentication(authentication);
 		}
 
 		filterChain.doFilter(request, response);
@@ -42,25 +44,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private String extractToken(HttpServletRequest request) {
 		String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
-
-		if (StringUtils.hasText(authorization) && authorization.startsWith("Bearer")) {
-			return authorization.replace("Bearer ", "");
+		if (authorization != null && authorization.startsWith("Bearer ")) {
+			String token = authorization.substring(7).trim();
+			return token.isEmpty() ? null : token;
 		}
-
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	private Authentication createAuthentication(String token) {
 		Claims claims = jwtProvider.parseAccessToken(token);
 
-		Long memberId = claims.get("memberId", Long.class);
-		List<?> permissions = claims.get("permissions", List.class);
+		Long userId = Long.valueOf(claims.get("userId").toString());
+		List<String> permissions = claims.get("permissions", List.class);
 
 		List<SimpleGrantedAuthority> authorities = permissions.stream()
-			.map(String::valueOf)
 			.map(SimpleGrantedAuthority::new)
 			.toList();
 
-		return new UsernamePasswordAuthenticationToken(memberId, token, authorities);
+		return new UsernamePasswordAuthenticationToken(userId, token, authorities);
 	}
 }

@@ -1,47 +1,58 @@
 spring:
   application:
     name: spring-webmvc-java
+  cloud:
+    aws:
+      region:
+        static: ap-northeast-2
+      credentials:
+        access-key: test
+        secret-key: test
+      sqs:
+        endpoint: http://localhost:4566
+        queues:
+          email: email-queue
+  datasource:
+    url: jdbc:mysql://localhost:3306/my_db
+    username: my_user
+    password: my_password
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  data:
+    redis:
+      host: localhost
+      port: 6379
   jpa:
-    hibernate:
-      ddl-auto: create
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
-#        show_sql: true
         format_sql: true
         default_batch_fetch_size: 10
     open-in-view: false
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
+      data-locations: classpath:data.sql
+      encoding: UTF-8
+      continue-on-error: false
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${SMTP_USERNAME:}
+    password: ${SMTP_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
 logging:
   level:
-    org.hibernate.SQL: DEBUG
-    org.hibernate.orm.jdbc.bind: DEBUG
-
-jwt:
-  access-token:
-    key: S3fR9pOWh0D2k-MX37rm8N6K3u0aXvdcqD4muOxZK8g
-    expiration: 10m
-  refresh-token:
-    key: XhNd_6u1OJvYOCp2JZ0cwlQUKtIJ6B5wAxXHfPSmeTA
-    expiration: 7d
-
-crypto:
-  secret-key: d9ANIqIyfTygI92m6jWFfAzUbEP73TNB
-  iv-parameter: F22DBBB19D308662
-
-cors:
-  allowed-origins:
-    - "http://localhost:3000"
-  allowed-origin-patterns:
-    - "http://localhost:*"
-  allowed-methods:
-    - "HEAD"
-    - "GET"
-    - "POST"
-    - "PUT"
-    - "DELETE"
-  allowed-headers:
-    - "*"
+    org:
+      hibernate:
+        SQL: debug
+        type: info
 
 management:
   endpoints:
@@ -49,6 +60,40 @@ management:
       exposure:
         include: "*"
 
-aws:
-  s3:
-    bucket: my-bucket
+app:
+  base-url: http://localhost:8080
+  docs-url: http://localhost:8080/docs/index.html
+  jwt:
+    access-token:
+      key: S3fR9pOWh0D2k-MX37rm8N6K3u0aXvdcqD4muOxZK8g
+      expiration: 10m
+    refresh-token:
+      key: XhNd_6u1OJvYOCp2JZ0cwlQUKtIJ6B5wAxXHfPSmeTA
+      expiration: 7d
+  crypto:
+    secret-key: d9ANIqIyfTygI92m6jWFfAzUbEP73TNB
+    iv-parameter: F22DBBB19D308662
+  cors:
+    allowed-origins:
+      - "http://localhost:3000"
+    allowed-origin-patterns:
+      - "http://localhost:*"
+    allowed-methods:
+      - "HEAD"
+      - "GET"
+      - "POST"
+      - "PUT"
+      - "DELETE"
+    allowed-headers:
+      - "*"
+  aws:
+    s3:
+      endpoint: http://localhost:4566
+      bucket: my-bucket
+    dynamodb:
+      endpoint: http://localhost:4566
+    cloudfront:
+      domain: http://localhost:4566/my-bucket
+  external:
+    notification:
+      host: http://localhost:8080

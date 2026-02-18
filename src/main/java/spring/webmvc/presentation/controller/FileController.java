@@ -8,9 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
-import spring.webmvc.infrastructure.common.FileUtil;
-import spring.webmvc.infrastructure.external.S3Service;
-import spring.webmvc.presentation.dto.request.FileUploadRequest;
+import spring.webmvc.infrastructure.external.s3.S3Service;
+import spring.webmvc.infrastructure.properties.AppProperties;
 import spring.webmvc.presentation.dto.response.FileResponse;
 
 @RestController
@@ -19,13 +18,15 @@ import spring.webmvc.presentation.dto.response.FileResponse;
 public class FileController {
 
 	private final S3Service s3Service;
+	private final AppProperties appProperties;
 
 	@PostMapping
 	@PreAuthorize("isAuthenticated()")
-	public FileResponse uploadFile(@RequestPart MultipartFile file, @RequestPart FileUploadRequest data) {
-		FileUtil.validate(data.type(), file);
+	public FileResponse uploadFile(
+		@RequestPart MultipartFile file
+	) {
+		String key = s3Service.putObject(file);
 
-		String key = s3Service.putObject(data.type(), file);
-		return new FileResponse(key);
+		return FileResponse.of(key, appProperties.aws().cloudfront().domain());
 	}
 }

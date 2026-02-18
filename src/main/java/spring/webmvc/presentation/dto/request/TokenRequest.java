@@ -1,11 +1,12 @@
 package spring.webmvc.presentation.dto.request;
 
-import jakarta.validation.constraints.NotBlank;
+import spring.webmvc.application.dto.command.RefreshTokenCommand;
 
 public record TokenRequest(
-	@NotBlank
 	String accessToken,
-	@NotBlank
 	String refreshToken
 ) {
+	public RefreshTokenCommand toCommand() {
+		return new RefreshTokenCommand(accessToken, refreshToken);
+	}
 }

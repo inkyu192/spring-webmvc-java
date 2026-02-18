@@ -7,6 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import spring.webmvc.domain.model.entity.Order;
 
 public interface OrderJpaRepository extends JpaRepository<Order, Long> {
-
-	Optional<Order> findByIdAndMemberId(Long id, Long memberId);
+	Optional<Order> findByIdAndUserId(Long id, Long userId);
 }

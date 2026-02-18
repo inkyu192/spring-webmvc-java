@@ -1,32 +1,28 @@
 package spring.webmvc.infrastructure.security;
 
-import java.io.IOException;
-import java.util.List;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
-import org.assertj.core.api.Assertions;
+import java.util.List;
+import java.util.Map;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.impl.DefaultClaims;
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
 
 @ExtendWith(MockitoExtension.class)
 class JwtAuthenticationFilterTest {
-
-	@InjectMocks
-	private JwtAuthenticationFilter jwtAuthenticationFilter;
 
 	@Mock
 	private JwtProvider jwtProvider;
@@ -34,76 +30,76 @@ class JwtAuthenticationFilterTest {
 	@Mock
 	private FilterChain filterChain;
 
+	private JwtAuthenticationFilter jwtAuthenticationFilter;
 	private MockHttpServletRequest request;
 	private MockHttpServletResponse response;
 
 	@BeforeEach
 	void setUp() {
-		SecurityContextHolder.clearContext();
+		jwtAuthenticationFilter = new JwtAuthenticationFilter(jwtProvider);
 		request = new MockHttpServletRequest();
 		response = new MockHttpServletResponse();
+		SecurityContextHolder.clearContext();
 	}
 
 	@Test
-	@DisplayName("doFilter: Authorization 없을 경우 Authentication 을 생성하지 않는다")
-	void doFilterCase1() throws ServletException, IOException {
-		// Given
+	@DisplayName("유효한 토큰이 있으면 인증 정보를 설정한다")
+	void doFilterInternalWithValidToken() throws Exception {
+		String token = "valid-token";
+		Long userId = 1L;
+		List<String> permissions = List.of("USER_READ", "USER_WRITE");
+		Claims claims = new DefaultClaims(Map.of(
+			"userId", userId,
+			"permissions", permissions
+		));
 
-		// When
-		jwtAuthenticationFilter.doFilter(request, response, filterChain);
+		request.addHeader("Authorization", "Bearer " + token);
+		when(jwtProvider.parseAccessToken(token)).thenReturn(claims);
 
-		// Then
-		Assertions.assertThat(SecurityContextHolder.getContext().getAuthentication()).isNull();
+		jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
+
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		assertThat(authentication).isNotNull();
+		assertThat(authentication.getPrincipal()).isEqualTo(userId);
+		assertThat(authentication.getCredentials()).isEqualTo(token);
+		assertThat(authentication.getAuthorities()).hasSize(2);
+
+		verify(filterChain).doFilter(request, response);
 	}
 
 	@Test
-	@DisplayName("doFilter: Authorization 비어있을 경우 Authentication 을 생성하지 않는다")
-	void doFilterCase2() throws ServletException, IOException {
-		// Given
-		request.addHeader(HttpHeaders.AUTHORIZATION, "");
+	@DisplayName("Authorization 헤더가 없으면 인증 정보를 설정하지 않는다")
+	void doFilterInternalWithoutAuthorizationHeader() throws Exception {
+		jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
 
-		// When
-		jwtAuthenticationFilter.doFilter(request, response, filterChain);
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		assertThat(authentication).isNull();
 
-		// Then
-		Assertions.assertThat(SecurityContextHolder.getContext().getAuthentication()).isNull();
+		verify(filterChain).doFilter(request, response);
+		verify(jwtProvider, never()).parseAccessToken(any());
 	}
 
 	@Test
-	@DisplayName("doFilter: Authorization 있고 유효성 검사 실패할 경우 JwtException 발생한다")
-	void doFilterCase3() {
-		// Given
-		String token = "invalid.jwt.token";
+	@DisplayName("Bearer 접두사가 없으면 인증 정보를 설정하지 않는다")
+	void doFilterInternalWithoutBearerPrefix() throws Exception {
+		request.addHeader("Authorization", "InvalidToken");
 
-		Mockito.when(jwtProvider.parseAccessToken(token)).thenThrow(new JwtException("invalidToken"));
+		jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
 
-		request.addHeader(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(token));
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		assertThat(authentication).isNull();
 
-		// When & Then
-		Assertions.assertThatThrownBy(() -> jwtAuthenticationFilter.doFilter(request, response, filterChain))
-			.isInstanceOf(JwtException.class);
+		verify(filterChain).doFilter(request, response);
+		verify(jwtProvider, never()).parseAccessToken(any());
 	}
 
 	@Test
-	@DisplayName("doFilter: Authorization 있고 유효성 검사 성공할 경우 Authentication 생성한다")
-	void doFilterCase4() throws ServletException, IOException {
-		// Given
-		String token = "valid.jwt.token";
-		Claims claims = Mockito.mock(Claims.class);
-		Long memberId = 1L;
-		List<String> permissions = List.of("PRODUCT_READER");
+	@DisplayName("빈 토큰이면 인증 정보를 설정하지 않는다")
+	void doFilterInternalWithEmptyToken() throws Exception {
+		request.addHeader("Authorization", "Bearer ");
 
-		Mockito.when(jwtProvider.parseAccessToken(token)).thenReturn(claims);
-		Mockito.when(claims.get("memberId", Long.class)).thenReturn(memberId);
-		Mockito.when(claims.get("permissions", List.class)).thenReturn(permissions);
+		jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
 
-		request.addHeader(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(token));
-
-		// When
-		jwtAuthenticationFilter.doFilter(request, response, filterChain);
-
-		// Then
-		Assertions.assertThat(SecurityContextHolder.getContext().getAuthentication()).isNotNull();
-		Assertions.assertThat(SecurityContextHolder.getContext().getAuthentication().getCredentials()).isEqualTo(token);
+		verify(filterChain).doFilter(request, response);
 	}
 }

@@ -1,6 +1,7 @@
 package spring.webmvc.application.dto.command;
 
 public record CurationProductCreateCommand(
-	Long productId
+	Long productId,
+	Long sortOrder
 ) {
 }

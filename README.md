@@ -1,7 +1,8 @@
 ## 개발 환경
 - **Language:** Java
-- **Library / Framework:** Spring Web MVC, Spring Data JPA, Querydsl, Spring REST Docs
-- **Database:** MySQL, Redis, MongoDB
+- **Framework:** Spring Web MVC, Spring Data JPA, Querydsl, Spring REST Docs
+- **Library:** Querydsl
+- **Database:** MySQL, Redis, DynamoDB
 - **Test:** JUnit 5, Mockito, Testcontainers
 - **Infrastructure**: Docker, Docker Compose, LocalStack
 
@@ -33,25 +34,16 @@ services:
     networks:
       - application-network
 
-  mongodb:
-    container_name: mongodb
-    image: mongo:7.0
-    ports:
-      - "27017:27017"
-    networks:
-      - application-network
-
   localstack:
     container_name: localstack
     image: localstack/localstack:3.8.1
     ports:
       - "4566:4566"
     environment:
-      - SERVICES=s3
+      - SERVICES=s3,dynamodb,sqs
       - DEBUG=1
       - AWS_ACCESS_KEY_ID=accessKey
       - AWS_SECRET_ACCESS_KEY=secretKey
-      - DEFAULT_REGION=ap-northeast-2
     volumes:
       - ./init-localstack.sh:/etc/localstack/init/ready.d/init.sh
     networks:
@@ -61,6 +53,12 @@ networks:
   application-network:
     name: application-network
 ```
+
+### SMTP 설정
+이메일 발송 기능을 사용하려면 SMTP 서버 정보를 환경 변수로 설정해야 합니다.
+
+- `SMTP_USERNAME`: Gmail 계정
+- `SMTP_PASSWORD`: Gmail 앱 비밀번호
 
 ---
 

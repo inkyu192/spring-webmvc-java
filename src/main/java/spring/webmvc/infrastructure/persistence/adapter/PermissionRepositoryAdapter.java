@@ -19,14 +19,4 @@ public class PermissionRepositoryAdapter implements PermissionRepository {
 	public List<Permission> findAllById(Iterable<Long> ids) {
 		return jpaRepository.findAllById(ids);
 	}
-
-	@Override
-	public Permission save(Permission permission) {
-		return jpaRepository.save(permission);
-	}
-
-	@Override
-	public List<Permission> saveAll(Iterable<Permission> permissions) {
-		return jpaRepository.saveAll(permissions);
-	}
 }

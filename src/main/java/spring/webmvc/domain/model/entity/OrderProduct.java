@@ -7,14 +7,13 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Table(name = "order_product")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class OrderProduct {
 
@@ -22,7 +21,11 @@ public class OrderProduct {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	private Long orderPrice;
+
+	private Long quantity;
+
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "product_id")
 	private Product product;
 
@@ -30,16 +33,13 @@ public class OrderProduct {
 	@JoinColumn(name = "order_id")
 	private Order order;
 
-	private long orderPrice;
-	private long quantity;
-
-	public static OrderProduct create(Order order, Product product, long quantity) {
+	public static OrderProduct create(Order order, Product product, Long quantity) {
 		OrderProduct orderProduct = new OrderProduct();
 
-		orderProduct.order = order;
-		orderProduct.product = product;
 		orderProduct.orderPrice = product.getPrice();
 		orderProduct.quantity = quantity;
+		orderProduct.product = product;
+		orderProduct.order = order;
 
 		product.removeQuantity(quantity);
 

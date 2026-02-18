@@ -1,24 +1,24 @@
 package spring.webmvc.infrastructure.config;
 
-import org.springframework.boot.test.context.TestConfiguration;
 import org.testcontainers.containers.localstack.LocalStackContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
 @Testcontainers
-@TestConfiguration
 public class LocalStackTestContainerConfig {
 
 	@Container
-	public static final LocalStackContainer LOCAL_STACK_CONTAINER =
+	public static final LocalStackContainer localStackContainer =
 		new LocalStackContainer(DockerImageName.parse("localstack/localstack:3.8.1"))
 			.withServices(
-				LocalStackContainer.Service.S3
+				LocalStackContainer.Service.S3,
+				LocalStackContainer.Service.DYNAMODB,
+				LocalStackContainer.Service.SQS
 			)
 			.withEnv("DEFAULT_REGION", "ap-northeast-2");
 
 	static {
-		LOCAL_STACK_CONTAINER.start();
+		localStackContainer.start();
 	}
 }

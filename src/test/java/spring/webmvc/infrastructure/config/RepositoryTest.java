@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Import;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @DataJpaTest
-@Import({MySQLTestContainerConfig.class, DataJpaTestConfig.class})
+@Import({MySQLTestContainerConfig.class, JpaTestConfig.class})
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public @interface RepositoryTest {
 }

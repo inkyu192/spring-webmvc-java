@@ -12,15 +12,23 @@ import spring.webmvc.infrastructure.crypto.CryptoService;
 @RequiredArgsConstructor
 public class CryptoAttributeConverter implements AttributeConverter<String, String> {
 
-	private final CryptoService hexAESCryptoService;
+	private final CryptoService aesHexCryptoService;
 
 	@Override
-	public String convertToDatabaseColumn(String s) {
-		return hexAESCryptoService.encrypt(s);
+	public String convertToDatabaseColumn(String attribute) {
+		if (attribute == null) {
+			return null;
+		}
+
+		return aesHexCryptoService.encrypt(attribute);
 	}
 
 	@Override
-	public String convertToEntityAttribute(String s) {
-		return hexAESCryptoService.decrypt(s);
+	public String convertToEntityAttribute(String dbData) {
+		if (dbData == null) {
+			return null;
+		}
+
+		return aesHexCryptoService.decrypt(dbData);
 	}
 }

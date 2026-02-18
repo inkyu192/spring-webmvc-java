@@ -6,12 +6,13 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import spring.webmvc.application.exception.DuplicateRequestException;
-import spring.webmvc.domain.repository.RequestLockCacheRepository;
+import spring.webmvc.domain.repository.cache.RequestLockCacheRepository;
+import spring.webmvc.infrastructure.exception.DuplicateRequestException;
 
 @Aspect
 @Component
@@ -31,11 +32,15 @@ public class RequestLockAspect {
 		String uri = httpServletRequest.getRequestURI();
 		String method = httpServletRequest.getMethod();
 
-		Boolean isSuccess = requestLockCacheRepository.tryLock(
-			method,
-			uri,
-			objectMapper.writeValueAsString(joinPoint.getArgs())
-		);
+		String hash;
+
+		try {
+			hash = objectMapper.writeValueAsString(joinPoint.getArgs());
+		} catch (JsonProcessingException e) {
+			throw new RuntimeException(e);
+		}
+
+		boolean isSuccess = requestLockCacheRepository.tryLock(method, uri, hash);
 
 		if (!isSuccess) {
 			throw new DuplicateRequestException(method, uri);

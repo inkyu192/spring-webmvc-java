@@ -21,12 +21,12 @@ public class PermissionMenu {
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "menu_id")
-	private Menu menu;
-
-	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "permission_id")
 	private Permission permission;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "menu_id")
+	private Menu menu;
 
 	public static PermissionMenu create(Menu menu, Permission permission) {
 		PermissionMenu permissionMenu = new PermissionMenu();

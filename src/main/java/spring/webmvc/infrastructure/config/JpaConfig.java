@@ -18,7 +18,7 @@ public class JpaConfig {
 
 	@Bean
 	public AuditorAware<Long> auditorProvider() {
-		return () -> Optional.ofNullable(SecurityContextUtil.getMemberIdOrNull());
+		return () -> Optional.ofNullable(SecurityContextUtil.getUserIdOrNull());
 	}
 
 	@Bean

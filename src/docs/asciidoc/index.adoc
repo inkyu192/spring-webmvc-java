@@ -11,192 +11,415 @@
 === 업로드
 
 **HTTP Request**
+
 include::{snippets}/file-upload/http-request.adoc[]
 
 **Request Headers**
+
 include::{snippets}/file-upload/request-headers.adoc[]
 
 **Request Parts**
+
 include::{snippets}/file-upload/request-parts.adoc[]
 
 **HTTP Response**
-include::{snippets}/login/http-response.adoc[]
+
+include::{snippets}/file-upload/http-response.adoc[]
 
 **Response Fields**
-include::{snippets}/login/response-fields.adoc[]
+
+include::{snippets}/file-upload/response-fields.adoc[]
 
 **HTTP Status Codes**
-[cols="1,3", options="header"]
+
+[cols="1,3",options="header"]
 |===
 | Code | Name
-| 201 | <<CREATED>>
-| 400 | <<BAD_REQUEST>>
+| 200 | <<OK>>
 | 401 | <<UNAUTHORIZED>>
+| 502 | <<BAD_GATEWAY>>
 |===
 
 == 인증
 
-=== 로그인
+=== 회원가입
 
 **HTTP Request**
-include::{snippets}/login/http-request.adoc[]
+
+include::{snippets}/sign-up/http-request.adoc[]
 
 **Request Fields**
-include::{snippets}/login/request-fields.adoc[]
+
+include::{snippets}/sign-up/request-fields.adoc[]
 
 **HTTP Response**
-include::{snippets}/login/http-response.adoc[]
+
+include::{snippets}/sign-up/http-response.adoc[]
 
 **Response Fields**
-include::{snippets}/login/response-fields.adoc[]
+
+include::{snippets}/sign-up/response-fields.adoc[]
 
 **HTTP Status Codes**
-[cols="1,3", options="header"]
+
+[cols="1,3",options="header"]
 |===
 | Code | Name
 | 201 | <<CREATED>>
-| 400 | <<BAD_REQUEST>>
+| 409 | <<CONFLICT>>
+|===
+
+=== 로그인
+
+**HTTP Request**
+
+include::{snippets}/sign-in/http-request.adoc[]
+
+**Request Fields**
+
+include::{snippets}/sign-in/request-fields.adoc[]
+
+**HTTP Response**
+
+include::{snippets}/sign-in/http-response.adoc[]
+
+**Response Fields**
+
+include::{snippets}/sign-in/response-fields.adoc[]
+
+**HTTP Status Codes**
+
+[cols="1,3",options="header"]
+|===
+| Code | Name
+| 200 | <<OK>>
 | 401 | <<UNAUTHORIZED>>
+| 404 | <<NOT_FOUND>>
 |===
 
 === 토큰 재발행
 
 **HTTP Request**
+
 include::{snippets}/token-refresh/http-request.adoc[]
 
 **Request Fields**
+
 include::{snippets}/token-refresh/request-fields.adoc[]
 
 **HTTP Response**
+
 include::{snippets}/token-refresh/http-response.adoc[]
 
 **Response Fields**
+
 include::{snippets}/token-refresh/response-fields.adoc[]
 
 **HTTP Status Codes**
-[cols="1,3", options="header"]
+
+[cols="1,3",options="header"]
 |===
 | Code | Name
-| 201 | <<CREATED>>
-| 400 | <<BAD_REQUEST>>
+| 200 | <<OK>>
 | 401 | <<UNAUTHORIZED>>
 | 404 | <<NOT_FOUND>>
 |===
 
-== 회원
-
-=== 생성
+=== 회원가입 인증 요청
 
 **HTTP Request**
-include::{snippets}/member-create/http-request.adoc[]
+
+include::{snippets}/join-verify-request/http-request.adoc[]
 
 **Request Fields**
-include::{snippets}/member-create/request-fields.adoc[]
+
+include::{snippets}/join-verify-request/request-fields.adoc[]
 
 **HTTP Response**
-include::{snippets}/member-create/http-response.adoc[]
 
-**Response Fields**
-include::{snippets}/member-create/response-fields.adoc[]
+include::{snippets}/join-verify-request/http-response.adoc[]
 
 **HTTP Status Codes**
-[cols="1,3", options="header"]
+
+[cols="1,3",options="header"]
 |===
 | Code | Name
-| 201 | <<CREATED>>
-| 400 | <<BAD_REQUEST>>
+| 204 | <<NO_CONTENT>>
 |===
 
-=== 조회
+=== 회원가입 인증 확인
 
 **HTTP Request**
-include::{snippets}/member-get/http-request.adoc[]
 
-**Request Headers**
-include::{snippets}/member-get/request-headers.adoc[]
-
-**HTTP Response**
-include::{snippets}/member-get/http-response.adoc[]
-
-**Response Fields**
-include::{snippets}/member-get/response-fields.adoc[]
-
-**HTTP Status Codes**
-[cols="1,3", options="header"]
-|===
-| Code | Name
-| 200 | <<OK>>
-| 401 | <<BAD_REQUEST>>
-|===
-
-=== 수정
-
-**HTTP Request**
-include::{snippets}/member-update/http-request.adoc[]
-
-**Request Headers**
-include::{snippets}/member-update/request-headers.adoc[]
+include::{snippets}/join-verify-confirm/http-request.adoc[]
 
 **Request Fields**
-include::{snippets}/member-update/request-fields.adoc[]
+
+include::{snippets}/join-verify-confirm/request-fields.adoc[]
 
 **HTTP Response**
-include::{snippets}/member-update/http-response.adoc[]
 
-**Response Fields**
-include::{snippets}/member-update/response-fields.adoc[]
+include::{snippets}/join-verify-confirm/http-response.adoc[]
 
 **HTTP Status Codes**
-[cols="1,3", options="header"]
+
+[cols="1,3",options="header"]
 |===
 | Code | Name
-| 200 | <<OK>>
-| 400 | <<BAD_REQUEST>>
+| 204 | <<NO_CONTENT>>
 | 401 | <<UNAUTHORIZED>>
 | 404 | <<NOT_FOUND>>
 |===
 
-=== 삭제
+=== 비밀번호 재설정 요청
 
 **HTTP Request**
-include::{snippets}/member-delete/http-request.adoc[]
 
-**Request Headers**
-include::{snippets}/member-delete/request-headers.adoc[]
+include::{snippets}/password-reset-request/http-request.adoc[]
+
+**Request Fields**
+
+include::{snippets}/password-reset-request/request-fields.adoc[]
 
 **HTTP Response**
-include::{snippets}/member-delete/http-response.adoc[]
+
+include::{snippets}/password-reset-request/http-response.adoc[]
 
 **HTTP Status Codes**
-[cols="1,3", options="header"]
+
+[cols="1,3",options="header"]
+|===
+| Code | Name
+| 204 | <<NO_CONTENT>>
+| 404 | <<NOT_FOUND>>
+|===
+
+=== 비밀번호 재설정 확인
+
+**HTTP Request**
+
+include::{snippets}/password-reset-confirm/http-request.adoc[]
+
+**Request Fields**
+
+include::{snippets}/password-reset-confirm/request-fields.adoc[]
+
+**HTTP Response**
+
+include::{snippets}/password-reset-confirm/http-response.adoc[]
+
+**HTTP Status Codes**
+
+[cols="1,3",options="header"]
+|===
+| Code | Name
+| 204 | <<NO_CONTENT>>
+| 401 | <<UNAUTHORIZED>>
+| 404 | <<NOT_FOUND>>
+|===
+
+== 메뉴
+
+=== 목록 조회
+
+**HTTP Request**
+
+include::{snippets}/menu-list/http-request.adoc[]
+
+**Request Headers**
+
+include::{snippets}/menu-list/request-headers.adoc[]
+
+**HTTP Response**
+
+include::{snippets}/menu-list/http-response.adoc[]
+
+**Response Fields**
+
+include::{snippets}/menu-list/response-fields.adoc[]
+
+**HTTP Status Codes**
+
+[cols="1,3",options="header"]
 |===
 | Code | Name
 | 200 | <<OK>>
 | 401 | <<UNAUTHORIZED>>
+|===
+
+== 사용자
+
+=== 제휴사
+
+==== 목록 조회
+
+**HTTP Request**
+
+include::{snippets}/partner-user-list/http-request.adoc[]
+
+**Request Headers**
+
+include::{snippets}/partner-user-list/request-headers.adoc[]
+
+**Query Parameters**
+
+include::{snippets}/partner-user-list/query-parameters.adoc[]
+
+**HTTP Response**
+
+include::{snippets}/partner-user-list/http-response.adoc[]
+
+**Response Fields**
+
+include::{snippets}/partner-user-list/response-fields.adoc[]
+
+**HTTP Status Codes**
+
+[cols="1,3",options="header"]
+|===
+| Code | Name
+| 200 | <<OK>>
+| 401 | <<UNAUTHORIZED>>
+| 403 | <<FORBIDDEN>>
+|===
+
+==== 상세 조회
+
+**HTTP Request**
+
+include::{snippets}/partner-user-detail/http-request.adoc[]
+
+**Request Headers**
+
+include::{snippets}/partner-user-detail/request-headers.adoc[]
+
+**Path Parameters**
+
+include::{snippets}/partner-user-detail/path-parameters.adoc[]
+
+**HTTP Response**
+
+include::{snippets}/partner-user-detail/http-response.adoc[]
+
+**Response Fields**
+
+include::{snippets}/partner-user-detail/response-fields.adoc[]
+
+**HTTP Status Codes**
+
+[cols="1,3",options="header"]
+|===
+| Code | Name
+| 200 | <<OK>>
+| 401 | <<UNAUTHORIZED>>
+| 403 | <<FORBIDDEN>>
 | 404 | <<NOT_FOUND>>
 |===
 
 == 상품
 
-=== 목록 조회
+=== 고객
+
+==== 목록 조회
 
 **HTTP Request**
-include::{snippets}/product-list/http-request.adoc[]
 
-**Request Headers**
-include::{snippets}/product-list/request-headers.adoc[]
+include::{snippets}/customer-product-list/http-request.adoc[]
 
 **Query Parameters**
-include::{snippets}/product-list/query-parameters.adoc[]
+
+include::{snippets}/customer-product-list/query-parameters.adoc[]
 
 **HTTP Response**
-include::{snippets}/product-list/http-response.adoc[]
+
+include::{snippets}/customer-product-list/http-response.adoc[]
 
 **Response Fields**
-include::{snippets}/product-list/response-fields.adoc[]
+
+include::{snippets}/customer-product-list/response-fields.adoc[]
 
 **HTTP Status Codes**
-[cols="1,3", options="header"]
+
+[cols="1,3",options="header"]
+|===
+| Code | Name
+| 200 | <<OK>>
+|===
+
+==== 상세 조회
+
+===== 교통
+
+**HTTP Request**
+
+include::{snippets}/customer-transport-detail/http-request.adoc[]
+
+**Path Parameters**
+
+include::{snippets}/customer-transport-detail/path-parameters.adoc[]
+
+**HTTP Response**
+
+include::{snippets}/customer-transport-detail/http-response.adoc[]
+
+**Response Fields**
+
+include::{snippets}/customer-transport-detail/response-fields.adoc[]
+
+===== 숙박
+
+**HTTP Request**
+
+include::{snippets}/customer-accommodation-detail/http-request.adoc[]
+
+**Path Parameters**
+
+include::{snippets}/customer-accommodation-detail/path-parameters.adoc[]
+
+**HTTP Response**
+
+include::{snippets}/customer-accommodation-detail/http-response.adoc[]
+
+**Response Fields**
+
+include::{snippets}/customer-accommodation-detail/response-fields.adoc[]
+
+**HTTP Status Codes**
+
+[cols="1,3",options="header"]
+|===
+| Code | Name
+| 200 | <<OK>>
+| 404 | <<NOT_FOUND>>
+|===
+
+=== 제휴사
+
+==== 목록 조회
+
+**HTTP Request**
+
+include::{snippets}/partner-product-list/http-request.adoc[]
+
+**Request Headers**
+
+include::{snippets}/partner-product-list/request-headers.adoc[]
+
+**Query Parameters**
+
+include::{snippets}/partner-product-list/query-parameters.adoc[]
+
+**HTTP Response**
+
+include::{snippets}/partner-product-list/http-response.adoc[]
+
+**Response Fields**
+
+include::{snippets}/partner-product-list/response-fields.adoc[]
+
+**HTTP Status Codes**
+
+[cols="1,3",options="header"]
 |===
 | Code | Name
 | 200 | <<OK>>
@@ -204,70 +427,55 @@ include::{snippets}/product-list/response-fields.adoc[]
 | 403 | <<FORBIDDEN>>
 |===
 
-=== 상세 조회
+==== 상세 조회
 
-==== 티켓
-
-**HTTP Request**
-include::{snippets}/ticket-get/http-request.adoc[]
-
-**Request Headers**
-include::{snippets}/ticket-get/request-headers.adoc[]
-
-**Path Parameters**
-include::{snippets}/ticket-get/path-parameters.adoc[]
-
-**Query Parameters**
-include::{snippets}/ticket-get/query-parameters.adoc[]
-
-**HTTP Response**
-include::{snippets}/ticket-get/http-response.adoc[]
-
-**Response Fields**
-include::{snippets}/ticket-get/response-fields.adoc[]
-
-==== 숙박
+===== 교통
 
 **HTTP Request**
-include::{snippets}/accommodation-get/http-request.adoc[]
+
+include::{snippets}/partner-transport-detail/http-request.adoc[]
 
 **Request Headers**
-include::{snippets}/accommodation-get/request-headers.adoc[]
+
+include::{snippets}/partner-transport-detail/request-headers.adoc[]
 
 **Path Parameters**
-include::{snippets}/accommodation-get/path-parameters.adoc[]
 
-**Query Parameters**
-include::{snippets}/accommodation-get/query-parameters.adoc[]
+include::{snippets}/partner-transport-detail/path-parameters.adoc[]
 
 **HTTP Response**
-include::{snippets}/accommodation-get/http-response.adoc[]
+
+include::{snippets}/partner-transport-detail/http-response.adoc[]
 
 **Response Fields**
-include::{snippets}/accommodation-get/response-fields.adoc[]
 
-==== 항공권
+include::{snippets}/partner-transport-detail/response-fields.adoc[]
+
+===== 숙박
 
 **HTTP Request**
-include::{snippets}/flight-get/http-request.adoc[]
+
+include::{snippets}/partner-accommodation-detail/http-request.adoc[]
 
 **Request Headers**
-include::{snippets}/flight-get/request-headers.adoc[]
+
+include::{snippets}/partner-accommodation-detail/request-headers.adoc[]
 
 **Path Parameters**
-include::{snippets}/flight-get/path-parameters.adoc[]
 
-**Query Parameters**
-include::{snippets}/flight-get/query-parameters.adoc[]
+include::{snippets}/partner-accommodation-detail/path-parameters.adoc[]
 
 **HTTP Response**
-include::{snippets}/flight-get/http-response.adoc[]
+
+include::{snippets}/partner-accommodation-detail/http-response.adoc[]
 
 **Response Fields**
-include::{snippets}/flight-get/response-fields.adoc[]
+
+include::{snippets}/partner-accommodation-detail/response-fields.adoc[]
 
 **HTTP Status Codes**
-[cols="1,3", options="header"]
+
+[cols="1,3",options="header"]
 |===
 | Code | Name
 | 200 | <<OK>>
@@ -276,27 +484,55 @@ include::{snippets}/flight-get/response-fields.adoc[]
 | 404 | <<NOT_FOUND>>
 |===
 
-=== 생성
+==== 생성
 
-==== 티켓
+===== 교통
 
 **HTTP Request**
-include::{snippets}/ticket-create/http-request.adoc[]
+
+include::{snippets}/partner-transport-create/http-request.adoc[]
 
 **Request Headers**
-include::{snippets}/ticket-create/request-headers.adoc[]
+
+include::{snippets}/partner-transport-create/request-headers.adoc[]
 
 **Request Fields**
-include::{snippets}/ticket-create/request-fields.adoc[]
+
+include::{snippets}/partner-transport-create/request-fields.adoc[]
 
 **HTTP Response**
-include::{snippets}/ticket-create/http-response.adoc[]
+
+include::{snippets}/partner-transport-create/http-response.adoc[]
 
 **Response Fields**
-include::{snippets}/ticket-create/response-fields.adoc[]
+
+include::{snippets}/partner-transport-create/response-fields.adoc[]
+
+===== 숙박
+
+**HTTP Request**
+
+include::{snippets}/partner-accommodation-create/http-request.adoc[]
+
+**Request Headers**
+
+include::{snippets}/partner-accommodation-create/request-headers.adoc[]
+
+**Request Fields**
+
+include::{snippets}/partner-accommodation-create/request-fields.adoc[]
+
+**HTTP Response**
+
+include::{snippets}/partner-accommodation-create/http-response.adoc[]
+
+**Response Fields**
+
+include::{snippets}/partner-accommodation-create/response-fields.adoc[]
 
 **HTTP Status Codes**
-[cols="1,3", options="header"]
+
+[cols="1,3",options="header"]
 |===
 | Code | Name
 | 201 | <<CREATED>>
@@ -304,216 +540,97 @@ include::{snippets}/ticket-create/response-fields.adoc[]
 | 403 | <<FORBIDDEN>>
 |===
 
-==== 숙박
+==== 수정
+
+===== 교통
 
 **HTTP Request**
-include::{snippets}/accommodation-create/http-request.adoc[]
+
+include::{snippets}/partner-transport-replace/http-request.adoc[]
 
 **Request Headers**
-include::{snippets}/accommodation-create/request-headers.adoc[]
+
+include::{snippets}/partner-transport-replace/request-headers.adoc[]
 
 **Request Fields**
-include::{snippets}/accommodation-create/request-fields.adoc[]
+
+include::{snippets}/partner-transport-replace/request-fields.adoc[]
 
 **HTTP Response**
-include::{snippets}/accommodation-create/http-response.adoc[]
+
+include::{snippets}/partner-transport-replace/http-response.adoc[]
 
 **Response Fields**
-include::{snippets}/accommodation-create/response-fields.adoc[]
 
-**HTTP Status Codes**
-[cols="1,3", options="header"]
-|===
-| Code | Name
-| 201 | <<CREATED>>
-| 401 | <<UNAUTHORIZED>>
-| 403 | <<FORBIDDEN>>
-|===
+include::{snippets}/partner-transport-replace/response-fields.adoc[]
 
-==== 항공권
+===== 숙박
 
 **HTTP Request**
-include::{snippets}/flight-create/http-request.adoc[]
+
+include::{snippets}/partner-accommodation-replace/http-request.adoc[]
 
 **Request Headers**
-include::{snippets}/flight-create/request-headers.adoc[]
+
+include::{snippets}/partner-accommodation-replace/request-headers.adoc[]
 
 **Request Fields**
-include::{snippets}/flight-create/request-fields.adoc[]
+
+include::{snippets}/partner-accommodation-replace/request-fields.adoc[]
 
 **HTTP Response**
-include::{snippets}/flight-create/http-response.adoc[]
+
+include::{snippets}/partner-accommodation-replace/http-response.adoc[]
 
 **Response Fields**
-include::{snippets}/flight-create/response-fields.adoc[]
+
+include::{snippets}/partner-accommodation-replace/response-fields.adoc[]
 
 **HTTP Status Codes**
-[cols="1,3", options="header"]
-|===
-| Code | Name
-| 201 | <<CREATED>>
-| 401 | <<UNAUTHORIZED>>
-| 403 | <<FORBIDDEN>>
-|===
 
-=== 수정
-
-==== 티켓
-
-**HTTP Request**
-include::{snippets}/ticket-update/http-request.adoc[]
-
-**Request Headers**
-include::{snippets}/ticket-update/request-headers.adoc[]
-
-**Path Parameters**
-include::{snippets}/ticket-update/path-parameters.adoc[]
-
-**Request Fields**
-include::{snippets}/ticket-update/request-fields.adoc[]
-
-**HTTP Response**
-include::{snippets}/ticket-update/http-response.adoc[]
-
-**Response Fields**
-include::{snippets}/ticket-update/response-fields.adoc[]
-
-**HTTP Status Codes**
-[cols="1,3", options="header"]
+[cols="1,3",options="header"]
 |===
 | Code | Name
 | 200 | <<OK>>
-| 201 | <<CREATED>>
-| 401 | <<UNAUTHORIZED>>
-| 403 | <<FORBIDDEN>>
-|===
-
-==== 숙박
-
-**HTTP Request**
-include::{snippets}/accommodation-update/http-request.adoc[]
-
-**Request Headers**
-include::{snippets}/accommodation-update/request-headers.adoc[]
-
-**Path Parameters**
-include::{snippets}/accommodation-update/path-parameters.adoc[]
-
-**Request Fields**
-include::{snippets}/accommodation-update/request-fields.adoc[]
-
-**HTTP Response**
-include::{snippets}/accommodation-update/http-response.adoc[]
-
-**Response Fields**
-include::{snippets}/accommodation-update/response-fields.adoc[]
-
-**HTTP Status Codes**
-[cols="1,3", options="header"]
-|===
-| Code | Name
-| 200 | <<OK>>
-| 201 | <<CREATED>>
-| 401 | <<UNAUTHORIZED>>
-| 403 | <<FORBIDDEN>>
-|===
-
-==== 항공권
-
-**HTTP Request**
-include::{snippets}/flight-update/http-request.adoc[]
-
-**Request Headers**
-include::{snippets}/flight-update/request-headers.adoc[]
-
-**Path Parameters**
-include::{snippets}/flight-update/path-parameters.adoc[]
-
-**Request Fields**
-include::{snippets}/flight-update/request-fields.adoc[]
-
-**HTTP Response**
-include::{snippets}/flight-update/http-response.adoc[]
-
-**Response Fields**
-include::{snippets}/flight-update/response-fields.adoc[]
-
-**HTTP Status Codes**
-[cols="1,3", options="header"]
-|===
-| Code | Name
-| 200 | <<OK>>
-| 201 | <<CREATED>>
-| 401 | <<UNAUTHORIZED>>
-| 403 | <<FORBIDDEN>>
-|===
-
-=== 삭제
-
-==== 티켓
-
-**HTTP Request**
-include::{snippets}/ticket-delete/http-request.adoc[]
-
-**Request Headers**
-include::{snippets}/ticket-delete/request-headers.adoc[]
-
-**Path Parameters**
-include::{snippets}/ticket-delete/path-parameters.adoc[]
-
-**HTTP Response**
-include::{snippets}/ticket-delete/http-response.adoc[]
-
-**HTTP Status Codes**
-[cols="1,3", options="header"]
-|===
-| Code | Name
-| 204 | <<NO_CONTENT>>
 | 401 | <<UNAUTHORIZED>>
 | 403 | <<FORBIDDEN>>
 | 404 | <<NOT_FOUND>>
+| 422 | <<UNPROCESSABLE_ENTITY>>
 |===
 
-==== 숙박
+==== 삭제
+
+===== 교통
 
 **HTTP Request**
-include::{snippets}/accommodation-delete/http-request.adoc[]
+
+include::{snippets}/partner-transport-delete/http-request.adoc[]
 
 **Request Headers**
-include::{snippets}/accommodation-delete/request-headers.adoc[]
 
-**Path Parameters**
-include::{snippets}/accommodation-delete/path-parameters.adoc[]
+include::{snippets}/partner-transport-delete/request-headers.adoc[]
 
 **HTTP Response**
-include::{snippets}/accommodation-delete/http-response.adoc[]
 
-**HTTP Status Codes**
-[cols="1,3", options="header"]
-|===
-| Code | Name
-| 204 | <<NO_CONTENT>>
-| 401 | <<UNAUTHORIZED>>
-| 403 | <<FORBIDDEN>>
-| 404 | <<NOT_FOUND>>
-|===
+include::{snippets}/partner-transport-delete/http-response.adoc[]
 
-==== 항공권
+===== 숙박
 
 **HTTP Request**
-include::{snippets}/flight-delete/http-request.adoc[]
+
+include::{snippets}/partner-accommodation-delete/http-request.adoc[]
 
 **Request Headers**
-include::{snippets}/flight-delete/request-headers.adoc[]
 
-**Path Parameters**
-include::{snippets}/flight-delete/path-parameters.adoc[]
+include::{snippets}/partner-accommodation-delete/request-headers.adoc[]
 
 **HTTP Response**
-include::{snippets}/flight-delete/http-response.adoc[]
+
+include::{snippets}/partner-accommodation-delete/http-response.adoc[]
 
 **HTTP Status Codes**
-[cols="1,3", options="header"]
+
+[cols="1,3",options="header"]
 |===
 | Code | Name
 | 204 | <<NO_CONTENT>>
@@ -524,88 +641,258 @@ include::{snippets}/flight-delete/http-response.adoc[]
 
 == 큐레이션
 
-=== 생성
+=== 고객
+
+==== 목록 조회
 
 **HTTP Request**
-include::{snippets}/curation-create/http-request.adoc[]
 
-**Request Headers**
-include::{snippets}/curation-create/request-headers.adoc[]
+include::{snippets}/customer-curation-list/http-request.adoc[]
 
-**Request Fields**
-include::{snippets}/curation-create/request-fields.adoc[]
+**Query Parameters**
+
+include::{snippets}/customer-curation-list/query-parameters.adoc[]
 
 **HTTP Response**
-include::{snippets}/curation-create/http-response.adoc[]
+
+include::{snippets}/customer-curation-list/http-response.adoc[]
 
 **Response Fields**
-include::{snippets}/curation-create/response-fields.adoc[]
+
+include::{snippets}/customer-curation-list/response-fields.adoc[]
 
 **HTTP Status Codes**
-[cols="1,3", options="header"]
+
+[cols="1,3",options="header"]
+|===
+| Code | Name
+| 200 | <<OK>>
+|===
+
+==== 상세 조회
+
+**HTTP Request**
+
+include::{snippets}/customer-curation-product/http-request.adoc[]
+
+**Path Parameters**
+
+include::{snippets}/customer-curation-product/path-parameters.adoc[]
+
+**Query Parameters**
+
+include::{snippets}/customer-curation-product/query-parameters.adoc[]
+
+**HTTP Response**
+
+include::{snippets}/customer-curation-product/http-response.adoc[]
+
+**Response Fields**
+
+include::{snippets}/customer-curation-product/response-fields.adoc[]
+
+**HTTP Status Codes**
+
+[cols="1,3",options="header"]
+|===
+| Code | Name
+| 200 | <<OK>>
+|===
+
+=== 제휴사
+
+==== 생성
+
+**HTTP Request**
+
+include::{snippets}/partner-curation-create/http-request.adoc[]
+
+**Request Headers**
+
+include::{snippets}/partner-curation-create/request-headers.adoc[]
+
+**Request Fields**
+
+include::{snippets}/partner-curation-create/request-fields.adoc[]
+
+**HTTP Response**
+
+include::{snippets}/partner-curation-create/http-response.adoc[]
+
+**Response Fields**
+
+include::{snippets}/partner-curation-create/response-fields.adoc[]
+
+**HTTP Status Codes**
+
+[cols="1,3",options="header"]
 |===
 | Code | Name
 | 201 | <<CREATED>>
-| 400 | <<BAD_REQUEST>>
+| 401 | <<UNAUTHORIZED>>
+| 403 | <<FORBIDDEN>>
 |===
 
-=== 목록 조회
+==== 목록 조회
 
 **HTTP Request**
-include::{snippets}/curation-list/http-request.adoc[]
+
+include::{snippets}/partner-curation-list/http-request.adoc[]
+
+**Request Headers**
+
+include::{snippets}/partner-curation-list/request-headers.adoc[]
+
+**Query Parameters**
+
+include::{snippets}/partner-curation-list/query-parameters.adoc[]
 
 **HTTP Response**
-include::{snippets}/curation-list/http-response.adoc[]
+
+include::{snippets}/partner-curation-list/http-response.adoc[]
 
 **Response Fields**
-include::{snippets}/curation-list/response-fields.adoc[]
+
+include::{snippets}/partner-curation-list/response-fields.adoc[]
 
 **HTTP Status Codes**
-[cols="1,3", options="header"]
+
+[cols="1,3",options="header"]
 |===
 | Code | Name
 | 200 | <<OK>>
+| 401 | <<UNAUTHORIZED>>
+| 403 | <<FORBIDDEN>>
 |===
 
-=== 상품 조회
+==== 상세 조회
 
 **HTTP Request**
-include::{snippets}/curation-product/http-request.adoc[]
+
+include::{snippets}/partner-curation-product/http-request.adoc[]
+
+**Request Headers**
+
+include::{snippets}/partner-curation-product/request-headers.adoc[]
+
+**Path Parameters**
+
+include::{snippets}/partner-curation-product/path-parameters.adoc[]
+
+**Query Parameters**
+
+include::{snippets}/partner-curation-product/query-parameters.adoc[]
 
 **HTTP Response**
-include::{snippets}/curation-product/http-response.adoc[]
+
+include::{snippets}/partner-curation-product/http-response.adoc[]
 
 **Response Fields**
-include::{snippets}/curation-product/response-fields.adoc[]
+
+include::{snippets}/partner-curation-product/response-fields.adoc[]
 
 **HTTP Status Codes**
-[cols="1,3", options="header"]
+
+[cols="1,3",options="header"]
 |===
 | Code | Name
 | 200 | <<OK>>
+| 401 | <<UNAUTHORIZED>>
+| 403 | <<FORBIDDEN>>
 |===
 
 == 주문
 
-=== 생성
+=== 고객
+
+==== 목록 조회
 
 **HTTP Request**
-include::{snippets}/order-create/http-request.adoc[]
+
+include::{snippets}/customer-order-list/http-request.adoc[]
 
 **Request Headers**
-include::{snippets}/order-create/request-headers.adoc[]
 
-**Request Fields**
-include::{snippets}/order-create/request-fields.adoc[]
+include::{snippets}/customer-order-list/request-headers.adoc[]
+
+**Query Parameters**
+
+include::{snippets}/customer-order-list/query-parameters.adoc[]
 
 **HTTP Response**
-include::{snippets}/order-create/http-response.adoc[]
+
+include::{snippets}/customer-order-list/http-response.adoc[]
 
 **Response Fields**
-include::{snippets}/order-create/response-fields.adoc[]
+
+include::{snippets}/customer-order-list/response-fields.adoc[]
 
 **HTTP Status Codes**
-[cols="1,3", options="header"]
+
+[cols="1,3",options="header"]
+|===
+| Code | Name
+| 200 | <<OK>>
+| 401 | <<UNAUTHORIZED>>
+|===
+
+==== 상세 조회
+
+**HTTP Request**
+
+include::{snippets}/customer-order-detail/http-request.adoc[]
+
+**Request Headers**
+
+include::{snippets}/customer-order-detail/request-headers.adoc[]
+
+**Path Parameters**
+
+include::{snippets}/customer-order-detail/path-parameters.adoc[]
+
+**HTTP Response**
+
+include::{snippets}/customer-order-detail/http-response.adoc[]
+
+**Response Fields**
+
+include::{snippets}/customer-order-detail/response-fields.adoc[]
+
+**HTTP Status Codes**
+
+[cols="1,3",options="header"]
+|===
+| Code | Name
+| 200 | <<OK>>
+| 401 | <<UNAUTHORIZED>>
+| 404 | <<NOT_FOUND>>
+|===
+
+==== 생성
+
+**HTTP Request**
+
+include::{snippets}/customer-order-create/http-request.adoc[]
+
+**Request Headers**
+
+include::{snippets}/customer-order-create/request-headers.adoc[]
+
+**Request Fields**
+
+include::{snippets}/customer-order-create/request-fields.adoc[]
+
+**HTTP Response**
+
+include::{snippets}/customer-order-create/http-response.adoc[]
+
+**Response Fields**
+
+include::{snippets}/customer-order-create/response-fields.adoc[]
+
+**HTTP Status Codes**
+
+[cols="1,3",options="header"]
 |===
 | Code | Name
 | 201 | <<CREATED>>
@@ -615,80 +902,140 @@ include::{snippets}/order-create/response-fields.adoc[]
 | 429 | <<TOO_MANY_REQUESTS>>
 |===
 
-=== 목록 조회
+==== 취소
 
 **HTTP Request**
-include::{snippets}/order-list/http-request.adoc[]
+
+include::{snippets}/customer-order-cancel/http-request.adoc[]
 
 **Request Headers**
-include::{snippets}/order-list/request-headers.adoc[]
 
-**Query Parameters**
-include::{snippets}/order-list/query-parameters.adoc[]
-
-**HTTP Response**
-include::{snippets}/order-list/http-response.adoc[]
-
-**Response Fields**
-include::{snippets}/order-list/response-fields.adoc[]
-
-**HTTP Status Codes**
-[cols="1,3", options="header"]
-|===
-| Code | Name
-| 200 | <<OK>>
-| 401 | <<UNAUTHORIZED>>
-|===
-
-=== 상세 조회
-
-**HTTP Request**
-include::{snippets}/order-get/http-request.adoc[]
-
-**Request Headers**
-include::{snippets}/order-get/request-headers.adoc[]
+include::{snippets}/customer-order-cancel/request-headers.adoc[]
 
 **Path Parameters**
-include::{snippets}/order-get/path-parameters.adoc[]
+
+include::{snippets}/customer-order-cancel/path-parameters.adoc[]
 
 **HTTP Response**
-include::{snippets}/order-get/http-response.adoc[]
+
+include::{snippets}/customer-order-cancel/http-response.adoc[]
 
 **Response Fields**
-include::{snippets}/order-get/response-fields.adoc[]
+
+include::{snippets}/customer-order-cancel/response-fields.adoc[]
 
 **HTTP Status Codes**
-[cols="1,3", options="header"]
+
+[cols="1,3",options="header"]
 |===
 | Code | Name
 | 200 | <<OK>>
 | 401 | <<UNAUTHORIZED>>
 | 404 | <<NOT_FOUND>>
+| 422 | <<UNPROCESSABLE_ENTITY>>
 |===
 
-=== 취소
+=== 제휴사
+
+==== 목록 조회
 
 **HTTP Request**
-include::{snippets}/order-cancel/http-request.adoc[]
+
+include::{snippets}/partner-order-list/http-request.adoc[]
 
 **Request Headers**
-include::{snippets}/order-cancel/request-headers.adoc[]
 
-**Path Parameters**
-include::{snippets}/order-cancel/path-parameters.adoc[]
+include::{snippets}/partner-order-list/request-headers.adoc[]
+
+**Query Parameters**
+
+include::{snippets}/partner-order-list/query-parameters.adoc[]
 
 **HTTP Response**
-include::{snippets}/order-cancel/http-response.adoc[]
+
+include::{snippets}/partner-order-list/http-response.adoc[]
 
 **Response Fields**
-include::{snippets}/order-cancel/response-fields.adoc[]
+
+include::{snippets}/partner-order-list/response-fields.adoc[]
 
 **HTTP Status Codes**
-[cols="1,3", options="header"]
+
+[cols="1,3",options="header"]
 |===
 | Code | Name
 | 200 | <<OK>>
 | 401 | <<UNAUTHORIZED>>
+| 403 | <<FORBIDDEN>>
+|===
+
+==== 상세 조회
+
+**HTTP Request**
+
+include::{snippets}/partner-order-detail/http-request.adoc[]
+
+**Request Headers**
+
+include::{snippets}/partner-order-detail/request-headers.adoc[]
+
+**Path Parameters**
+
+include::{snippets}/partner-order-detail/path-parameters.adoc[]
+
+**HTTP Response**
+
+include::{snippets}/partner-order-detail/http-response.adoc[]
+
+**Response Fields**
+
+include::{snippets}/partner-order-detail/response-fields.adoc[]
+
+**HTTP Status Codes**
+
+[cols="1,3",options="header"]
+|===
+| Code | Name
+| 200 | <<OK>>
+| 401 | <<UNAUTHORIZED>>
+| 403 | <<FORBIDDEN>>
+| 404 | <<NOT_FOUND>>
+|===
+
+==== 주문 상태 업데이트
+
+**HTTP Request**
+
+include::{snippets}/partner-order-update-status/http-request.adoc[]
+
+**Request Headers**
+
+include::{snippets}/partner-order-update-status/request-headers.adoc[]
+
+**Path Parameters**
+
+include::{snippets}/partner-order-update-status/path-parameters.adoc[]
+
+**Request Fields**
+
+include::{snippets}/partner-order-update-status/request-fields.adoc[]
+
+**HTTP Response**
+
+include::{snippets}/partner-order-update-status/http-response.adoc[]
+
+**Response Fields**
+
+include::{snippets}/partner-order-update-status/response-fields.adoc[]
+
+**HTTP Status Codes**
+
+[cols="1,3",options="header"]
+|===
+| Code | Name
+| 200 | <<OK>>
+| 401 | <<UNAUTHORIZED>>
+| 403 | <<FORBIDDEN>>
 | 404 | <<NOT_FOUND>>
 | 422 | <<UNPROCESSABLE_ENTITY>>
 |===
@@ -703,16 +1050,16 @@ include::{snippets}/order-cancel/response-fields.adoc[]
   "type": "about:blank",
   "title": "Not Found",
   "status": 404,
-  "detail": "Permission 엔티티를 찾을 수 없습니다. (ID: 1)",
-  "instance": "/members"
+  "detail": "User 엔티티를 찾을 수 없습니다. (ID: 1)",
+  "instance": "/users/1"
 }
 ----
 
 **Response Fields**
 
-[cols="1,3", options="header"]
+[cols="1,3",options="header"]
 |===
-| Path	 | Description
+| Path     | Description
 | type | 에러 타입 URI 또는 식별자 (RFC 7807에 따라 `about:blank`일 수 있음)
 | title | 에러 제목
 | status | HTTP 상태 코드
@@ -722,7 +1069,7 @@ include::{snippets}/order-cancel/response-fields.adoc[]
 
 == HTTP Status Codes
 
-[cols="1,2,5", options="header"]
+[cols="1,2,5",options="header"]
 |===
 | Code | Name | Description
 | [[OK]] 200 | OK | 요청이 성공적으로 처리됨.
@@ -736,4 +1083,5 @@ include::{snippets}/order-cancel/response-fields.adoc[]
 | [[UNPROCESSABLE_ENTITY]] 422 | UNPROCESSABLE_ENTITY | 요청은 문법적으로는 맞지만, 비즈니스 로직상 처리가 불가능한 상태에서 발생합니다.
 | [[TOO_MANY_REQUESTS]] 429 | TOO_MANY_REQUESTS | 클라이언트가 일정 시간 내에 너무 많은 요청을 보낸 경우 발생합니다.
 | [[INTERNAL_SERVER_ERROR]] 500 | INTERNAL_SERVER_ERROR | 서버 내부 오류. 예기치 못한 오류가 발생했을 때 사용됩니다.
+| [[BAD_GATEWAY]] 502 | BAD_GATEWAY | 외부 서비스와의 통신 오류로 인해 요청을 처리하지 못한 경우 발생합니다.
 |===

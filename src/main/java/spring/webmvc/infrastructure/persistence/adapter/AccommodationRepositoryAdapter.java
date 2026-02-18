@@ -16,11 +16,6 @@ public class AccommodationRepositoryAdapter implements AccommodationRepository {
 	private final AccommodationJpaRepository jpaRepository;
 
 	@Override
-	public Optional<Accommodation> findById(Long id) {
-		return jpaRepository.findById(id);
-	}
-
-	@Override
 	public Optional<Accommodation> findByProductId(Long productId) {
 		return jpaRepository.findByProductId(productId);
 	}

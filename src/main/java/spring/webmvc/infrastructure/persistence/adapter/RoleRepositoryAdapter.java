@@ -16,16 +16,6 @@ public class RoleRepositoryAdapter implements RoleRepository {
 	private final RoleJpaRepository jpaRepository;
 
 	@Override
-	public Role save(Role role) {
-		return jpaRepository.save(role);
-	}
-
-	@Override
-	public List<Role> saveAll(Iterable<Role> roles) {
-		return jpaRepository.saveAll(roles);
-	}
-
-	@Override
 	public List<Role> findAllById(Iterable<Long> ids) {
 		return jpaRepository.findAllById(ids);
 	}

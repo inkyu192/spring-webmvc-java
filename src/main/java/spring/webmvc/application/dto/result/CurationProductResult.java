@@ -1,25 +1,29 @@
 package spring.webmvc.application.dto.result;
 
-import spring.webmvc.domain.model.cache.CurationProductCache;
-import spring.webmvc.domain.model.entity.Curation;
+import spring.webmvc.domain.model.entity.CurationProduct;
 import spring.webmvc.domain.model.entity.Product;
-import spring.webmvc.infrastructure.persistence.dto.CursorPage;
 
 public record CurationProductResult(
-	CurationResult curation,
-	CursorPage<ProductResult> productPage
+	Long id,
+	String name,
+	String description,
+	Long price
 ) {
-	public CurationProductResult(Curation curation, CursorPage<Product> productPage) {
-		this(
-			new CurationResult(curation),
-			productPage.map(ProductResult::new)
+	public static CurationProductResult of(CurationProduct curationProduct) {
+		return new CurationProductResult(
+			curationProduct.getProduct().getId(),
+			curationProduct.getProduct().getName(),
+			curationProduct.getProduct().getDescription(),
+			curationProduct.getProduct().getPrice()
 		);
 	}
 
-	public CurationProductResult(CurationProductCache curationProduct) {
-		this(
-			new CurationResult(curationProduct.curation()),
-			curationProduct.productPage().map(ProductResult::new)
+	public static CurationProductResult of(Product product) {
+		return new CurationProductResult(
+			product.getId(),
+			product.getName(),
+			product.getDescription(),
+			product.getPrice()
 		);
 	}
 }

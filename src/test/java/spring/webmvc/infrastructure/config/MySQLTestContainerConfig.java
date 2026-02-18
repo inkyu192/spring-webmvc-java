@@ -2,7 +2,6 @@ package spring.webmvc.infrastructure.config;
 
 import javax.sql.DataSource;
 
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -12,7 +11,6 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 @Testcontainers
-@TestConfiguration
 public class MySQLTestContainerConfig {
 
 	@Container

@@ -2,16 +2,16 @@ package spring.webmvc.presentation.dto.response;
 
 import java.util.List;
 
-import spring.webmvc.application.dto.result.CurationResult;
+import spring.webmvc.application.dto.result.CurationSummaryResult;
 
 public record CurationListResponse(
-	long count,
-	List<CurationResponse> curations
+	Long size,
+	List<CurationSummaryResponse> curations
 ) {
-	public CurationListResponse(List<CurationResult> resultList) {
-		this(
-			resultList.size(),
-			resultList.stream().map(CurationResponse::new).toList()
+	public static CurationListResponse of(List<CurationSummaryResult> results) {
+		return new CurationListResponse(
+			(long)results.size(),
+			results.stream().map(CurationSummaryResponse::of).toList()
 		);
 	}
 }

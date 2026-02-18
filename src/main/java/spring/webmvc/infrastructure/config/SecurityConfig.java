@@ -14,8 +14,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import lombok.SneakyThrows;
-import spring.webmvc.infrastructure.properties.CorsProperties;
+import spring.webmvc.infrastructure.properties.AppProperties;
 import spring.webmvc.infrastructure.security.JwtAuthenticationFilter;
 import spring.webmvc.presentation.exception.handler.AccessDeniedExceptionHandler;
 import spring.webmvc.presentation.exception.handler.AuthenticationExceptionHandler;
@@ -26,15 +25,14 @@ import spring.webmvc.presentation.exception.handler.JwtExceptionHandler;
 public class SecurityConfig {
 
 	@Bean
-	@SneakyThrows
 	public SecurityFilterChain securityFilterChain(
 		HttpSecurity httpSecurity,
-		CorsProperties corsProperties,
+		AppProperties appProperties,
 		AuthenticationExceptionHandler authenticationExceptionHandler,
 		AccessDeniedExceptionHandler accessDeniedExceptionHandler,
 		JwtAuthenticationFilter jwtAuthenticationFilter,
 		JwtExceptionHandler jwtExceptionHandler
-	) {
+	) throws Exception {
 		return httpSecurity
 			.csrf(AbstractHttpConfigurer::disable)
 			.anonymous(AbstractHttpConfigurer::disable)
@@ -42,29 +40,28 @@ public class SecurityConfig {
 			.logout(AbstractHttpConfigurer::disable)
 			.httpBasic(AbstractHttpConfigurer::disable)
 			.formLogin(AbstractHttpConfigurer::disable)
-			.exceptionHandling(httpSecurityExceptionHandlingConfigurer -> {
-				httpSecurityExceptionHandlingConfigurer.authenticationEntryPoint(authenticationExceptionHandler);
-				httpSecurityExceptionHandlingConfigurer.accessDeniedHandler(accessDeniedExceptionHandler);
+			.exceptionHandling(exceptionHandling -> {
+				exceptionHandling.authenticationEntryPoint(authenticationExceptionHandler);
+				exceptionHandling.accessDeniedHandler(accessDeniedExceptionHandler);
 			})
-			.sessionManagement(httpSecuritySessionManagementConfigurer ->
-				httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-			.cors(httpSecurityCorsConfigurer ->
-				httpSecurityCorsConfigurer.configurationSource(createCorsConfig(corsProperties)))
+			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+			.cors(cors -> cors.configurationSource(createCorsConfig(appProperties.cors())))
 			.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
 			.addFilterBefore(jwtExceptionHandler, JwtAuthenticationFilter.class)
 			.build();
 	}
 
-	private CorsConfigurationSource createCorsConfig(CorsProperties corsProperties) {
+	private CorsConfigurationSource createCorsConfig(AppProperties.CorsProperties corsProperties) {
 		CorsConfiguration config = new CorsConfiguration();
-		config.setAllowedOrigins(corsProperties.getAllowedOrigins());
-		config.setAllowedOriginPatterns(corsProperties.getAllowedOriginPatterns());
-		config.setAllowedMethods(corsProperties.getAllowedMethods());
-		config.setAllowedHeaders(corsProperties.getAllowedHeaders());
+		config.setAllowedOrigins(corsProperties.allowedOrigins());
+		config.setAllowedOriginPatterns(corsProperties.allowedOriginPatterns());
+		config.setAllowedMethods(corsProperties.allowedMethods());
+		config.setAllowedHeaders(corsProperties.allowedHeaders());
 		config.setAllowCredentials(true);
 
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", config);
+
 		return source;
 	}
 

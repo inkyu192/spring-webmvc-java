@@ -6,7 +6,7 @@ public record TokenResponse(
 	String accessToken,
 	String refreshToken
 ) {
-	public TokenResponse(TokenResult tokenResult) {
-		this(tokenResult.accessToken(), tokenResult.refreshToken());
+	public static TokenResponse of(TokenResult result) {
+		return new TokenResponse(result.accessToken(), result.refreshToken());
 	}
 }

@@ -22,10 +22,11 @@ public class Role extends BaseTime {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+
 	private String name;
 
 	@OneToMany(mappedBy = "role", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<RolePermission> rolePermissions = new ArrayList<>();
+	private final List<RolePermission> rolePermissions = new ArrayList<>();
 
 	public List<RolePermission> getRolePermissions() {
 		return Collections.unmodifiableList(rolePermissions);
@@ -40,6 +41,8 @@ public class Role extends BaseTime {
 	}
 
 	public void addPermission(Permission permission) {
-		rolePermissions.add(RolePermission.create(this, permission));
+		RolePermission rolePermission = RolePermission.create(this, permission);
+
+		rolePermissions.add(rolePermission);
 	}
 }

@@ -10,14 +10,12 @@ public record MenuResponse(
 	String path,
 	List<MenuResponse> children
 ) {
-	public MenuResponse(MenuResult menuResult) {
-		this(
-			menuResult.id(),
-			menuResult.name(),
-			menuResult.path(),
-			menuResult.children().stream()
-				.map(MenuResponse::new)
-				.toList()
+	public static MenuResponse of(MenuResult result) {
+		return new MenuResponse(
+			result.id(),
+			result.name(),
+			result.path(),
+			result.children().stream().map(MenuResponse::of).toList()
 		);
 	}
 }

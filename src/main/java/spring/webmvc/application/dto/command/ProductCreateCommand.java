@@ -1,15 +1,15 @@
 package spring.webmvc.application.dto.command;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import spring.webmvc.domain.model.enums.Category;
+import spring.webmvc.domain.model.enums.ProductCategory;
+import spring.webmvc.domain.model.vo.ProductExposureAttribute;
 
-@Getter
-@RequiredArgsConstructor
-public class ProductCreateCommand {
-	private final Category category;
-	private final String name;
-	private final String description;
-	private final long price;
-	private final long quantity;
+public record ProductCreateCommand(
+	ProductCategory category,
+	String name,
+	String description,
+	Long price,
+	Long quantity,
+	ProductAttributePutCommand attribute,
+	ProductExposureAttribute exposureAttribute
+) {
 }

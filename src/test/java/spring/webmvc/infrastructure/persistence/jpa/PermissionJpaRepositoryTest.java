@@ -1,9 +1,10 @@
 package spring.webmvc.infrastructure.persistence.jpa;
 
+import static org.assertj.core.api.Assertions.*;
+
 import java.util.List;
 import java.util.Optional;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,63 +15,52 @@ import spring.webmvc.infrastructure.config.RepositoryTest;
 @RepositoryTest
 class PermissionJpaRepositoryTest {
 
-    @Autowired
-    private PermissionJpaRepository permissionJpaRepository;
+	@Autowired
+	private PermissionJpaRepository permissionJpaRepository;
 
-    @Test
-    @DisplayName("save: Permission 저장 후 반환한다")
-    void save() {
-        // Given
-        Permission permission = Permission.create("name");
+	@Test
+	@DisplayName("save: Permission 저장 후 반환한다")
+	void save() {
+		Permission permission = Permission.create("name");
 
-        // When
-        Permission saved = permissionJpaRepository.save(permission);
+		Permission saved = permissionJpaRepository.save(permission);
 
-        // Then
-        Assertions.assertThat(saved.getId()).isNotNull();
-        Assertions.assertThat(saved.getName()).isEqualTo(permission.getName());
-    }
+		assertThat(saved.getId()).isNotNull();
+		assertThat(saved.getName()).isEqualTo(permission.getName());
+	}
 
-    @Test
-    @DisplayName("findById: Permission 반환한다")
-    void findById() {
-        // Given
-        Permission permission = permissionJpaRepository.save(Permission.create("name"));
+	@Test
+	@DisplayName("findById: Permission 반환한다")
+	void findById() {
+		Permission permission = permissionJpaRepository.save(Permission.create("name"));
 
-        // When
-        Optional<Permission> result = permissionJpaRepository.findById(permission.getId());
+		Optional<Permission> result = permissionJpaRepository.findById(permission.getId());
 
-        // Then
-        Assertions.assertThat(result).isPresent();
-        Assertions.assertThat(result.get().getName()).isEqualTo(permission.getName());
-    }
+		assertThat(result).isPresent();
+		assertThat(result.get().getName()).isEqualTo(permission.getName());
+	}
 
-    @Test
-    @DisplayName("findAll: Permission 목록 반환한다")
-    void findAll() {
-        // Given
-        permissionJpaRepository.save(Permission.create("name1"));
-        permissionJpaRepository.save(Permission.create("name2"));
+	@Test
+	@DisplayName("findAll: Permission 목록 반환한다")
+	void findAll() {
+		permissionJpaRepository.save(Permission.create("name1"));
+		permissionJpaRepository.save(Permission.create("name2"));
 
-        // When
-        List<Permission> result = permissionJpaRepository.findAll();
+		List<Permission> result = permissionJpaRepository.findAll();
 
-        // Then
-        Assertions.assertThat(result).hasSize(2);
-    }
+		assertThat(result).hasSize(2);
+	}
 
-    @Test
-    @DisplayName("deleteById: Permission 삭제한다")
-    void deleteById() {
-        // Given
-        Permission permission = permissionJpaRepository.save(Permission.create("name"));
-        Long id = permission.getId();
+	@Test
+	@DisplayName("deleteById: Permission 삭제한다")
+	void deleteById() {
+		Permission permission = permissionJpaRepository.save(Permission.create("name"));
+		Long id = permission.getId();
 
-        // When
-        permissionJpaRepository.deleteById(id);
+		permissionJpaRepository.deleteById(id);
 
-        // Then
-        Optional<Permission> deleted = permissionJpaRepository.findById(id);
-        Assertions.assertThat(deleted).isEmpty();
-    }
+		Optional<Permission> deleted = permissionJpaRepository.findById(id);
+
+		assertThat(deleted).isEmpty();
+	}
 }

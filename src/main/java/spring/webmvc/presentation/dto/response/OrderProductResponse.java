@@ -1,17 +1,19 @@
 package spring.webmvc.presentation.dto.response;
 
-import spring.webmvc.domain.model.entity.OrderProduct;
+import spring.webmvc.application.dto.result.OrderProductResult;
 
 public record OrderProductResponse(
+	Long id,
 	String name,
-	long price,
-	long quantity
+	Long price,
+	Long quantity
 ) {
-	public OrderProductResponse(OrderProduct orderProduct) {
-		this(
-			orderProduct.getProduct().getName(),
-			orderProduct.getOrderPrice(),
-			orderProduct.getQuantity()
+	public static OrderProductResponse from(OrderProductResult result) {
+		return new OrderProductResponse(
+			result.id(),
+			result.name(),
+			result.price(),
+			result.quantity()
 		);
 	}
 }

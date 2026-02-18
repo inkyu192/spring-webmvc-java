@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>이메일 인증</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f5f5;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            max-width: 450px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        h1 {
+            color: #2c3e50;
+            font-size: 28px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 14px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #34495e;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        input[type="password"] {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .password-requirements {
+            background: #f8f9fa;
+            border-left: 3px solid #667eea;
+            padding: 12px 16px;
+            margin-top: 20px;
+            border-radius: 4px;
+        }
+
+        .password-requirements h3 {
+            font-size: 13px;
+            color: #495057;
+            margin-bottom: 8px;
+        }
+
+        .password-requirements ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .password-requirements li {
+            font-size: 12px;
+            color: #6c757d;
+            padding: 3px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .password-requirements li:before {
+            content: "•";
+            position: absolute;
+            left: 8px;
+            color: #667eea;
+        }
+
+        .error-message {
+            background: #fee;
+            border-left: 3px solid #dc3545;
+            color: #c82333;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        button:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+
+
+        #loading {
+            display: none;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div id="verifyForm">
+        <h1>이메일 인증</h1>
+        <p class="subtitle">잠시만 기다려주세요...</p>
+
+        <div id="errorMessage" class="error-message" style="display: none;"></div>
+
+        <form id="joinVerifyForm" style="display: none;">
+            <input type="hidden" id="token" th:value="${token}">
+
+            <button type="submit" id="submitButton">
+                <span id="buttonText">인증 완료</span>
+                <span id="loading"><span class="spinner"></span>처리 중...</span>
+            </button>
+        </form>
+    </div>
+
+</div>
+
+<script>
+    // 페이지 로드 시 자동으로 인증 확인 API 호출
+    window.addEventListener('DOMContentLoaded', function () {
+        const token = document.getElementById('token').value;
+        const errorMessage = document.getElementById('errorMessage');
+
+        // API 호출
+        fetch('/auth/join/verify/confirm', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                token: token
+            })
+        })
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = '/auth/join/verify/success';
+                } else {
+                    return response.json().then(data => {
+                        throw new Error(data.message || '이메일 인증에 실패했습니다.');
+                    });
+                }
+            })
+            .catch(error => {
+                errorMessage.textContent = error.message || '오류가 발생했습니다. 다시 시도해주세요.';
+                errorMessage.style.display = 'block';
+            });
+    });
+</script>
+</body>
+</html>

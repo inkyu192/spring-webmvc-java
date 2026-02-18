@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -21,11 +22,11 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import spring.webmvc.domain.model.enums.OrderStatus;
-import spring.webmvc.presentation.exception.OrderCancelNotAllowedException;
+import spring.webmvc.infrastructure.exception.InvalidEntityStatusException;
 
 @Entity
-@Getter
 @Table(name = "orders")
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Order extends BaseTime {
 
@@ -33,42 +34,67 @@ public class Order extends BaseTime {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "member_id")
-	private Member member;
-
-	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<OrderProduct> orderProducts = new ArrayList<>();
-
 	private Instant orderedAt;
 
 	@Enumerated(EnumType.STRING)
 	private OrderStatus status;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_id")
+	private User user;
+
+	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+	private final List<OrderProduct> orderProducts = new ArrayList<>();
+
 	public List<OrderProduct> getOrderProducts() {
 		return Collections.unmodifiableList(orderProducts);
 	}
 
-	public static Order create(Member member) {
+	public static Order create(User user) {
 		Order order = new Order();
 
 		order.orderedAt = Instant.now();
 		order.status = OrderStatus.ORDER;
-		order.member = member;
+		order.user = user;
 
 		return order;
 	}
 
-	public void addProduct(Product product, int quantity) {
-		orderProducts.add(OrderProduct.create(this, product, quantity));
+	public void addProduct(Product product, Long quantity) {
+		OrderProduct orderProduct = OrderProduct.create(this, product, quantity);
+
+		orderProducts.add(orderProduct);
 	}
 
 	public void cancel() {
 		if (status == OrderStatus.CONFIRM) {
-			throw new OrderCancelNotAllowedException(id);
+			throw new InvalidEntityStatusException(
+				Order.class,
+				Objects.requireNonNull(id),
+				status.getDescription(),
+				OrderStatus.CANCEL.getDescription()
+			);
 		}
 
 		status = OrderStatus.CANCEL;
+
 		orderProducts.forEach(OrderProduct::cancel);
+	}
+
+	public void updateStatus(OrderStatus status) {
+		if (this.status == OrderStatus.CONFIRM) {
+			throw new InvalidEntityStatusException(
+				Order.class,
+				Objects.requireNonNull(id),
+				this.status.getDescription(),
+				status.getDescription()
+			);
+		}
+
+		this.status = status;
+
+		if (status == OrderStatus.CANCEL) {
+			orderProducts.forEach(OrderProduct::cancel);
+		}
 	}
 }

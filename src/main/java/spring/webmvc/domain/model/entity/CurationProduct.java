@@ -28,11 +28,14 @@ public class CurationProduct {
 	@JoinColumn(name = "product_id")
 	private Product product;
 
-	public static CurationProduct create(Curation curation, Product product) {
+	private Long sortOrder;
+
+	public static CurationProduct create(Curation curation, Product product, Long sortOrder) {
 		CurationProduct curationProduct = new CurationProduct();
 
 		curationProduct.curation = curation;
 		curationProduct.product = product;
+		curationProduct.sortOrder = sortOrder;
 
 		return curationProduct;
 	}

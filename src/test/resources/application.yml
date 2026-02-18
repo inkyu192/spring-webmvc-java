@@ -11,3 +11,8 @@ logging:
   level:
     org.hibernate.SQL: DEBUG
     org.hibernate.orm.jdbc.bind: TRACE
+
+app:
+  aws:
+    cloudfront:
+      domain: http://localhost:4566/my-bucket

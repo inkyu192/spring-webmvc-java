@@ -5,7 +5,6 @@ import java.util.stream.Collectors;
 
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 public final class SecurityContextUtil {
@@ -13,9 +12,8 @@ public final class SecurityContextUtil {
 	private SecurityContextUtil() {
 	}
 
-	public static Long getMemberId() {
+	public static Long getUserId() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
 		if (authentication == null) {
 			throw new BadCredentialsException("인증 정보가 없습니다.");
 		}
@@ -31,7 +29,7 @@ public final class SecurityContextUtil {
 		}
 	}
 
-	public static Long getMemberIdOrNull() {
+	public static Long getUserIdOrNull() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
 		if (authentication == null || !authentication.isAuthenticated()) {
@@ -46,8 +44,17 @@ public final class SecurityContextUtil {
 	}
 
 	public static Set<String> getAuthorities() {
-		return SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
-			.map(GrantedAuthority::getAuthority)
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication == null) {
+			throw new BadCredentialsException("인증 정보가 없습니다.");
+		}
+
+		if (!authentication.isAuthenticated()) {
+			throw new BadCredentialsException("인증되지 않은 사용자입니다.");
+		}
+
+		return authentication.getAuthorities().stream()
+			.map(Object::toString)
 			.collect(Collectors.toSet());
 	}
 }

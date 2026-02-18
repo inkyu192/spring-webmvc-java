@@ -1,109 +1,167 @@
 package spring.webmvc.application.service;
 
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import spring.webmvc.application.dto.command.OrderCreateCommand;
 import spring.webmvc.application.dto.command.OrderProductCreateCommand;
-import spring.webmvc.domain.cache.CacheKey;
-import spring.webmvc.domain.cache.ValueCache;
-import spring.webmvc.domain.model.entity.Member;
+import spring.webmvc.application.dto.command.OrderStatusUpdateCommand;
+import spring.webmvc.application.dto.query.OrderCursorPageQuery;
+import spring.webmvc.application.dto.query.OrderOffsetPageQuery;
+import spring.webmvc.application.dto.result.OrderDetailResult;
+import spring.webmvc.application.dto.result.OrderSummaryResult;
 import spring.webmvc.domain.model.entity.Order;
 import spring.webmvc.domain.model.entity.Product;
-import spring.webmvc.domain.model.enums.OrderStatus;
-import spring.webmvc.domain.repository.MemberRepository;
+import spring.webmvc.domain.model.entity.User;
 import spring.webmvc.domain.repository.OrderRepository;
 import spring.webmvc.domain.repository.ProductRepository;
+import spring.webmvc.domain.repository.UserRepository;
+import spring.webmvc.domain.repository.cache.ProductCacheRepository;
+import spring.webmvc.infrastructure.exception.InsufficientQuantityException;
+import spring.webmvc.infrastructure.exception.NotFoundEntityException;
+import spring.webmvc.infrastructure.persistence.dto.CursorPage;
 import spring.webmvc.infrastructure.security.SecurityContextUtil;
-import spring.webmvc.presentation.exception.EntityNotFoundException;
-import spring.webmvc.presentation.exception.InsufficientQuantityException;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class OrderService {
-
-	private final ValueCache valueCache;
-	private final MemberRepository memberRepository;
+	private ProductCacheRepository productCacheRepository;
+	private final UserRepository userRepository;
 	private final ProductRepository productRepository;
 	private final OrderRepository orderRepository;
 
 	@Transactional
-	public Order createOrder(OrderCreateCommand orderCreateCommand) {
-		Long memberId = SecurityContextUtil.getMemberId();
-		Member member = memberRepository.findById(memberId)
-			.orElseThrow(() -> new EntityNotFoundException(Member.class, memberId));
+	public OrderDetailResult createOrder(OrderCreateCommand command) {
+		User user = userRepository.findById(command.userId())
+			.orElseThrow(() -> new NotFoundEntityException(User.class, command.userId()));
 
-		Map<Long, Product> productMap = productRepository.findAllById(
-				orderCreateCommand.products().stream()
-					.map(OrderProductCreateCommand::id)
-					.toList()
-			)
-			.stream()
-			.collect(Collectors.toMap(Product::getId, product -> product));
+		List<Long> productIds = command.products().stream()
+			.map(OrderProductCreateCommand::id)
+			.toList();
 
-		Order order = Order.create(member);
+		Map<Long, Product> productMap = productRepository.findAllById(productIds).stream()
+			.collect(Collectors.toMap(Product::getId, Function.identity()));
 
-		for (OrderProductCreateCommand orderProductCreateCommand : orderCreateCommand.products()) {
-			Product product = productMap.get(orderProductCreateCommand.id());
-			int quantity = orderProductCreateCommand.quantity();
-
-			if (product == null) {
-				throw new EntityNotFoundException(Product.class, orderProductCreateCommand.id());
-			}
-
-			String key = CacheKey.PRODUCT_STOCK.generate(product.getId());
-			Long stock = valueCache.decrement(key, quantity);
-
-			if (stock == null || stock < 0) {
-				if (stock != null) {
-					valueCache.increment(key, quantity);
-				}
-				throw new InsufficientQuantityException(product.getName(), quantity, valueCache.get(key, Long.class));
-			}
-
-			order.addProduct(product, quantity);
-		}
+		Order order = Order.create(user);
+		List<OrderProductCreateCommand> processedProducts = new ArrayList<>();
 
 		try {
-			return orderRepository.save(order);
+			for (OrderProductCreateCommand orderProductCreateCommand : command.products()) {
+				Long productId = orderProductCreateCommand.id();
+
+				Product product = productMap.get(productId);
+				if (product == null) {
+					throw new NotFoundEntityException(Product.class, productId);
+				}
+
+				// 캐시 없을 경우 초기화
+				if (productCacheRepository.getProductStock(productId) == null) {
+					productCacheRepository.setProductStockIfAbsent(productId, product.getQuantity(),
+						Duration.ofHours(1));
+				}
+
+				// 원자적 재고 감소 처리
+				Long stock = productCacheRepository.decrementProductStock(productId,
+					orderProductCreateCommand.quantity());
+
+				if (stock == null || stock < 0) {
+					if (stock != null) {
+						productCacheRepository.incrementProductStock(productId, orderProductCreateCommand.quantity());
+					}
+
+					Long currentStock = productCacheRepository.getProductStock(productId);
+					long safeStock = currentStock != null ? currentStock : 0L;
+
+					throw new InsufficientQuantityException(
+						product.getName(),
+						orderProductCreateCommand.quantity(),
+						safeStock
+					);
+				}
+
+				// 성공 시 주문 처리
+				order.addProduct(product, orderProductCreateCommand.quantity());
+				processedProducts.add(orderProductCreateCommand);
+			}
+
+			orderRepository.save(order);
+
+			return OrderDetailResult.of(order);
 		} catch (Exception e) {
-			for (OrderProductCreateCommand orderProductCreateCommand : orderCreateCommand.products()) {
-				String key = CacheKey.PRODUCT_STOCK.generate(orderProductCreateCommand.id());
-				valueCache.increment(key, orderProductCreateCommand.quantity());
+			for (OrderProductCreateCommand orderProductCreateCommand : processedProducts) {
+				productCacheRepository.incrementProductStock(
+					orderProductCreateCommand.id(),
+					orderProductCreateCommand.quantity()
+				);
 			}
 			throw e;
 		}
 	}
 
-	public Page<Order> findOrders(Pageable pageable, OrderStatus orderStatus) {
-		Long memberId = SecurityContextUtil.getMemberId();
-		return orderRepository.findAll(pageable, memberId, orderStatus);
-
+	public Page<OrderSummaryResult> findOrdersWithOffsetPage(OrderOffsetPageQuery query) {
+		return orderRepository.findAllWithOffsetPage(
+				query.pageable(),
+				query.userId(),
+				query.orderStatus(),
+				query.orderedFrom(),
+				query.orderedTo()
+			)
+			.map(OrderSummaryResult::of);
 	}
 
-	public Order findOrder(Long id) {
-		Long memberId = SecurityContextUtil.getMemberId();
+	public CursorPage<OrderSummaryResult> findOrdersWithCursorPage(OrderCursorPageQuery query) {
+		return orderRepository.findAllWithCursorPage(
+				query.cursorId(),
+				query.userId(),
+				query.orderStatus(),
+				query.orderedFrom(),
+				query.orderedTo()
+			)
+			.map(OrderSummaryResult::of);
+	}
 
-		return orderRepository.findByIdAndMemberId(id, memberId)
-			.orElseThrow(() -> new EntityNotFoundException(Order.class, id));
+	public OrderDetailResult findOrder(Long id) {
+		Order order = orderRepository.findById(id)
+			.orElseThrow(() -> new NotFoundEntityException(Order.class, id));
+
+		return OrderDetailResult.of(order);
+	}
+
+	public OrderDetailResult findOrderByUser(Long id, Long userId) {
+		Order order = orderRepository.findByIdAndUserId(id, userId)
+			.orElseThrow(() -> new NotFoundEntityException(Order.class, id));
+
+		return OrderDetailResult.of(order);
 	}
 
 	@Transactional
-	public Order cancelOrder(Long id) {
-		Long memberId = SecurityContextUtil.getMemberId();
+	public OrderDetailResult updateOrderStatus(OrderStatusUpdateCommand command) {
+		Order order = orderRepository.findById(command.id())
+			.orElseThrow(() -> new NotFoundEntityException(Order.class, command.id()));
 
-		Order order = orderRepository.findByIdAndMemberId(id, memberId)
-			.orElseThrow(() -> new EntityNotFoundException(Order.class, id));
+		order.updateStatus(command.orderStatus());
+
+		return OrderDetailResult.of(order);
+	}
+
+	@Transactional
+	public OrderDetailResult cancelOrder(Long id) {
+		Long userId = SecurityContextUtil.getUserId();
+		Order order = orderRepository.findByIdAndUserId(id, userId)
+			.orElseThrow(() -> new NotFoundEntityException(Order.class, id));
 
 		order.cancel();
 
-		return order;
+		return OrderDetailResult.of(order);
 	}
 }

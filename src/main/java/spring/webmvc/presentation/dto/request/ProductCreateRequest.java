@@ -3,38 +3,47 @@ package spring.webmvc.presentation.dto.request;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import spring.webmvc.application.dto.command.ProductCreateCommand;
-import spring.webmvc.domain.model.enums.Category;
+import spring.webmvc.domain.model.enums.ProductCategory;
+import spring.webmvc.domain.model.vo.ProductExposureAttribute;
 
-@JsonTypeInfo(
-	use = JsonTypeInfo.Id.NAME,
-	property = "category",
-	visible = true
-)
-@JsonSubTypes({
-	@JsonSubTypes.Type(value = TicketCreateRequest.class, name = "TICKET"),
-	@JsonSubTypes.Type(value = FlightCreateRequest.class, name = "FLIGHT"),
-	@JsonSubTypes.Type(value = AccommodationCreateRequest.class, name = "ACCOMMODATION"),
-})
-@Getter
-@RequiredArgsConstructor
-public abstract class ProductCreateRequest {
-	@NotNull
-	protected final Category category;
-	@NotBlank
-	protected final String name;
-	@NotBlank
-	protected final String description;
+public record ProductCreateRequest(
+	ProductCategory category,
+	String name,
+	String description,
+
 	@Min(100)
-	protected final long price;
-	@Max(9999)
-	protected final long quantity;
+	Long price,
 
-	public abstract ProductCreateCommand toCommand();
+	@Max(9999)
+	Long quantity,
+
+	@Valid
+	@JsonTypeInfo(
+		use = JsonTypeInfo.Id.NAME,
+		include = JsonTypeInfo.As.EXTERNAL_PROPERTY,
+		property = "category"
+	)
+	@JsonSubTypes({
+		@JsonSubTypes.Type(name = "TRANSPORT", value = TransportPutRequest.class),
+		@JsonSubTypes.Type(name = "ACCOMMODATION", value = AccommodationPutRequest.class)
+	})
+	ProductAttributePutRequest attribute,
+
+	ProductExposureAttribute exposureAttribute
+) {
+	public ProductCreateCommand toCommand() {
+		return new ProductCreateCommand(
+			category,
+			name,
+			description,
+			price,
+			quantity,
+			attribute.toCommand(),
+			exposureAttribute
+		);
+	}
 }

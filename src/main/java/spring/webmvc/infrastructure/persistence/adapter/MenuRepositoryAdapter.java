@@ -1,7 +1,6 @@
 package spring.webmvc.infrastructure.persistence.adapter;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
@@ -9,31 +8,23 @@ import lombok.RequiredArgsConstructor;
 import spring.webmvc.domain.model.entity.Menu;
 import spring.webmvc.domain.repository.MenuRepository;
 import spring.webmvc.infrastructure.persistence.jpa.MenuJpaRepository;
+import spring.webmvc.infrastructure.persistence.jpa.MenuQuerydslRepository;
 
 @Component
 @RequiredArgsConstructor
 public class MenuRepositoryAdapter implements MenuRepository {
 
 	private final MenuJpaRepository jpaRepository;
+	private final MenuQuerydslRepository querydslRepository;
 
 	@Override
-	public Optional<Menu> findById(Long id) {
-		return jpaRepository.findById(id);
+	public List<Menu> findAllById(List<Long> ids) {
+		return jpaRepository.findAllById(ids);
 	}
 
 	@Override
-	public List<Menu> findRootMenus(Iterable<String> permissions) {
-		return jpaRepository.findRootMenus(permissions);
-	}
-
-	@Override
-	public List<Menu> findChildMenus(Iterable<String> permissions, Long parentId) {
-		return jpaRepository.findChildMenus(permissions, parentId);
-	}
-
-	@Override
-	public Menu save(Menu menu) {
-		return jpaRepository.save(menu);
+	public List<Menu> findAllByPermissions(Iterable<String> permissions) {
+		return querydslRepository.findAllByPermissions(permissions);
 	}
 
 	@Override
