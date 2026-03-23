@@ -73,7 +73,7 @@ class UserControllerTest {
 		when(userService.findUsers(any(UserQuery.class))).thenReturn(page);
 
 		mockMvc.perform(
-				RestDocumentationRequestBuilders.get("/api/partner/users")
+				RestDocumentationRequestBuilders.get("/partner/users")
 					.header("Authorization", "Bearer access-token")
 					.queryParam("page", "0")
 					.queryParam("size", "20")
@@ -122,7 +122,7 @@ class UserControllerTest {
 		when(userService.findUserDetail(userId)).thenReturn(credentialResult);
 
 		mockMvc.perform(
-				RestDocumentationRequestBuilders.get("/api/partner/users/{id}", userId)
+				RestDocumentationRequestBuilders.get("/partner/users/{id}", userId)
 					.header("Authorization", "Bearer access-token")
 			)
 			.andExpect(MockMvcResultMatchers.status().isOk())

@@ -22,7 +22,7 @@ import spring.webmvc.presentation.dto.response.UserDetailResponse;
 import spring.webmvc.presentation.dto.response.UserSummaryResponse;
 
 @RestController
-@RequestMapping("/api/partner/users")
+@RequestMapping("/partner/users")
 @RequiredArgsConstructor
 public class UserController {
 

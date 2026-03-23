@@ -69,7 +69,7 @@ class MenuControllerTest {
 		when(menuService.findMenus()).thenReturn(result);
 
 		mockMvc.perform(
-				RestDocumentationRequestBuilders.get("/api/menus")
+				RestDocumentationRequestBuilders.get("/menus")
 					.header("Authorization", "Bearer access-token")
 			)
 			.andExpect(MockMvcResultMatchers.status().isOk())

@@ -3,7 +3,9 @@ package spring.webmvc.presentation.exception.handler;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ProblemDetail;
@@ -16,6 +18,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import spring.webmvc.application.service.TranslationService;
 import spring.webmvc.infrastructure.properties.AppProperties;
 
 @Component
@@ -23,6 +26,7 @@ import spring.webmvc.infrastructure.properties.AppProperties;
 public class AuthenticationExceptionHandler implements AuthenticationEntryPoint {
 	private final AppProperties appProperties;
 	private final ObjectMapper objectMapper;
+	private final TranslationService translationService;
 
 	@Override
 	public void commence(
@@ -31,9 +35,11 @@ public class AuthenticationExceptionHandler implements AuthenticationEntryPoint 
 		AuthenticationException exception
 	) throws IOException {
 		HttpStatus status = HttpStatus.UNAUTHORIZED;
+		Locale locale = LocaleContextHolder.getLocale();
 
-		ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(status, exception.getMessage());
-		problemDetail.setType(URI.create("%s#%s".formatted(appProperties.docsUrl(), status)));
+		String detail = translationService.getMessage(AuthenticationException.class.getSimpleName(), locale);
+		ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(status, detail);
+		problemDetail.setType(URI.create("%s#%s".formatted(appProperties.docsUrl(), status.name())));
 
 		response.setStatus(status.value());
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);

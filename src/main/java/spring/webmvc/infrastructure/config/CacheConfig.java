@@ -29,7 +29,7 @@ public class CacheConfig {
 		objectMapper.registerModule(new JavaTimeModule());
 		objectMapper.activateDefaultTyping(
 			BasicPolymorphicTypeValidator.builder().allowIfBaseType(Object.class).build(),
-			ObjectMapper.DefaultTyping.NON_FINAL,
+			ObjectMapper.DefaultTyping.EVERYTHING,
 			JsonTypeInfo.As.PROPERTY
 		);
 

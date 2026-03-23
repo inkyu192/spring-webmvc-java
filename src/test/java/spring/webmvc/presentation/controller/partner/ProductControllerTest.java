@@ -69,7 +69,6 @@ class ProductControllerTest {
 		);
 
 		AccommodationResult accommodationResult = new AccommodationResult(
-			1L,
 			"제주도",
 			now,
 			now.plusSeconds(86400)
@@ -461,7 +460,7 @@ class ProductControllerTest {
 			.andExpect(MockMvcResultMatchers.status().isOk())
 			.andDo(
 				MockMvcRestDocumentation.document(
-					"partner-transport-replace",
+					"partner-transport-update",
 					HeaderDocumentation.requestHeaders(
 						HeaderDocumentation.headerWithName("Authorization").description("액세스 토큰")
 					),
@@ -544,7 +543,7 @@ class ProductControllerTest {
 			.andExpect(MockMvcResultMatchers.status().isOk())
 			.andDo(
 				MockMvcRestDocumentation.document(
-					"partner-accommodation-replace",
+					"partner-accommodation-update",
 					HeaderDocumentation.requestHeaders(
 						HeaderDocumentation.headerWithName("Authorization").description("액세스 토큰")
 					),

@@ -17,6 +17,10 @@ public enum OrderStatus {
 
 	private final String description;
 
+	public String getTranslationCode() {
+		return "OrderStatus." + name();
+	}
+
 	@JsonCreator
 	public static OrderStatus of(String name) {
 		return Arrays.stream(values())

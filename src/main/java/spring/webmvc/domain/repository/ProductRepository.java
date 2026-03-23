@@ -7,8 +7,8 @@ import org.springframework.data.domain.Page;
 
 import spring.webmvc.application.dto.query.ProductCursorPageQuery;
 import spring.webmvc.application.dto.query.ProductOffsetPageQuery;
+import spring.webmvc.domain.dto.CursorPage;
 import spring.webmvc.domain.model.entity.Product;
-import spring.webmvc.infrastructure.persistence.dto.CursorPage;
 
 public interface ProductRepository {
 	Optional<Product> findById(Long id);

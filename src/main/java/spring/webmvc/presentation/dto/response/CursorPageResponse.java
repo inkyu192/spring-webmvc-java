@@ -3,7 +3,7 @@ package spring.webmvc.presentation.dto.response;
 import java.util.List;
 import java.util.function.Function;
 
-import spring.webmvc.infrastructure.persistence.dto.CursorPage;
+import spring.webmvc.domain.dto.CursorPage;
 
 public record CursorPageResponse<T>(
 	Long size,

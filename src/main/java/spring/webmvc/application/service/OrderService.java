@@ -19,6 +19,7 @@ import spring.webmvc.application.dto.query.OrderCursorPageQuery;
 import spring.webmvc.application.dto.query.OrderOffsetPageQuery;
 import spring.webmvc.application.dto.result.OrderDetailResult;
 import spring.webmvc.application.dto.result.OrderSummaryResult;
+import spring.webmvc.domain.dto.CursorPage;
 import spring.webmvc.domain.model.entity.Order;
 import spring.webmvc.domain.model.entity.Product;
 import spring.webmvc.domain.model.entity.User;
@@ -28,7 +29,6 @@ import spring.webmvc.domain.repository.UserRepository;
 import spring.webmvc.domain.repository.cache.ProductCacheRepository;
 import spring.webmvc.infrastructure.exception.InsufficientQuantityException;
 import spring.webmvc.infrastructure.exception.NotFoundEntityException;
-import spring.webmvc.infrastructure.persistence.dto.CursorPage;
 import spring.webmvc.infrastructure.security.SecurityContextUtil;
 
 @Service

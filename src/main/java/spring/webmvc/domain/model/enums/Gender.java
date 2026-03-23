@@ -11,4 +11,8 @@ public enum Gender {
 	;
 
 	private final String description;
+
+	public String getTranslationCode() {
+		return "Gender." + name();
+	}
 }

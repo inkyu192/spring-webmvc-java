@@ -13,12 +13,12 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import jakarta.persistence.EntityManager;
 import spring.webmvc.application.dto.query.ProductCursorPageQuery;
+import spring.webmvc.domain.dto.CursorPage;
 import spring.webmvc.domain.model.entity.Accommodation;
 import spring.webmvc.domain.model.entity.Product;
 import spring.webmvc.domain.model.enums.ProductCategory;
 import spring.webmvc.domain.model.vo.ProductExposureAttribute;
 import spring.webmvc.infrastructure.config.RepositoryTest;
-import spring.webmvc.infrastructure.persistence.dto.CursorPage;
 
 @RepositoryTest
 class ProductQuerydslRepositoryTest {

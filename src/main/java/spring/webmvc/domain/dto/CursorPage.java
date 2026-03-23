@@ -1,4 +1,4 @@
-package spring.webmvc.infrastructure.persistence.dto;
+package spring.webmvc.domain.dto;
 
 import java.util.List;
 import java.util.function.Function;

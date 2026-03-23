@@ -6,6 +6,30 @@
 :toclevels: 3
 :sectnums:
 
+== 코드
+
+=== 조회
+
+**HTTP Request**
+
+include::{snippets}/code-list/http-request.adoc[]
+
+**HTTP Response**
+
+include::{snippets}/code-list/http-response.adoc[]
+
+**Response Fields**
+
+include::{snippets}/code-list/response-fields.adoc[]
+
+**HTTP Status Codes**
+
+[cols="1,3",options="header"]
+|===
+| Code | Name
+| 200 | <<OK>>
+|===
+
 == 파일
 
 === 업로드
@@ -546,45 +570,45 @@ include::{snippets}/partner-accommodation-create/response-fields.adoc[]
 
 **HTTP Request**
 
-include::{snippets}/partner-transport-replace/http-request.adoc[]
+include::{snippets}/partner-transport-update/http-request.adoc[]
 
 **Request Headers**
 
-include::{snippets}/partner-transport-replace/request-headers.adoc[]
+include::{snippets}/partner-transport-update/request-headers.adoc[]
 
 **Request Fields**
 
-include::{snippets}/partner-transport-replace/request-fields.adoc[]
+include::{snippets}/partner-transport-update/request-fields.adoc[]
 
 **HTTP Response**
 
-include::{snippets}/partner-transport-replace/http-response.adoc[]
+include::{snippets}/partner-transport-update/http-response.adoc[]
 
 **Response Fields**
 
-include::{snippets}/partner-transport-replace/response-fields.adoc[]
+include::{snippets}/partner-transport-update/response-fields.adoc[]
 
 ===== 숙박
 
 **HTTP Request**
 
-include::{snippets}/partner-accommodation-replace/http-request.adoc[]
+include::{snippets}/partner-accommodation-update/http-request.adoc[]
 
 **Request Headers**
 
-include::{snippets}/partner-accommodation-replace/request-headers.adoc[]
+include::{snippets}/partner-accommodation-update/request-headers.adoc[]
 
 **Request Fields**
 
-include::{snippets}/partner-accommodation-replace/request-fields.adoc[]
+include::{snippets}/partner-accommodation-update/request-fields.adoc[]
 
 **HTTP Response**
 
-include::{snippets}/partner-accommodation-replace/http-response.adoc[]
+include::{snippets}/partner-accommodation-update/http-response.adoc[]
 
 **Response Fields**
 
-include::{snippets}/partner-accommodation-replace/response-fields.adoc[]
+include::{snippets}/partner-accommodation-update/response-fields.adoc[]
 
 **HTTP Status Codes**
 

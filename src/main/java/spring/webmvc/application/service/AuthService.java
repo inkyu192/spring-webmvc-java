@@ -1,7 +1,6 @@
 package spring.webmvc.application.service;
 
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +28,7 @@ import spring.webmvc.domain.repository.UserRepository;
 import spring.webmvc.domain.repository.cache.AuthCacheRepository;
 import spring.webmvc.domain.repository.cache.TokenCacheRepository;
 import spring.webmvc.infrastructure.exception.DuplicateEntityException;
+import spring.webmvc.infrastructure.exception.InvalidCredentialsException;
 import spring.webmvc.infrastructure.exception.NotFoundEntityException;
 import spring.webmvc.infrastructure.external.s3.FileType;
 import spring.webmvc.infrastructure.external.s3.S3Service;
@@ -96,11 +96,11 @@ public class AuthService {
 			.orElseThrow(() -> new NotFoundEntityException(UserCredential.class, command.email().getValue()));
 
 		if (!passwordEncoder.matches(command.password(), userCredential.getPassword())) {
-			throw new BadCredentialsException("유효하지 않은 인증 정보입니다.");
+			throw new InvalidCredentialsException();
 		}
 
 		if (!userCredential.isVerified()) {
-			throw new BadCredentialsException("이메일 인증이 필요합니다.");
+			throw new InvalidCredentialsException();
 		}
 
 		User user = userCredential.getUser();
@@ -121,7 +121,7 @@ public class AuthService {
 		String refreshToken = tokenCacheRepository.getRefreshToken(userId, command.refreshToken());
 
 		if (refreshToken == null) {
-			throw new BadCredentialsException("유효하지 않은 인증 정보입니다.");
+			throw new InvalidCredentialsException();
 		}
 
 		User user = userRepository.findById(userId)
@@ -155,7 +155,7 @@ public class AuthService {
 	public void confirmJoinVerify(JoinVerifyConfirmCommand command) {
 		String email = authCacheRepository.getJoinVerifyToken(command.token());
 		if (email == null) {
-			throw new BadCredentialsException("유효하지 않은 인증 정보입니다.");
+			throw new InvalidCredentialsException();
 		}
 
 		UserCredential userCredential = userCredentialRepository.findByEmail(Email.create(email))
@@ -178,7 +178,7 @@ public class AuthService {
 		String email = authCacheRepository.getPasswordResetToken(command.token());
 
 		if (email == null) {
-			throw new BadCredentialsException("유효하지 않은 인증 정보입니다.");
+			throw new InvalidCredentialsException();
 		}
 
 		UserCredential userCredential = userCredentialRepository.findByEmail(Email.create(email))

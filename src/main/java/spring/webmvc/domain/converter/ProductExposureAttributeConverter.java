@@ -33,7 +33,7 @@ public class ProductExposureAttributeConverter implements AttributeConverter<Pro
 	@Override
 	public ProductExposureAttribute convertToEntityAttribute(String dbData) {
 		if (dbData == null) {
-			return null;
+			return new ProductExposureAttribute(false, false, false, false);
 		}
 
 		try {

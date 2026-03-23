@@ -1,6 +1,7 @@
 SET
 FOREIGN_KEY_CHECKS = 0;
 
+DROP TABLE IF EXISTS translation;
 DROP TABLE IF EXISTS curation_product;
 DROP TABLE IF EXISTS curation;
 DROP TABLE IF EXISTS order_product;
@@ -87,13 +88,13 @@ CREATE TABLE permission
 
 CREATE TABLE menu
 (
-    id         BIGINT AUTO_INCREMENT PRIMARY KEY,
-    name       VARCHAR(255) NOT NULL,
-    path       VARCHAR(255),
-    sort_order BIGINT,
-    parent_id  BIGINT,
-    created_at DATETIME(6)  NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
-    updated_at DATETIME(6)  NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    id               BIGINT AUTO_INCREMENT PRIMARY KEY,
+    translation_code VARCHAR(255) NOT NULL,
+    path             VARCHAR(255),
+    sort_order       BIGINT,
+    parent_id        BIGINT,
+    created_at       DATETIME(6)  NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    updated_at       DATETIME(6)  NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
     CONSTRAINT fk_menu_parent FOREIGN KEY (parent_id) REFERENCES menu (id)
 );
 
@@ -176,8 +177,7 @@ CREATE TABLE product
 
 CREATE TABLE transport
 (
-    id                 BIGINT PRIMARY KEY AUTO_INCREMENT,
-    product_id         BIGINT       NOT NULL UNIQUE,
+    product_id         BIGINT PRIMARY KEY,
     departure_location VARCHAR(255) NOT NULL,
     arrival_location   VARCHAR(255) NOT NULL,
     departure_time     DATETIME(6)  NOT NULL,
@@ -187,8 +187,7 @@ CREATE TABLE transport
 
 CREATE TABLE accommodation
 (
-    id             BIGINT PRIMARY KEY AUTO_INCREMENT,
-    product_id     BIGINT       NOT NULL UNIQUE,
+    product_id     BIGINT PRIMARY KEY,
     place          VARCHAR(255) NOT NULL,
     check_in_time  DATETIME(6)  NOT NULL,
     check_out_time DATETIME(6)  NOT NULL,
@@ -238,4 +237,15 @@ CREATE TABLE curation_product
     product_id  BIGINT NOT NULL,
     CONSTRAINT fk_curation_product_curation FOREIGN KEY (curation_id) REFERENCES curation (id),
     CONSTRAINT fk_curation_product_product FOREIGN KEY (product_id) REFERENCES product (id)
+);
+
+CREATE TABLE translation
+(
+    id         BIGINT AUTO_INCREMENT PRIMARY KEY,
+    code       VARCHAR(255) NOT NULL,
+    locale     VARCHAR(10)  NOT NULL,
+    message    VARCHAR(500) NOT NULL,
+    created_at DATETIME(6)  NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    updated_at DATETIME(6)  NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    UNIQUE KEY uk_translation_code_locale (code, locale)
 );

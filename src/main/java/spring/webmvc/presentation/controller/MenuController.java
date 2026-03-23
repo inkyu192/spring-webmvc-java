@@ -13,7 +13,7 @@ import spring.webmvc.application.service.MenuService;
 import spring.webmvc.presentation.dto.response.MenuResponse;
 
 @RestController
-@RequestMapping("/api/menus")
+@RequestMapping("/menus")
 @RequiredArgsConstructor
 public class MenuController {
 

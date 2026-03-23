@@ -12,4 +12,8 @@ public enum OauthProvider {
 	;
 
 	private final String description;
+
+	public String getTranslationCode() {
+		return "OauthProvider." + name();
+	}
 }

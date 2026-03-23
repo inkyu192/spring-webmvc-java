@@ -2,11 +2,11 @@ package spring.webmvc.application.dto.result;
 
 import java.util.List;
 
+import spring.webmvc.domain.dto.CursorPage;
 import spring.webmvc.domain.model.entity.Curation;
 import spring.webmvc.domain.model.entity.CurationProduct;
 import spring.webmvc.domain.model.entity.Product;
 import spring.webmvc.domain.model.enums.CurationCategory;
-import spring.webmvc.infrastructure.persistence.dto.CursorPage;
 
 public record CurationCursorPageResult(
 	Long id,

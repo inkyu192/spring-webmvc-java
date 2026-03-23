@@ -8,10 +8,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
+import spring.webmvc.domain.dto.CursorPage;
 import spring.webmvc.domain.model.entity.Order;
 import spring.webmvc.domain.model.enums.OrderStatus;
 import spring.webmvc.domain.repository.OrderRepository;
-import spring.webmvc.infrastructure.persistence.dto.CursorPage;
 import spring.webmvc.infrastructure.persistence.jpa.OrderJpaRepository;
 import spring.webmvc.infrastructure.persistence.jpa.OrderQuerydslRepository;
 

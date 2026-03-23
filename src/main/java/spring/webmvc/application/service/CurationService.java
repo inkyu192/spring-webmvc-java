@@ -19,6 +19,7 @@ import spring.webmvc.application.dto.result.CurationCursorPageResult;
 import spring.webmvc.application.dto.result.CurationDetailResult;
 import spring.webmvc.application.dto.result.CurationOffsetPageResult;
 import spring.webmvc.application.dto.result.CurationSummaryResult;
+import spring.webmvc.domain.dto.CursorPage;
 import spring.webmvc.domain.model.entity.Curation;
 import spring.webmvc.domain.model.entity.CurationProduct;
 import spring.webmvc.domain.model.entity.Product;
@@ -29,7 +30,6 @@ import spring.webmvc.domain.repository.CurationRepository;
 import spring.webmvc.domain.repository.ProductRepository;
 import spring.webmvc.domain.repository.UserCurationProductRepository;
 import spring.webmvc.infrastructure.exception.NotFoundEntityException;
-import spring.webmvc.infrastructure.persistence.dto.CursorPage;
 
 @Service
 @Transactional(readOnly = true)

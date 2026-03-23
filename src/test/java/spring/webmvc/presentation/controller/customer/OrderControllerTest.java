@@ -25,9 +25,9 @@ import spring.webmvc.application.dto.result.OrderDetailResult;
 import spring.webmvc.application.dto.result.OrderProductResult;
 import spring.webmvc.application.dto.result.OrderSummaryResult;
 import spring.webmvc.application.service.OrderService;
+import spring.webmvc.domain.dto.CursorPage;
 import spring.webmvc.domain.model.enums.OrderStatus;
 import spring.webmvc.infrastructure.config.ControllerTest;
-import spring.webmvc.infrastructure.persistence.dto.CursorPage;
 import spring.webmvc.infrastructure.security.SecurityContextUtil;
 
 @ControllerTest(OrderController.class)

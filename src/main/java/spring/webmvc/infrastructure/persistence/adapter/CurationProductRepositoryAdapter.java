@@ -5,9 +5,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
+import spring.webmvc.domain.dto.CursorPage;
 import spring.webmvc.domain.model.entity.CurationProduct;
 import spring.webmvc.domain.repository.CurationProductRepository;
-import spring.webmvc.infrastructure.persistence.dto.CursorPage;
 import spring.webmvc.infrastructure.persistence.jpa.CurationProductQuerydslRepository;
 
 @Component

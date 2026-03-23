@@ -14,8 +14,8 @@ import org.springframework.stereotype.Repository;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
+import spring.webmvc.domain.dto.CursorPage;
 import spring.webmvc.domain.model.entity.CurationProduct;
-import spring.webmvc.infrastructure.persistence.dto.CursorPage;
 
 @Repository
 public class CurationProductQuerydslRepository {

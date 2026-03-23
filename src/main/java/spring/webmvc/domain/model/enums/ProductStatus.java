@@ -17,6 +17,10 @@ public enum ProductStatus {
 
 	private final String description;
 
+	public String getTranslationCode() {
+		return "ProductStatus." + name();
+	}
+
 	@JsonCreator
 	public static ProductStatus of(String name) {
 		return Arrays.stream(values())

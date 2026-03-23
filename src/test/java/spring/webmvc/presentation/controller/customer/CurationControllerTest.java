@@ -19,9 +19,10 @@ import spring.webmvc.application.dto.result.CurationCursorPageResult;
 import spring.webmvc.application.dto.result.CurationProductResult;
 import spring.webmvc.application.dto.result.CurationSummaryResult;
 import spring.webmvc.application.service.CurationService;
+import spring.webmvc.domain.dto.CursorPage;
 import spring.webmvc.domain.model.enums.CurationCategory;
+import spring.webmvc.domain.model.vo.ProductExposureAttribute;
 import spring.webmvc.infrastructure.config.ControllerTest;
-import spring.webmvc.infrastructure.persistence.dto.CursorPage;
 
 @ControllerTest(CurationController.class)
 class CurationControllerTest {
@@ -45,8 +46,10 @@ class CurationControllerTest {
 		);
 
 		List<CurationProductResult> products = List.of(
-			new CurationProductResult(1L, "제주도 호텔", "제주도 3박 4일", 100000L),
-			new CurationProductResult(2L, "부산 교통편", "부산 왕복 교통편", 50000L)
+			new CurationProductResult(1L, "제주도 호텔", "제주도 3박 4일", 100000L,
+				new ProductExposureAttribute(true, false, true, false)),
+			new CurationProductResult(2L, "부산 교통편", "부산 왕복 교통편", 50000L,
+				new ProductExposureAttribute(false, true, false, false))
 		);
 
 		CursorPage<CurationProductResult> productPage = new CursorPage<>(
@@ -122,7 +125,17 @@ class CurationControllerTest {
 						PayloadDocumentation.fieldWithPath("products.content[].id").description("상품 ID"),
 						PayloadDocumentation.fieldWithPath("products.content[].name").description("상품명"),
 						PayloadDocumentation.fieldWithPath("products.content[].description").description("상품 설명"),
-						PayloadDocumentation.fieldWithPath("products.content[].price").description("상품 가격")
+						PayloadDocumentation.fieldWithPath("products.content[].price").description("상품 가격"),
+						PayloadDocumentation.fieldWithPath("products.content[].exposureAttribute")
+							.description("상품 노출 속성(배지)"),
+						PayloadDocumentation.fieldWithPath("products.content[].exposureAttribute.isPromotional")
+							.description("프로모션 여부"),
+						PayloadDocumentation.fieldWithPath("products.content[].exposureAttribute.isNewArrival")
+							.description("신상품 여부"),
+						PayloadDocumentation.fieldWithPath("products.content[].exposureAttribute.isFeatured")
+							.description("추천 상품 여부"),
+						PayloadDocumentation.fieldWithPath("products.content[].exposureAttribute.isLowStock")
+							.description("재고 부족 여부")
 					)
 				)
 			);

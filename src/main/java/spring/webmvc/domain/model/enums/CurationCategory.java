@@ -14,4 +14,8 @@ public enum CurationCategory {
 	;
 
 	private final String description;
+
+	public String getTranslationCode() {
+		return "CurationCategory." + name();
+	}
 }

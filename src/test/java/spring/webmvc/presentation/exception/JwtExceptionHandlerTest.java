@@ -1,5 +1,6 @@
 package spring.webmvc.presentation.exception;
 
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -17,6 +18,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
+import spring.webmvc.application.service.TranslationService;
 import spring.webmvc.infrastructure.properties.AppProperties;
 import spring.webmvc.presentation.exception.handler.JwtExceptionHandler;
 
@@ -32,13 +34,16 @@ class JwtExceptionHandlerTest {
 	@Mock
 	private ObjectMapper objectMapper;
 
+	@Mock
+	private TranslationService translationService;
+
 	private JwtExceptionHandler jwtExceptionHandler;
 	private MockHttpServletRequest request;
 	private MockHttpServletResponse response;
 
 	@BeforeEach
 	void setUp() {
-		jwtExceptionHandler = new JwtExceptionHandler(appProperties, objectMapper);
+		jwtExceptionHandler = new JwtExceptionHandler(appProperties, objectMapper, translationService);
 		request = new MockHttpServletRequest();
 		response = new MockHttpServletResponse();
 	}
@@ -47,14 +52,15 @@ class JwtExceptionHandlerTest {
 	@DisplayName("JwtException 발생할 경우 ProblemDetail 반환한다")
 	void doFilterWhenJwtExceptionOccurs() throws Exception {
 		HttpStatus status = HttpStatus.UNAUTHORIZED;
-		String message = "JwtException";
+		String message = "유효하지 않은 토큰입니다.";
 		String docsUrl = "http://localhost:8080/docs/index.html";
 
 		String problemDetailJson = "{\"type\":\"%s#%s\",\"title\":\"Unauthorized\",\"status\":401,\"detail\":\"%s\"}"
 			.formatted(docsUrl, status.name(), message);
 
-		doThrow(new JwtException(message)).when(filterChain).doFilter(request, response);
+		doThrow(new JwtException("token error")).when(filterChain).doFilter(request, response);
 		when(appProperties.docsUrl()).thenReturn(docsUrl);
+		when(translationService.getMessage(eq("JwtException"), any())).thenReturn(message);
 		when(objectMapper.writeValueAsString(any(ProblemDetail.class))).thenReturn(problemDetailJson);
 
 		jwtExceptionHandler.doFilter(request, response, filterChain);
@@ -66,14 +72,15 @@ class JwtExceptionHandlerTest {
 	@DisplayName("RuntimeException 발생할 경우 ProblemDetail 반환한다")
 	void doFilterWhenRuntimeExceptionOccurs() throws Exception {
 		HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
-		String message = "RuntimeException";
+		String message = "서버에서 오류가 발생했습니다.";
 		String docsUrl = "http://localhost:8080/docs/index.html";
 
 		String problemDetailJson = "{\"type\":\"%s#%s\",\"title\":\"Internal Server Error\",\"status\":500,\"detail\":\"%s\"}"
 			.formatted(docsUrl, status.name(), message);
 
-		doThrow(new RuntimeException(message)).when(filterChain).doFilter(request, response);
+		doThrow(new RuntimeException("unexpected error")).when(filterChain).doFilter(request, response);
 		when(appProperties.docsUrl()).thenReturn(docsUrl);
+		when(translationService.getMessage(eq("Exception"), any())).thenReturn(message);
 		when(objectMapper.writeValueAsString(any(ProblemDetail.class))).thenReturn(problemDetailJson);
 
 		jwtExceptionHandler.doFilter(request, response, filterChain);

@@ -6,9 +6,9 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import spring.webmvc.domain.dto.CursorPage;
 import spring.webmvc.domain.model.entity.Order;
 import spring.webmvc.domain.model.enums.OrderStatus;
-import spring.webmvc.infrastructure.persistence.dto.CursorPage;
 
 public interface OrderRepository {
 	Page<Order> findAllWithOffsetPage(

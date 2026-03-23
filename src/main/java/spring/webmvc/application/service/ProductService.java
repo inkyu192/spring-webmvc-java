@@ -23,11 +23,11 @@ import spring.webmvc.application.dto.result.ProductDetailResult;
 import spring.webmvc.application.dto.result.ProductSummaryResult;
 import spring.webmvc.application.event.ProductViewEvent;
 import spring.webmvc.application.strategy.product.ProductAttributeStrategy;
+import spring.webmvc.domain.dto.CursorPage;
 import spring.webmvc.domain.model.entity.Product;
 import spring.webmvc.domain.model.enums.ProductCategory;
 import spring.webmvc.domain.repository.ProductRepository;
 import spring.webmvc.infrastructure.exception.NotFoundEntityException;
-import spring.webmvc.infrastructure.persistence.dto.CursorPage;
 
 @Service
 @Transactional(readOnly = true)

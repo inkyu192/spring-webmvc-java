@@ -20,7 +20,7 @@ public class Menu extends BaseTime {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	private String name;
+	private String translationCode;
 
 	private String path;
 
@@ -30,10 +30,10 @@ public class Menu extends BaseTime {
 	@JoinColumn(name = "parent_id")
 	private Menu parent;
 
-	public static Menu create(String name, String path, Menu parent, Long sortOrder) {
+	public static Menu create(String translationCode, String path, Menu parent, Long sortOrder) {
 		Menu menu = new Menu();
 
-		menu.name = name;
+		menu.translationCode = translationCode;
 		menu.path = path;
 		menu.sortOrder = sortOrder;
 		menu.parent = parent;

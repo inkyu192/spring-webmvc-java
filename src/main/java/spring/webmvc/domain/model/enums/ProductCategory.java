@@ -11,4 +11,8 @@ public enum ProductCategory {
 	;
 
 	private final String description;
+
+	public String getTranslationCode() {
+		return "ProductCategory." + name();
+	}
 }
