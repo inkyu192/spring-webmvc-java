@@ -119,6 +119,7 @@ include::{snippets}/sign-in/response-fields.adoc[]
 | 200 | <<OK>>
 | 401 | <<UNAUTHORIZED>>
 | 404 | <<NOT_FOUND>>
+| 409 | <<CONFLICT>>
 |===
 
 === 토큰 재발행
@@ -231,6 +232,63 @@ include::{snippets}/password-reset-confirm/request-fields.adoc[]
 **HTTP Response**
 
 include::{snippets}/password-reset-confirm/http-response.adoc[]
+
+**HTTP Status Codes**
+
+[cols="1,3",options="header"]
+|===
+| Code | Name
+| 204 | <<NO_CONTENT>>
+| 401 | <<UNAUTHORIZED>>
+| 404 | <<NOT_FOUND>>
+|===
+
+== 디바이스
+
+=== 목록 조회
+
+**HTTP Request**
+
+include::{snippets}/device-list/http-request.adoc[]
+
+**Request Headers**
+
+include::{snippets}/device-list/request-headers.adoc[]
+
+**HTTP Response**
+
+include::{snippets}/device-list/http-response.adoc[]
+
+**Response Fields**
+
+include::{snippets}/device-list/response-fields.adoc[]
+
+**HTTP Status Codes**
+
+[cols="1,3",options="header"]
+|===
+| Code | Name
+| 200 | <<OK>>
+| 401 | <<UNAUTHORIZED>>
+|===
+
+=== 삭제
+
+**HTTP Request**
+
+include::{snippets}/device-delete/http-request.adoc[]
+
+**Request Headers**
+
+include::{snippets}/device-delete/request-headers.adoc[]
+
+**Path Parameters**
+
+include::{snippets}/device-delete/path-parameters.adoc[]
+
+**HTTP Response**
+
+include::{snippets}/device-delete/http-response.adoc[]
 
 **HTTP Status Codes**
 

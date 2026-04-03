@@ -60,7 +60,7 @@ public class OrderController {
 	}
 
 	@PatchMapping("/{id}")
-	@PreAuthorize("hasAuthority('ORDER_WRITE')")
+	@PreAuthorize("hasAuthority('ORDER_UPDATE')")
 	@RequestLock
 	public OrderDetailResponse updateOrderStatus(
 		@PathVariable Long id,

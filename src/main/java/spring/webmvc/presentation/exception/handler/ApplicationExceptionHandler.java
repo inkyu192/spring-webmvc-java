@@ -21,10 +21,13 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import spring.webmvc.application.service.TranslationService;
+import spring.webmvc.infrastructure.exception.AbstractExternalException;
 import spring.webmvc.infrastructure.exception.AbstractHttpException;
 import spring.webmvc.infrastructure.properties.AppProperties;
 
+@Slf4j
 @RestControllerAdvice
 @RequiredArgsConstructor
 public class ApplicationExceptionHandler {
@@ -34,9 +37,25 @@ public class ApplicationExceptionHandler {
 
 	@ExceptionHandler(AbstractHttpException.class)
 	public ProblemDetail handleBusinessException(AbstractHttpException e, Locale locale) {
-		String detail = translationService.getMessage(e.getTranslationCode(), locale, e.getTranslationArgs());
+		String detail = translationService.getMessage(e.getTranslationCode(), locale, e.getMessageArgs());
+
 		ProblemDetail problem = ProblemDetail.forStatusAndDetail(e.getHttpStatus(), detail);
-		problem.setType(URI.create("%s#%s".formatted(appProperties.docsUrl(), HttpStatus.valueOf(problem.getStatus()).name())));
+		problem.setType(
+			URI.create("%s#%s".formatted(appProperties.docsUrl(), HttpStatus.valueOf(problem.getStatus()).name())));
+
+		return problem;
+	}
+
+	@ExceptionHandler(AbstractExternalException.class)
+	public ProblemDetail handleExternalException(AbstractExternalException e, Locale locale) {
+		log.error("External service error: {}", e.getTranslationCode(), e);
+
+		String detail = translationService.getMessage(e.getTranslationCode(), locale, e.getMessageArgs());
+
+		ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_GATEWAY, detail);
+		problem.setType(
+			URI.create("%s#%s".formatted(appProperties.docsUrl(), HttpStatus.valueOf(problem.getStatus()).name())));
+
 		return problem;
 	}
 
@@ -49,7 +68,8 @@ public class ApplicationExceptionHandler {
 		ProblemDetail body = errorResponse.getBody();
 		String detail = translationService.getMessage(errorResponse.getClass().getSimpleName(), locale);
 		body.setDetail(detail);
-		body.setType(URI.create("%s#%s".formatted(appProperties.docsUrl(), HttpStatus.valueOf(body.getStatus()).name())));
+		body.setType(
+			URI.create("%s#%s".formatted(appProperties.docsUrl(), HttpStatus.valueOf(body.getStatus()).name())));
 		return body;
 	}
 
@@ -63,7 +83,8 @@ public class ApplicationExceptionHandler {
 
 		String detail = translationService.getMessage(exception.getClass().getSimpleName(), locale);
 		ProblemDetail problem = ProblemDetail.forStatusAndDetail(status, detail);
-		problem.setType(URI.create("%s#%s".formatted(appProperties.docsUrl(), HttpStatus.valueOf(problem.getStatus()).name())));
+		problem.setType(
+			URI.create("%s#%s".formatted(appProperties.docsUrl(), HttpStatus.valueOf(problem.getStatus()).name())));
 		return problem;
 	}
 
@@ -71,7 +92,8 @@ public class ApplicationExceptionHandler {
 	public ProblemDetail handleValidationException(MethodArgumentNotValidException exception, Locale locale) {
 		String className = MethodArgumentNotValidException.class.getSimpleName();
 		ProblemDetail body = exception.getBody();
-		body.setType(URI.create("%s#%s".formatted(appProperties.docsUrl(), HttpStatus.valueOf(body.getStatus()).name())));
+		body.setType(
+			URI.create("%s#%s".formatted(appProperties.docsUrl(), HttpStatus.valueOf(body.getStatus()).name())));
 		body.setDetail(translationService.getMessage(className, locale));
 
 		Map<String, String> fields = new LinkedHashMap<>();

@@ -60,7 +60,7 @@ public class ProductController {
 	}
 
 	@PostMapping
-	@PreAuthorize("hasAuthority('PRODUCT_WRITE')")
+	@PreAuthorize("hasAuthority('PRODUCT_CREATE')")
 	@ResponseStatus(HttpStatus.CREATED)
 	public ProductDetailResponse createProduct(
 		@RequestBody @Validated ProductCreateRequest request
@@ -72,7 +72,7 @@ public class ProductController {
 	}
 
 	@PutMapping("/{id}")
-	@PreAuthorize("hasAuthority('PRODUCT_WRITE')")
+	@PreAuthorize("hasAuthority('PRODUCT_UPDATE')")
 	public ProductDetailResponse updateProduct(
 		@PathVariable Long id,
 		@RequestBody @Validated ProductUpdateRequest request
@@ -84,7 +84,7 @@ public class ProductController {
 	}
 
 	@DeleteMapping("/{id}")
-	@PreAuthorize("hasAuthority('PRODUCT_WRITE')")
+	@PreAuthorize("hasAuthority('PRODUCT_DELETE')")
 	public void deleteProduct(@PathVariable Long id) {
 		productService.deleteProduct(id);
 	}

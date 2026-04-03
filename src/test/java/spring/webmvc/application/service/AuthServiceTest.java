@@ -33,16 +33,20 @@ import spring.webmvc.application.event.SendPasswordResetEmailEvent;
 import spring.webmvc.application.event.SendVerifyEmailEvent;
 import spring.webmvc.domain.model.entity.User;
 import spring.webmvc.domain.model.entity.UserCredential;
+import spring.webmvc.domain.model.entity.UserDevice;
+import spring.webmvc.domain.model.enums.DeviceType;
 import spring.webmvc.domain.model.enums.Gender;
 import spring.webmvc.domain.model.vo.Email;
 import spring.webmvc.domain.model.vo.Phone;
 import spring.webmvc.domain.repository.PermissionRepository;
 import spring.webmvc.domain.repository.RoleRepository;
 import spring.webmvc.domain.repository.UserCredentialRepository;
+import spring.webmvc.domain.repository.UserDeviceRepository;
 import spring.webmvc.domain.repository.UserRepository;
 import spring.webmvc.domain.repository.cache.AuthCacheRepository;
 import spring.webmvc.domain.repository.cache.TokenCacheRepository;
 import spring.webmvc.infrastructure.exception.DuplicateEntityException;
+import spring.webmvc.infrastructure.exception.ExceededMaxDeviceException;
 import spring.webmvc.infrastructure.exception.InvalidCredentialsException;
 import spring.webmvc.infrastructure.exception.NotFoundEntityException;
 import spring.webmvc.infrastructure.external.s3.S3Service;
@@ -62,6 +66,9 @@ class AuthServiceTest {
 
 	@Mock
 	private UserCredentialRepository userCredentialRepository;
+
+	@Mock
+	private UserDeviceRepository userDeviceRepository;
 
 	@Mock
 	private PasswordEncoder passwordEncoder;
@@ -89,6 +96,8 @@ class AuthServiceTest {
 	private final Long userId = 1L;
 	private final String accessToken = "accessToken";
 	private final String refreshToken = "refreshToken";
+	private final String deviceId = "device-1";
+	private final String deviceName = "iPhone 15";
 
 	@BeforeEach
 	void setUp() {
@@ -97,6 +106,7 @@ class AuthServiceTest {
 			tokenCacheRepository,
 			userRepository,
 			userCredentialRepository,
+			userDeviceRepository,
 			passwordEncoder,
 			authCacheRepository,
 			eventPublisher,
@@ -119,65 +129,6 @@ class AuthServiceTest {
 			email,
 			"encodedPassword"
 		));
-	}
-
-	@Test
-	@DisplayName("회원가입 성공")
-	void signUp() {
-		SignUpCommand command = new SignUpCommand(
-			email,
-			"password123",
-			"홍길동",
-			Phone.create("010-1234-5678"),
-			Gender.MALE,
-			LocalDate.of(1990, 1, 1),
-			null,
-			List.of(),
-			List.of()
-		);
-
-		when(userCredentialRepository.existsByEmail(email)).thenReturn(false);
-		when(userRepository.existsByPhone(any())).thenReturn(false);
-		when(passwordEncoder.encode(any())).thenReturn("encodedPassword");
-		when(userRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
-		when(roleRepository.findAllById(any())).thenReturn(List.of());
-		when(permissionRepository.findAllById(any())).thenReturn(List.of());
-
-		User result = authService.signUp(command);
-
-		assertThat(result).isNotNull();
-		verify(userCredentialRepository).existsByEmail(email);
-		verify(userRepository).existsByPhone(any());
-		verify(userRepository).save(any());
-		verify(userCredentialRepository).save(any());
-	}
-
-	@Test
-	@DisplayName("프로필 이미지 없이 회원가입 시 S3 copyObject 호출되지 않음")
-	void signUpWithoutProfileImage() {
-		SignUpCommand command = new SignUpCommand(
-			email,
-			"password123",
-			"홍길동",
-			Phone.create("010-1234-5678"),
-			Gender.MALE,
-			LocalDate.of(1990, 1, 1),
-			null,
-			List.of(),
-			List.of()
-		);
-
-		when(userCredentialRepository.existsByEmail(email)).thenReturn(false);
-		when(userRepository.existsByPhone(any())).thenReturn(false);
-		when(roleRepository.findAllById(any())).thenReturn(List.of());
-		when(permissionRepository.findAllById(any())).thenReturn(List.of());
-		when(passwordEncoder.encode(any())).thenReturn("encodedPassword");
-		when(userRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
-
-		User result = authService.signUp(command);
-
-		assertThat(result).isNotNull();
-		verify(s3Service, never()).copyObject(any(), any(), any());
 	}
 
 	@Test
@@ -225,30 +176,69 @@ class AuthServiceTest {
 	}
 
 	@Test
-	@DisplayName("로그인 성공")
-	void signIn() {
-		SignInCommand command = new SignInCommand(email, "password123");
+	@DisplayName("프로필 이미지 없이 회원가입 성공")
+	void signUpWithoutProfileImage() {
+		SignUpCommand command = new SignUpCommand(
+			email,
+			"password123",
+			"홍길동",
+			Phone.create("010-1234-5678"),
+			Gender.MALE,
+			LocalDate.of(1990, 1, 1),
+			null,
+			List.of(),
+			List.of()
+		);
 
-		doReturn(userId).when(user).getId();
-		doReturn(Collections.emptyList()).when(user).getPermissionNames();
-		userCredential.verify();
+		when(userCredentialRepository.existsByEmail(email)).thenReturn(false);
+		when(userRepository.existsByPhone(any())).thenReturn(false);
+		when(roleRepository.findAllById(any())).thenReturn(List.of());
+		when(permissionRepository.findAllById(any())).thenReturn(List.of());
+		when(passwordEncoder.encode(any())).thenReturn("encodedPassword");
+		when(userRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
-		when(userCredentialRepository.findByEmail(email)).thenReturn(Optional.of(userCredential));
-		when(passwordEncoder.matches("password123", "encodedPassword")).thenReturn(true);
-		when(jwtProvider.createAccessToken(userId, Collections.emptyList())).thenReturn(accessToken);
-		when(jwtProvider.createRefreshToken()).thenReturn(refreshToken);
-		doNothing().when(tokenCacheRepository).addRefreshToken(userId, refreshToken);
+		User result = authService.signUp(command);
 
-		TokenResult result = authService.signIn(command);
+		assertThat(result).isNotNull();
+		verify(s3Service, never()).copyObject(any(), any(), any());
+	}
 
-		assertThat(result.accessToken()).isEqualTo(accessToken);
-		assertThat(result.refreshToken()).isEqualTo(refreshToken);
+	@Test
+	@DisplayName("회원가입 성공")
+	void signUp() {
+		SignUpCommand command = new SignUpCommand(
+			email,
+			"password123",
+			"홍길동",
+			Phone.create("010-1234-5678"),
+			Gender.MALE,
+			LocalDate.of(1990, 1, 1),
+			null,
+			List.of(),
+			List.of()
+		);
+
+		when(userCredentialRepository.existsByEmail(email)).thenReturn(false);
+		when(userRepository.existsByPhone(any())).thenReturn(false);
+		when(passwordEncoder.encode(any())).thenReturn("encodedPassword");
+		when(userRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+		when(roleRepository.findAllById(any())).thenReturn(List.of());
+		when(permissionRepository.findAllById(any())).thenReturn(List.of());
+
+		User result = authService.signUp(command);
+
+		assertThat(result).isNotNull();
+		verify(userCredentialRepository).existsByEmail(email);
+		verify(userRepository).existsByPhone(any());
+		verify(userRepository).save(any());
+		verify(userCredentialRepository).save(any());
 	}
 
 	@Test
 	@DisplayName("존재하지 않는 이메일로 로그인 시 NotFoundEntityException 발생")
 	void signInWithNonExistentEmail() {
-		SignInCommand command = new SignInCommand(email, "password123");
+		SignInCommand command = new SignInCommand(email, "password123", deviceId, deviceName, DeviceType.WEB,
+			"test-fcm-token");
 
 		when(userCredentialRepository.findByEmail(email)).thenReturn(Optional.empty());
 
@@ -259,7 +249,8 @@ class AuthServiceTest {
 	@Test
 	@DisplayName("잘못된 비밀번호로 로그인 시 InvalidCredentialsException 발생")
 	void signInWithWrongPassword() {
-		SignInCommand command = new SignInCommand(email, "wrongPassword");
+		SignInCommand command = new SignInCommand(email, "wrongPassword", deviceId, deviceName, DeviceType.WEB,
+			"test-fcm-token");
 
 		when(userCredentialRepository.findByEmail(email)).thenReturn(Optional.of(userCredential));
 		when(passwordEncoder.matches("wrongPassword", "encodedPassword")).thenReturn(false);
@@ -269,9 +260,66 @@ class AuthServiceTest {
 	}
 
 	@Test
+	@DisplayName("이메일 인증 안된 계정으로 로그인 시 InvalidCredentialsException 발생")
+	void signInWithUnverifiedEmail() {
+		SignInCommand command = new SignInCommand(email, "password123", deviceId, deviceName, DeviceType.WEB,
+			"test-fcm-token");
+		UserCredential unverifiedCredential = spy(UserCredential.create(user, email, "encodedPassword"));
+
+		when(userCredentialRepository.findByEmail(email)).thenReturn(Optional.of(unverifiedCredential));
+		when(passwordEncoder.matches("password123", "encodedPassword")).thenReturn(true);
+
+		assertThatThrownBy(() -> authService.signIn(command))
+			.isInstanceOf(InvalidCredentialsException.class);
+	}
+
+	@Test
+	@DisplayName("디바이스 최대 개수 초과 시 ExceededMaxDeviceException 발생")
+	void signInWithExceededMaxDevices() {
+		SignInCommand command = new SignInCommand(email, "password123", deviceId, deviceName, DeviceType.WEB,
+			"test-fcm-token");
+
+		doReturn(userId).when(user).getId();
+		userCredential.verify();
+
+		when(userCredentialRepository.findByEmail(email)).thenReturn(Optional.of(userCredential));
+		when(passwordEncoder.matches("password123", "encodedPassword")).thenReturn(true);
+		when(userDeviceRepository.findByUserIdAndDeviceId(userId, deviceId)).thenReturn(Optional.empty());
+		when(userDeviceRepository.countByUserId(userId)).thenReturn((long)UserDevice.MAX_DEVICES);
+
+		assertThatThrownBy(() -> authService.signIn(command))
+			.isInstanceOf(ExceededMaxDeviceException.class);
+	}
+
+	@Test
+	@DisplayName("로그인 성공")
+	void signIn() {
+		SignInCommand command = new SignInCommand(email, "password123", deviceId, deviceName, DeviceType.WEB,
+			"test-fcm-token");
+
+		doReturn(userId).when(user).getId();
+		doReturn(Collections.emptyList()).when(user).getPermissionNames();
+		userCredential.verify();
+
+		when(userCredentialRepository.findByEmail(email)).thenReturn(Optional.of(userCredential));
+		when(passwordEncoder.matches("password123", "encodedPassword")).thenReturn(true);
+		when(userDeviceRepository.findByUserIdAndDeviceId(userId, deviceId)).thenReturn(Optional.empty());
+		when(userDeviceRepository.countByUserId(userId)).thenReturn(0L);
+		when(userDeviceRepository.save(any(UserDevice.class))).thenAnswer(invocation -> invocation.getArgument(0));
+		when(jwtProvider.createAccessToken(userId, Collections.emptyList())).thenReturn(accessToken);
+		when(jwtProvider.createRefreshToken()).thenReturn(refreshToken);
+		doNothing().when(tokenCacheRepository).setRefreshToken(userId, deviceId, refreshToken);
+
+		TokenResult result = authService.signIn(command);
+
+		assertThat(result.accessToken()).isEqualTo(accessToken);
+		assertThat(result.refreshToken()).isEqualTo(refreshToken);
+	}
+
+	@Test
 	@DisplayName("토큰 갱신 성공")
 	void refreshToken() {
-		RefreshTokenCommand command = new RefreshTokenCommand(accessToken, refreshToken);
+		RefreshTokenCommand command = new RefreshTokenCommand(accessToken, refreshToken, deviceId);
 		Claims claims = new DefaultClaims(Map.of("userId", userId));
 		String newRefreshToken = "newRefreshToken";
 
@@ -280,75 +328,44 @@ class AuthServiceTest {
 
 		when(jwtProvider.parseRefreshToken(refreshToken)).thenReturn(mock(Claims.class));
 		when(jwtProvider.parseAccessToken(accessToken)).thenReturn(claims);
-		when(tokenCacheRepository.getRefreshToken(userId, refreshToken)).thenReturn(refreshToken);
+		when(tokenCacheRepository.getRefreshToken(userId, deviceId)).thenReturn(refreshToken);
 		when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 		when(jwtProvider.createAccessToken(userId, Collections.emptyList())).thenReturn("newAccessToken");
 		when(jwtProvider.createRefreshToken()).thenReturn(newRefreshToken);
-		doNothing().when(tokenCacheRepository).removeRefreshToken(userId, refreshToken);
-		doNothing().when(tokenCacheRepository).addRefreshToken(userId, newRefreshToken);
+		doNothing().when(tokenCacheRepository).removeRefreshToken(userId, deviceId);
+		doNothing().when(tokenCacheRepository).setRefreshToken(userId, deviceId, newRefreshToken);
 
 		TokenResult result = authService.refreshToken(command);
 
 		assertThat(result.accessToken()).isEqualTo("newAccessToken");
 		assertThat(result.refreshToken()).isEqualTo(newRefreshToken);
-		verify(tokenCacheRepository).removeRefreshToken(userId, refreshToken);
-		verify(tokenCacheRepository).addRefreshToken(userId, newRefreshToken);
+		verify(tokenCacheRepository).removeRefreshToken(userId, deviceId);
+		verify(tokenCacheRepository).setRefreshToken(userId, deviceId, newRefreshToken);
 	}
 
 	@Test
 	@DisplayName("유효하지 않은 refresh token으로 갱신 시 InvalidCredentialsException 발생")
 	void refreshTokenWithInvalidToken() {
-		RefreshTokenCommand command = new RefreshTokenCommand(accessToken, "invalidRefreshToken");
+		RefreshTokenCommand command = new RefreshTokenCommand(accessToken, "invalidRefreshToken", deviceId);
 		Claims claims = new DefaultClaims(Map.of("userId", userId));
 
 		when(jwtProvider.parseRefreshToken("invalidRefreshToken")).thenReturn(mock(Claims.class));
 		when(jwtProvider.parseAccessToken(accessToken)).thenReturn(claims);
-		when(tokenCacheRepository.getRefreshToken(userId, "invalidRefreshToken")).thenReturn(null);
+		when(tokenCacheRepository.getRefreshToken(userId, deviceId)).thenReturn(null);
 
 		assertThatThrownBy(() -> authService.refreshToken(command))
 			.isInstanceOf(InvalidCredentialsException.class);
 	}
 
 	@Test
-	@DisplayName("비밀번호 재설정 확인 성공")
-	void confirmPasswordReset() {
-		String token = "resetToken";
-		String newPassword = "newPassword123";
-		String encodedPassword = "encodedNewPassword";
-		PasswordResetConfirmCommand command = new PasswordResetConfirmCommand(token, newPassword);
-
-		when(authCacheRepository.getPasswordResetToken(token)).thenReturn(email.getValue());
-		when(userCredentialRepository.findByEmail(any())).thenReturn(Optional.of(userCredential));
-		when(passwordEncoder.encode(newPassword)).thenReturn(encodedPassword);
-		doNothing().when(authCacheRepository).deletePasswordResetToken(token);
-
-		authService.confirmPasswordReset(command);
-
-		verify(userCredential).updatePassword(encodedPassword);
-	}
-
-	@Test
-	@DisplayName("유효하지 않은 토큰으로 비밀번호 재설정 확인 시 InvalidCredentialsException 발생")
-	void confirmPasswordResetWithInvalidToken() {
+	@DisplayName("유효하지 않은 토큰으로 회원가입 인증 확인 시 InvalidCredentialsException 발생")
+	void confirmJoinVerifyWithInvalidToken() {
 		String token = "invalidToken";
-		PasswordResetConfirmCommand command = new PasswordResetConfirmCommand(token, "newPassword123");
+		JoinVerifyConfirmCommand command = new JoinVerifyConfirmCommand(token);
 
-		when(authCacheRepository.getPasswordResetToken(token)).thenReturn(null);
+		when(authCacheRepository.getJoinVerifyToken(token)).thenReturn(null);
 
-		assertThatThrownBy(() -> authService.confirmPasswordReset(command))
-			.isInstanceOf(InvalidCredentialsException.class);
-	}
-
-	@Test
-	@DisplayName("이메일 인증 안된 계정으로 로그인 시 InvalidCredentialsException 발생")
-	void signInWithUnverifiedEmail() {
-		SignInCommand command = new SignInCommand(email, "password123");
-		UserCredential unverifiedCredential = spy(UserCredential.create(user, email, "encodedPassword"));
-
-		when(userCredentialRepository.findByEmail(email)).thenReturn(Optional.of(unverifiedCredential));
-		when(passwordEncoder.matches("password123", "encodedPassword")).thenReturn(true);
-
-		assertThatThrownBy(() -> authService.signIn(command))
+		assertThatThrownBy(() -> authService.confirmJoinVerify(command))
 			.isInstanceOf(InvalidCredentialsException.class);
 	}
 
@@ -379,15 +396,14 @@ class AuthServiceTest {
 	}
 
 	@Test
-	@DisplayName("유효하지 않은 토큰으로 회원가입 인증 확인 시 InvalidCredentialsException 발생")
-	void confirmJoinVerifyWithInvalidToken() {
-		String token = "invalidToken";
-		JoinVerifyConfirmCommand command = new JoinVerifyConfirmCommand(token);
+	@DisplayName("존재하지 않는 이메일로 비밀번호 재설정 요청 시 NotFoundEntityException 발생")
+	void requestPasswordResetWithNonExistentEmail() {
+		PasswordResetRequestCommand command = new PasswordResetRequestCommand(email);
 
-		when(authCacheRepository.getJoinVerifyToken(token)).thenReturn(null);
+		when(userCredentialRepository.findByEmail(email)).thenReturn(Optional.empty());
 
-		assertThatThrownBy(() -> authService.confirmJoinVerify(command))
-			.isInstanceOf(InvalidCredentialsException.class);
+		assertThatThrownBy(() -> authService.requestPasswordReset(command))
+			.isInstanceOf(NotFoundEntityException.class);
 	}
 
 	@Test
@@ -404,13 +420,32 @@ class AuthServiceTest {
 	}
 
 	@Test
-	@DisplayName("존재하지 않는 이메일로 비밀번호 재설정 요청 시 NotFoundEntityException 발생")
-	void requestPasswordResetWithNonExistentEmail() {
-		PasswordResetRequestCommand command = new PasswordResetRequestCommand(email);
+	@DisplayName("유효하지 않은 토큰으로 비밀번호 재설정 확인 시 InvalidCredentialsException 발생")
+	void confirmPasswordResetWithInvalidToken() {
+		String token = "invalidToken";
+		PasswordResetConfirmCommand command = new PasswordResetConfirmCommand(token, "newPassword123");
 
-		when(userCredentialRepository.findByEmail(email)).thenReturn(Optional.empty());
+		when(authCacheRepository.getPasswordResetToken(token)).thenReturn(null);
 
-		assertThatThrownBy(() -> authService.requestPasswordReset(command))
-			.isInstanceOf(NotFoundEntityException.class);
+		assertThatThrownBy(() -> authService.confirmPasswordReset(command))
+			.isInstanceOf(InvalidCredentialsException.class);
+	}
+
+	@Test
+	@DisplayName("비밀번호 재설정 확인 성공")
+	void confirmPasswordReset() {
+		String token = "resetToken";
+		String newPassword = "newPassword123";
+		String encodedPassword = "encodedNewPassword";
+		PasswordResetConfirmCommand command = new PasswordResetConfirmCommand(token, newPassword);
+
+		when(authCacheRepository.getPasswordResetToken(token)).thenReturn(email.getValue());
+		when(userCredentialRepository.findByEmail(any())).thenReturn(Optional.of(userCredential));
+		when(passwordEncoder.encode(newPassword)).thenReturn(encodedPassword);
+		doNothing().when(authCacheRepository).deletePasswordResetToken(token);
+
+		authService.confirmPasswordReset(command);
+
+		verify(userCredential).updatePassword(encodedPassword);
 	}
 }

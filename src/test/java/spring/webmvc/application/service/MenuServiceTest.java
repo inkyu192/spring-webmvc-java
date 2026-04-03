@@ -44,7 +44,9 @@ class MenuServiceTest {
 
 		var authorities = List.of(
 			new SimpleGrantedAuthority("PRODUCT_READ"),
-			new SimpleGrantedAuthority("PRODUCT_WRITE")
+			new SimpleGrantedAuthority("PRODUCT_CREATE"),
+			new SimpleGrantedAuthority("PRODUCT_UPDATE"),
+			new SimpleGrantedAuthority("PRODUCT_DELETE")
 		);
 		var authentication = new UsernamePasswordAuthenticationToken("1", null, authorities);
 		SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -68,8 +70,11 @@ class MenuServiceTest {
 		Menu childMenu2 = Menu.create("menu.products.accommodations", "/products/accommodations", parentMenu, 2L);
 		setId(childMenu2, 7L);
 
-		when(menuRepository.findAllWithRecursiveByPermissions(Set.of("PRODUCT_READ", "PRODUCT_WRITE")))
-			.thenReturn(List.of(parentMenu, childMenu1, childMenu2));
+		when(
+			menuRepository.findAllWithRecursiveByPermissions(
+				Set.of("PRODUCT_READ", "PRODUCT_CREATE", "PRODUCT_UPDATE", "PRODUCT_DELETE")
+			)
+		).thenReturn(List.of(parentMenu, childMenu1, childMenu2));
 
 		when(translationService.getMessage("menu.products", locale)).thenReturn("상품");
 		when(translationService.getMessage("menu.products.transports", locale)).thenReturn("교통수단관리");
@@ -102,8 +107,11 @@ class MenuServiceTest {
 		Menu childMenu = Menu.create("menu.products.transports", "/products/transports", parentMenu, 1L);
 		setId(childMenu, 6L);
 
-		when(menuRepository.findAllWithRecursiveByPermissions(Set.of("PRODUCT_READ", "PRODUCT_WRITE")))
-			.thenReturn(List.of(parentMenu, childMenu));
+		when(
+			menuRepository.findAllWithRecursiveByPermissions(
+				Set.of("PRODUCT_READ", "PRODUCT_CREATE", "PRODUCT_UPDATE", "PRODUCT_DELETE")
+			)
+		).thenReturn(List.of(parentMenu, childMenu));
 
 		when(translationService.getMessage("menu.products", enLocale)).thenReturn("Products");
 		when(translationService.getMessage("menu.products.transports", enLocale)).thenReturn("Transport Management");

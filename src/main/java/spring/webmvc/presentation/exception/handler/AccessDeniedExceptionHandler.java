@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.sentry.Sentry;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,7 @@ public class AccessDeniedExceptionHandler implements AccessDeniedHandler {
 		HttpServletResponse response,
 		AccessDeniedException exception
 	) throws IOException {
+		Sentry.captureException(exception);
 		HttpStatus status = HttpStatus.FORBIDDEN;
 		Locale locale = LocaleContextHolder.getLocale();
 

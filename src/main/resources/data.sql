@@ -1,12 +1,13 @@
 INSERT INTO permission (id, name, created_at, updated_at)
 VALUES (1, 'USER_READ', NOW(6), NOW(6)),
-       (2, 'USER_WRITE', NOW(6), NOW(6)),
        (3, 'PRODUCT_READ', NOW(6), NOW(6)),
-       (4, 'PRODUCT_WRITE', NOW(6), NOW(6)),
+       (4, 'PRODUCT_CREATE', NOW(6), NOW(6)),
        (5, 'ORDER_READ', NOW(6), NOW(6)),
-       (6, 'ORDER_WRITE', NOW(6), NOW(6)),
+       (6, 'ORDER_UPDATE', NOW(6), NOW(6)),
        (8, 'CURATION_READ', NOW(6), NOW(6)),
-       (9, 'CURATION_WRITE', NOW(6), NOW(6));
+       (9, 'CURATION_CREATE', NOW(6), NOW(6)),
+       (10, 'PRODUCT_UPDATE', NOW(6), NOW(6)),
+       (11, 'PRODUCT_DELETE', NOW(6), NOW(6));
 
 INSERT INTO role (id, name, created_at, updated_at)
 VALUES (1, 'OPERATOR', NOW(6), NOW(6)),
@@ -17,19 +18,21 @@ VALUES (1, 'OPERATOR', NOW(6), NOW(6)),
 
 INSERT INTO role_permission (role_id, permission_id)
 VALUES (1, 1),
-       (1, 2),
        (1, 3),
        (1, 4),
+       (1, 10),
+       (1, 11),
        (1, 5),
        (1, 6),
        (1, 8),
        (1, 9),
        (2, 1),
-       (2, 2),
        (2, 5),
        (2, 6),
        (3, 3),
        (3, 4),
+       (3, 10),
+       (3, 11),
        (3, 5),
        (3, 6),
        (3, 8),
@@ -53,14 +56,18 @@ VALUES (5, 'menu.users.management', '/users', 1, 1, NOW(6), NOW(6)),
 INSERT INTO permission_menu (permission_id, menu_id)
 VALUES (1, 1),
        (1, 5),
-       (2, 1),
-       (2, 5),
        (3, 2),
        (3, 6),
        (3, 7),
        (4, 2),
        (4, 6),
        (4, 7),
+       (10, 2),
+       (10, 6),
+       (10, 7),
+       (11, 2),
+       (11, 6),
+       (11, 7),
        (5, 3),
        (5, 9),
        (6, 3),
@@ -369,21 +376,25 @@ VALUES (1, '6f41476f7a298cd9384e1bbaf98086f2', 'b43d8c3d6e01842b9bc4a4cb1dfeea4a
         NOW(6));
 
 INSERT INTO user_credential (user_id, email, password, verified_at, created_at)
-VALUES (1, '80642c37a554627b6c373f0ac14538f45b3359c793f56f9474d0ff43d7ef179d',
+VALUES (1, 'b341221f354d39b17db4cf195b04197159c3eea7fe12f48567798af428d359c3',
         '$2a$10$CUNldObv2DnCJTpB5yYzL.zlWwxC2zj/gYSsJ14mY687edZrCtxwm', NOW(6), NOW(6));
 
 INSERT INTO user_role (user_id, role_id)
-VALUES (1, 3);
+VALUES (1, 1);
 
 INSERT INTO user_permission (user_id, permission_id)
 VALUES (1, 3),
-       (1, 4);
+       (1, 4),
+       (1, 10),
+       (1, 11);
 
 INSERT INTO translation (code, locale, message, created_at, updated_at)
 VALUES ('Gender', 'ko', '성별', NOW(6), NOW(6)),
        ('Gender', 'en', 'Gender', NOW(6), NOW(6)),
        ('CurationCategory', 'ko', '큐레이션 카테고리', NOW(6), NOW(6)),
        ('CurationCategory', 'en', 'Curation Category', NOW(6), NOW(6)),
+       ('DeviceType', 'ko', '디바이스 타입', NOW(6), NOW(6)),
+       ('DeviceType', 'en', 'Device Type', NOW(6), NOW(6)),
        ('OauthProvider', 'ko', 'OAuth 제공자', NOW(6), NOW(6)),
        ('OauthProvider', 'en', 'OAuth Provider', NOW(6), NOW(6)),
        ('OrderStatus', 'ko', '주문 상태', NOW(6), NOW(6)),
@@ -396,6 +407,12 @@ VALUES ('Gender', 'ko', '성별', NOW(6), NOW(6)),
        ('Gender.MALE', 'en', 'Male', NOW(6), NOW(6)),
        ('Gender.FEMALE', 'ko', '여성', NOW(6), NOW(6)),
        ('Gender.FEMALE', 'en', 'Female', NOW(6), NOW(6)),
+       ('DeviceType.IOS', 'ko', 'iOS', NOW(6), NOW(6)),
+       ('DeviceType.IOS', 'en', 'iOS', NOW(6), NOW(6)),
+       ('DeviceType.ANDROID', 'ko', '안드로이드', NOW(6), NOW(6)),
+       ('DeviceType.ANDROID', 'en', 'Android', NOW(6), NOW(6)),
+       ('DeviceType.WEB', 'ko', '웹', NOW(6), NOW(6)),
+       ('DeviceType.WEB', 'en', 'Web', NOW(6), NOW(6)),
        ('CurationCategory.HOME', 'ko', '홈', NOW(6), NOW(6)),
        ('CurationCategory.HOME', 'en', 'Home', NOW(6), NOW(6)),
        ('CurationCategory.CATEGORY', 'ko', '카테고리', NOW(6), NOW(6)),
@@ -441,6 +458,8 @@ VALUES ('Gender', 'ko', '성별', NOW(6), NOW(6)),
         NOW(6)),
        ('FailedAwsIntegrationException', 'ko', '{0} 서비스와의 통신 중 오류가 발생했습니다.', NOW(6), NOW(6)),
        ('FailedAwsIntegrationException', 'en', 'Error communicating with {0} service.', NOW(6), NOW(6)),
+       ('ExceededMaxDeviceException', 'ko', '등록 가능한 최대 기기 수({0}개)를 초과했습니다.', NOW(6), NOW(6)),
+       ('ExceededMaxDeviceException', 'en', 'Maximum number of devices ({0}) has been exceeded.', NOW(6), NOW(6)),
        ('AbstractHttpException', 'ko', '등록되지 않은 오류가 발생했습니다.', NOW(6), NOW(6)),
        ('AbstractHttpException', 'en', 'An unregistered error has occurred.', NOW(6), NOW(6)),
        ('HttpMessageNotReadableException', 'ko', '요청 본문을 읽을 수 없습니다.', NOW(6), NOW(6)),

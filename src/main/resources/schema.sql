@@ -14,6 +14,7 @@ DROP TABLE IF EXISTS role_permission;
 DROP TABLE IF EXISTS user_permission;
 DROP TABLE IF EXISTS user_role;
 DROP TABLE IF EXISTS user_company;
+DROP TABLE IF EXISTS user_device;
 DROP TABLE IF EXISTS delivery_address;
 DROP TABLE IF EXISTS menu;
 DROP TABLE IF EXISTS permission;
@@ -57,6 +58,21 @@ CREATE TABLE user_oauth
     oauth_user_id  VARCHAR(255) NOT NULL,
     created_at     DATETIME(6)  NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
     CONSTRAINT fk_user_oauth_user FOREIGN KEY (user_id) REFERENCES users (id)
+);
+
+CREATE TABLE user_device
+(
+    id            BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id       BIGINT       NOT NULL,
+    device_id     VARCHAR(255) NOT NULL,
+    device_name   VARCHAR(255) NOT NULL,
+    device_type   VARCHAR(50)  NOT NULL,
+    token         VARCHAR(512) NOT NULL,
+    last_login_at DATETIME(6)  NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    created_at    DATETIME(6)  NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    updated_at    DATETIME(6)  NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    UNIQUE KEY uk_user_device (user_id, device_id),
+    CONSTRAINT fk_user_device_user FOREIGN KEY (user_id) REFERENCES users (id)
 );
 
 CREATE TABLE company
@@ -242,10 +258,10 @@ CREATE TABLE curation_product
 CREATE TABLE translation
 (
     id         BIGINT AUTO_INCREMENT PRIMARY KEY,
-    code       VARCHAR(255) NOT NULL,
+    code       VARCHAR(100) NOT NULL,
     locale     VARCHAR(10)  NOT NULL,
     message    VARCHAR(500) NOT NULL,
     created_at DATETIME(6)  NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
     updated_at DATETIME(6)  NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
-    UNIQUE KEY uk_translation_code_locale (code, locale)
+    UNIQUE KEY uk_translation (code, locale)
 );

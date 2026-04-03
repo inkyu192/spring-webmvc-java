@@ -5,9 +5,9 @@ import spring.webmvc.application.dto.command.VerifyEmailCommand;
 public record VerifyEmailRequest(
 	@jakarta.validation.constraints.Email
 	String email,
-	String verifyUrl
+	String verifyLink
 ) {
 	public VerifyEmailCommand toCommand() {
-		return new VerifyEmailCommand(email, verifyUrl);
+		return new VerifyEmailCommand(email, verifyLink);
 	}
 }

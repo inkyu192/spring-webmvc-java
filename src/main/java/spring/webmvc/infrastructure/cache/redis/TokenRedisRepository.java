@@ -15,53 +15,42 @@ import spring.webmvc.infrastructure.properties.AppProperties;
 @RequiredArgsConstructor
 public class TokenRedisRepository implements TokenCacheRepository {
 
-	private static final String REFRESH_TOKEN_KEY = "user:%d:refresh-tokens";
-	private static final int MAX_TOKENS = 3;
+	private static final String REFRESH_TOKEN_KEY = "user:%d:device:%s:refresh-token";
 
 	private final RedisTemplate<String, String> redisTemplate;
 	private final AppProperties appProperties;
 
 	@Override
-	public void addRefreshToken(Long userId, String refreshToken) {
-		String key = String.format(REFRESH_TOKEN_KEY, userId);
+	public void setRefreshToken(Long userId, String deviceId, String refreshToken) {
+		String key = String.format(REFRESH_TOKEN_KEY, userId, deviceId);
 		try {
-			double score = System.currentTimeMillis();
-			redisTemplate.opsForZSet().add(key, refreshToken, score);
-
-			Long size = redisTemplate.opsForZSet().zCard(key);
-			if (size != null && size > MAX_TOKENS) {
-				redisTemplate.opsForZSet().removeRange(key, 0, size - MAX_TOKENS - 1);
-			}
-
 			long ttl = appProperties.jwt().refreshToken().expiration().getSeconds();
-			redisTemplate.expire(key, ttl, TimeUnit.SECONDS);
+			redisTemplate.opsForValue().set(key, refreshToken, ttl, TimeUnit.SECONDS);
 		} catch (Exception e) {
-			log.error("Failed to add refresh token for userId={}: {}", userId, e.getMessage(), e);
+			log.error("Failed to set refresh token for userId={}, deviceId={}: {}", userId, deviceId, e.getMessage(),
+				e);
 		}
 	}
 
 	@Override
-	public String getRefreshToken(Long userId, String refreshToken) {
-		String key = String.format(REFRESH_TOKEN_KEY, userId);
-
+	public String getRefreshToken(Long userId, String deviceId) {
+		String key = String.format(REFRESH_TOKEN_KEY, userId, deviceId);
 		try {
-			Double score = redisTemplate.opsForZSet().score(key, refreshToken);
-
-			return score != null ? refreshToken : null;
+			return redisTemplate.opsForValue().get(key);
 		} catch (Exception e) {
-			log.warn("Failed to get refresh token for userId={}: {}", userId, e.getMessage());
+			log.warn("Failed to get refresh token for userId={}, deviceId={}: {}", userId, deviceId, e.getMessage());
 			return null;
 		}
 	}
 
 	@Override
-	public void removeRefreshToken(Long userId, String refreshToken) {
-		String key = String.format(REFRESH_TOKEN_KEY, userId);
-
+	public void removeRefreshToken(Long userId, String deviceId) {
+		String key = String.format(REFRESH_TOKEN_KEY, userId, deviceId);
 		try {
-			redisTemplate.opsForZSet().remove(key, refreshToken);
+			redisTemplate.delete(key);
 		} catch (Exception e) {
-			log.error("Failed to remove refresh token for userId={}: {}", userId, e.getMessage(), e);
+			log.error("Failed to remove refresh token for userId={}, deviceId={}: {}", userId, deviceId, e.getMessage(),
+				e);
 		}
 	}
 }

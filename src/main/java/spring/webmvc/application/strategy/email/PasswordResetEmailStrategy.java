@@ -9,8 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
 import spring.webmvc.application.dto.command.PasswordResetEmailCommand;
-import spring.webmvc.application.enums.EmailTemplate;
-import spring.webmvc.infrastructure.external.smtp.EmailSender;
+import spring.webmvc.infrastructure.external.ses.EmailSender;
 
 @Component
 @RequiredArgsConstructor

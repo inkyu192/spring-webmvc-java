@@ -54,12 +54,6 @@ networks:
     name: application-network
 ```
 
-### SMTP 설정
-이메일 발송 기능을 사용하려면 SMTP 서버 정보를 환경 변수로 설정해야 합니다.
-
-- `SMTP_USERNAME`: Gmail 계정
-- `SMTP_PASSWORD`: Gmail 앱 비밀번호
-
 ---
 
 ## API 문서

@@ -43,7 +43,8 @@ public record AppProperties(
 	public record AwsProperties(
 		S3Properties s3,
 		DynamoDbProperties dynamodb,
-		CloudFrontProperties cloudfront
+		CloudFrontProperties cloudfront,
+		SesProperties ses
 	) {
 		public record S3Properties(
 			String endpoint,
@@ -58,6 +59,12 @@ public record AppProperties(
 
 		public record CloudFrontProperties(
 			String domain
+		) {
+		}
+
+		public record SesProperties(
+			String endpoint,
+			String senderEmail
 		) {
 		}
 	}

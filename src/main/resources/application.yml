@@ -1,3 +1,10 @@
+sentry:
+  dsn: ${SENTRY_DSN:}
+  environment: local
+  send-default-pii: true
+  traces-sample-rate: 1.0
+  exception-resolver-order: -2147483647
+
 spring:
   application:
     name: spring-webmvc-java
@@ -35,17 +42,6 @@ spring:
       data-locations: classpath:data.sql
       encoding: UTF-8
       continue-on-error: false
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: ${SMTP_USERNAME:}
-    password: ${SMTP_PASSWORD:}
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
 
 logging:
   level:
@@ -94,6 +90,9 @@ app:
       endpoint: http://localhost:4566
     cloudfront:
       domain: http://localhost:4566/my-bucket
+    ses:
+      endpoint: http://localhost:4566
+      sender-email: noreply@example.com
   external:
     notification:
       host: http://localhost:8080

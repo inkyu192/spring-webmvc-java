@@ -36,7 +36,7 @@ public class CurationController {
 	private final CurationService curationService;
 
 	@PostMapping
-	@PreAuthorize("hasAuthority('CURATION_WRITE')")
+	@PreAuthorize("hasAuthority('CURATION_CREATE')")
 	@ResponseStatus(HttpStatus.CREATED)
 	public CurationDetailResponse createCuration(
 		@RequestBody @Validated CurationCreateRequest request

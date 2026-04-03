@@ -26,7 +26,7 @@ services:
     ports:
       - "4566:4566"
     environment:
-      - SERVICES=s3,dynamodb,sqs
+      - SERVICES=s3,dynamodb,sqs,ses
       - DEBUG=1
       - AWS_ACCESS_KEY_ID=accessKey
       - AWS_SECRET_ACCESS_KEY=secretKey

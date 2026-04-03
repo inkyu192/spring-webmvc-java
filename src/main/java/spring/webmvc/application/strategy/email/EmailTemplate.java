@@ -1,4 +1,4 @@
-package spring.webmvc.application.enums;
+package spring.webmvc.application.strategy.email;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

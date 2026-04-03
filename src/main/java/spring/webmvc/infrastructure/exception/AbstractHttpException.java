@@ -8,17 +8,11 @@ import lombok.Getter;
 public abstract class AbstractHttpException extends RuntimeException {
 
 	private final HttpStatus httpStatus;
-	private final Object[] translationArgs;
+	private final Object[] messageArgs;
 
-	protected AbstractHttpException(HttpStatus httpStatus, Object... translationArgs) {
+	protected AbstractHttpException(HttpStatus httpStatus, Object... messageArgs) {
 		this.httpStatus = httpStatus;
-		this.translationArgs = translationArgs;
-	}
-
-	protected AbstractHttpException(HttpStatus httpStatus, Throwable throwable, Object... translationArgs) {
-		super(throwable);
-		this.httpStatus = httpStatus;
-		this.translationArgs = translationArgs;
+		this.messageArgs = messageArgs;
 	}
 
 	public String getTranslationCode() {

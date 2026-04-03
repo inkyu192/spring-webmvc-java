@@ -47,7 +47,7 @@ class JwtAuthenticationFilterTest {
 	void doFilterInternalWithValidToken() throws Exception {
 		String token = "valid-token";
 		Long userId = 1L;
-		List<String> permissions = List.of("USER_READ", "USER_WRITE");
+		List<String> permissions = List.of("USER_READ");
 		Claims claims = new DefaultClaims(Map.of(
 			"userId", userId,
 			"permissions", permissions
@@ -62,7 +62,7 @@ class JwtAuthenticationFilterTest {
 		assertThat(authentication).isNotNull();
 		assertThat(authentication.getPrincipal()).isEqualTo(userId);
 		assertThat(authentication.getCredentials()).isEqualTo(token);
-		assertThat(authentication.getAuthorities()).hasSize(2);
+		assertThat(authentication.getAuthorities()).hasSize(1);
 
 		verify(filterChain).doFilter(request, response);
 	}

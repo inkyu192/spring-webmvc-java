@@ -48,3 +48,6 @@ awslocal sqs create-queue --queue-name email-queue --region $REGION
 
 echo "[init] SQS setup completed!"
 awslocal sqs list-queues --region $REGION
+
+echo "[init] Verifying SES email identity..."
+awslocal ses verify-email-identity --email-address noreply@example.com --region $REGION

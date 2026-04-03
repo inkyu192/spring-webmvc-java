@@ -2,7 +2,6 @@ package spring.webmvc.domain.model.entity;
 
 import java.time.Instant;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -23,7 +22,6 @@ public class UserCredential {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id")
 	private Long id;
 
 	@OneToOne(fetch = FetchType.LAZY)

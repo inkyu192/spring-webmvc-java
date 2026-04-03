@@ -2,6 +2,7 @@ package spring.webmvc.presentation.controller;
 
 import java.util.List;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,6 +20,7 @@ public class CodeController {
 	private final CodeService codeService;
 
 	@GetMapping
+	@PreAuthorize("isAuthenticated()")
 	public CodeListResponse findCodes() {
 		List<CodeGroupResult> codes = codeService.findCodes();
 

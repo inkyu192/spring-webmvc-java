@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import spring.webmvc.application.dto.command.PasswordResetEmailCommand;
 import spring.webmvc.application.dto.command.VerifyEmailCommand;
-import spring.webmvc.application.enums.EmailTemplate;
+import spring.webmvc.application.strategy.email.EmailTemplate;
 import spring.webmvc.infrastructure.external.sqs.SqsProducer;
 
 @Service

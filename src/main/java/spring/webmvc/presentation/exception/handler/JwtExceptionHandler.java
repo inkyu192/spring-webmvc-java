@@ -15,6 +15,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.jsonwebtoken.JwtException;
+import io.sentry.Sentry;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -38,6 +39,7 @@ public class JwtExceptionHandler extends OncePerRequestFilter {
 		try {
 			filterChain.doFilter(request, response);
 		} catch (Exception e) {
+			Sentry.captureException(e);
 			HttpStatus status = (e instanceof JwtException)
 				? HttpStatus.UNAUTHORIZED
 				: HttpStatus.INTERNAL_SERVER_ERROR;

@@ -1,4 +1,4 @@
-package spring.webmvc.application.consumer;
+package spring.webmvc.presentation.consumer;
 
 import java.util.List;
 import java.util.Map;
@@ -12,8 +12,8 @@ import org.springframework.stereotype.Component;
 
 import io.awspring.cloud.sqs.annotation.SqsListener;
 import lombok.extern.slf4j.Slf4j;
-import spring.webmvc.application.enums.EmailTemplate;
 import spring.webmvc.application.strategy.email.EmailStrategy;
+import spring.webmvc.application.strategy.email.EmailTemplate;
 
 @Component
 @Slf4j

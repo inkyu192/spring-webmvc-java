@@ -97,7 +97,11 @@ class AuthControllerTest {
 					.content("""
 						{
 						  "email": "test@example.com",
-						  "password": "password123"
+						  "password": "password123",
+						  "deviceId": "device-1",
+						  "deviceName": "iPhone 15",
+						  "deviceType": "WEB",
+						  "token": "test-fcm-token"
 						}
 						""")
 			)
@@ -107,7 +111,11 @@ class AuthControllerTest {
 					"sign-in",
 					PayloadDocumentation.requestFields(
 						PayloadDocumentation.fieldWithPath("email").description("이메일"),
-						PayloadDocumentation.fieldWithPath("password").description("비밀번호")
+						PayloadDocumentation.fieldWithPath("password").description("비밀번호"),
+						PayloadDocumentation.fieldWithPath("deviceId").description("디바이스 ID"),
+						PayloadDocumentation.fieldWithPath("deviceName").description("디바이스 이름"),
+						PayloadDocumentation.fieldWithPath("deviceType").description("디바이스 타입"),
+						PayloadDocumentation.fieldWithPath("token").description("푸시 토큰")
 					),
 					PayloadDocumentation.responseFields(
 						PayloadDocumentation.fieldWithPath("accessToken").description("액세스 토큰"),
@@ -129,7 +137,8 @@ class AuthControllerTest {
 					.content("""
 						{
 						  "accessToken": "accessToken",
-						  "refreshToken": "refreshToken"
+						  "refreshToken": "refreshToken",
+						  "deviceId": "device-1"
 						}
 						""")
 			)
@@ -139,7 +148,8 @@ class AuthControllerTest {
 					"token-refresh",
 					PayloadDocumentation.requestFields(
 						PayloadDocumentation.fieldWithPath("accessToken").description("액세스 토큰"),
-						PayloadDocumentation.fieldWithPath("refreshToken").description("리프레시 토큰")
+						PayloadDocumentation.fieldWithPath("refreshToken").description("리프레시 토큰"),
+						PayloadDocumentation.fieldWithPath("deviceId").description("디바이스 ID")
 					),
 					PayloadDocumentation.responseFields(
 						PayloadDocumentation.fieldWithPath("accessToken").description("새 액세스 토큰"),
