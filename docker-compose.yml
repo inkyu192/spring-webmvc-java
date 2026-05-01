@@ -1,7 +1,7 @@
 services:
   mysql:
     container_name: mysql
-    image: mysql:8.4.7
+    image: mysql:8.4
     environment:
       MYSQL_DATABASE: my_db
       MYSQL_USER: my_user
@@ -14,7 +14,7 @@ services:
 
   redis:
     container_name: redis
-    image: redis:7.4.7
+    image: redis:7.4
     ports:
       - "6379:6379"
     networks:
@@ -22,7 +22,7 @@ services:
 
   localstack:
     container_name: localstack
-    image: localstack/localstack:3.8.1
+    image: localstack/localstack:3.8
     ports:
       - "4566:4566"
     environment:

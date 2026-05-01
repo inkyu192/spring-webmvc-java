@@ -21,13 +21,14 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import spring.webmvc.application.dto.query.ProductCursorPageQuery;
 import spring.webmvc.application.dto.result.AccommodationResult;
 import spring.webmvc.application.dto.result.ProductDetailResult;
+import spring.webmvc.application.dto.result.ProductExposureAttributeResult;
 import spring.webmvc.application.dto.result.ProductSummaryResult;
+import spring.webmvc.application.dto.result.TagResult;
 import spring.webmvc.application.dto.result.TransportResult;
 import spring.webmvc.application.service.ProductService;
 import spring.webmvc.domain.dto.CursorPage;
 import spring.webmvc.domain.model.enums.ProductCategory;
 import spring.webmvc.domain.model.enums.ProductStatus;
-import spring.webmvc.domain.model.vo.ProductExposureAttribute;
 import spring.webmvc.infrastructure.config.ControllerTest;
 
 @ControllerTest(ProductController.class)
@@ -48,8 +49,8 @@ class ProductControllerTest {
 	void setUp() {
 		Instant now = Instant.now();
 
-		ProductExposureAttribute exposureAttribute = new ProductExposureAttribute(
-			false, true, false, false
+		ProductExposureAttributeResult exposureAttribute = new ProductExposureAttributeResult(
+			false, true, false, false, false, false
 		);
 
 		productSummaryResult = new ProductSummaryResult(
@@ -80,7 +81,8 @@ class ProductControllerTest {
 			10L,
 			exposureAttribute,
 			now,
-			accommodationResult
+			accommodationResult,
+			List.of(new TagResult(1L, "제주"), new TagResult(5L, "럭셔리"))
 		);
 
 		TransportResult transportResult = new TransportResult(
@@ -100,7 +102,8 @@ class ProductControllerTest {
 			20L,
 			exposureAttribute,
 			now,
-			transportResult
+			transportResult,
+			List.of(new TagResult(4L, "특가"))
 		);
 	}
 
@@ -113,7 +116,8 @@ class ProductControllerTest {
 			null
 		);
 
-		when(productService.findProductsWithCursorPage(any(ProductCursorPageQuery.class))).thenReturn(cursorPage);
+		when(productService.findProductsWithCursorPage(any(ProductCursorPageQuery.class), any())).thenReturn(
+			cursorPage);
 
 		mockMvc.perform(
 				RestDocumentationRequestBuilders.get("/customer/products")
@@ -150,6 +154,10 @@ class ProductControllerTest {
 							.description("추천 상품 여부"),
 						PayloadDocumentation.fieldWithPath("content[].exposureAttribute.isLowStock")
 							.description("품절 임박 여부"),
+						PayloadDocumentation.fieldWithPath("content[].exposureAttribute.isRecommended")
+							.description("추천 뱃지 여부"),
+						PayloadDocumentation.fieldWithPath("content[].exposureAttribute.isPersonalPick")
+							.description("개인 맞춤 뱃지 여부"),
 						PayloadDocumentation.fieldWithPath("content[].createdAt").description("생성일시")
 					)
 				)
@@ -158,7 +166,7 @@ class ProductControllerTest {
 
 	@Test
 	void findTransport() throws Exception {
-		when(productService.findProductCached(productId)).thenReturn(transportDetailResult);
+		when(productService.findProductCached(any(), eq(productId))).thenReturn(transportDetailResult);
 		doNothing().when(productService).incrementProductViewCount(productId);
 
 		mockMvc.perform(
@@ -188,12 +196,18 @@ class ProductControllerTest {
 						PayloadDocumentation.fieldWithPath("exposureAttribute.isNewArrival").description("신상품 여부"),
 						PayloadDocumentation.fieldWithPath("exposureAttribute.isFeatured").description("추천 상품 여부"),
 						PayloadDocumentation.fieldWithPath("exposureAttribute.isLowStock").description("품절 임박 여부"),
+						PayloadDocumentation.fieldWithPath("exposureAttribute.isRecommended").description("추천 뱃지 여부"),
+						PayloadDocumentation.fieldWithPath("exposureAttribute.isPersonalPick")
+							.description("개인 맞춤 뱃지 여부"),
 						PayloadDocumentation.fieldWithPath("createdAt").description("생성일시"),
 						PayloadDocumentation.fieldWithPath("attribute").description("상세 정보"),
 						PayloadDocumentation.fieldWithPath("attribute.departureLocation").description("출발지"),
 						PayloadDocumentation.fieldWithPath("attribute.arrivalLocation").description("도착지"),
 						PayloadDocumentation.fieldWithPath("attribute.departureTime").description("출발 시간"),
-						PayloadDocumentation.fieldWithPath("attribute.arrivalTime").description("도착 시간")
+						PayloadDocumentation.fieldWithPath("attribute.arrivalTime").description("도착 시간"),
+						PayloadDocumentation.fieldWithPath("tags").description("태그 목록"),
+						PayloadDocumentation.fieldWithPath("tags[].id").description("태그 ID").optional(),
+						PayloadDocumentation.fieldWithPath("tags[].name").description("태그명").optional()
 					)
 				)
 			);
@@ -201,7 +215,7 @@ class ProductControllerTest {
 
 	@Test
 	void findAccommodation() throws Exception {
-		when(productService.findProductCached(productId)).thenReturn(accommodationDetailResult);
+		when(productService.findProductCached(any(), eq(productId))).thenReturn(accommodationDetailResult);
 		doNothing().when(productService).incrementProductViewCount(productId);
 
 		mockMvc.perform(
@@ -231,11 +245,17 @@ class ProductControllerTest {
 						PayloadDocumentation.fieldWithPath("exposureAttribute.isNewArrival").description("신상품 여부"),
 						PayloadDocumentation.fieldWithPath("exposureAttribute.isFeatured").description("추천 상품 여부"),
 						PayloadDocumentation.fieldWithPath("exposureAttribute.isLowStock").description("품절 임박 여부"),
+						PayloadDocumentation.fieldWithPath("exposureAttribute.isRecommended").description("추천 뱃지 여부"),
+						PayloadDocumentation.fieldWithPath("exposureAttribute.isPersonalPick")
+							.description("개인 맞춤 뱃지 여부"),
 						PayloadDocumentation.fieldWithPath("createdAt").description("생성일시"),
 						PayloadDocumentation.fieldWithPath("attribute").description("상세 정보"),
 						PayloadDocumentation.fieldWithPath("attribute.place").description("장소"),
 						PayloadDocumentation.fieldWithPath("attribute.checkInTime").description("체크인 시간"),
-						PayloadDocumentation.fieldWithPath("attribute.checkOutTime").description("체크아웃 시간")
+						PayloadDocumentation.fieldWithPath("attribute.checkOutTime").description("체크아웃 시간"),
+						PayloadDocumentation.fieldWithPath("tags").description("태그 목록"),
+						PayloadDocumentation.fieldWithPath("tags[].id").description("태그 ID").optional(),
+						PayloadDocumentation.fieldWithPath("tags[].name").description("태그명").optional()
 					)
 				)
 			);

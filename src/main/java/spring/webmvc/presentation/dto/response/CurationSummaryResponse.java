@@ -1,18 +1,23 @@
 package spring.webmvc.presentation.dto.response;
 
 import spring.webmvc.application.dto.result.CurationSummaryResult;
-import spring.webmvc.domain.model.enums.CurationCategory;
+import spring.webmvc.domain.model.enums.CurationPlacement;
+import spring.webmvc.domain.model.enums.CurationType;
 
 public record CurationSummaryResponse(
 	Long id,
 	String title,
-	CurationCategory category
+	CurationPlacement placement,
+	CurationType type,
+	CurationExposureAttributeResponse exposureAttribute
 ) {
 	public static CurationSummaryResponse of(CurationSummaryResult result) {
 		return new CurationSummaryResponse(
 			result.id(),
 			result.title(),
-			result.category()
+			result.placement(),
+			result.type(),
+			CurationExposureAttributeResponse.of(result.exposureAttribute())
 		);
 	}
 }

@@ -8,7 +8,6 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import spring.webmvc.application.dto.command.ProductCreateCommand;
 import spring.webmvc.domain.model.enums.ProductCategory;
-import spring.webmvc.domain.model.vo.ProductExposureAttribute;
 
 public record ProductCreateRequest(
 	ProductCategory category,
@@ -33,7 +32,7 @@ public record ProductCreateRequest(
 	})
 	ProductAttributePutRequest attribute,
 
-	ProductExposureAttribute exposureAttribute
+	ProductExposureAttributeRequest exposureAttribute
 ) {
 	public ProductCreateCommand toCommand() {
 		return new ProductCreateCommand(
@@ -43,7 +42,7 @@ public record ProductCreateRequest(
 			price,
 			quantity,
 			attribute.toCommand(),
-			exposureAttribute
+			exposureAttribute.toVO()
 		);
 	}
 }

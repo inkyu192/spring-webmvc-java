@@ -242,24 +242,23 @@ VALUES (26, '서울특별시 중구 동호로 249', '2025-04-01 15:00:00', '2025
        (49, '서울특별시 서초구 헌릉로 149', '2025-06-28 14:00:00', '2025-06-29 12:00:00'),
        (50, '서울특별시 강남구 언주로 508', '2025-07-02 14:00:00', '2025-07-03 12:00:00');
 
-INSERT INTO curation (id, title, category, is_exposed, sort_order, created_by, updated_by, created_at, updated_at)
+INSERT INTO curation (id, title, placement, type, is_exposed, sort_order, created_by, updated_by, created_at,
+                      updated_at)
 VALUES -- 홈 화면 (메인 페이지)
-       (1, '지금 가장 인기있는 여행지', 'HOME', true, 1, 1, 1, NOW(6), NOW(6)),
-       (2, '특가 할인 패키지', 'HOME', true, 2, 1, 1, NOW(6), NOW(6)),
-       (3, 'MD 추천 상품', 'HOME', true, 3, 1, 1, NOW(6), NOW(6)),
-       -- 카테고리 페이지
-       (4, '동남아 베스트', 'CATEGORY', true, 1, 1, 1, NOW(6), NOW(6)),
-       (5, '일본 여행 인기', 'CATEGORY', true, 2, 1, 1, NOW(6), NOW(6)),
-       (6, '유럽 럭셔리', 'CATEGORY', true, 3, 1, 1, NOW(6), NOW(6)),
-       -- 이벤트 페이지
-       (7, '봄 여행 특가 이벤트', 'EVENT', true, 1, 1, 1, NOW(6), NOW(6)),
-       (8, '여름 휴가 대전', 'EVENT', true, 2, 1, 1, NOW(6), NOW(6)),
+       (1, '지금 가장 인기있는 여행지', 'HOME', 'MANUAL', true, 1, 1, 1, NOW(6), NOW(6)),
+       (2, '특가 할인 패키지', 'HOME', 'MANUAL', true, 2, 1, 1, NOW(6), NOW(6)),
+       (3, 'MD 추천 상품', 'HOME', 'MANUAL', true, 3, 1, 1, NOW(6), NOW(6)),
+       -- 상품 페이지
+       (4, '동남아 베스트', 'PRODUCT', 'SEARCH', true, 1, 1, 1, NOW(6), NOW(6)),
+       (5, '일본 여행 인기', 'PRODUCT', 'SEARCH', true, 2, 1, 1, NOW(6), NOW(6)),
+       (6, '유럽 럭셔리', 'PRODUCT', 'SEARCH', true, 3, 1, 1, NOW(6), NOW(6)),
+       (7, '봄 여행 특가 이벤트', 'PRODUCT', 'MANUAL', true, 4, 1, 1, NOW(6), NOW(6)),
+       (8, '여름 휴가 대전', 'PRODUCT', 'MANUAL', true, 5, 1, 1, NOW(6), NOW(6)),
        -- 프로모션 페이지
-       (9, '3월 프로모션', 'PROMOTION', true, 1, 1, 1, NOW(6), NOW(6)),
-       (10, '얼리버드 특가', 'PROMOTION', true, 2, 1, 1, NOW(6), NOW(6)),
-       -- 마이페이지
-       (11, '최근 본 상품과 유사한 상품', 'MY_PAGE', true, 1, 1, 1, NOW(6), NOW(6)),
-       (12, '회원님을 위한 맞춤 추천', 'MY_PAGE', true, 2, 1, 1, NOW(6), NOW(6));
+       (9, '3월 프로모션', 'PROMOTION', 'MANUAL', true, 1, 1, 1, NOW(6), NOW(6)),
+       (10, '얼리버드 특가', 'PROMOTION', 'MANUAL', true, 2, 1, 1, NOW(6), NOW(6)),
+       (11, '이런 상품은 어떠세요?', 'HOME', 'PERSONALIZED', true, 3, 1, 1, NOW(6), NOW(6)),
+       (12, '회원님을 위한 맞춤 추천', 'HOME', 'PERSONALIZED', true, 4, 1, 1, NOW(6), NOW(6));
 
 INSERT INTO curation_product (curation_id, product_id, sort_order)
 VALUES -- 1. 지금 가장 인기있는 여행지 (HOME - 동남아, 제주, 일본)
@@ -391,8 +390,8 @@ VALUES (1, 3),
 INSERT INTO translation (code, locale, message, created_at, updated_at)
 VALUES ('Gender', 'ko', '성별', NOW(6), NOW(6)),
        ('Gender', 'en', 'Gender', NOW(6), NOW(6)),
-       ('CurationCategory', 'ko', '큐레이션 카테고리', NOW(6), NOW(6)),
-       ('CurationCategory', 'en', 'Curation Category', NOW(6), NOW(6)),
+       ('CurationPlacement', 'ko', '큐레이션 배치', NOW(6), NOW(6)),
+       ('CurationPlacement', 'en', 'Curation Placement', NOW(6), NOW(6)),
        ('DeviceType', 'ko', '디바이스 타입', NOW(6), NOW(6)),
        ('DeviceType', 'en', 'Device Type', NOW(6), NOW(6)),
        ('OauthProvider', 'ko', 'OAuth 제공자', NOW(6), NOW(6)),
@@ -413,16 +412,12 @@ VALUES ('Gender', 'ko', '성별', NOW(6), NOW(6)),
        ('DeviceType.ANDROID', 'en', 'Android', NOW(6), NOW(6)),
        ('DeviceType.WEB', 'ko', '웹', NOW(6), NOW(6)),
        ('DeviceType.WEB', 'en', 'Web', NOW(6), NOW(6)),
-       ('CurationCategory.HOME', 'ko', '홈', NOW(6), NOW(6)),
-       ('CurationCategory.HOME', 'en', 'Home', NOW(6), NOW(6)),
-       ('CurationCategory.CATEGORY', 'ko', '카테고리', NOW(6), NOW(6)),
-       ('CurationCategory.CATEGORY', 'en', 'Category', NOW(6), NOW(6)),
-       ('CurationCategory.EVENT', 'ko', '이벤트', NOW(6), NOW(6)),
-       ('CurationCategory.EVENT', 'en', 'Event', NOW(6), NOW(6)),
-       ('CurationCategory.PROMOTION', 'ko', '프로모션', NOW(6), NOW(6)),
-       ('CurationCategory.PROMOTION', 'en', 'Promotion', NOW(6), NOW(6)),
-       ('CurationCategory.MY_PAGE', 'ko', '마이페이지', NOW(6), NOW(6)),
-       ('CurationCategory.MY_PAGE', 'en', 'My Page', NOW(6), NOW(6)),
+       ('CurationPlacement.HOME', 'ko', '홈', NOW(6), NOW(6)),
+       ('CurationPlacement.HOME', 'en', 'Home', NOW(6), NOW(6)),
+       ('CurationPlacement.PROMOTION', 'ko', '프로모션', NOW(6), NOW(6)),
+       ('CurationPlacement.PROMOTION', 'en', 'Promotion', NOW(6), NOW(6)),
+       ('CurationPlacement.PRODUCT', 'ko', '상품', NOW(6), NOW(6)),
+       ('CurationPlacement.PRODUCT', 'en', 'Product', NOW(6), NOW(6)),
        ('ProductCategory.TRANSPORT', 'ko', '교통수단', NOW(6), NOW(6)),
        ('ProductCategory.TRANSPORT', 'en', 'Transport', NOW(6), NOW(6)),
        ('ProductCategory.ACCOMMODATION', 'ko', '숙박', NOW(6), NOW(6)),
@@ -522,6 +517,32 @@ VALUES ('Gender', 'ko', '성별', NOW(6), NOW(6)),
        ('menu.curations.management', 'ko', '큐레이션관리', NOW(6), NOW(6)),
        ('menu.curations.management', 'en', 'Curation Management', NOW(6), NOW(6));
 
+INSERT INTO tag (id, name, created_at, updated_at)
+VALUES (1, '동남아', NOW(6), NOW(6)),
+       (2, '일본', NOW(6), NOW(6)),
+       (3, '유럽', NOW(6), NOW(6)),
+       (4, '특가', NOW(6), NOW(6)),
+       (5, '럭셔리', NOW(6), NOW(6)),
+       (6, '가족여행', NOW(6), NOW(6)),
+       (7, '비즈니스', NOW(6), NOW(6)),
+       (8, '제주', NOW(6), NOW(6));
+
+INSERT INTO product_tag (product_id, tag_id)
+VALUES -- 동남아 항공권
+       (3, 1), (5, 1), (9, 1), (10, 1), (11, 1), (12, 1), (16, 1),
+       -- 일본 항공권
+       (1, 2), (2, 2),
+       -- 유럽 항공권
+       (8, 3), (20, 3), (21, 3), (22, 3), (23, 3),
+       -- 특가 상품
+       (2, 4), (5, 4), (9, 4), (10, 4), (13, 4), (29, 4), (36, 4), (37, 4), (42, 4),
+       -- 럭셔리 숙박
+       (33, 5), (34, 5), (38, 5),
+       -- 제주 숙박
+       (27, 8), (35, 8), (40, 8), (48, 8);
+
+ALTER TABLE tag AUTO_INCREMENT = 51;
+ALTER TABLE product_tag AUTO_INCREMENT = 101;
 ALTER TABLE permission AUTO_INCREMENT = 51;
 ALTER TABLE role AUTO_INCREMENT = 51;
 ALTER TABLE menu AUTO_INCREMENT = 51;

@@ -1,11 +1,13 @@
 package spring.webmvc.application.dto.result;
 
 import java.time.Instant;
+import java.util.List;
 
 import spring.webmvc.domain.model.entity.Product;
+import spring.webmvc.domain.model.entity.Tag;
+import spring.webmvc.domain.model.entity.UserProductBadge;
 import spring.webmvc.domain.model.enums.ProductCategory;
 import spring.webmvc.domain.model.enums.ProductStatus;
-import spring.webmvc.domain.model.vo.ProductExposureAttribute;
 
 public record ProductDetailResult(
 	Long id,
@@ -15,11 +17,25 @@ public record ProductDetailResult(
 	String description,
 	Long price,
 	Long quantity,
-	ProductExposureAttribute exposureAttribute,
+	ProductExposureAttributeResult exposureAttribute,
 	Instant createdAt,
-	ProductAttributeResult attribute
+	ProductAttributeResult attribute,
+	List<TagResult> tags
 ) {
 	public static ProductDetailResult of(Product product, ProductAttributeResult attribute) {
+		return of(product, attribute, null, List.of());
+	}
+
+	public static ProductDetailResult of(Product product, ProductAttributeResult attribute, UserProductBadge badge) {
+		return of(product, attribute, badge, List.of());
+	}
+
+	public static ProductDetailResult of(
+		Product product,
+		ProductAttributeResult attribute,
+		UserProductBadge badge,
+		List<Tag> tags
+	) {
 		return new ProductDetailResult(
 			product.getId(),
 			product.getCategory(),
@@ -28,9 +44,10 @@ public record ProductDetailResult(
 			product.getDescription(),
 			product.getPrice(),
 			product.getQuantity(),
-			product.getExposureAttribute(),
+			ProductExposureAttributeResult.of(product.getExposureAttribute(), badge),
 			product.getCreatedAt(),
-			attribute
+			attribute,
+			tags.stream().map(TagResult::of).toList()
 		);
 	}
 }

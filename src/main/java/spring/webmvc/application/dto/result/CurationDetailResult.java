@@ -3,12 +3,17 @@ package spring.webmvc.application.dto.result;
 import java.util.List;
 
 import spring.webmvc.domain.model.entity.Curation;
-import spring.webmvc.domain.model.enums.CurationCategory;
+import spring.webmvc.domain.model.enums.CurationPlacement;
+import spring.webmvc.domain.model.enums.CurationType;
+import spring.webmvc.domain.model.vo.CurationAttribute;
 
 public record CurationDetailResult(
 	Long id,
 	String title,
-	CurationCategory category,
+	CurationPlacement placement,
+	CurationType type,
+	CurationAttribute attribute,
+	CurationExposureAttributeResult exposureAttribute,
 	List<CurationProductResult> products
 ) {
 	public static CurationDetailResult of(Curation curation) {
@@ -19,7 +24,10 @@ public record CurationDetailResult(
 		return new CurationDetailResult(
 			curation.getId(),
 			curation.getTitle(),
-			curation.getCategory(),
+			curation.getPlacement(),
+			curation.getType(),
+			curation.getAttribute(),
+			CurationExposureAttributeResult.of(curation.getExposureAttribute()),
 			products
 		);
 	}

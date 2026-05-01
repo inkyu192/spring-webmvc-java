@@ -1,48 +1,30 @@
 package spring.webmvc.application.dto.result;
 
-import java.util.List;
-
 import spring.webmvc.domain.dto.CursorPage;
 import spring.webmvc.domain.model.entity.Curation;
-import spring.webmvc.domain.model.entity.CurationProduct;
-import spring.webmvc.domain.model.entity.Product;
-import spring.webmvc.domain.model.enums.CurationCategory;
+import spring.webmvc.domain.model.enums.CurationPlacement;
+import spring.webmvc.domain.model.enums.CurationType;
 
 public record CurationCursorPageResult(
 	Long id,
 	String title,
-	CurationCategory category,
+	CurationPlacement placement,
+	CurationType type,
+	CurationExposureAttributeResult exposureAttribute,
 	CursorPage<CurationProductResult> productPage
 ) {
 
 	public static CurationCursorPageResult of(
 		Curation curation,
-		CursorPage<CurationProduct> page
+		CursorPage<CurationProductResult> productPage
 	) {
 		return new CurationCursorPageResult(
 			curation.getId(),
 			curation.getTitle(),
-			curation.getCategory(),
-			page.map(CurationProductResult::of)
-		);
-	}
-
-	public static CurationCursorPageResult of(
-		Curation curation,
-		List<Product> products
-	) {
-		return new CurationCursorPageResult(
-			curation.getId(),
-			curation.getTitle(),
-			curation.getCategory(),
-			new CursorPage<>(
-				products.stream()
-					.map(CurationProductResult::of)
-					.toList(),
-				(long)products.size(),
-				false,
-				null
-			)
+			curation.getPlacement(),
+			curation.getType(),
+			CurationExposureAttributeResult.of(curation.getExposureAttribute()),
+			productPage
 		);
 	}
 }

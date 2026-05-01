@@ -10,6 +10,10 @@ public record CursorPage<T>(
 	Boolean hasNext,
 	Long nextCursorId
 ) {
+	public static <T> CursorPage<T> empty() {
+		return new CursorPage<>(List.of(), 0L, false, null);
+	}
+
 	public static <T> CursorPage<T> create(List<T> content, Long size, Function<T, Long> getCursorId) {
 		List<T> actualContent;
 		Long cursorId;

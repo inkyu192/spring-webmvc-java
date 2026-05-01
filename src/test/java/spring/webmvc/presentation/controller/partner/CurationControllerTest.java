@@ -22,12 +22,16 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import spring.webmvc.application.dto.result.CurationDetailResult;
+import spring.webmvc.application.dto.result.CurationExposureAttributeResult;
 import spring.webmvc.application.dto.result.CurationOffsetPageResult;
 import spring.webmvc.application.dto.result.CurationProductResult;
 import spring.webmvc.application.dto.result.CurationSummaryResult;
+import spring.webmvc.application.dto.result.ProductExposureAttributeResult;
 import spring.webmvc.application.service.CurationService;
-import spring.webmvc.domain.model.enums.CurationCategory;
-import spring.webmvc.domain.model.vo.ProductExposureAttribute;
+import spring.webmvc.domain.model.enums.CurationLayout;
+import spring.webmvc.domain.model.enums.CurationPlacement;
+import spring.webmvc.domain.model.enums.CurationType;
+import spring.webmvc.domain.model.vo.CurationAttribute;
 import spring.webmvc.infrastructure.config.ControllerTest;
 
 @ControllerTest(CurationController.class)
@@ -49,20 +53,25 @@ class CurationControllerTest {
 		curationSummaryResult = new CurationSummaryResult(
 			curationId,
 			"여름 휴가 패키지",
-			CurationCategory.HOME
+			CurationPlacement.HOME,
+			CurationType.MANUAL,
+			new CurationExposureAttributeResult(CurationLayout.CAROUSEL)
 		);
 
 		List<CurationProductResult> products = List.of(
 			new CurationProductResult(1L, "제주도 호텔", "제주도 3박 4일", 100000L,
-				new ProductExposureAttribute(true, false, true, false)),
+				new ProductExposureAttributeResult(true, false, true, false, false, false)),
 			new CurationProductResult(2L, "부산 교통편", "부산 왕복 교통편", 50000L,
-				new ProductExposureAttribute(false, true, false, false))
+				new ProductExposureAttributeResult(false, true, false, false, false, false))
 		);
 
 		curationDetailResult = new CurationDetailResult(
 			curationId,
 			"여름 휴가 패키지",
-			CurationCategory.HOME,
+			CurationPlacement.HOME,
+			CurationType.MANUAL,
+			new CurationAttribute(List.of()),
+			new CurationExposureAttributeResult(CurationLayout.CAROUSEL),
 			products
 		);
 
@@ -75,21 +84,23 @@ class CurationControllerTest {
 		curationOffsetPageResult = new CurationOffsetPageResult(
 			curationId,
 			"여름 휴가 패키지",
-			CurationCategory.HOME,
+			CurationPlacement.HOME,
+			CurationType.MANUAL,
+			new CurationExposureAttributeResult(CurationLayout.CAROUSEL),
 			productPage
 		);
 	}
 
 	@Test
 	void findCurations() throws Exception {
-		CurationCategory category = CurationCategory.HOME;
+		CurationPlacement placement = CurationPlacement.HOME;
 
-		when(curationService.findCurations(category)).thenReturn(List.of(curationSummaryResult));
+		when(curationService.findCurations(placement)).thenReturn(List.of(curationSummaryResult));
 
 		mockMvc.perform(
 				RestDocumentationRequestBuilders.get("/partner/curations")
 					.header("Authorization", "Bearer access-token")
-					.queryParam("category", "HOME")
+					.queryParam("placement", "HOME")
 			)
 			.andExpect(MockMvcResultMatchers.status().isOk())
 			.andDo(
@@ -99,13 +110,17 @@ class CurationControllerTest {
 						HeaderDocumentation.headerWithName("Authorization").description("액세스 토큰")
 					),
 					RequestDocumentation.queryParameters(
-						RequestDocumentation.parameterWithName("category").description("큐레이션 카테고리")
+						RequestDocumentation.parameterWithName("placement").description("큐레이션 카테고리")
 					),
 					PayloadDocumentation.responseFields(
 						PayloadDocumentation.fieldWithPath("size").description("큐레이션 수"),
 						PayloadDocumentation.fieldWithPath("curations[].id").description("큐레이션 ID"),
 						PayloadDocumentation.fieldWithPath("curations[].title").description("큐레이션 제목"),
-						PayloadDocumentation.fieldWithPath("curations[].category").description("큐레이션 카테고리")
+						PayloadDocumentation.fieldWithPath("curations[].placement").description("큐레이션 카테고리"),
+						PayloadDocumentation.fieldWithPath("curations[].type").description("큐레이션 타입"),
+						PayloadDocumentation.fieldWithPath("curations[].exposureAttribute").description("큐레이션 노출 속성"),
+						PayloadDocumentation.fieldWithPath("curations[].exposureAttribute.layout")
+							.description("큐레이션 레이아웃")
 					)
 				)
 			);
@@ -137,7 +152,10 @@ class CurationControllerTest {
 					PayloadDocumentation.responseFields(
 						PayloadDocumentation.fieldWithPath("id").description("큐레이션 ID"),
 						PayloadDocumentation.fieldWithPath("title").description("큐레이션 제목"),
-						PayloadDocumentation.fieldWithPath("category").description("큐레이션 카테고리"),
+						PayloadDocumentation.fieldWithPath("placement").description("큐레이션 카테고리"),
+						PayloadDocumentation.fieldWithPath("type").description("큐레이션 타입"),
+						PayloadDocumentation.fieldWithPath("exposureAttribute").description("큐레이션 노출 속성"),
+						PayloadDocumentation.fieldWithPath("exposureAttribute.layout").description("큐레이션 레이아웃"),
 						PayloadDocumentation.fieldWithPath("products.page").description("현재 페이지 번호"),
 						PayloadDocumentation.fieldWithPath("products.size").description("페이지 크기"),
 						PayloadDocumentation.fieldWithPath("products.totalElements").description("전체 요소 수"),
@@ -157,7 +175,11 @@ class CurationControllerTest {
 						PayloadDocumentation.fieldWithPath("products.content[].exposureAttribute.isFeatured")
 							.description("추천 상품 여부"),
 						PayloadDocumentation.fieldWithPath("products.content[].exposureAttribute.isLowStock")
-							.description("재고 부족 여부")
+							.description("재고 부족 여부"),
+						PayloadDocumentation.fieldWithPath("products.content[].exposureAttribute.isRecommended")
+							.description("추천 뱃지 여부"),
+						PayloadDocumentation.fieldWithPath("products.content[].exposureAttribute.isPersonalPick")
+							.description("개인 맞춤 뱃지 여부")
 					)
 				)
 			);
@@ -174,7 +196,14 @@ class CurationControllerTest {
 					.content("""
 						{
 						  "title": "여름 휴가 패키지",
-						  "category": "HOME",
+						  "placement": "HOME",
+						  "type": "MANUAL",
+						  "attribute": {
+						    "tagIds": [1, 2]
+						  },
+						  "exposureAttribute": {
+						    "layout": "CAROUSEL"
+						  },
 						  "isExposed": true,
 						  "sortOrder": 1,
 						  "products": [
@@ -199,7 +228,17 @@ class CurationControllerTest {
 					),
 					PayloadDocumentation.requestFields(
 						PayloadDocumentation.fieldWithPath("title").description("큐레이션 제목"),
-						PayloadDocumentation.fieldWithPath("category").description("큐레이션 카테고리"),
+						PayloadDocumentation.fieldWithPath("placement").description("큐레이션 카테고리"),
+						PayloadDocumentation.fieldWithPath("type")
+							.description("큐레이션 타입 (MANUAL, SEARCH, PERSONALIZED)"),
+						PayloadDocumentation.fieldWithPath("attribute").description("큐레이션 속성").optional(),
+						PayloadDocumentation.fieldWithPath("attribute.tagIds")
+							.description("검색 태그 ID 목록 (SEARCH 타입에서 사용)")
+							.optional(),
+						PayloadDocumentation.fieldWithPath("exposureAttribute").description("큐레이션 노출 속성").optional(),
+						PayloadDocumentation.fieldWithPath("exposureAttribute.layout")
+							.description("큐레이션 레이아웃 (GRID, CAROUSEL, LIST)")
+							.optional(),
 						PayloadDocumentation.fieldWithPath("isExposed").description("노출 여부"),
 						PayloadDocumentation.fieldWithPath("sortOrder").description("정렬 순서"),
 						PayloadDocumentation.fieldWithPath("products[].productId").description("상품 ID"),
@@ -208,7 +247,12 @@ class CurationControllerTest {
 					PayloadDocumentation.responseFields(
 						PayloadDocumentation.fieldWithPath("id").description("큐레이션 ID"),
 						PayloadDocumentation.fieldWithPath("title").description("큐레이션 제목"),
-						PayloadDocumentation.fieldWithPath("category").description("큐레이션 카테고리"),
+						PayloadDocumentation.fieldWithPath("placement").description("큐레이션 카테고리"),
+						PayloadDocumentation.fieldWithPath("type").description("큐레이션 타입"),
+						PayloadDocumentation.fieldWithPath("attribute").description("큐레이션 속성"),
+						PayloadDocumentation.fieldWithPath("attribute.tagIds").description("검색 태그 ID 목록"),
+						PayloadDocumentation.fieldWithPath("exposureAttribute").description("큐레이션 노출 속성"),
+						PayloadDocumentation.fieldWithPath("exposureAttribute.layout").description("큐레이션 레이아웃"),
 						PayloadDocumentation.fieldWithPath("products[].id").description("상품 ID"),
 						PayloadDocumentation.fieldWithPath("products[].name").description("상품명"),
 						PayloadDocumentation.fieldWithPath("products[].description").description("상품 설명"),
@@ -221,7 +265,11 @@ class CurationControllerTest {
 						PayloadDocumentation.fieldWithPath("products[].exposureAttribute.isFeatured")
 							.description("추천 상품 여부"),
 						PayloadDocumentation.fieldWithPath("products[].exposureAttribute.isLowStock")
-							.description("재고 부족 여부")
+							.description("재고 부족 여부"),
+						PayloadDocumentation.fieldWithPath("products[].exposureAttribute.isRecommended")
+							.description("추천 뱃지 여부"),
+						PayloadDocumentation.fieldWithPath("products[].exposureAttribute.isPersonalPick")
+							.description("개인 맞춤 뱃지 여부")
 					)
 				)
 			);

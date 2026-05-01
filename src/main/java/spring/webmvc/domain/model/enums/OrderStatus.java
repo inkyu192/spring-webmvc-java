@@ -10,16 +10,10 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum OrderStatus {
-	ORDER("주문"),
-	CONFIRM("확정"),
-	CANCEL("취소"),
+	ORDER,
+	CONFIRM,
+	CANCEL,
 	;
-
-	private final String description;
-
-	public String getTranslationCode() {
-		return "OrderStatus." + name();
-	}
 
 	@JsonCreator
 	public static OrderStatus of(String name) {

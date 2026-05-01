@@ -14,7 +14,7 @@ import com.zaxxer.hikari.HikariDataSource;
 public class MySQLTestContainerConfig {
 
 	@Container
-	private static final MySQLContainer<?> mysql = new MySQLContainer<>("mysql:8.4.7");
+	private static final MySQLContainer<?> mysql = new MySQLContainer<>("mysql:8.4");
 
 	static {
 		mysql.start();

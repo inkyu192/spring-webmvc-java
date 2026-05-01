@@ -76,8 +76,8 @@ public class Product extends BaseCreator {
 			throw new InvalidEntityStatusException(
 				Product.class,
 				Objects.requireNonNull(id),
-				this.status.getDescription(),
-				status.getDescription()
+				this.status.name(),
+				status.name()
 			);
 		}
 

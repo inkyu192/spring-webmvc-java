@@ -71,8 +71,8 @@ public class Order extends BaseTime {
 			throw new InvalidEntityStatusException(
 				Order.class,
 				Objects.requireNonNull(id),
-				status.getDescription(),
-				OrderStatus.CANCEL.getDescription()
+				status.name(),
+				OrderStatus.CANCEL.name()
 			);
 		}
 
@@ -86,8 +86,8 @@ public class Order extends BaseTime {
 			throw new InvalidEntityStatusException(
 				Order.class,
 				Objects.requireNonNull(id),
-				this.status.getDescription(),
-				status.getDescription()
+				this.status.name(),
+				status.name()
 			);
 		}
 

@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 import spring.webmvc.application.dto.result.CurationCursorPageResult;
 import spring.webmvc.application.dto.result.CurationSummaryResult;
 import spring.webmvc.application.service.CurationService;
-import spring.webmvc.domain.model.enums.CurationCategory;
+import spring.webmvc.domain.model.enums.CurationPlacement;
 import spring.webmvc.infrastructure.security.SecurityContextUtil;
 import spring.webmvc.presentation.dto.response.CurationDetailCursorPageResponse;
 import spring.webmvc.presentation.dto.response.CurationListResponse;
@@ -26,9 +26,9 @@ public class CurationController {
 
 	@GetMapping
 	public CurationListResponse findCurations(
-		@RequestParam(required = false) CurationCategory category
+		@RequestParam(required = false) CurationPlacement placement
 	) {
-		List<CurationSummaryResult> results = curationService.findCurationsCached(category);
+		List<CurationSummaryResult> results = curationService.findCurationsCached(placement);
 
 		return CurationListResponse.of(results);
 	}

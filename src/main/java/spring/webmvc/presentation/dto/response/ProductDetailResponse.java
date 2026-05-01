@@ -1,11 +1,11 @@
 package spring.webmvc.presentation.dto.response;
 
 import java.time.Instant;
+import java.util.List;
 
 import spring.webmvc.application.dto.result.ProductDetailResult;
 import spring.webmvc.domain.model.enums.ProductCategory;
 import spring.webmvc.domain.model.enums.ProductStatus;
-import spring.webmvc.domain.model.vo.ProductExposureAttribute;
 
 public record ProductDetailResponse(
 	Long id,
@@ -15,9 +15,10 @@ public record ProductDetailResponse(
 	String description,
 	Long price,
 	Long quantity,
-	ProductExposureAttribute exposureAttribute,
+	ProductExposureAttributeResponse exposureAttribute,
 	Instant createdAt,
-	ProductAttributeResponse attribute
+	ProductAttributeResponse attribute,
+	List<TagResponse> tags
 ) {
 	public static ProductDetailResponse of(ProductDetailResult result) {
 		return new ProductDetailResponse(
@@ -28,9 +29,10 @@ public record ProductDetailResponse(
 			result.description(),
 			result.price(),
 			result.quantity(),
-			result.exposureAttribute(),
+			ProductExposureAttributeResponse.of(result.exposureAttribute()),
 			result.createdAt(),
-			ProductAttributeResponse.of(result.attribute())
+			ProductAttributeResponse.of(result.attribute()),
+			result.tags().stream().map(TagResponse::of).toList()
 		);
 	}
 }

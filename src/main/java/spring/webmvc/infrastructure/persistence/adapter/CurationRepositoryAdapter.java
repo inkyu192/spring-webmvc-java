@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
 import spring.webmvc.domain.model.entity.Curation;
-import spring.webmvc.domain.model.enums.CurationCategory;
+import spring.webmvc.domain.model.enums.CurationPlacement;
 import spring.webmvc.domain.repository.CurationRepository;
 import spring.webmvc.infrastructure.persistence.jpa.CurationJpaRepository;
 
@@ -23,8 +23,8 @@ public class CurationRepositoryAdapter implements CurationRepository {
 	}
 
 	@Override
-	public List<Curation> findAllByCategory(CurationCategory category) {
-		return jpaRepository.findByCategoryAndIsExposedIsTrueOrderBySortOrder(category);
+	public List<Curation> findAllByPlacement(CurationPlacement placement) {
+		return jpaRepository.findByPlacementAndIsExposedIsTrueOrderBySortOrder(placement);
 	}
 
 	@Override

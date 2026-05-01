@@ -25,8 +25,12 @@ import spring.webmvc.application.event.ProductViewEvent;
 import spring.webmvc.application.strategy.product.ProductAttributeStrategy;
 import spring.webmvc.domain.dto.CursorPage;
 import spring.webmvc.domain.model.entity.Product;
+import spring.webmvc.domain.model.entity.Tag;
+import spring.webmvc.domain.model.entity.UserProductBadge;
 import spring.webmvc.domain.model.enums.ProductCategory;
 import spring.webmvc.domain.repository.ProductRepository;
+import spring.webmvc.domain.repository.ProductTagRepository;
+import spring.webmvc.domain.repository.UserProductBadgeRepository;
 import spring.webmvc.infrastructure.exception.NotFoundEntityException;
 
 @Service
@@ -34,15 +38,21 @@ import spring.webmvc.infrastructure.exception.NotFoundEntityException;
 public class ProductService {
 
 	private final ProductRepository productRepository;
+	private final ProductTagRepository productTagRepository;
+	private final UserProductBadgeRepository userProductBadgeRepository;
 	private final ApplicationEventPublisher eventPublisher;
 	private final Map<ProductCategory, ProductAttributeStrategy> productAttributeStrategyMap;
 
 	public ProductService(
 		ProductRepository productRepository,
+		ProductTagRepository productTagRepository,
+		UserProductBadgeRepository userProductBadgeRepository,
 		ApplicationEventPublisher eventPublisher,
 		List<ProductAttributeStrategy> productStrategies
 	) {
 		this.productRepository = productRepository;
+		this.productTagRepository = productTagRepository;
+		this.userProductBadgeRepository = userProductBadgeRepository;
 		this.eventPublisher = eventPublisher;
 
 		Set<ProductCategory> duplicates = productStrategies.stream()
@@ -62,8 +72,24 @@ public class ProductService {
 	}
 
 	public CursorPage<ProductSummaryResult> findProductsWithCursorPage(ProductCursorPageQuery query) {
-		return productRepository.findAllWithCursorPage(query)
-			.map(ProductSummaryResult::of);
+		return findProductsWithCursorPage(query, null);
+	}
+
+	public CursorPage<ProductSummaryResult> findProductsWithCursorPage(ProductCursorPageQuery query, Long userId) {
+		CursorPage<Product> page = productRepository.findAllWithCursorPage(query);
+
+		if (userId != null) {
+			List<Long> productIds = page.content().stream().map(Product::getId).toList();
+			Map<Long, UserProductBadge> badgeMap = userProductBadgeRepository
+				.findByUserIdAndProductIds(userId, productIds).stream()
+				.collect(Collectors.toMap(
+					b -> Long.parseLong(b.getSk().replace("PRODUCT#", "")),
+					Function.identity()
+				));
+			return page.map(product -> ProductSummaryResult.of(product, badgeMap.get(product.getId())));
+		}
+
+		return page.map(ProductSummaryResult::of);
 	}
 
 	public Page<ProductSummaryResult> findProductsWithOffsetPage(ProductOffsetPageQuery query) {
@@ -71,12 +97,16 @@ public class ProductService {
 			.map(ProductSummaryResult::of);
 	}
 
-	@Cacheable(value = "product", key = "'product:' + #id")
-	public ProductDetailResult findProductCached(Long id) {
-		return findProduct(id);
+	@Cacheable(value = "product", key = "'product:' + #id + ':user:' + #userId")
+	public ProductDetailResult findProductCached(Long userId, Long id) {
+		return findProduct(id, userId);
 	}
 
 	public ProductDetailResult findProduct(Long id) {
+		return findProduct(id, null);
+	}
+
+	public ProductDetailResult findProduct(Long id, Long userId) {
 		Product product = productRepository.findById(id)
 			.orElseThrow(() -> new NotFoundEntityException(Product.class, id));
 
@@ -87,7 +117,14 @@ public class ProductService {
 
 		ProductAttributeResult attributeResult = strategy.findByProductId(id);
 
-		return ProductDetailResult.of(product, attributeResult);
+		UserProductBadge badge = null;
+		if (userId != null) {
+			badge = userProductBadgeRepository.findByUserIdAndProductId(userId, id);
+		}
+
+		List<Tag> tags = productTagRepository.findTagsByProductId(id);
+
+		return ProductDetailResult.of(product, attributeResult, badge, tags);
 	}
 
 	public void incrementProductViewCount(Long id) {
@@ -119,7 +156,7 @@ public class ProductService {
 
 	@Transactional
 	@Caching(evict = {
-		@CacheEvict(value = "product", key = "'product:' + #command.id"),
+		@CacheEvict(value = "product", allEntries = true),
 		@CacheEvict(value = "productStock", key = "'product:' + #command.id + ':stock'")
 	})
 	public ProductDetailResult updateProduct(ProductUpdateCommand command) {
@@ -147,7 +184,7 @@ public class ProductService {
 
 	@Transactional
 	@Caching(evict = {
-		@CacheEvict(value = "product", key = "'product:' + #id"),
+		@CacheEvict(value = "product", allEntries = true),
 		@CacheEvict(value = "productStock", key = "'product:' + #id + ':stock'")
 	})
 	public void deleteProduct(Long id) {

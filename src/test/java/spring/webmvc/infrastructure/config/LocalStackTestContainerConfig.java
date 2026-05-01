@@ -10,7 +10,7 @@ public class LocalStackTestContainerConfig {
 
 	@Container
 	public static final LocalStackContainer localStackContainer =
-		new LocalStackContainer(DockerImageName.parse("localstack/localstack:3.8.1"))
+		new LocalStackContainer(DockerImageName.parse("localstack/localstack:3.8"))
 			.withServices(
 				LocalStackContainer.Service.S3,
 				LocalStackContainer.Service.DYNAMODB,

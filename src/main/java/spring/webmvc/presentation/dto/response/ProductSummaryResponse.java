@@ -5,7 +5,6 @@ import java.time.Instant;
 import spring.webmvc.application.dto.result.ProductSummaryResult;
 import spring.webmvc.domain.model.enums.ProductCategory;
 import spring.webmvc.domain.model.enums.ProductStatus;
-import spring.webmvc.domain.model.vo.ProductExposureAttribute;
 
 public record ProductSummaryResponse(
 	Long id,
@@ -15,7 +14,7 @@ public record ProductSummaryResponse(
 	String description,
 	Long price,
 	Long quantity,
-	ProductExposureAttribute exposureAttribute,
+	ProductExposureAttributeResponse exposureAttribute,
 	Instant createdAt
 ) {
 	public static ProductSummaryResponse of(ProductSummaryResult result) {
@@ -27,7 +26,7 @@ public record ProductSummaryResponse(
 			result.description(),
 			result.price(),
 			result.quantity(),
-			result.exposureAttribute(),
+			ProductExposureAttributeResponse.of(result.exposureAttribute()),
 			result.createdAt()
 		);
 	}

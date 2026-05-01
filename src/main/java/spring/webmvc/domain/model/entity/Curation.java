@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -15,7 +16,12 @@ import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import spring.webmvc.domain.model.enums.CurationCategory;
+import spring.webmvc.domain.converter.CurationAttributeConverter;
+import spring.webmvc.domain.converter.CurationExposureAttributeConverter;
+import spring.webmvc.domain.model.enums.CurationPlacement;
+import spring.webmvc.domain.model.enums.CurationType;
+import spring.webmvc.domain.model.vo.CurationAttribute;
+import spring.webmvc.domain.model.vo.CurationExposureAttribute;
 
 @Entity
 @Getter
@@ -28,7 +34,16 @@ public class Curation extends BaseCreator {
 	private String title;
 
 	@Enumerated(EnumType.STRING)
-	private CurationCategory category;
+	private CurationPlacement placement;
+
+	@Enumerated(EnumType.STRING)
+	private CurationType type;
+
+	@Convert(converter = CurationAttributeConverter.class)
+	private CurationAttribute attribute;
+
+	@Convert(converter = CurationExposureAttributeConverter.class)
+	private CurationExposureAttribute exposureAttribute;
 
 	private Boolean isExposed;
 	private Long sortOrder;
@@ -42,14 +57,20 @@ public class Curation extends BaseCreator {
 
 	public static Curation create(
 		String title,
-		CurationCategory category,
+		CurationPlacement placement,
+		CurationType type,
+		CurationAttribute attribute,
+		CurationExposureAttribute exposureAttribute,
 		Boolean isExposed,
 		Long sortOrder
 	) {
 		Curation curation = new Curation();
 
 		curation.title = title;
-		curation.category = category;
+		curation.placement = placement;
+		curation.type = type;
+		curation.attribute = attribute;
+		curation.exposureAttribute = exposureAttribute;
 		curation.isExposed = isExposed;
 		curation.sortOrder = sortOrder;
 

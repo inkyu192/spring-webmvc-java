@@ -22,7 +22,7 @@ import spring.webmvc.application.dto.result.CurationDetailResult;
 import spring.webmvc.application.dto.result.CurationOffsetPageResult;
 import spring.webmvc.application.dto.result.CurationSummaryResult;
 import spring.webmvc.application.service.CurationService;
-import spring.webmvc.domain.model.enums.CurationCategory;
+import spring.webmvc.domain.model.enums.CurationPlacement;
 import spring.webmvc.presentation.dto.request.CurationCreateRequest;
 import spring.webmvc.presentation.dto.response.CurationDetailOffsetPageResponse;
 import spring.webmvc.presentation.dto.response.CurationDetailResponse;
@@ -50,9 +50,9 @@ public class CurationController {
 	@GetMapping
 	@PreAuthorize("hasAuthority('CURATION_READ')")
 	public CurationListResponse findCurations(
-		@RequestParam CurationCategory category
+		@RequestParam CurationPlacement placement
 	) {
-		List<CurationSummaryResult> results = curationService.findCurations(category);
+		List<CurationSummaryResult> results = curationService.findCurations(placement);
 
 		return CurationListResponse.of(results);
 	}

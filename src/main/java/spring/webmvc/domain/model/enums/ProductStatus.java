@@ -10,16 +10,10 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum ProductStatus {
-	PENDING("대기"),
-	SELLING("판매중"),
-	DISCONTINUED("중지"),
+	PENDING,
+	SELLING,
+	DISCONTINUED,
 	;
-
-	private final String description;
-
-	public String getTranslationCode() {
-		return "ProductStatus." + name();
-	}
 
 	@JsonCreator
 	public static ProductStatus of(String name) {

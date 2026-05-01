@@ -8,7 +8,6 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import spring.webmvc.application.dto.command.ProductUpdateCommand;
 import spring.webmvc.domain.model.enums.ProductStatus;
-import spring.webmvc.domain.model.vo.ProductExposureAttribute;
 
 public record ProductUpdateRequest(
 	ProductStatus status,
@@ -29,7 +28,7 @@ public record ProductUpdateRequest(
 	})
 	ProductAttributePutRequest attribute,
 
-	ProductExposureAttribute exposureAttribute
+	ProductExposureAttributeRequest exposureAttribute
 ) {
 	public ProductUpdateCommand toCommand(Long id) {
 		return new ProductUpdateCommand(
@@ -40,7 +39,7 @@ public record ProductUpdateRequest(
 			price,
 			quantity,
 			attribute.toCommand(),
-			exposureAttribute
+			exposureAttribute.toVO()
 		);
 	}
 }

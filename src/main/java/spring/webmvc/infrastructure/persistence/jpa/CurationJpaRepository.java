@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import spring.webmvc.domain.model.entity.Curation;
-import spring.webmvc.domain.model.enums.CurationCategory;
+import spring.webmvc.domain.model.enums.CurationPlacement;
 
 public interface CurationJpaRepository extends JpaRepository<Curation, Long> {
-	List<Curation> findByCategoryAndIsExposedIsTrueOrderBySortOrder(CurationCategory category);
+	List<Curation> findByPlacementAndIsExposedIsTrueOrderBySortOrder(CurationPlacement placement);
 }

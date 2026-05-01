@@ -3,9 +3,9 @@ package spring.webmvc.application.dto.result;
 import java.time.Instant;
 
 import spring.webmvc.domain.model.entity.Product;
+import spring.webmvc.domain.model.entity.UserProductBadge;
 import spring.webmvc.domain.model.enums.ProductCategory;
 import spring.webmvc.domain.model.enums.ProductStatus;
-import spring.webmvc.domain.model.vo.ProductExposureAttribute;
 
 public record ProductSummaryResult(
 	Long id,
@@ -15,10 +15,14 @@ public record ProductSummaryResult(
 	String description,
 	Long price,
 	Long quantity,
-	ProductExposureAttribute exposureAttribute,
+	ProductExposureAttributeResult exposureAttribute,
 	Instant createdAt
 ) {
 	public static ProductSummaryResult of(Product product) {
+		return of(product, null);
+	}
+
+	public static ProductSummaryResult of(Product product, UserProductBadge badge) {
 		return new ProductSummaryResult(
 			product.getId(),
 			product.getCategory(),
@@ -27,7 +31,7 @@ public record ProductSummaryResult(
 			product.getDescription(),
 			product.getPrice(),
 			product.getQuantity(),
-			product.getExposureAttribute(),
+			ProductExposureAttributeResult.of(product.getExposureAttribute(), badge),
 			product.getCreatedAt()
 		);
 	}

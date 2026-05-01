@@ -1,7 +1,8 @@
-SET
-FOREIGN_KEY_CHECKS = 0;
+SET FOREIGN_KEY_CHECKS = 0;
 
 DROP TABLE IF EXISTS translation;
+DROP TABLE IF EXISTS product_tag;
+DROP TABLE IF EXISTS tag;
 DROP TABLE IF EXISTS curation_product;
 DROP TABLE IF EXISTS curation;
 DROP TABLE IF EXISTS order_product;
@@ -24,8 +25,7 @@ DROP TABLE IF EXISTS user_credential;
 DROP TABLE IF EXISTS user_oauth;
 DROP TABLE IF EXISTS users;
 
-SET
-FOREIGN_KEY_CHECKS = 1;
+SET FOREIGN_KEY_CHECKS = 1;
 
 CREATE TABLE users
 (
@@ -191,6 +191,24 @@ CREATE TABLE product
     updated_at         DATETIME(6)  NOT NULL DEFAULT CURRENT_TIMESTAMP(6)
 );
 
+CREATE TABLE tag
+(
+    id         BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name       VARCHAR(255) NOT NULL UNIQUE,
+    created_at DATETIME(6)  NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    updated_at DATETIME(6)  NOT NULL DEFAULT CURRENT_TIMESTAMP(6)
+);
+
+CREATE TABLE product_tag
+(
+    id         BIGINT AUTO_INCREMENT PRIMARY KEY,
+    product_id BIGINT NOT NULL,
+    tag_id     BIGINT NOT NULL,
+    CONSTRAINT fk_product_tag_product FOREIGN KEY (product_id) REFERENCES product (id),
+    CONSTRAINT fk_product_tag_tag FOREIGN KEY (tag_id) REFERENCES tag (id),
+    UNIQUE KEY uk_product_tag (product_id, tag_id)
+);
+
 CREATE TABLE transport
 (
     product_id         BIGINT PRIMARY KEY,
@@ -234,15 +252,19 @@ CREATE TABLE order_product
 
 CREATE TABLE curation
 (
-    id         BIGINT AUTO_INCREMENT PRIMARY KEY,
-    title      VARCHAR(255) NOT NULL,
-    category   VARCHAR(50)  NOT NULL,
-    is_exposed BIT(1)       NOT NULL,
-    sort_order BIGINT       NOT NULL,
-    created_by BIGINT,
-    updated_by BIGINT,
-    created_at DATETIME(6)  NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
-    updated_at DATETIME(6)  NOT NULL DEFAULT CURRENT_TIMESTAMP(6)
+    id                 BIGINT AUTO_INCREMENT PRIMARY KEY,
+    title              VARCHAR(255) NOT NULL,
+    placement          VARCHAR(50)  NOT NULL,
+    type               VARCHAR(20)  NOT NULL DEFAULT 'MANUAL',
+    attribute          JSON,
+    exposure_attribute JSON,
+    is_exposed         BIT(1)       NOT NULL,
+    sort_order         BIGINT       NOT NULL,
+    created_by         BIGINT,
+    updated_by         BIGINT,
+    created_at         DATETIME(6)  NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    updated_at         DATETIME(6)  NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    INDEX              idx_curation_type(type)
 );
 
 CREATE TABLE curation_product
