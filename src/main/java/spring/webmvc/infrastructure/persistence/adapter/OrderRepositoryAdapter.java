@@ -55,6 +55,11 @@ public class OrderRepositoryAdapter implements OrderRepository {
 	}
 
 	@Override
+	public String findMaxOrderNumberByDate(String date) {
+		return jpaRepository.findMaxOrderNumberByDatePrefix(date);
+	}
+
+	@Override
 	public Order save(Order order) {
 		return jpaRepository.save(order);
 	}

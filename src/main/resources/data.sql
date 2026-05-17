@@ -455,6 +455,8 @@ VALUES ('Gender', 'ko', '성별', NOW(6), NOW(6)),
        ('FailedAwsIntegrationException', 'en', 'Error communicating with {0} service.', NOW(6), NOW(6)),
        ('ExceededMaxDeviceException', 'ko', '등록 가능한 최대 기기 수({0}개)를 초과했습니다.', NOW(6), NOW(6)),
        ('ExceededMaxDeviceException', 'en', 'Maximum number of devices ({0}) has been exceeded.', NOW(6), NOW(6)),
+       ('OrderNumberGenerationException', 'ko', '주문번호 생성에 실패했습니다.', NOW(6), NOW(6)),
+       ('OrderNumberGenerationException', 'en', 'Failed to generate order number.', NOW(6), NOW(6)),
        ('AbstractHttpException', 'ko', '등록되지 않은 오류가 발생했습니다.', NOW(6), NOW(6)),
        ('AbstractHttpException', 'en', 'An unregistered error has occurred.', NOW(6), NOW(6)),
        ('HttpMessageNotReadableException', 'ko', '요청 본문을 읽을 수 없습니다.', NOW(6), NOW(6)),
@@ -529,17 +531,41 @@ VALUES (1, '동남아', NOW(6), NOW(6)),
 
 INSERT INTO product_tag (product_id, tag_id)
 VALUES -- 동남아 항공권
-       (3, 1), (5, 1), (9, 1), (10, 1), (11, 1), (12, 1), (16, 1),
+       (3, 1),
+       (5, 1),
+       (9, 1),
+       (10, 1),
+       (11, 1),
+       (12, 1),
+       (16, 1),
        -- 일본 항공권
-       (1, 2), (2, 2),
+       (1, 2),
+       (2, 2),
        -- 유럽 항공권
-       (8, 3), (20, 3), (21, 3), (22, 3), (23, 3),
+       (8, 3),
+       (20, 3),
+       (21, 3),
+       (22, 3),
+       (23, 3),
        -- 특가 상품
-       (2, 4), (5, 4), (9, 4), (10, 4), (13, 4), (29, 4), (36, 4), (37, 4), (42, 4),
+       (2, 4),
+       (5, 4),
+       (9, 4),
+       (10, 4),
+       (13, 4),
+       (29, 4),
+       (36, 4),
+       (37, 4),
+       (42, 4),
        -- 럭셔리 숙박
-       (33, 5), (34, 5), (38, 5),
+       (33, 5),
+       (34, 5),
+       (38, 5),
        -- 제주 숙박
-       (27, 8), (35, 8), (40, 8), (48, 8);
+       (27, 8),
+       (35, 8),
+       (40, 8),
+       (48, 8);
 
 ALTER TABLE tag AUTO_INCREMENT = 51;
 ALTER TABLE product_tag AUTO_INCREMENT = 101;

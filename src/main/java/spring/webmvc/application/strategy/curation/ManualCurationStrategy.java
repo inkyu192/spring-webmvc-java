@@ -2,6 +2,7 @@ package spring.webmvc.application.strategy.curation;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -17,6 +18,7 @@ import spring.webmvc.domain.model.entity.CurationProduct;
 import spring.webmvc.domain.model.entity.UserProductBadge;
 import spring.webmvc.domain.model.enums.CurationType;
 import spring.webmvc.domain.repository.CurationProductRepository;
+import spring.webmvc.domain.repository.RecentlyViewedProductRepository;
 import spring.webmvc.domain.repository.UserProductBadgeRepository;
 
 @Component
@@ -25,6 +27,7 @@ public class ManualCurationStrategy implements CurationProductStrategy {
 
 	private final CurationProductRepository curationProductRepository;
 	private final UserProductBadgeRepository userProductBadgeRepository;
+	private final RecentlyViewedProductRepository recentlyViewedProductRepository;
 
 	@Override
 	public CurationType getType() {
@@ -45,7 +48,12 @@ public class ManualCurationStrategy implements CurationProductStrategy {
 					b -> Long.parseLong(b.getSk().replace("PRODUCT#", "")),
 					Function.identity()
 				));
-			return page.map(cp -> CurationProductResult.of(cp, badgeMap.get(cp.getProduct().getId())));
+			Set<Long> recentlyViewedIds = recentlyViewedProductRepository.findProductIdsByUserIdWithinDays(userId);
+			return page.map(cp -> CurationProductResult.of(
+				cp,
+				badgeMap.get(cp.getProduct().getId()),
+				recentlyViewedIds.contains(cp.getProduct().getId())
+			));
 		}
 
 		return page.map(CurationProductResult::of);

@@ -3,6 +3,7 @@ package spring.webmvc.application.strategy.curation;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -21,6 +22,7 @@ import spring.webmvc.domain.model.entity.UserProductBadge;
 import spring.webmvc.domain.model.enums.CurationType;
 import spring.webmvc.domain.repository.CurationProductRepository;
 import spring.webmvc.domain.repository.ProductRepository;
+import spring.webmvc.domain.repository.RecentlyViewedProductRepository;
 import spring.webmvc.domain.repository.UserCurationProductRepository;
 import spring.webmvc.domain.repository.UserProductBadgeRepository;
 
@@ -32,6 +34,7 @@ public class PersonalizedCurationStrategy implements CurationProductStrategy {
 	private final ProductRepository productRepository;
 	private final UserProductBadgeRepository userProductBadgeRepository;
 	private final CurationProductRepository curationProductRepository;
+	private final RecentlyViewedProductRepository recentlyViewedProductRepository;
 
 	@Override
 	public CurationType getType() {
@@ -67,8 +70,14 @@ public class PersonalizedCurationStrategy implements CurationProductStrategy {
 				Function.identity()
 			));
 
+		Set<Long> recentlyViewedIds = recentlyViewedProductRepository.findProductIdsByUserIdWithinDays(userId);
+
 		List<CurationProductResult> results = products.stream()
-			.map(p -> CurationProductResult.of(p, badgeMap.get(p.getId())))
+			.map(p -> CurationProductResult.of(
+				p,
+				badgeMap.get(p.getId()),
+				recentlyViewedIds.contains(p.getId())
+			))
 			.toList();
 
 		return new CursorPage<>(results, (long)results.size(), false, null);
@@ -93,7 +102,12 @@ public class PersonalizedCurationStrategy implements CurationProductStrategy {
 					b -> Long.parseLong(b.getSk().replace("PRODUCT#", "")),
 					Function.identity()
 				));
-			return page.map(cp -> CurationProductResult.of(cp, badgeMap.get(cp.getProduct().getId())));
+			Set<Long> recentlyViewedIds = recentlyViewedProductRepository.findProductIdsByUserIdWithinDays(userId);
+			return page.map(cp -> CurationProductResult.of(
+				cp,
+				badgeMap.get(cp.getProduct().getId()),
+				recentlyViewedIds.contains(cp.getProduct().getId())
+			));
 		}
 
 		return page.map(CurationProductResult::of);

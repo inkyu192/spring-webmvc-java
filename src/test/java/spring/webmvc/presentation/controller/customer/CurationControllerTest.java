@@ -52,9 +52,9 @@ class CurationControllerTest {
 
 		List<CurationProductResult> products = List.of(
 			new CurationProductResult(1L, "제주도 호텔", "제주도 3박 4일", 100000L,
-				new ProductExposureAttributeResult(true, false, true, false, false, false)),
+				new ProductExposureAttributeResult(true, false, true, false, false, false, false, false)),
 			new CurationProductResult(2L, "부산 교통편", "부산 왕복 교통편", 50000L,
-				new ProductExposureAttributeResult(false, true, false, false, false, false))
+				new ProductExposureAttributeResult(false, true, false, false, false, false, false, false))
 		);
 
 		CursorPage<CurationProductResult> productPage = new CursorPage<>(
@@ -153,7 +153,11 @@ class CurationControllerTest {
 						PayloadDocumentation.fieldWithPath("products.content[].exposureAttribute.isRecommended")
 							.description("추천 뱃지 여부"),
 						PayloadDocumentation.fieldWithPath("products.content[].exposureAttribute.isPersonalPick")
-							.description("개인 맞춤 뱃지 여부")
+							.description("개인 맞춤 뱃지 여부"),
+						PayloadDocumentation.fieldWithPath("products.content[].exposureAttribute.isRecentlyViewed")
+							.description("최근 본 상품 여부"),
+						PayloadDocumentation.fieldWithPath("products.content[].exposureAttribute.isWished")
+							.description("찜 여부")
 					)
 				)
 			);

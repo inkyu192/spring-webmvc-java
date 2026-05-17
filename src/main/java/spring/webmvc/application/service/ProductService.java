@@ -22,15 +22,19 @@ import spring.webmvc.application.dto.result.ProductAttributeResult;
 import spring.webmvc.application.dto.result.ProductDetailResult;
 import spring.webmvc.application.dto.result.ProductSummaryResult;
 import spring.webmvc.application.event.ProductViewEvent;
+import spring.webmvc.application.event.RecentlyViewedEvent;
 import spring.webmvc.application.strategy.product.ProductAttributeStrategy;
 import spring.webmvc.domain.dto.CursorPage;
 import spring.webmvc.domain.model.entity.Product;
+import spring.webmvc.domain.model.entity.RecentlyViewedProduct;
 import spring.webmvc.domain.model.entity.Tag;
 import spring.webmvc.domain.model.entity.UserProductBadge;
 import spring.webmvc.domain.model.enums.ProductCategory;
 import spring.webmvc.domain.repository.ProductRepository;
 import spring.webmvc.domain.repository.ProductTagRepository;
+import spring.webmvc.domain.repository.RecentlyViewedProductRepository;
 import spring.webmvc.domain.repository.UserProductBadgeRepository;
+import spring.webmvc.domain.repository.WishlistRepository;
 import spring.webmvc.infrastructure.exception.NotFoundEntityException;
 
 @Service
@@ -40,6 +44,8 @@ public class ProductService {
 	private final ProductRepository productRepository;
 	private final ProductTagRepository productTagRepository;
 	private final UserProductBadgeRepository userProductBadgeRepository;
+	private final RecentlyViewedProductRepository recentlyViewedProductRepository;
+	private final WishlistRepository wishlistRepository;
 	private final ApplicationEventPublisher eventPublisher;
 	private final Map<ProductCategory, ProductAttributeStrategy> productAttributeStrategyMap;
 
@@ -47,12 +53,16 @@ public class ProductService {
 		ProductRepository productRepository,
 		ProductTagRepository productTagRepository,
 		UserProductBadgeRepository userProductBadgeRepository,
+		RecentlyViewedProductRepository recentlyViewedProductRepository,
+		WishlistRepository wishlistRepository,
 		ApplicationEventPublisher eventPublisher,
 		List<ProductAttributeStrategy> productStrategies
 	) {
 		this.productRepository = productRepository;
 		this.productTagRepository = productTagRepository;
 		this.userProductBadgeRepository = userProductBadgeRepository;
+		this.recentlyViewedProductRepository = recentlyViewedProductRepository;
+		this.wishlistRepository = wishlistRepository;
 		this.eventPublisher = eventPublisher;
 
 		Set<ProductCategory> duplicates = productStrategies.stream()
@@ -86,7 +96,14 @@ public class ProductService {
 					b -> Long.parseLong(b.getSk().replace("PRODUCT#", "")),
 					Function.identity()
 				));
-			return page.map(product -> ProductSummaryResult.of(product, badgeMap.get(product.getId())));
+			Set<Long> recentlyViewedIds = recentlyViewedProductRepository.findProductIdsByUserIdWithinDays(userId);
+			Set<Long> wishedIds = wishlistRepository.findProductIdsByUserId(userId);
+			return page.map(product -> ProductSummaryResult.of(
+				product,
+				badgeMap.get(product.getId()),
+				recentlyViewedIds.contains(product.getId()),
+				wishedIds.contains(product.getId())
+			));
 		}
 
 		return page.map(ProductSummaryResult::of);
@@ -129,6 +146,35 @@ public class ProductService {
 
 	public void incrementProductViewCount(Long id) {
 		eventPublisher.publishEvent(new ProductViewEvent(id));
+	}
+
+	public void recordRecentlyViewed(Long userId, Long productId) {
+		eventPublisher.publishEvent(new RecentlyViewedEvent(userId, productId));
+	}
+
+	public CursorPage<ProductSummaryResult> findRecentlyViewedProducts(Long userId, Long cursorId) {
+		CursorPage<RecentlyViewedProduct> page = recentlyViewedProductRepository
+			.findAllByUserIdWithCursorPage(userId, cursorId);
+
+		List<Long> productIds = page.content().stream()
+			.map(rvp -> rvp.getProduct().getId())
+			.toList();
+
+		Map<Long, UserProductBadge> badgeMap = userProductBadgeRepository
+			.findByUserIdAndProductIds(userId, productIds).stream()
+			.collect(Collectors.toMap(
+				b -> Long.parseLong(b.getSk().replace("PRODUCT#", "")),
+				Function.identity()
+			));
+
+		Set<Long> wishedIds = wishlistRepository.findProductIdsByUserId(userId);
+
+		return page.map(rvp -> ProductSummaryResult.of(
+			rvp.getProduct(),
+			badgeMap.get(rvp.getProduct().getId()),
+			true,
+			wishedIds.contains(rvp.getProduct().getId())
+		));
 	}
 
 	@Transactional

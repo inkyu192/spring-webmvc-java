@@ -54,7 +54,7 @@ class ProductControllerTest {
 		Instant now = Instant.now();
 
 		ProductExposureAttributeResult exposureAttribute = new ProductExposureAttributeResult(
-			false, true, false, false, false, false
+			false, true, false, false, false, false, false, false
 		);
 
 		productSummaryResult = new ProductSummaryResult(
@@ -167,6 +167,10 @@ class ProductControllerTest {
 							.description("추천 뱃지 여부"),
 						PayloadDocumentation.fieldWithPath("content[].exposureAttribute.isPersonalPick")
 							.description("개인 맞춤 뱃지 여부"),
+						PayloadDocumentation.fieldWithPath("content[].exposureAttribute.isRecentlyViewed")
+							.description("최근 본 상품 여부"),
+						PayloadDocumentation.fieldWithPath("content[].exposureAttribute.isWished")
+							.description("찜 여부"),
 						PayloadDocumentation.fieldWithPath("content[].createdAt").description("생성일시")
 					)
 				)
@@ -217,6 +221,12 @@ class ProductControllerTest {
 							.optional(),
 						PayloadDocumentation.fieldWithPath("exposureAttribute.isPersonalPick")
 							.description("개인 맞춤 뱃지 여부")
+							.optional(),
+						PayloadDocumentation.fieldWithPath("exposureAttribute.isRecentlyViewed")
+							.description("최근 본 상품 여부")
+							.optional(),
+						PayloadDocumentation.fieldWithPath("exposureAttribute.isWished")
+							.description("찜 여부")
 							.optional(),
 						PayloadDocumentation.fieldWithPath("createdAt").description("생성일시"),
 						PayloadDocumentation.fieldWithPath("attribute").description("상세 정보"),
@@ -276,6 +286,12 @@ class ProductControllerTest {
 							.optional(),
 						PayloadDocumentation.fieldWithPath("exposureAttribute.isPersonalPick")
 							.description("개인 맞춤 뱃지 여부")
+							.optional(),
+						PayloadDocumentation.fieldWithPath("exposureAttribute.isRecentlyViewed")
+							.description("최근 본 상품 여부")
+							.optional(),
+						PayloadDocumentation.fieldWithPath("exposureAttribute.isWished")
+							.description("찜 여부")
 							.optional(),
 						PayloadDocumentation.fieldWithPath("createdAt").description("생성일시"),
 						PayloadDocumentation.fieldWithPath("attribute").description("상세 정보"),
@@ -363,6 +379,9 @@ class ProductControllerTest {
 						PayloadDocumentation.fieldWithPath("exposureAttribute.isRecommended").description("추천 뱃지 여부"),
 						PayloadDocumentation.fieldWithPath("exposureAttribute.isPersonalPick")
 							.description("개인 맞춤 뱃지 여부"),
+						PayloadDocumentation.fieldWithPath("exposureAttribute.isRecentlyViewed")
+							.description("최근 본 상품 여부"),
+						PayloadDocumentation.fieldWithPath("exposureAttribute.isWished").description("찜 여부"),
 						PayloadDocumentation.fieldWithPath("createdAt").description("생성일시"),
 						PayloadDocumentation.fieldWithPath("attribute").description("상세 정보"),
 						PayloadDocumentation.fieldWithPath("attribute.departureLocation").description("출발지"),
@@ -448,6 +467,9 @@ class ProductControllerTest {
 						PayloadDocumentation.fieldWithPath("exposureAttribute.isRecommended").description("추천 뱃지 여부"),
 						PayloadDocumentation.fieldWithPath("exposureAttribute.isPersonalPick")
 							.description("개인 맞춤 뱃지 여부"),
+						PayloadDocumentation.fieldWithPath("exposureAttribute.isRecentlyViewed")
+							.description("최근 본 상품 여부"),
+						PayloadDocumentation.fieldWithPath("exposureAttribute.isWished").description("찜 여부"),
 						PayloadDocumentation.fieldWithPath("createdAt").description("생성일시"),
 						PayloadDocumentation.fieldWithPath("attribute").description("상세 정보"),
 						PayloadDocumentation.fieldWithPath("attribute.place").description("장소"),
@@ -537,6 +559,9 @@ class ProductControllerTest {
 						PayloadDocumentation.fieldWithPath("exposureAttribute.isRecommended").description("추천 뱃지 여부"),
 						PayloadDocumentation.fieldWithPath("exposureAttribute.isPersonalPick")
 							.description("개인 맞춤 뱃지 여부"),
+						PayloadDocumentation.fieldWithPath("exposureAttribute.isRecentlyViewed")
+							.description("최근 본 상품 여부"),
+						PayloadDocumentation.fieldWithPath("exposureAttribute.isWished").description("찜 여부"),
 						PayloadDocumentation.fieldWithPath("createdAt").description("생성일시"),
 						PayloadDocumentation.fieldWithPath("attribute").description("상세 정보"),
 						PayloadDocumentation.fieldWithPath("attribute.departureLocation").description("출발지"),
@@ -625,6 +650,9 @@ class ProductControllerTest {
 						PayloadDocumentation.fieldWithPath("exposureAttribute.isRecommended").description("추천 뱃지 여부"),
 						PayloadDocumentation.fieldWithPath("exposureAttribute.isPersonalPick")
 							.description("개인 맞춤 뱃지 여부"),
+						PayloadDocumentation.fieldWithPath("exposureAttribute.isRecentlyViewed")
+							.description("최근 본 상품 여부"),
+						PayloadDocumentation.fieldWithPath("exposureAttribute.isWished").description("찜 여부"),
 						PayloadDocumentation.fieldWithPath("createdAt").description("생성일시"),
 						PayloadDocumentation.fieldWithPath("attribute").description("상세 정보"),
 						PayloadDocumentation.fieldWithPath("attribute.place").description("장소"),

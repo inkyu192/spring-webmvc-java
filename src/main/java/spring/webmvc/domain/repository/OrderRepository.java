@@ -31,5 +31,7 @@ public interface OrderRepository {
 
 	Optional<Order> findByIdAndUserId(Long id, Long userId);
 
+	String findMaxOrderNumberByDate(String date);
+
 	Order save(Order order);
 }

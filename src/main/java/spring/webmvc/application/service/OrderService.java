@@ -1,6 +1,8 @@
 package spring.webmvc.application.service;
 
 import java.time.Duration;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -26,15 +28,20 @@ import spring.webmvc.domain.model.entity.User;
 import spring.webmvc.domain.repository.OrderRepository;
 import spring.webmvc.domain.repository.ProductRepository;
 import spring.webmvc.domain.repository.UserRepository;
+import spring.webmvc.domain.repository.cache.OrderCacheRepository;
 import spring.webmvc.domain.repository.cache.ProductCacheRepository;
 import spring.webmvc.infrastructure.exception.InsufficientQuantityException;
 import spring.webmvc.infrastructure.exception.NotFoundEntityException;
+import spring.webmvc.infrastructure.exception.OrderNumberGenerationException;
 import spring.webmvc.infrastructure.security.SecurityContextUtil;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class OrderService {
+	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd");
+
+	private final OrderCacheRepository orderCacheRepository;
 	private ProductCacheRepository productCacheRepository;
 	private final UserRepository userRepository;
 	private final ProductRepository productRepository;
@@ -52,7 +59,8 @@ public class OrderService {
 		Map<Long, Product> productMap = productRepository.findAllById(productIds).stream()
 			.collect(Collectors.toMap(Product::getId, Function.identity()));
 
-		Order order = Order.create(user);
+		String orderNumber = generateOrderNumber();
+		Order order = Order.create(orderNumber, user);
 		List<OrderProductCreateCommand> processedProducts = new ArrayList<>();
 
 		try {
@@ -163,5 +171,42 @@ public class OrderService {
 		order.cancel();
 
 		return OrderDetailResult.of(order);
+	}
+
+	private String generateOrderNumber() {
+		String date = LocalDate.now().format(DATE_FORMATTER);
+
+		Long seq = orderCacheRepository.incrementSequence(date);
+		if (seq == null) {
+			throw new OrderNumberGenerationException();
+		}
+
+		Long finalSeq;
+		if (seq == 1L) {
+			Long lastSeq = recoverSequenceFromDb(date);
+			if (lastSeq > 0) {
+				orderCacheRepository.setSequence(date, lastSeq + 1);
+				finalSeq = lastSeq + 1;
+			} else {
+				finalSeq = seq;
+			}
+		} else {
+			finalSeq = seq;
+		}
+
+		return date + String.format("%08d", finalSeq);
+	}
+
+	private Long recoverSequenceFromDb(String date) {
+		String maxOrderNumber = orderRepository.findMaxOrderNumberByDate(date);
+		if (maxOrderNumber != null && maxOrderNumber.length() >= 8) {
+			String seqPart = maxOrderNumber.substring(maxOrderNumber.length() - 8);
+			try {
+				return Long.parseLong(seqPart);
+			} catch (NumberFormatException e) {
+				return 0L;
+			}
+		}
+		return 0L;
 	}
 }

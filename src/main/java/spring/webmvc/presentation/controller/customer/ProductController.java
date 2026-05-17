@@ -44,6 +44,9 @@ public class ProductController {
 		ProductDetailResult result = productService.findProductCached(userId, id);
 
 		productService.incrementProductViewCount(id);
+		if (userId != null) {
+			productService.recordRecentlyViewed(userId, id);
+		}
 
 		return ProductDetailResponse.of(result);
 	}

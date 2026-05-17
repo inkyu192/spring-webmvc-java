@@ -9,11 +9,15 @@ public record ProductExposureAttributeResult(
 	boolean isFeatured,
 	boolean isLowStock,
 	boolean isRecommended,
-	boolean isPersonalPick
+	boolean isPersonalPick,
+	boolean isRecentlyViewed,
+	boolean isWished
 ) {
 	public static ProductExposureAttributeResult of(
 		ProductExposureAttribute vo,
-		UserProductBadge badge
+		UserProductBadge badge,
+		boolean isRecentlyViewed,
+		boolean isWished
 	) {
 		return new ProductExposureAttributeResult(
 			vo.isPromotional(),
@@ -21,11 +25,25 @@ public record ProductExposureAttributeResult(
 			vo.isFeatured(),
 			vo.isLowStock(),
 			badge != null && Boolean.TRUE.equals(badge.getIsRecommended()),
-			badge != null && Boolean.TRUE.equals(badge.getIsPersonalPick())
+			badge != null && Boolean.TRUE.equals(badge.getIsPersonalPick()),
+			isRecentlyViewed,
+			isWished
 		);
 	}
 
+	public static ProductExposureAttributeResult of(
+		ProductExposureAttribute vo,
+		UserProductBadge badge,
+		boolean isRecentlyViewed
+	) {
+		return of(vo, badge, isRecentlyViewed, false);
+	}
+
+	public static ProductExposureAttributeResult of(ProductExposureAttribute vo, UserProductBadge badge) {
+		return of(vo, badge, false, false);
+	}
+
 	public static ProductExposureAttributeResult of(ProductExposureAttribute vo) {
-		return of(vo, null);
+		return of(vo, null, false, false);
 	}
 }

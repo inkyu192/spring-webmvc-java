@@ -8,7 +8,9 @@ public record ProductExposureAttributeResponse(
 	boolean isFeatured,
 	boolean isLowStock,
 	boolean isRecommended,
-	boolean isPersonalPick
+	boolean isPersonalPick,
+	boolean isRecentlyViewed,
+	boolean isWished
 ) {
 	public static ProductExposureAttributeResponse of(ProductExposureAttributeResult result) {
 		return new ProductExposureAttributeResponse(
@@ -17,7 +19,9 @@ public record ProductExposureAttributeResponse(
 			result.isFeatured(),
 			result.isLowStock(),
 			result.isRecommended(),
-			result.isPersonalPick()
+			result.isPersonalPick(),
+			result.isRecentlyViewed(),
+			result.isWished()
 		);
 	}
 }

@@ -45,6 +45,7 @@ class OrderControllerTest {
 	private final Long userId = 1L;
 	private final Long productId = 1L;
 	private final Long quantity = 3L;
+	private final String orderNumber = "2024050600000001";
 	private final OrderStatus orderStatus = OrderStatus.ORDER;
 
 	@BeforeEach
@@ -58,6 +59,7 @@ class OrderControllerTest {
 
 		orderDetailResult = new OrderDetailResult(
 			orderId,
+			orderNumber,
 			Instant.now(),
 			OrderStatus.ORDER,
 			List.of(orderProductResult)
@@ -65,6 +67,7 @@ class OrderControllerTest {
 
 		orderSummaryResult = new OrderSummaryResult(
 			orderId,
+			orderNumber,
 			Instant.now(),
 			OrderStatus.ORDER
 		);
@@ -105,6 +108,7 @@ class OrderControllerTest {
 						),
 						PayloadDocumentation.responseFields(
 							PayloadDocumentation.fieldWithPath("id").description("주문아이디"),
+							PayloadDocumentation.fieldWithPath("orderNumber").description("주문번호"),
 							PayloadDocumentation.fieldWithPath("orderedAt").description("주문일시"),
 							PayloadDocumentation.fieldWithPath("status").description("주문상태"),
 							PayloadDocumentation.fieldWithPath("products[].id").description("상품아이디"),
@@ -151,6 +155,7 @@ class OrderControllerTest {
 							PayloadDocumentation.fieldWithPath("hasNext").description("다음 페이지 존재 여부"),
 							PayloadDocumentation.fieldWithPath("nextCursorId").description("다음 커서 ID"),
 							PayloadDocumentation.fieldWithPath("content[].id").description("주문아이디"),
+							PayloadDocumentation.fieldWithPath("content[].orderNumber").description("주문번호"),
 							PayloadDocumentation.fieldWithPath("content[].orderedAt").description("주문일시"),
 							PayloadDocumentation.fieldWithPath("content[].status").description("주문상태")
 						)
@@ -182,6 +187,7 @@ class OrderControllerTest {
 						),
 						PayloadDocumentation.responseFields(
 							PayloadDocumentation.fieldWithPath("id").description("주문아이디"),
+							PayloadDocumentation.fieldWithPath("orderNumber").description("주문번호"),
 							PayloadDocumentation.fieldWithPath("orderedAt").description("주문일시"),
 							PayloadDocumentation.fieldWithPath("status").description("주문상태"),
 							PayloadDocumentation.fieldWithPath("products[].id").description("상품아이디"),
@@ -217,6 +223,7 @@ class OrderControllerTest {
 						),
 						PayloadDocumentation.responseFields(
 							PayloadDocumentation.fieldWithPath("id").description("주문아이디"),
+							PayloadDocumentation.fieldWithPath("orderNumber").description("주문번호"),
 							PayloadDocumentation.fieldWithPath("orderedAt").description("주문일시"),
 							PayloadDocumentation.fieldWithPath("status").description("주문상태"),
 							PayloadDocumentation.fieldWithPath("products[].id").description("상품아이디"),

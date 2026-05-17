@@ -8,6 +8,7 @@ import spring.webmvc.domain.model.enums.OrderStatus;
 
 public record OrderDetailResponse(
 	Long id,
+	String orderNumber,
 	Instant orderedAt,
 	OrderStatus status,
 	List<OrderProductResponse> products
@@ -15,6 +16,7 @@ public record OrderDetailResponse(
 	public static OrderDetailResponse of(OrderDetailResult result) {
 		return new OrderDetailResponse(
 			result.id(),
+			result.orderNumber(),
 			result.orderedAt(),
 			result.status(),
 			result.products().stream()

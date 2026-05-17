@@ -883,6 +883,39 @@ include::{snippets}/partner-curation-product/response-fields.adoc[]
 | 403 | <<FORBIDDEN>>
 |===
 
+== 마이페이지
+
+=== 최근 본 상품 목록 조회
+
+**HTTP Request**
+
+include::{snippets}/customer-my-recently-viewed/http-request.adoc[]
+
+**Request Headers**
+
+include::{snippets}/customer-my-recently-viewed/request-headers.adoc[]
+
+**Query Parameters**
+
+include::{snippets}/customer-my-recently-viewed/query-parameters.adoc[]
+
+**HTTP Response**
+
+include::{snippets}/customer-my-recently-viewed/http-response.adoc[]
+
+**Response Fields**
+
+include::{snippets}/customer-my-recently-viewed/response-fields.adoc[]
+
+**HTTP Status Codes**
+
+[cols="1,3",options="header"]
+|===
+| Code | Name
+| 200 | <<OK>>
+| 401 | <<UNAUTHORIZED>>
+|===
+
 == 주문
 
 === 고객

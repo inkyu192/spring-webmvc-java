@@ -12,30 +12,40 @@ public record CurationProductResult(
 	ProductExposureAttributeResult exposureAttribute
 ) {
 	public static CurationProductResult of(CurationProduct curationProduct) {
-		return of(curationProduct, null);
+		return of(curationProduct, null, false);
 	}
 
 	public static CurationProductResult of(CurationProduct curationProduct, UserProductBadge badge) {
+		return of(curationProduct, badge, false);
+	}
+
+	public static CurationProductResult of(CurationProduct curationProduct, UserProductBadge badge,
+		boolean isRecentlyViewed) {
 		return new CurationProductResult(
 			curationProduct.getProduct().getId(),
 			curationProduct.getProduct().getName(),
 			curationProduct.getProduct().getDescription(),
 			curationProduct.getProduct().getPrice(),
-			ProductExposureAttributeResult.of(curationProduct.getProduct().getExposureAttribute(), badge)
+			ProductExposureAttributeResult.of(curationProduct.getProduct().getExposureAttribute(), badge,
+				isRecentlyViewed)
 		);
 	}
 
 	public static CurationProductResult of(Product product) {
-		return of(product, null);
+		return of(product, null, false);
 	}
 
 	public static CurationProductResult of(Product product, UserProductBadge badge) {
+		return of(product, badge, false);
+	}
+
+	public static CurationProductResult of(Product product, UserProductBadge badge, boolean isRecentlyViewed) {
 		return new CurationProductResult(
 			product.getId(),
 			product.getName(),
 			product.getDescription(),
 			product.getPrice(),
-			ProductExposureAttributeResult.of(product.getExposureAttribute(), badge)
+			ProductExposureAttributeResult.of(product.getExposureAttribute(), badge, isRecentlyViewed)
 		);
 	}
 }

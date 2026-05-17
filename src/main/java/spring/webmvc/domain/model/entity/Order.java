@@ -34,6 +34,8 @@ public class Order extends BaseTime {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	private String orderNumber;
+
 	private Instant orderedAt;
 
 	@Enumerated(EnumType.STRING)
@@ -50,9 +52,10 @@ public class Order extends BaseTime {
 		return Collections.unmodifiableList(orderProducts);
 	}
 
-	public static Order create(User user) {
+	public static Order create(String orderNumber, User user) {
 		Order order = new Order();
 
+		order.orderNumber = orderNumber;
 		order.orderedAt = Instant.now();
 		order.status = OrderStatus.ORDER;
 		order.user = user;
